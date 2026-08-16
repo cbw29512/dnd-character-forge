@@ -11,7 +11,7 @@ const L2_2014 = ["Alter Self","Arcane Lock","Blindness/Deafness","Blur","Continu
 const L2_2024 = ["Alter Self","Arcane Lock","Augury","Blindness/Deafness","Blur","Continual Flame","Darkness","Darkvision","Detect Thoughts","Enhance Ability","Enlarge/Reduce","Flaming Sphere","Gentle Repose","Gust of Wind","Hold Person","Invisibility","Knock","Levitate","Locate Object","Magic Mouth","Magic Weapon","Mirror Image","Misty Step","Ray of Enfeeblement","Rope Trick","Scorching Ray","See Invisibility","Shatter","Spider Climb","Suggestion","Web"];
 const EVO_0 = ["Acid Splash","Fire Bolt","Light","Ray of Frost","Shocking Grasp"];
 const EVO_1 = ["Burning Hands","Magic Missile","Thunderwave"];
-const EVO_2 = ["Continual Flame","Flaming Sphere","Gust of Wind","Scorching Ray","Shatter"];
+const EVO_2 = ["Continual Flame","Darkness","Flaming Sphere","Gust of Wind","Scorching Ray","Shatter"];
 const EVO_3 = ["Fireball","Lightning Bolt"];
 
 export const WIZARD_SPELLS_2014 = [
