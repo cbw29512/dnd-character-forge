@@ -21,12 +21,12 @@ const resolve = (value, items) => value && value !== RANDOM ? items.find(i=>i.id
 export function generateCharacter(state) {
   try {
     const data = dataFor(state.ruleset);
-    const level = state.constraints.level === RANDOM ? 1 + Math.floor(Math.random() * 5) : Number(state.constraints.level);
     const species = resolve(state.constraints.species,data.species), cls = resolve(state.constraints.class,data.classes), background = resolve(state.constraints.background,data.backgrounds);
     if (!species || !cls || !background) throw new Error("A selected character option is unavailable for this ruleset.");
+    const level = resolveLevel(state.constraints.level,state.constraints.subclass,cls);
     const subclasses = data.subclasses.filter(item=>item.classId===cls.id);
     const subclass = level >= cls.subclassLevel && subclasses.length ? resolve(state.constraints.subclass,subclasses) : null;
-    if (state.constraints.subclass !== RANDOM && level < cls.subclassLevel) throw new Error(`${cls.name} subclass is not available until level ${cls.subclassLevel}.`);
+    if (state.constraints.subclass !== RANDOM && !subclass) throw new Error(`${cls.name} subclass choice is not legal at level ${level}.`);
     let abilities = generateBaseAbilities("standard",cls.abilityPriority);
     abilities = state.ruleset === "2014" ? apply2014Species(abilities,species) : apply2024Background(abilities,background,cls.primary);
     abilities = applyClassAsi(abilities,level,cls.primary);
@@ -51,6 +51,13 @@ export function generateCharacter(state) {
     if (!validation.valid) throw new Error(validation.errors.join(" "));
     return { ...character, validation };
   } catch (error) { console.error("[generator] Character generation blocked", error); throw error; }
+}
+function resolveLevel(value,subclassValue,cls) {
+  try {
+    if (value !== RANDOM) return Number(value);
+    const minimum = subclassValue && subclassValue !== RANDOM ? cls.subclassLevel : 1;
+    return minimum + Math.floor(Math.random()*(6-minimum));
+  } catch (error) { console.error("[generator] level resolution failed",error); throw error; }
 }
 function resolveFeatures(ruleset,classId,level,subclassId) {
   try { return classId === "wizard" ? wizardFeatures(ruleset,level,subclassId) : fighterFeatures(ruleset,level,subclassId); }
