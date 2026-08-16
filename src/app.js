@@ -6,6 +6,7 @@ import { savePregen } from "./library/local-library.js";
 import { renderCharacter } from "./ui/render.js";
 import { populateOptions } from "./ui/options.js";
 import { bindPregenLibrary, renderPregenLibrary } from "./ui/library.js";
+import { bindHomebrewLibrary, renderHomebrewLibrary } from "./ui/homebrew-library.js";
 
 const state = createInitialState();
 const constraintIds = ["level","species","class","subclass","background","name"];
@@ -19,6 +20,7 @@ function boot() {
     bindHomebrew();
     bindResultActions();
     bindPregenLibrary();
+    bindHomebrewLibrary(showToast);
     document.getElementById("forgeButton").addEventListener("click", forge);
     forge();
   } catch (error) { showError(error); }
@@ -51,6 +53,7 @@ function bindTabs() {
       document.querySelectorAll("[data-tab]").forEach(item => item.classList.toggle("is-active", item === button));
       document.querySelectorAll("[data-view]").forEach(view => view.hidden = view.dataset.view !== button.dataset.tab);
       if (button.dataset.tab === "pregens") renderPregenLibrary();
+      if (button.dataset.tab === "homebrew") renderHomebrewLibrary();
     }));
   } catch (error) { console.error("[app] bindTabs failed", error); throw error; }
 }
