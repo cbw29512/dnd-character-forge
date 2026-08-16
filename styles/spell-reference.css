@@ -1,0 +1,14 @@
+.cantrip-reference-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.cantrip-reference-card { padding:12px; border:1px solid #e1d7c8; border-radius:10px; background:#fbf8f2; }
+.cantrip-reference-head { display:flex; justify-content:space-between; align-items:start; gap:10px; }
+.cantrip-reference-head strong,.cantrip-reference-head span { display:block; }
+.cantrip-reference-head strong { color:#2e2b26; font-size:.8rem; }
+.cantrip-reference-head div span { margin-top:2px; color:#8b8378; font-size:.58rem; text-transform:uppercase; }
+.cantrip-reference-head > span { color:#8c3038; font-size:.58rem; font-weight:900; text-transform:uppercase; }
+.cantrip-meta { margin:9px 0; display:flex; flex-wrap:wrap; gap:5px; }
+.cantrip-meta span { padding:4px 6px; border-radius:999px; background:#eee5d7; color:#6e665d; font-size:.57rem; font-weight:800; }
+.cantrip-reference-card b { display:block; margin:7px 0; color:#3b3025; font-size:.7rem; }
+.cantrip-reference-card p { margin:0; color:#666057; font-size:.69rem; line-height:1.5; }
+.cantrip-reference-card em { display:inline-block; margin-top:8px; color:#8c3038; font-size:.58rem; font-style:normal; font-weight:900; text-transform:uppercase; }
+@media (max-width:680px) { .cantrip-reference-grid { grid-template-columns:1fr; } }
+@media print { .cantrip-reference-card { break-inside:avoid; } }
