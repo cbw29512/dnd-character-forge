@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Forge complete, rules-validated D&D pre-generated characters in seconds.">
+  <meta name="theme-color" content="#0f1115">
+  <title>D&D Character Forge — Instant, Accurate Pregens</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/responsive.css">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="D&D Character Forge home">
+      <span class="brand-mark" aria-hidden="true">CF</span>
+      <span><strong>Character Forge</strong><small>Instant. Accurate. Playable.</small></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <button class="nav-link is-active" data-tab="forge">Forge</button>
+      <button class="nav-link" data-tab="pregens">Pregens</button>
+      <button class="nav-link" data-tab="homebrew">Homebrew</button>
+    </nav>
+    <span class="header-proof">✓ Accuracy-first</span>
+  </header>
+
+  <main class="site-shell">
+    <section data-view="forge">
+      <div class="hero-copy">
+        <p class="eyebrow">PREGENERATED CHARACTERS WITHOUT THE RULES HEADACHE</p>
+        <h1>Ready to play.<br><span>Right now.</span></h1>
+        <p class="hero-lede">Choose only what matters. Leave everything else Random. Character Forge builds the rest and validates the result before you see it.</p>
+        <div class="trust-row" aria-label="Forge guarantees">
+          <span>✓ RAW-only mode</span><span>✓ Ruleset aware</span><span>✓ No guessed mechanics</span>
+        </div>
+      </div>
+
+      <div class="forge-workspace">
+        <aside class="forge-panel" aria-labelledby="forge-title">
+          <div class="panel-heading">
+            <div><p class="section-kicker">01 · SET CONSTRAINTS</p><h2 id="forge-title">What matters to you?</h2></div>
+            <span class="random-note">Everything else stays Random</span>
+          </div>
+
+          <div class="field-grid">
+            <label class="field field-emphasis">Character source
+              <select id="sourceMode"><option value="RAW">RAW only</option><option value="HOMEBREW">RAW + Homebrew</option></select>
+              <small>RAW mode never includes community content.</small>
+            </label>
+            <label class="field field-emphasis">Rules edition
+              <select id="ruleset"><option value="2024">2024 · SRD 5.2.1</option><option value="2014">2014 · SRD 5.1</option></select>
+              <small>The entire character follows this ruleset.</small>
+            </label>
+            <label class="field">Level<select id="level"><option value="random">Random</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+            <label class="field">Species<select id="species"></select></label>
+            <label class="field">Class<select id="class"></select></label>
+            <label class="field">Subclass<select id="subclass"></select></label>
+            <label class="field">Background<select id="background"></select></label>
+            <label class="field">Name<input id="name" autocomplete="off" placeholder="Random when blank"></label>
+          </div>
+
+          <div id="homebrewPanel" hidden class="homebrew-panel">
+            <div class="homebrew-heading"><span class="hb-icon">HB</span><div><strong>Homebrew effect</strong><small>Structured changes recalculate dependent stats.</small></div></div>
+            <div class="homebrew-fields">
+              <input id="hbName" placeholder="Feat name" aria-label="Homebrew feat name">
+              <select id="hbAbility" aria-label="Ability"><option value="str">Strength</option><option value="dex">Dexterity</option><option value="con">Constitution</option><option value="int">Intelligence</option><option value="wis">Wisdom</option><option value="cha">Charisma</option></select>
+              <select id="hbAmount" aria-label="Modifier"><option value="1">+1</option><option value="2">+2</option><option value="-1">−1</option><option value="-2">−2</option></select>
+              <button id="addHomebrew" class="secondary-button" type="button">Add effect</button>
+            </div>
+            <small id="hbList" class="homebrew-list"></small>
+          </div>
+
+          <button id="forgeButton" class="forge-button" type="button"><span aria-hidden="true">✦</span> Forge Character <span class="button-arrow">→</span></button>
+          <p id="error" class="error-banner" role="alert" hidden></p>
+          <div class="coverage-note"><span class="status-dot"></span><span><strong>Verified coverage:</strong> Fighter vertical slice, levels 1–5. Unsupported content stays unavailable rather than being guessed.</span></div>
+        </aside>
+
+        <section class="result-stage" aria-live="polite" aria-label="Generated character">
+          <div class="result-label"><p class="section-kicker">02 · PLAYABLE RESULT</p><span>Validated before display</span></div>
+          <div id="result"></div>
+        </section>
+      </div>
+    </section>
+
+    <section data-view="pregens" hidden class="library-view">
+      <p class="section-kicker">COMMUNITY · COMING NEXT</p><h2>Pregen Library</h2>
+      <p>Find complete characters by level, class, ruleset, or RAW status. Shared characters will remain pinned to the rules and content versions that created them.</p>
+    </section>
+    <section data-view="homebrew" hidden class="library-view">
+      <p class="section-kicker">COMMUNITY · COMING NEXT</p><h2>Homebrew Library</h2>
+      <p>Publish structured Homebrew that Character Forge can actually calculate. RAW mode remains isolated from community content.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer"><span>Character Forge is an independent tool and is not affiliated with Wizards of the Coast.</span><span>SRD 5.1 / 5.2.1 material used under CC BY 4.0.</span></footer>
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
