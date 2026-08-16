@@ -2,60 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { validateWizardSelections, wizardPickerLimits } from "../src/rules/wizard.js";
 
-function wizardState(ruleset,level) {
-  try {
-    const state=createInitialState();
-    state.ruleset=ruleset; state.constraints.class="wizard"; state.constraints.level=String(level);
-    return state;
-  } catch(error){ console.error("[test] wizardState failed",error); throw error; }
-}
+function wizardState(ruleset,level){try{const state=createInitialState();state.ruleset=ruleset;state.constraints.class="wizard";state.constraints.level=String(level);return state;}catch(error){console.error("[test] wizardState failed",error);throw error;}}
 
-test("2014 Wizard levels 1-5 use RAW spellbook and prepared counts",()=>{
-  try {
-    const books={1:6,2:8,3:10,4:12,5:14}, prepared={1:4,2:5,3:6,4:8,5:9}, cantrips={1:3,2:3,3:3,4:4,5:4};
-    for(let level=1;level<=5;level+=1){ const c=generateCharacter(wizardState("2014",level)); assert.equal(c.spells.spellbook.all.length,books[level]); assert.equal(c.spells.prepared.all.length,prepared[level]); assert.equal(c.spells.cantrips.all.length,cantrips[level]); }
-  } catch(error){ console.error("[test] 2014 Wizard counts",error); throw error; }
-});
-
-test("2024 Wizard levels 1-5 use fixed prepared-spell table",()=>{
-  try {
-    const prepared={1:4,2:5,3:6,4:7,5:9}, cantrips={1:3,2:3,3:3,4:4,5:4}, books={1:6,2:8,3:12,4:14,5:17};
-    for(let level=1;level<=5;level+=1){ const c=generateCharacter(wizardState("2024",level)); assert.equal(c.spells.prepared.all.length,prepared[level]); assert.equal(c.spells.cantrips.all.length,cantrips[level]); assert.equal(c.spells.spellbook.all.length,books[level]); }
-  } catch(error){ console.error("[test] 2024 Wizard counts",error); throw error; }
-});
-
-test("Wizard spell DC and attack bonus use Intelligence and proficiency",()=>{
-  try {
-    const c=generateCharacter(wizardState("2024",5)), intMod=Math.floor((c.abilities.int-10)/2);
-    assert.equal(c.spells.saveDc,8+c.proficiency+intMod); assert.equal(c.spells.attackBonus,c.proficiency+intMod);
-  } catch(error){ console.error("[test] Wizard spell math",error); throw error; }
-});
-
-test("2024 Scholar grants Expertise in a proficient eligible skill",()=>{
-  try {
-    const c=generateCharacter(wizardState("2024",2)); assert.equal(c.expertise.length,1); const skill=c.expertise[0]; assert.ok(c.skills.includes(skill));
-    const ability={arcana:"int",history:"int",investigation:"int",medicine:"wis",nature:"int",religion:"int"}[skill];
-    assert.ok(ability); const mod=Math.floor((c.abilities[ability]-10)/2); assert.equal(c.skillBonuses[skill],mod+(2*c.proficiency));
-  } catch(error){ console.error("[test] Scholar expertise",error); throw error; }
-});
-
-test("player-selected Wizard spells stay fixed while remaining choices randomize",()=>{
-  try {
-    const state=wizardState("2024",5); state.spellSelections={cantrips:["fire-bolt"],spellbook:["magic-missile"],prepared:["shield","fireball"]};
-    const c=generateCharacter(state); assert.ok(c.spells.cantrips.all.includes("fire-bolt")); assert.ok(c.spells.spellbook.all.includes("magic-missile")); assert.ok(c.spells.spellbook.all.includes("shield")); assert.ok(c.spells.spellbook.all.includes("fireball")); assert.ok(c.spells.prepared.all.includes("shield")); assert.ok(c.spells.prepared.all.includes("fireball"));
-  } catch(error){ console.error("[test] selected Wizard spells",error); throw error; }
-});
-
-test("level 3 Wizard rejects historically impossible non-Evocation level-2 spellbook picks",()=>{
-  try {
-    const state=wizardState("2024",3); state.spellSelections.spellbook=["blur","invisibility","misty-step"];
-    assert.throws(()=>generateCharacter(state),/cannot be acquired legally/);
-  } catch(error){ console.error("[test] Wizard acquisition history",error); throw error; }
-});
-
-test("Wizard prepared spells are unique and always come from the spellbook",()=>{
-  try {
-    for(const ruleset of ["2014","2024"]) for(let level=1;level<=5;level+=1){ const c=generateCharacter(wizardState(ruleset,level)); assert.equal(new Set(c.spells.spellbook.all).size,c.spells.spellbook.all.length); assert.equal(new Set(c.spells.prepared.all).size,c.spells.prepared.all.length); for(const id of c.spells.prepared.all) assert.ok(c.spells.spellbook.all.includes(id)); }
-  } catch(error){ console.error("[test] Wizard duplicate/subset rules",error); throw error; }
-});
+test("2014 Wizard levels 1-5 use RAW spellbook and prepared counts",()=>{try{const books={1:6,2:8,3:10,4:12,5:14},prepared={1:4,2:5,3:6,4:8,5:9},cantrips={1:3,2:3,3:3,4:4,5:4};for(let level=1;level<=5;level+=1){const c=generateCharacter(wizardState("2014",level));assert.equal(c.spells.spellbook.all.length,books[level]);assert.equal(c.spells.prepared.all.length,prepared[level]);assert.equal(c.spells.cantrips.all.length,cantrips[level]);}}catch(error){console.error("[test] 2014 Wizard counts",error);throw error;}});
+test("2024 Wizard levels 1-5 use fixed prepared-spell table",()=>{try{const prepared={1:4,2:5,3:6,4:7,5:9},cantrips={1:3,2:3,3:3,4:4,5:4},books={1:6,2:8,3:12,4:14,5:17};for(let level=1;level<=5;level+=1){const c=generateCharacter(wizardState("2024",level));assert.equal(c.spells.prepared.all.length,prepared[level]);assert.equal(c.spells.cantrips.all.length,cantrips[level]);assert.equal(c.spells.spellbook.all.length,books[level]);}}catch(error){console.error("[test] 2024 Wizard counts",error);throw error;}});
+test("Wizard picker limits share generator spell rules",()=>{try{assert.deepEqual(wizardPickerLimits({ruleset:"2014",level:5,subclassId:"school-evocation"}),{cantrips:4,spellbook:14,prepared:null});assert.deepEqual(wizardPickerLimits({ruleset:"2024",level:5,subclassId:"evoker"}),{cantrips:4,spellbook:17,prepared:9});}catch(error){console.error("[test] Wizard picker limits",error);throw error;}});
+test("picker validation blocks excessive and historically impossible choices",()=>{try{assert.throws(()=>validateWizardSelections({ruleset:"2024",level:3,subclassId:"evoker",selections:{cantrips:["fire-bolt","mage-hand","light","ray-of-frost"]}}),/at most 3 cantrips/);assert.throws(()=>validateWizardSelections({ruleset:"2024",level:3,subclassId:"evoker",selections:{spellbook:["blur","invisibility","misty-step"]}}),/cannot be acquired legally/);}catch(error){console.error("[test] picker validation",error);throw error;}});
+test("Wizard spell DC and attack bonus use Intelligence and proficiency",()=>{try{const c=generateCharacter(wizardState("2024",5)),intMod=Math.floor((c.abilities.int-10)/2);assert.equal(c.spells.saveDc,8+c.proficiency+intMod);assert.equal(c.spells.attackBonus,c.proficiency+intMod);}catch(error){console.error("[test] Wizard spell math",error);throw error;}});
+test("2024 Scholar grants Expertise in a proficient eligible skill",()=>{try{const c=generateCharacter(wizardState("2024",2));assert.equal(c.expertise.length,1);const skill=c.expertise[0];assert.ok(c.skills.includes(skill));const ability={arcana:"int",history:"int",investigation:"int",medicine:"wis",nature:"int",religion:"int"}[skill];assert.ok(ability);const mod=Math.floor((c.abilities[ability]-10)/2);assert.equal(c.skillBonuses[skill],mod+(2*c.proficiency));}catch(error){console.error("[test] Scholar expertise",error);throw error;}});
+test("player-selected Wizard spells stay fixed while remaining choices randomize",()=>{try{const state=wizardState("2024",5);state.spellSelections={cantrips:["fire-bolt"],spellbook:["magic-missile"],prepared:["shield","fireball"]};const c=generateCharacter(state);for(const id of ["fire-bolt"])assert.ok(c.spells.cantrips.all.includes(id));for(const id of ["magic-missile","shield","fireball"])assert.ok(c.spells.spellbook.all.includes(id));for(const id of ["shield","fireball"])assert.ok(c.spells.prepared.all.includes(id));}catch(error){console.error("[test] selected Wizard spells",error);throw error;}});
+test("level 3 Wizard rejects historically impossible non-Evocation level-2 spellbook picks",()=>{try{const state=wizardState("2024",3);state.spellSelections.spellbook=["blur","invisibility","misty-step"];assert.throws(()=>generateCharacter(state),/cannot be acquired legally/);}catch(error){console.error("[test] Wizard acquisition history",error);throw error;}});
+test("Wizard prepared spells are unique and always come from the spellbook",()=>{try{for(const ruleset of ["2014","2024"])for(let level=1;level<=5;level+=1){const c=generateCharacter(wizardState(ruleset,level));assert.equal(new Set(c.spells.spellbook.all).size,c.spells.spellbook.all.length);assert.equal(new Set(c.spells.prepared.all).size,c.spells.prepared.all.length);for(const id of c.spells.prepared.all)assert.ok(c.spells.spellbook.all.includes(id));}}catch(error){console.error("[test] Wizard duplicate/subset rules",error);throw error;}});
