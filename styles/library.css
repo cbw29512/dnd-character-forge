@@ -22,7 +22,10 @@
 .library-card h3 { margin:24px 0 7px; color:#f3eee6; font:700 1.45rem/1 Georgia,serif; }
 .library-card p { margin:0; color:#a5a8a4; font-size:.78rem; line-height:1.55; }
 .library-meta { margin-top:auto; padding-top:20px; display:flex; justify-content:space-between; gap:10px; color:#777d79; font-size:.62rem; }
-.library-remove { margin-top:12px; width:max-content; border:0; background:transparent; color:#a87c80; padding:0; font-size:.68rem; font-weight:800; }
+.library-actions { margin-top:14px; display:flex; align-items:center; gap:12px; }
+.library-open { padding:8px 11px; border:1px solid rgba(201,164,92,.28); border-radius:8px; background:rgba(201,164,92,.08); color:#e0c585; font-size:.68rem; font-weight:850; }
+.library-open:hover { background:rgba(201,164,92,.14); border-color:rgba(201,164,92,.45); }
+.library-remove { width:max-content; border:0; background:transparent; color:#a87c80; padding:0; font-size:.68rem; font-weight:800; }
 .library-empty { grid-column:1/-1; padding:58px 24px; text-align:center; border:1px dashed rgba(255,255,255,.12); border-radius:18px; background:rgba(255,255,255,.02); }
 .library-empty > span { color:var(--gold); font-size:1.7rem; }
 .library-empty h3 { margin:12px 0 7px; color:#eee9df; font:700 1.3rem Georgia,serif; }
