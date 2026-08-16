@@ -14,17 +14,18 @@ const constraintIds=["level","species","class","subclass","background","name"];
 
 function boot(){
   try{
-    populateOptions(state); bindConstraints(); bindMode(); bindTabs(); bindHomebrew(); bindResultActions(); bindPregenLibrary(); bindHomebrewLibrary(showToast); bindSpellPicker(state,showToast);
-    document.getElementById("forgeButton").addEventListener("click",forge); forge();
+    populateOptions(state);bindConstraints();bindMode();bindTabs();bindHomebrew();bindResultActions();bindPregenLibrary();bindHomebrewLibrary(showToast);bindSpellPicker(state,showToast);
+    document.getElementById("forgeButton").addEventListener("click",forge);forge();
   }catch(error){showError(error);}
 }
 function bindConstraints(){
   try{
     constraintIds.forEach(id=>document.getElementById(id).addEventListener("change",event=>{state.constraints[id]=event.target.value;}));
     document.getElementById("name").addEventListener("input",event=>{state.constraints.name=event.target.value;});
-    document.getElementById("class").addEventListener("change",()=>{state.constraints.subclass="random"; populateSubclasses(state);});
+    document.getElementById("class").addEventListener("change",()=>{state.constraints.subclass="random";populateSubclasses(state);});
+    document.getElementById("level").addEventListener("change",()=>populateSubclasses(state));
     document.getElementById("ruleset").addEventListener("change",event=>{
-      state.ruleset=event.target.value; state.constraints.species="random"; state.constraints.class="random"; state.constraints.subclass="random"; state.constraints.background="random"; state.spellSelections={cantrips:[],spellbook:[],prepared:[]}; populateOptions(state);
+      state.ruleset=event.target.value;state.constraints.species="random";state.constraints.class="random";state.constraints.subclass="random";state.constraints.background="random";state.spellSelections={cantrips:[],spellbook:[],prepared:[]};populateOptions(state);
     });
   }catch(error){console.error("[app] bindConstraints failed",error);throw error;}
 }
@@ -35,9 +36,8 @@ function bindMode(){
 function bindTabs(){
   try{
     document.querySelectorAll("[data-tab]").forEach(button=>button.addEventListener("click",()=>{
-      document.querySelectorAll("[data-tab]").forEach(item=>item.classList.toggle("is-active",item===button));
-      document.querySelectorAll("[data-view]").forEach(view=>view.hidden=view.dataset.view!==button.dataset.tab);
-      if(button.dataset.tab==="pregens")renderPregenLibrary(); if(button.dataset.tab==="homebrew")renderHomebrewLibrary();
+      document.querySelectorAll("[data-tab]").forEach(item=>item.classList.toggle("is-active",item===button));document.querySelectorAll("[data-view]").forEach(view=>view.hidden=view.dataset.view!==button.dataset.tab);
+      if(button.dataset.tab==="pregens")renderPregenLibrary();if(button.dataset.tab==="homebrew")renderHomebrewLibrary();
     }));
   }catch(error){console.error("[app] bindTabs failed",error);throw error;}
 }
@@ -47,7 +47,7 @@ function bindHomebrew(){
       try{
         const item=createAbilityFeat({name:document.getElementById("hbName").value,ability:document.getElementById("hbAbility").value,amount:document.getElementById("hbAmount").value});
         if(state.homebrew.some(value=>value.name.trim().toLowerCase()===item.name.trim().toLowerCase()))throw new Error(`Homebrew named "${item.name}" is already active.`);
-        state.homebrew.push(item); document.getElementById("hbList").textContent=`Active: ${state.homebrew.map(value=>value.name).join(", ")}`;
+        state.homebrew.push(item);document.getElementById("hbList").textContent=`Active: ${state.homebrew.map(value=>value.name).join(", ")}`;
       }catch(error){showError(error);}
     });
   }catch(error){console.error("[app] bindHomebrew failed",error);throw error;}
@@ -56,8 +56,7 @@ function bindResultActions(){
   try{
     document.getElementById("result").addEventListener("click",async event=>{
       try{
-        const action=event.target.closest("[data-action]")?.dataset.action;
-        if(action==="reroll")forge(); if(action==="print")window.print();
+        const action=event.target.closest("[data-action]")?.dataset.action;if(action==="reroll")forge();if(action==="print")window.print();
         if(action==="save"){const entry=await savePregen(state.currentCharacter);renderPregenLibrary();showToast(`${entry.name} saved to My Pregens.`);}
       }catch(error){showToast(error.message,true);}
     });
