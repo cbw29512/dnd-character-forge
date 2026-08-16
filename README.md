@@ -8,57 +8,44 @@ Accuracy-first pre-generated character website. Every configurable field default
 - Derived values are recalculated from source mechanics rather than guessed constants.
 - Invalid or unsupported combinations fail closed instead of rendering a character.
 - Duplicate rules choices, RAW records, spell choices, HTML IDs, Homebrew mechanics, and saved pregen mechanics are protected by validation/fingerprinting.
-- The public UI is designed as a premium, simple web product rather than a developer-facing form.
 
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
-- Human
-- Acolyte
+- Human / Acolyte
 - Fighter / Champion, levels 1–5
 - Wizard / School of Evocation, levels 1–5
+- Cleric / Life Domain, levels 1–5
 
 ### RAW 2024 / SRD 5.2.1
-- Human
-- Criminal / Soldier
+- Human / Criminal / Soldier
 - Fighter / Champion, levels 1–5
 - Wizard / Evoker, levels 1–5
+- Cleric / Life Domain, levels 1–5
 
-## Wizard spell picker
-- No spell choices: Forge randomizes the complete legal loadout.
-- Some choices: those choices stay fixed and every remaining legal slot is randomized.
-- Complete selection: no random fill for that bucket.
-- Cantrips, spellbook, and prepared spells are modeled separately.
-- Impossible historical spellbook choices, duplicates, illegal spell IDs, and excessive selections fail closed.
-- 2014 prepared-spell count follows final Intelligence; 2024 follows the class table.
+## Spell picker
+- Wizard and Cleric support fixed cantrip/prepared choices with Random filling every remaining legal choice.
+- Wizard keeps spellbook and prepared spells separate and rejects impossible acquisition histories.
+- Cleric has no spellbook; Life Domain spells are always prepared and never consume normal prepared slots.
+- 2014 Cleric prepared-spell count follows final Wisdom; 2024 follows the Cleric class table.
+- A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
+
+## Cleric rules modeled
+- Wisdom spellcasting, d8 hit die, Wisdom/Charisma saves, Cleric skill list and starting gear.
+- 2014 Life Domain at level 1, heavy armor, Disciple of Life, Preserve Life, Channel Divinity, and Destroy Undead through level 5.
+- 2024 Divine Order, Channel Divinity / Divine Spark / Turn Undead, Life Domain at level 3, Sear Undead, and Thaumaturge's Arcana/Religion check bonus through level 5.
+- Medium armor uses the RAW Dexterity cap.
 
 ## Libraries
-The current browser-local foundation includes:
-- **My Pregens:** save/search/filter pregens; SHA-256 mechanical fingerprints block renamed duplicates.
-- **My Homebrew:** structured ability-effect Homebrew; duplicate names and mechanically identical rename-only copies are blocked.
-
-The storage adapter is intentionally separated from the UI so a shared community backend can replace localStorage later without rewriting the Forge.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge.
 
 ## Quality gate
-Every push to `main` runs GitHub Actions with:
-- JavaScript syntax checks
-- rules regression tests
-- 1,000-character random-generation torture test
-- Wizard spell progression / picker tests
-- RAW data and spell-catalog duplicate checks
-- website duplicate-ID and missing-local-asset checks
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, and website integrity checks.
 
 ## Run locally
-From the project directory:
-
-```bash
-python -m http.server 8080
-```
+`python -m http.server 8080`
 
 ## Test
-
-```bash
-npm test
-```
+`npm test`
 
 ## Deployment
 GitHub Pages publishes from `main` / repository root.
