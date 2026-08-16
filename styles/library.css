@@ -12,6 +12,7 @@
 .library-toolbar label { color:#979b98; font-size:.7rem; font-weight:800; }
 .library-toolbar input,.library-toolbar select { margin-top:6px; background:#1a1d21; border-color:#34383d; color:#ece8df; }
 .library-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; }
+.library-grid-spaced { margin-top:18px; }
 .library-card { position:relative; padding:20px; min-height:210px; display:flex; flex-direction:column; border:1px solid rgba(255,255,255,.08); border-radius:17px; background:linear-gradient(145deg,#202328,#191b1f); box-shadow:0 16px 38px rgba(0,0,0,.16); }
 .library-card-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .library-badge { padding:6px 8px; border-radius:999px; font-size:.62rem; font-weight:900; letter-spacing:.08em; }
@@ -28,12 +29,14 @@
 .library-empty p { max-width:520px; margin:0 auto; color:#8f948f; line-height:1.6; }
 .library-roadmap { margin-top:20px; padding:16px 18px; display:flex; gap:12px; border:1px solid rgba(255,255,255,.07); border-radius:13px; background:rgba(255,255,255,.025); color:#8f948f; font-size:.75rem; line-height:1.5; }
 .library-roadmap strong { flex:0 0 auto; color:#d8d2c6; }
-.feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; padding-top:24px; }
-.feature-grid article { padding:22px; border:1px solid rgba(255,255,255,.08); border-radius:16px; background:#1c1f23; }
-.feature-grid article > span { color:var(--gold); font-size:.66rem; font-weight:900; letter-spacing:.15em; }
-.feature-grid h3 { margin:20px 0 8px; color:#eee8dd; font:700 1.15rem Georgia,serif; }
-.feature-grid p { margin:0; color:#8f948f; font-size:.76rem; line-height:1.6; }
+.homebrew-builder { margin-top:24px; padding:22px; display:grid; grid-template-columns:minmax(220px,.8fr) minmax(0,1.5fr); gap:28px; border:1px solid rgba(255,255,255,.08); border-radius:18px; background:#1c1f23; }
+.homebrew-builder h3 { margin:8px 0; color:#f0eadf; font:700 1.45rem Georgia,serif; }
+.homebrew-builder p { margin:0; color:#8e938f; font-size:.75rem; line-height:1.6; }
+.homebrew-builder-fields { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:10px; align-items:end; }
+.homebrew-builder-fields label { color:#9ca09d; font-size:.68rem; font-weight:800; }
+.homebrew-builder-fields input,.homebrew-builder-fields select { margin-top:6px; background:#15181b; border-color:#34383d; color:#eee9df; }
+.forge-button.compact { min-height:45px; margin:0; padding:0 14px; font-size:.7rem; }
 .toast { position:fixed; right:22px; bottom:22px; z-index:50; max-width:min(420px,calc(100vw - 36px)); padding:13px 16px; border:1px solid rgba(82,170,120,.28); border-radius:12px; background:#193326; color:#c5ebd4; box-shadow:0 18px 50px rgba(0,0,0,.3); font-size:.78rem; font-weight:700; }
 .toast.is-error { border-color:rgba(200,77,87,.3); background:#3a2024; color:#f2c0c4; }
-@media (max-width:900px) { .library-grid,.feature-grid { grid-template-columns:repeat(2,1fr); } .library-toolbar { grid-template-columns:1fr 1fr; } .library-search { grid-column:1/-1; } }
-@media (max-width:620px) { .library-hero { display:block; } .library-count { display:inline-block; margin-top:18px; } .library-toolbar,.library-grid,.feature-grid { grid-template-columns:1fr; } .library-search { grid-column:auto; } .library-roadmap { display:block; } .library-roadmap strong { display:block; margin-bottom:5px; } .character-actions { flex-wrap:wrap; } }
+@media (max-width:900px) { .library-grid { grid-template-columns:repeat(2,1fr); } .library-toolbar { grid-template-columns:1fr 1fr; } .library-search { grid-column:1/-1; } .homebrew-builder { grid-template-columns:1fr; } .homebrew-builder-fields { grid-template-columns:1fr 1fr; } }
+@media (max-width:620px) { .library-hero { display:block; } .library-count { display:inline-block; margin-top:18px; } .library-toolbar,.library-grid,.homebrew-builder-fields { grid-template-columns:1fr; } .library-search { grid-column:auto; } .library-roadmap { display:block; } .library-roadmap strong { display:block; margin-bottom:5px; } .character-actions { flex-wrap:wrap; } }
