@@ -7,8 +7,8 @@ Accuracy-first pre-generated character website. Every configurable field default
 - **Homebrew mode:** RAW may be extended by explicitly selected structured Homebrew.
 - Derived values are recalculated from source mechanics rather than guessed constants.
 - Invalid or unsupported combinations fail closed instead of rendering a character.
+- The 2024 RAW pools are scoped to **SRD 5.2.1**, not the broader Player's Handbook spell list.
 - Duplicate rules choices, RAW records, spell choices, HTML IDs, Homebrew mechanics, and saved pregen mechanics are protected by validation/fingerprinting.
-- Active core traits/features now require a registered play-reference description; missing reference mechanics fail closed rather than rendering a name-only feature.
 
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
@@ -24,10 +24,15 @@ Accuracy-first pre-generated character website. Every configurable field default
 - Cleric / Life Domain, levels 1–5
 
 ## Playable character sheet
-- The sheet includes concise action/resource/effect cards for active Human traits, Origin feats, Fighting Styles, class/subclass features, and Weapon Mastery properties.
-- Dynamic feature text uses the generated character: Second Wind healing/uses, Arcane Recovery slot-level recovery, Scholar Expertise, Preserve Life healing pool, Sear Undead dice, and Tactical Shift movement.
-- Weapon Mastery choices display friendly weapon/property mechanics instead of raw IDs, and CI requires every 2024 weapon in the verified data to have a known mastery property.
-- Spell descriptions are the next reference layer; spell DC, attack, slots, preparation, always-prepared spells, and spellbook structure are already displayed.
+- Core traits/features render concise action/resource/effect cards.
+- 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
+- Each 2024 cantrip reference records its SRD 5.2.1 source page for audit traceability.
+- Current-level cantrip scaling is calculated for damage, True Strike extra damage, and Spare the Dying range.
+- Weapon Mastery choices display friendly weapon/property mechanics instead of raw IDs.
+- Level 1+ spell descriptions are the next reference layer; spell DC, attack, slots, preparation, always-prepared spells, and Wizard spellbook structure are already displayed.
+
+## SRD spell boundary
+The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard spell list. **Elementalism is included; Thunderclap is excluded** because Thunderclap is not a Wizard spell entry in SRD 5.2.1. The broader 2024 Player's Handbook/Basic Rules list is not used as the site's redistributable RAW spell pool.
 
 ## Spell picker
 - Wizard and Cleric support fixed cantrip/prepared choices with Random filling every remaining legal choice.
@@ -40,7 +45,7 @@ Accuracy-first pre-generated character website. Every configurable field default
 The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
