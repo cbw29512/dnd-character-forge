@@ -29,6 +29,19 @@ export function pregenFingerprintPayload(character) {
   } catch (error) { console.error("[fingerprint] pregen payload failed", error); throw error; }
 }
 
+export function homebrewFingerprintPayload(item, ruleset) {
+  try {
+    return {
+      ruleset,
+      type:item.type,
+      source:item.source,
+      effects:item.effects||[],
+      prerequisites:item.prerequisites||[],
+      progression:item.progression||null
+    };
+  } catch (error) { console.error("[fingerprint] homebrew payload failed", error); throw error; }
+}
+
 export async function fingerprint(payload) {
   try {
     const canonical = JSON.stringify(stable(payload));
