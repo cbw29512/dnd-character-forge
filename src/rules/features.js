@@ -17,12 +17,31 @@ export function fighterFeatures(ruleset, level, subclass) {
     return features;
   } catch (error) { console.error("[features] fighter feature resolution failed", error); throw error; }
 }
-export function applyFighterAsi(scores, level) {
+
+export function wizardFeatures(ruleset, level, subclass) {
+  try {
+    const features = ["Spellcasting","Arcane Recovery"];
+    if (ruleset === "2014") {
+      if (level >= 2 && subclass === "school-evocation") features.push("Evocation Savant","Sculpt Spells");
+      if (level >= 4) features.push("Ability Score Improvement");
+      return features;
+    }
+    features.push("Ritual Adept");
+    if (level >= 2) features.push("Scholar");
+    if (level >= 3 && subclass === "evoker") features.push("Evocation Savant","Potent Cantrip");
+    if (level >= 4) features.push("Ability Score Improvement");
+    if (level >= 5) features.push("Memorize Spell");
+    return features;
+  } catch (error) { console.error("[features] wizard feature resolution failed", error); throw error; }
+}
+
+export function applyClassAsi(scores, level, primary) {
   try {
     if (level < 4) return scores;
     const next = { ...scores };
-    const target = next.str >= next.dex ? "str" : "dex";
+    const target = primary.find(ability=>next[ability] < 20) || primary[0];
     next[target] = Math.min(20, next[target] + 2);
     return next;
-  } catch (error) { console.error("[features] ASI failed", error); throw error; }
+  } catch (error) { console.error("[features] class ASI failed", error); throw error; }
 }
+export const applyFighterAsi = (scores, level) => applyClassAsi(scores,level,[scores.str>=scores.dex?"str":"dex"]);
