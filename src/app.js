@@ -2,8 +2,10 @@ import { createInitialState } from "./state.js";
 import { SOURCE } from "./schema.js";
 import { generateCharacter } from "./rules/generator.js";
 import { createAbilityFeat } from "./rules/homebrew.js";
+import { savePregen } from "./library/local-library.js";
 import { renderCharacter } from "./ui/render.js";
 import { populateOptions } from "./ui/options.js";
+import { bindPregenLibrary, renderPregenLibrary } from "./ui/library.js";
 
 const state = createInitialState();
 const constraintIds = ["level","species","class","subclass","background","name"];
@@ -16,6 +18,7 @@ function boot() {
     bindTabs();
     bindHomebrew();
     bindResultActions();
+    bindPregenLibrary();
     document.getElementById("forgeButton").addEventListener("click", forge);
     forge();
   } catch (error) { showError(error); }
@@ -47,6 +50,7 @@ function bindTabs() {
     document.querySelectorAll("[data-tab]").forEach(button => button.addEventListener("click", () => {
       document.querySelectorAll("[data-tab]").forEach(item => item.classList.toggle("is-active", item === button));
       document.querySelectorAll("[data-view]").forEach(view => view.hidden = view.dataset.view !== button.dataset.tab);
+      if (button.dataset.tab === "pregens") renderPregenLibrary();
     }));
   } catch (error) { console.error("[app] bindTabs failed", error); throw error; }
 }
@@ -65,10 +69,17 @@ function bindHomebrew() {
 }
 function bindResultActions() {
   try {
-    document.getElementById("result").addEventListener("click", event => {
-      const action = event.target.closest("[data-action]")?.dataset.action;
-      if (action === "reroll") forge();
-      if (action === "print") window.print();
+    document.getElementById("result").addEventListener("click", async event => {
+      try {
+        const action = event.target.closest("[data-action]")?.dataset.action;
+        if (action === "reroll") forge();
+        if (action === "print") window.print();
+        if (action === "save") {
+          const entry = await savePregen(state.currentCharacter);
+          renderPregenLibrary();
+          showToast(`${entry.name} saved to My Pregens.`);
+        }
+      } catch (error) { showToast(error.message,true); }
     });
   } catch (error) { console.error("[app] bindResultActions failed", error); throw error; }
 }
@@ -87,5 +98,15 @@ function showError(error) {
   const element = document.getElementById("error");
   element.textContent = error.message;
   element.hidden = false;
+}
+function showToast(message,isError=false) {
+  try {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.toggle("is-error",isError);
+    toast.hidden = false;
+    window.clearTimeout(showToast.timer);
+    showToast.timer = window.setTimeout(()=>{ toast.hidden = true; },3600);
+  } catch (error) { console.error("[app] showToast failed", error); }
 }
 boot();
