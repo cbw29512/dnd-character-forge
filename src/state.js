@@ -5,14 +5,8 @@ export function createInitialState() {
     return {
       sourceMode: SOURCE.RAW,
       ruleset: "2024",
-      constraints: {
-        level: RANDOM,
-        species: RANDOM,
-        class: RANDOM,
-        subclass: RANDOM,
-        background: RANDOM,
-        name: ""
-      },
+      constraints: { level:RANDOM, species:RANDOM, class:RANDOM, subclass:RANDOM, background:RANDOM, name:"" },
+      spellSelections: { cantrips:[], spellbook:[], prepared:[] },
       homebrew: [],
       currentCharacter: null,
       activeTab: "forge"
