@@ -24,6 +24,7 @@ export function masteryEntries(character){
 }
 function dynamicFeature(character,name){
   try{
+    if(name==="Spellcasting")return spellcasting(character);
     if(name==="Second Wind")return secondWind(character);
     if(name==="Weapon Mastery")return{category:"Fighter",timing:"Passive",text:`Use the mastery properties for ${character.masteryIds.length} chosen weapons listed below. After a Long Rest, you can change one chosen weapon.`};
     if(name==="Tactical Shift")return{category:"Fighter",timing:"With Second Wind",text:`After using Second Wind as a Bonus Action, move up to ${Math.floor(character.speed/2)} ft without provoking Opportunity Attacks.`};
@@ -33,6 +34,15 @@ function dynamicFeature(character,name){
     if(name==="Sear Undead")return searUndead(character);
     return null;
   }catch(error){console.error(`[reference] dynamic ${name} failed`,error);throw error;}
+}
+function spellcasting(character){
+  try{
+    const base="Use the spell section above for save DC, attack bonus, slots, and prepared spells. Expended spell slots return after a Long Rest.";
+    if(character.ruleset==="2014"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic / Ritual",text:`${base} A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared.`};
+    if(character.ruleset==="2014"&&character.class.id==="cleric")return{category:"Cleric",timing:"Magic / Ritual",text:`${base} A prepared Cleric spell with the Ritual tag can be cast as a Ritual.`};
+    if(character.ruleset==="2024"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with legal spells from your spellbook; Ritual Adept is listed separately.`};
+    return{category:"Cleric",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with other Cleric spells for which you have slots.`};
+  }catch(error){console.error("[reference] spellcasting failed",error);throw error;}
 }
 function secondWind(character){
   const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};

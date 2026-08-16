@@ -11,6 +11,10 @@ test("every active feature in the verified slice builds a complete quick referen
   try{for(const ruleset of ["2014","2024"])for(const classId of ["fighter","wizard","cleric"])for(let level=1;level<=5;level++){const c=make(ruleset,classId,level),refs=buildQuickReference(c);assert.ok(refs.length>0);assert.equal(new Set(refs.map(item=>item.id)).size,refs.length);for(const item of refs){assert.ok(item.name);assert.ok(item.category);assert.ok(item.timing);assert.ok(item.text.length>=20);}}}
   catch(error){console.error("[test] complete quick reference",error);throw error;}
 });
+test("2014 caster references preserve class-specific ritual rules",()=>{
+  try{const wizard=buildQuickReference(make("2014","wizard",3)).find(ref=>ref.name==="Spellcasting"),cleric=buildQuickReference(make("2014","cleric",3)).find(ref=>ref.name==="Spellcasting");assert.match(wizard.text,/spellbook.*Ritual/i);assert.match(wizard.text,/without being prepared/i);assert.match(cleric.text,/prepared Cleric spell.*Ritual/i);}
+  catch(error){console.error("[test] 2014 ritual references",error);throw error;}
+});
 test("2024 Fighter Second Wind reference uses level-specific healing and uses",()=>{try{const refs=buildQuickReference(make("2024","fighter",4)),item=refs.find(ref=>ref.name==="Second Wind");assert.match(item.text,/1d10 \+ 4 HP/);assert.match(item.text,/3 uses/);}catch(error){console.error("[test] Second Wind reference",error);throw error;}});
 test("level 5 Wizard Arcane Recovery reference exposes three slot levels",()=>{try{for(const ruleset of ["2014","2024"]){const item=buildQuickReference(make(ruleset,"wizard",5)).find(ref=>ref.name==="Arcane Recovery");assert.match(item.text,/up to 3 total spell-slot levels/);}}catch(error){console.error("[test] Arcane Recovery reference",error);throw error;}});
 test("level 5 Life Cleric reference calculates Preserve Life and Sear Undead",()=>{
