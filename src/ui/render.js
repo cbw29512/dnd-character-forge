@@ -16,7 +16,7 @@ export function renderCharacter(character, target) {
           <p class="character-subtitle">Level ${character.level} ${character.species.name} ${character.class.name}${character.subclass?` · ${character.subclass.name}`:""}<br>${character.background.name} · ${character.size}</p></div>
           <span class="validation-badge ${homebrew?"hb":"raw"}">${badge}</span>
         </div>
-        <div class="character-actions"><button class="action-button" data-action="reroll">↻ Forge again</button><button class="action-button" data-action="print">Print / PDF</button></div>
+        <div class="character-actions"><button class="action-button primary-action" data-action="save">＋ Save to Pregens</button><button class="action-button" data-action="reroll">↻ Forge again</button><button class="action-button" data-action="print">Print / PDF</button></div>
         <div class="ability-grid">${ABILITIES.map(key=>abilityCard(key,character.abilities[key])).join("")}</div>
       </header>
       <div class="metric-grid">${metric("Armor Class",character.ac)}${metric("Hit Points",character.hp)}${metric("Initiative",fmt(character.initiative))}${metric("Speed",`${character.speed} ft`)}${metric("Proficiency",fmt(character.proficiency))}${metric("Passive Perception",character.passivePerception)}</div>
@@ -28,6 +28,7 @@ export function renderCharacter(character, target) {
         ${detail("Features",`<p>${joinText([...(character.species.traits||[]),character.background.feature,...character.features])}</p>`,"span-2")}
         ${character.feats.length?detail("Feats",`<p>${joinText(character.feats.map(feat=>feat.name))}</p>`):""}
         ${character.masteryIds.length?detail("Weapon Mastery",`<p>${joinText(character.masteryIds)}</p>`):""}
+        ${character.spells?detail("Spells",`<p>${joinText(character.spells.all||[])}</p>`,"span-2"):""}
         ${detail("Equipment",`<p>${character.inventory.map(item=>`${item.quantity > 1 ? `${item.quantity} × ` : ""}${item.name}`).join(", ")}</p>`,"span-2")}
         ${homebrew?detail("Homebrew Used",`<p>${joinText(character.homebrew.map(item=>item.name))}</p>`,"span-2"):""}
       </div>
