@@ -1,5 +1,7 @@
-const s=(id,name,school,castingTime,range,components,duration,resolution,effect,srdPage,extra={})=>({id,name,level:0,school,castingTime,range,components,duration,resolution,effect,concentration:false,source:"SRD 5.2.1",srdPage,...extra});
-export const SPELL_REFERENCE_2024=[
+import { SPELL_REFERENCE_2024_LEVEL1_CLERIC } from "./spell-reference-2024-level1-cleric.js";
+
+const s=(id,name,school,castingTime,range,components,duration,resolution,effect,srdPage,extra={})=>({id,name,level:0,school,castingTime,range,components,duration,resolution,effect,concentration:false,ritual:false,upcast:null,source:"SRD 5.2.1",srdPage,...extra});
+const CANTRIPS=[
   s("acid-splash","Acid Splash","Evocation","Action","60 ft","V, S","Instantaneous","DEX save","Choose a point in range; creatures in a 5-ft-radius sphere there save or take Acid damage.",107,{damage:{dice:1,die:6,type:"Acid",scales:true}}),
   s("chill-touch","Chill Touch","Necromancy","Action","Touch","V, S","Instantaneous","Melee spell attack","On a hit, deal Necrotic damage and the target cannot regain Hit Points until the end of your next turn.",115,{damage:{dice:1,die:10,type:"Necrotic",scales:true}}),
   s("dancing-lights","Dancing Lights","Illusion","Action","120 ft","V, S, M","Concentration, up to 1 min","Utility","Create up to four torch-sized dim lights, or combine them into one Medium humanoid-like form. As a Bonus Action, move the lights up to 60 ft while keeping them in range and near one another.",121,{concentration:true}),
@@ -21,4 +23,5 @@ export const SPELL_REFERENCE_2024=[
   s("thaumaturgy","Thaumaturgy","Transmutation","Action","30 ft","V","Up to 1 min","Utility","Create a minor wonder: alter your eyes, boom your voice and gain Advantage on Intimidation, manipulate nearby flames, open or slam an unlocked door/window, create a phantom sound, or cause harmless tremors. Up to three 1-minute effects can coexist.",169),
   s("true-strike","True Strike","Divination","Action","Self","S, M","Instantaneous","Weapon attack","Make one attack with the material weapon, using your spellcasting ability for its attack and damage rolls. The damage can be Radiant or the weapon's normal type; higher character levels add Radiant damage.",171,{trueStrikeScaling:true})
 ];
+export const SPELL_REFERENCE_2024=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
 export const SPELL_REFERENCE_2024_BY_ID=Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell]));
