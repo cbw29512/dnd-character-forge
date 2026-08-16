@@ -2,15 +2,17 @@ import { ABILITIES } from "../schema.js";
 import { roll4d6DropLowest } from "./random.js";
 
 const STANDARD = [15, 14, 13, 12, 10, 8];
-const FIGHTER_ORDER = ["str", "dex", "con", "wis", "cha", "int"];
+const DEFAULT_ORDER = ["str", "dex", "con", "wis", "cha", "int"];
 
-export function generateBaseAbilities(method = "standard") {
+export function generateBaseAbilities(method = "standard", priority = DEFAULT_ORDER) {
   try {
     const values = method === "rolled"
       ? Array.from({ length: 6 }, roll4d6DropLowest).sort((a,b)=>b-a)
       : [...STANDARD];
+    const order = [...new Set([...priority,...ABILITIES])].filter(ability=>ABILITIES.includes(ability)).slice(0,6);
+    if (order.length !== 6) throw new Error("Ability priority must resolve all six abilities");
     const scores = Object.fromEntries(ABILITIES.map(a => [a, 8]));
-    FIGHTER_ORDER.forEach((ability, index) => { scores[ability] = values[index]; });
+    order.forEach((ability, index) => { scores[ability] = values[index]; });
     return scores;
   } catch (error) { console.error("[abilities] generation failed", error); throw error; }
 }
