@@ -4,7 +4,8 @@ import { RAW_2024 } from "../data/raw-2024.js";
 import { pick, sample } from "./random.js";
 import { generateBaseAbilities, apply2014Species, apply2024Background } from "./abilities.js";
 import { abilityMod, proficiencyBonus, calculateAc, averageHp } from "./math.js";
-import { fighterFeatures, wizardFeatures, clericFeatures, applyClassAsi } from "./features.js";
+import { applyClassAsi } from "./features.js";
+import { resolveClassFeatures } from "./class-features.js";
 import { buildWizardSpellcasting } from "./wizard.js";
 import { buildClericSpellcasting, resolveDivineOrder } from "./cleric.js";
 import { validateCharacter } from "./validation.js";
@@ -25,14 +26,14 @@ export function generateCharacter(state){
     let abilities=generateBaseAbilities("standard",cls.abilityPriority);abilities=state.ruleset==="2014"?apply2014Species(abilities,species):apply2024Background(abilities,background,cls.primary);abilities=applyClassAsi(abilities,level,cls.primary);
     const skills=uniqueStrings([...(background.skills||[]),...sample(cls.skillChoices,cls.skillCount,background.skills||[])]);if(state.ruleset==="2024"&&species.extraSkills)skills.push(...sample(ALL_SKILLS,species.extraSkills,skills));
     const equipment=pick(cls.equipmentPackages),fightingStyle=cls.id==="fighter"?data.fightingStyles[pick(equipment.styles)]:null,divineOrder=cls.id==="cleric"?resolveDivineOrder(state.ruleset,state.spellSelections||{}):null;
-    let character={id:crypto.randomUUID(),sourceMode:SOURCE.RAW,ruleset:state.ruleset,level,name:state.constraints.name.trim()||pick(NAMES),species,size:resolveSize(state.ruleset,species),class:cls,subclass,background,abilities,abilityMaximums:Object.fromEntries(ABILITIES.map(a=>[a,20])),skills,expertise:[],saves:cls.saves,proficiency:proficiencyBonus(level),equipment,fightingStyle,divineOrder,languages:resolveLanguages(state.ruleset,background),feats:[],homebrew:[],homebrewAcBonus:0,features:resolveFeatures(state.ruleset,cls.id,level,subclass?.id,divineOrder),spells:null};
+    const features=resolveClassFeatures({ruleset:state.ruleset,classId:cls.id,level,subclassId:subclass?.id||null,divineOrder});
+    let character={id:crypto.randomUUID(),sourceMode:SOURCE.RAW,ruleset:state.ruleset,level,name:state.constraints.name.trim()||pick(NAMES),species,size:resolveSize(state.ruleset,species),class:cls,subclass,background,abilities,abilityMaximums:Object.fromEntries(ABILITIES.map(a=>[a,20])),skills,expertise:[],saves:cls.saves,proficiency:proficiencyBonus(level),equipment,fightingStyle,divineOrder,languages:resolveLanguages(state.ruleset,background),feats:[],homebrew:[],homebrewAcBonus:0,features,spells:null};
     if(fightingStyle)character.features.push(`Fighting Style: ${fightingStyle.name}`);if(state.ruleset==="2024")character=apply2024Feats(character,data,background,species);if(state.ruleset==="2024"&&cls.id==="wizard"&&level>=2)character.expertise=[pick(character.skills.filter(skill=>SCHOLAR_SKILLS.includes(skill)))];
     if(cls.spellcasting==="wizard")character.spells=buildWizardSpellcasting(character,state.spellSelections||{});if(cls.spellcasting==="cleric")character.spells=buildClericSpellcasting(character,state.spellSelections||{});
     character=derive(character,data);const validation=validateCharacter(character,SOURCE.RAW);if(!validation.valid)throw new Error(validation.errors.join(" "));return{...character,validation};
   }catch(error){console.error("[generator] Character generation blocked",error);throw error;}
 }
 function resolveLevel(value,subclassValue,cls){try{if(value!==RANDOM)return Number(value);const minimum=subclassValue&&subclassValue!==RANDOM?cls.subclassLevel:1;return minimum+Math.floor(Math.random()*(6-minimum));}catch(error){console.error("[generator] level resolution failed",error);throw error;}}
-function resolveFeatures(ruleset,classId,level,subclassId,divineOrder){try{if(classId==="wizard")return wizardFeatures(ruleset,level,subclassId);if(classId==="cleric")return clericFeatures(ruleset,level,subclassId,divineOrder);return fighterFeatures(ruleset,level,subclassId);}catch(error){console.error("[generator] feature resolution failed",error);throw error;}}
 function resolveSize(ruleset,species){try{return ruleset==="2024"&&species.size.includes("or")?pick(["Small","Medium"]):species.size;}catch(error){console.error("[generator] size resolution failed",error);throw error;}}
 function resolveLanguages(ruleset,background){try{return ruleset==="2024"?["Common",...sample(LANGUAGES_2024,2)]:["Common",...sample(LANGUAGES_2014,1+(background.languages||0))];}catch(error){console.error("[generator] language resolution failed",error);throw error;}}
 function apply2024Feats(character,data,background,species){try{const next=structuredClone(character),feats=[data.feats.find(f=>f.id===background.feat)];if(species.originFeat)feats.push(pick(data.feats.filter(f=>f.category==="Origin"&&!feats.some(x=>x.id===f.id))));next.feats=uniqueBy(feats.filter(Boolean),feat=>feat.id);for(const feat of next.feats)if(feat.extraSkills)next.skills.push(...sample(ALL_SKILLS,feat.extraSkills,next.skills));return next;}catch(error){console.error("[generator] feat resolution failed",error);throw error;}}
