@@ -12,7 +12,7 @@ export function createInitialState() {
       activeTab: "forge"
     };
   } catch (error) {
-    console.error("[state] Failed to create initial state", error);
+    console.error("[state] Failed to create RAW-only initial state", error);
     throw error;
   }
 }
