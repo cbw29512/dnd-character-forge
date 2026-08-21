@@ -95,6 +95,7 @@ export const SRD_COVERAGE = Object.freeze({
       "alert",
       "magic-initiate",
       "savage-attacker",
+      "skilled",
       "ability-score-improvement",
       "grappler",
       "archery",
