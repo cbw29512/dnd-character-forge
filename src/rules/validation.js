@@ -6,7 +6,11 @@ import { duplicateValues } from "./duplicates.js";
 const CLERIC_CANTRIPS={1:3,2:3,3:3,4:4,5:4},CLERIC_PREPARED_2024={1:4,2:5,3:6,4:7,5:9};
 export function validateCharacter(character,mode){
   try{
-    const errors=[];if(mode===SOURCE.RAW&&character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");if(character.level<1||character.level>5)errors.push("Launch slice currently validates levels 1-5 only.");
+    const errors=[];
+    if(mode!==SOURCE.RAW)errors.push("Production Character Forge accepts RAW characters only.");
+    if(character.sourceMode!==SOURCE.RAW)errors.push("Generated character source must be RAW.");
+    if(character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");
+    if(character.level<1||character.level>5)errors.push("Launch slice currently validates levels 1-5 only.");
     for(const ability of ABILITIES){const max=character.abilityMaximums[ability]??20;if(character.abilities[ability]>max)errors.push(`${ability.toUpperCase()} exceeds its maximum.`);if(character.abilities[ability]<1)errors.push(`${ability.toUpperCase()} is below 1.`);}
     checkDuplicates(errors,"skill proficiencies",character.skills);checkDuplicates(errors,"expertise entries",character.expertise);checkDuplicates(errors,"saving throw proficiencies",character.saves);checkDuplicates(errors,"languages",character.languages);checkDuplicates(errors,"feats",character.feats,item=>item.id);checkDuplicates(errors,"feat names",character.feats,item=>item.name);checkDuplicates(errors,"Homebrew entries",character.homebrew,item=>item.id);checkDuplicates(errors,"Homebrew names",character.homebrew,item=>item.name);checkDuplicates(errors,"weapon masteries",character.masteryIds);checkDuplicates(errors,"attack entries",character.attacks,item=>item.name);checkDuplicates(errors,"features",character.features);
     if(character.skills.length<character.class.skillCount)errors.push(`${character.class.name} is missing skill proficiencies.`);if(character.subclass&&character.level<character.class.subclassLevel)errors.push(`${character.class.name} subclass cannot be active before level ${character.class.subclassLevel}.`);if(character.expertise.some(skill=>!character.skills.includes(skill)))errors.push("Expertise requires an existing skill proficiency.");
