@@ -34,7 +34,7 @@ export function generateCharacter(state){
     if(fightingStyle)character.features.push(`Fighting Style: ${fightingStyle.name}`);
     if(state.ruleset==="2024")character=apply2024Feats(character,data,background,species);
     if(cls.id==="barbarian"){
-      character=applyBarbarianAdvancement(character,data);
+      character=applyBarbarianAdvancement(character,data,state.advancementSelections||{});
       character.abilities=applyBarbarianAbilityProgression(character.abilities,state.ruleset,level);
       if(level>=20)Object.assign(character.abilityMaximums,barbarianAbilityMaximums(state.ruleset,level));
     }
