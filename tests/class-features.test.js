@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { resolveClassFeatures, supportedFeatureClasses } from "../src/rules/class-features.js";
 
 test("feature registry contains only currently verified resolvers", () => {
-  try { assert.deepEqual([...supportedFeatureClasses()].sort(), ["barbarian","cleric","fighter","rogue","wizard"]); }
+  try { assert.deepEqual([...supportedFeatureClasses()].sort(), ["barbarian","cleric","fighter","monk","rogue","wizard"]); }
   catch(error){console.error("[test] feature registry classes",error);throw error;}
 });
 
@@ -18,6 +18,8 @@ test("feature registry resolves verified class feature modules", () => {
     assert.ok(resolveClassFeatures({ruleset:"2024",classId:"rogue",level:1}).includes("Sneak Attack"));
     assert.ok(resolveClassFeatures({ruleset:"2024",classId:"rogue",level:3,subclassId:"thief"}).includes("Fast Hands"));
     assert.ok(resolveClassFeatures({ruleset:"2024",classId:"fighter",level:1}).includes("Second Wind"));
+    assert.ok(resolveClassFeatures({ruleset:"2024",classId:"monk",level:1}).includes("Martial Arts"));
+    assert.ok(resolveClassFeatures({ruleset:"2024",classId:"monk",level:3,subclassId:"open-hand"}).includes("Open Hand Technique"));
     assert.ok(resolveClassFeatures({ruleset:"2024",classId:"wizard",level:1}).includes("Spellcasting"));
     assert.ok(resolveClassFeatures({ruleset:"2024",classId:"cleric",level:1,divineOrder:"protector"}).includes("Spellcasting"));
   }catch(error){console.error("[test] feature registry supported classes",error);throw error;}
