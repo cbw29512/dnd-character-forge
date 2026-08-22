@@ -1,0 +1,16 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { FIGHTER_TABLES, fighterFeatures, fighterProgression, fighterResources } from "../src/rules/fighter.js";
+
+const ATTACKS=[1,1,1,1,2,2,2,2,2,2,3,3,3,3,3,3,3,3,3,4];
+const SECOND_WIND=[2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4];
+const MASTERY=[3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6];
+
+test("Fighter progression covers every level 1-20 in both editions",()=>{for(const ruleset of ["2014","2024"]){assert.equal(Object.keys(FIGHTER_TABLES[ruleset]).length,20);for(let level=1;level<=20;level++)assert.ok(fighterProgression(ruleset,level));}});
+test("Fighter attack count scales to two, three, then four attacks",()=>{for(const ruleset of ["2014","2024"])for(let level=1;level<=20;level++)assert.equal(fighterProgression(ruleset,level).attacks,ATTACKS[level-1],`${ruleset} level ${level}`);});
+test("2014 Action Surge and Indomitable uses scale at their exact levels",()=>{for(let level=1;level<=20;level++){const row=fighterProgression("2014",level);assert.equal(row.actionSurge,level>=17?2:level>=2?1:0);assert.equal(row.indomitable,level>=17?3:level>=13?2:level>=9?1:0);}});
+test("2024 Second Wind and Weapon Mastery match the Fighter table",()=>{for(let level=1;level<=20;level++){const row=fighterProgression("2024",level);assert.equal(row.secondWind,SECOND_WIND[level-1]);assert.equal(row.masteries,MASTERY[level-1]);}});
+test("Champion timing remains edition-isolated",()=>{const old3=fighterFeatures("2014",3,"champion"),new3=fighterFeatures("2024",3,"champion"),old7=fighterFeatures("2014",7,"champion"),new7=fighterFeatures("2024",7,"champion"),old10=fighterFeatures("2014",10,"champion"),new10=fighterFeatures("2024",10,"champion");assert.ok(old3.includes("Improved Critical"));assert.ok(!old3.includes("Remarkable Athlete"));assert.ok(new3.includes("Remarkable Athlete"));assert.ok(old7.includes("Remarkable Athlete"));assert.ok(!old7.includes("Additional Fighting Style"));assert.ok(new7.includes("Additional Fighting Style"));assert.ok(old10.includes("Additional Fighting Style"));assert.ok(new10.includes("Heroic Warrior"));});
+test("Champion critical range upgrades at level 15 in both editions",()=>{for(const ruleset of ["2014","2024"]){assert.ok(fighterFeatures(ruleset,14,"champion").includes("Improved Critical"));assert.ok(!fighterFeatures(ruleset,14,"champion").includes("Superior Critical"));assert.ok(fighterFeatures(ruleset,15,"champion").includes("Superior Critical"));}});
+test("Fighter resource cards derive from current level",()=>{const old17=Object.fromEntries(fighterResources("2014",17).map(item=>[item.id,item.value])),new16=Object.fromEntries(fighterResources("2024",16).map(item=>[item.id,item.value]));assert.equal(old17["action-surge"],"2");assert.equal(old17.indomitable,"3");assert.equal(old17["attacks-per-action"],"3");assert.equal(new16["second-wind"],"4");assert.equal(new16["weapon-masteries"],"6");assert.equal(new16["attacks-per-action"],"3");});
+test("invalid Fighter levels and editions fail closed",()=>{assert.throws(()=>fighterProgression("2024",0),/1 to 20/i);assert.throws(()=>fighterProgression("2024",21),/1 to 20/i);assert.throws(()=>fighterProgression("2099",1),/Unsupported Fighter ruleset/i);assert.throws(()=>fighterFeatures("2024",3,"battle-master"),/Unsupported Fighter subclass/i);});
