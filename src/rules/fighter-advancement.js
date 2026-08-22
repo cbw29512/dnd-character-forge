@@ -23,11 +23,15 @@ export function applyFighterAdvancement(character,data,selections={}){
       let grapplerTaken=next.feats.some(feat=>feat.id==="grappler");
       for(const level of LEVELS_2024){
         if(character.level<level)continue;
-        const selected=selections[level]??RANDOM,canGrapple=!grapplerTaken&&(next.abilities.str>=13||next.abilities.dex>=13);
+        const selected=selections[level]??RANDOM,meetsPrerequisite=!grapplerTaken&&(next.abilities.str>=13||next.abilities.dex>=13),hasIncreaseRoom=next.abilities.str<20||next.abilities.dex<20;
         if(![RANDOM,"ability-score-improvement","grappler"].includes(selected))throw new Error(`Illegal 2024 Fighter General feat at level ${level}: ${selected}`);
-        const useGrappler=selected==="grappler"||(selected===RANDOM&&canGrapple&&Math.random()<.2);
-        if(useGrappler){if(!canGrapple)throw new Error(`Grappler is not legal for this 2024 Fighter at level ${level}.`);const feat=requiredFeat(data,"grappler"),ability=next.abilities.str>=next.abilities.dex?"str":"dex";next.abilities[ability]=Math.min(20,next.abilities[ability]+1);next.feats.push(feat);grapplerTaken=true;choices.push({level,type:"feat",id:feat.id,name:feat.name,increases:{[ability]:1},locked:selected!==RANDOM});}
-        else{const feat=requiredFeat(data,"ability-score-improvement"),increases=applyAsi(next.abilities,["str","dex","con","wis","int","cha"],20);next.feats.push(feat);choices.push({level,type:"feat",id:feat.id,name:feat.name,increases,locked:selected!==RANDOM});}
+        const useGrappler=selected==="grappler"||(selected===RANDOM&&meetsPrerequisite&&hasIncreaseRoom&&Math.random()<.2);
+        if(useGrappler){
+          if(!meetsPrerequisite)throw new Error(`Grappler is not legal for this 2024 Fighter at level ${level}.`);
+          const feat=requiredFeat(data,"grappler"),increases={};
+          if(hasIncreaseRoom){const ability=bestAbility(next.abilities,["str","dex"],20);next.abilities[ability]+=1;increases[ability]=1;}
+          next.feats.push(feat);grapplerTaken=true;choices.push({level,type:"feat",id:feat.id,name:feat.name,increases,locked:selected!==RANDOM});
+        }else{const feat=requiredFeat(data,"ability-score-improvement"),increases=applyAsi(next.abilities,["str","dex","con","wis","int","cha"],20);next.feats.push(feat);choices.push({level,type:"feat",id:feat.id,name:feat.name,increases,locked:selected!==RANDOM});}
       }
       if(character.level>=19){const selected=selections[19]??RANDOM;if(selected!==RANDOM&&!EPIC_BOONS.includes(selected))throw new Error(`Illegal Fighter Epic Boon selection: ${selected}`);const feat=requiredFeat(data,selected===RANDOM?pick(EPIC_BOONS):selected),ability=epicAbility(next.abilities,feat.id);next.abilities[ability]+=1;next.abilityMaximums[ability]=30;next.feats.push(feat);choices.push({level:19,type:"epic-boon",id:feat.id,name:feat.name,increases:{[ability]:1},locked:selected!==RANDOM});}
     }else throw new Error(`Unsupported Fighter advancement ruleset: ${character.ruleset}`);
