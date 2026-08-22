@@ -19,130 +19,43 @@
 <body>
   <div class="ambient" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="brand" href="#" aria-label="D&D Character Forge home">
-      <span class="brand-mark" aria-hidden="true">CF</span>
-      <span><strong>Character Forge</strong><small>Instant. RAW. Playable.</small></span>
-    </a>
-    <nav class="primary-nav" aria-label="Primary">
-      <button class="nav-link is-active" data-tab="forge">Forge</button>
-      <button class="nav-link" data-tab="pregens">Pregens</button>
-    </nav>
+    <a class="brand" href="#" aria-label="D&D Character Forge home"><span class="brand-mark" aria-hidden="true">CF</span><span><strong>Character Forge</strong><small>Instant. RAW. Playable.</small></span></a>
+    <nav class="primary-nav" aria-label="Primary"><button class="nav-link is-active" data-tab="forge">Forge</button><button class="nav-link" data-tab="pregens">Pregens</button></nav>
     <span class="header-proof">✓ RAW-only</span>
   </header>
-
   <main class="site-shell">
     <section data-view="forge">
       <div class="hero-copy">
-        <p class="eyebrow">PREGENERATED CHARACTERS WITHOUT THE RULES HEADACHE</p>
-        <h1>Ready to play.<br><span>Right now.</span></h1>
+        <p class="eyebrow">PREGENERATED CHARACTERS WITHOUT THE RULES HEADACHE</p><h1>Ready to play.<br><span>Right now.</span></h1>
         <p class="hero-lede">Choose only what matters. Leave everything else Random. Character Forge builds the rest from the selected SRD and validates the result before you see it.</p>
-        <div class="trust-row" aria-label="Forge guarantees">
-          <span>✓ RAW only</span>
-          <span>✓ Edition isolated</span>
-          <span>✓ Class-specific play sheets</span>
-        </div>
+        <div class="trust-row" aria-label="Forge guarantees"><span>✓ RAW only</span><span>✓ Edition isolated</span><span>✓ Class-specific play sheets</span></div>
       </div>
-
       <div class="forge-workspace">
         <aside class="forge-panel" aria-labelledby="forge-title">
-          <div class="panel-heading">
-            <div><p class="section-kicker">01 · SET CONSTRAINTS</p><h2 id="forge-title">What matters to you?</h2></div>
-            <span class="random-note">Everything else stays Random</span>
-          </div>
-
+          <div class="panel-heading"><div><p class="section-kicker">01 · SET CONSTRAINTS</p><h2 id="forge-title">What matters to you?</h2></div><span class="random-note">Everything else stays Random</span></div>
           <div class="field-grid">
-            <label class="field field-emphasis">Rules edition
-              <select id="ruleset">
-                <option value="2024">2024 · SRD 5.2.1</option>
-                <option value="2014">2014 · SRD 5.1</option>
-              </select>
-              <small>Every rule on the character follows this edition.</small>
-            </label>
-            <label class="field">Level
-              <select id="level">
-                <option value="random">Random</option>
-                <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-              </select>
-            </label>
-            <label class="field">Species<select id="species"></select></label>
-            <label class="field">Class<select id="class"></select></label>
-            <label class="field">Subclass<select id="subclass"></select></label>
-            <label class="field">Background<select id="background"></select></label>
-            <label class="field">Name<input id="name" autocomplete="off" placeholder="Random when blank"></label>
+            <label class="field field-emphasis">Rules edition<select id="ruleset"><option value="2024">2024 · SRD 5.2.1</option><option value="2014">2014 · SRD 5.1</option></select><small>Every rule on the character follows this edition.</small></label>
+            <label class="field">Level<select id="level"><option value="random">Random</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+            <label class="field">Species<select id="species"></select></label><label class="field">Class<select id="class"></select></label><label class="field">Subclass<select id="subclass"></select></label><label class="field">Background<select id="background"></select></label><label class="field">Name<input id="name" autocomplete="off" placeholder="Random when blank"></label>
           </div>
-
-          <div id="spellPickerPanel" hidden class="choice-panel">
-            <div>
-              <strong>Spell choices</strong>
-              <small id="spellPickerHint">Pick any spells you want. Forge randomizes every remaining legal choice.</small>
-              <span id="spellChoiceSummary" class="choice-summary">All spell choices Random</span>
-            </div>
-            <button id="openSpellPicker" class="secondary-button" type="button">Choose spells</button>
+          <div id="advancementPanel" hidden class="advancement-panel">
+            <div class="advancement-heading"><div><strong>Feat & ability advancement</strong><small>Every level stays Random unless you lock a legal RAW choice.</small></div><span id="advancementSummary" class="choice-summary">All advancement choices Random</span></div>
+            <div id="advancementFields" class="advancement-fields"></div>
           </div>
-
+          <div id="spellPickerPanel" hidden class="choice-panel"><div><strong>Spell choices</strong><small id="spellPickerHint">Pick any spells you want. Forge randomizes every remaining legal choice.</small><span id="spellChoiceSummary" class="choice-summary">All spell choices Random</span></div><button id="openSpellPicker" class="secondary-button" type="button">Choose spells</button></div>
           <button id="forgeButton" class="forge-button" type="button"><span aria-hidden="true">✦</span> Forge RAW Character <span class="button-arrow">→</span></button>
           <p id="error" class="error-banner" role="alert" hidden></p>
-
-          <div class="coverage-note">
-            <span class="status-dot"></span>
-            <span><strong>Production completion in progress:</strong> every exposed option is verified against SRD 5.1 or SRD 5.2.1. Unsupported content remains unavailable rather than being guessed.</span>
-          </div>
-          <details class="rules-note">
-            <summary>RAW boundary</summary>
-            <p>Character Forge uses the Creative Commons System Reference Documents as its public RAW rules sources. 2014 and 2024 mechanics remain separate, and Homebrew mechanics are rejected by the production generator.</p>
-          </details>
+          <div class="coverage-note"><span class="status-dot"></span><span><strong>Production completion in progress:</strong> every exposed option is verified against SRD 5.1 or SRD 5.2.1. Unsupported content remains unavailable rather than being guessed.</span></div>
+          <details class="rules-note"><summary>RAW boundary</summary><p>Character Forge uses the Creative Commons System Reference Documents as its public RAW rules sources. 2014 and 2024 mechanics remain separate, and Homebrew mechanics are rejected by the production generator.</p></details>
         </aside>
-
-        <section class="result-stage" aria-live="polite" aria-label="Generated character">
-          <div class="result-label"><p class="section-kicker">02 · PLAYABLE RESULT</p><span>Validated before display · class-aware print layout</span></div>
-          <div id="result"></div>
-        </section>
+        <section class="result-stage" aria-live="polite" aria-label="Generated character"><div class="result-label"><p class="section-kicker">02 · PLAYABLE RESULT</p><span>Validated before display · class-aware print layout</span></div><div id="result"></div></section>
       </div>
     </section>
-
-    <section data-view="pregens" hidden class="library-page">
-      <div class="library-hero">
-        <div>
-          <p class="section-kicker">MY LIBRARY</p>
-          <h2>Saved RAW Pregens</h2>
-          <p>Keep ready-to-play RAW characters without filling the library with copies. Mechanical fingerprints block exact duplicates automatically.</p>
-        </div>
-        <span id="pregenCount" class="library-count">0 RAW saved</span>
-      </div>
-      <div class="library-toolbar">
-        <label class="library-search">Search<input id="pregenSearch" placeholder="Name, class, species…"></label>
-        <label>Rules
-          <select id="pregenRuleset"><option value="all">All editions</option><option value="2024">2024</option><option value="2014">2014</option></select>
-        </label>
-      </div>
-      <div id="pregenGrid" class="library-grid"></div>
-    </section>
+    <section data-view="pregens" hidden class="library-page"><div class="library-hero"><div><p class="section-kicker">MY LIBRARY</p><h2>Saved RAW Pregens</h2><p>Keep ready-to-play RAW characters without filling the library with copies. Mechanical fingerprints block exact duplicates automatically.</p></div><span id="pregenCount" class="library-count">0 RAW saved</span></div><div class="library-toolbar"><label class="library-search">Search<input id="pregenSearch" placeholder="Name, class, species…"></label><label>Rules<select id="pregenRuleset"><option value="all">All editions</option><option value="2024">2024</option><option value="2014">2014</option></select></label></div><div id="pregenGrid" class="library-grid"></div></section>
   </main>
-
-  <dialog id="spellDialog" class="spell-dialog" aria-labelledby="spellDialogTitle">
-    <div class="spell-dialog-head">
-      <div>
-        <p class="section-kicker">SPELL PICKER</p>
-        <h2 id="spellDialogTitle">Choose what matters.</h2>
-        <p>Every unchecked legal choice remains Random. Class rules decide spellbook, prepared, and always-prepared structure.</p>
-      </div>
-      <button id="closeSpellPicker" class="dialog-close" type="button" aria-label="Close spell picker">×</button>
-    </div>
-    <label class="spell-search">Search spells<input id="spellSearch" type="search" placeholder="Bless, Fireball, Shield…" autocomplete="off"></label>
-    <div id="spellPickerLists" class="spell-picker-lists"></div>
-    <div class="spell-dialog-foot"><span id="spellDialogSummary">All spell choices Random</span><button id="doneSpellPicker" class="secondary-button" type="button">Done</button></div>
-  </dialog>
-
+  <dialog id="spellDialog" class="spell-dialog" aria-labelledby="spellDialogTitle"><div class="spell-dialog-head"><div><p class="section-kicker">SPELL PICKER</p><h2 id="spellDialogTitle">Choose what matters.</h2><p>Every unchecked legal choice remains Random. Class rules decide spellbook, prepared, and always-prepared structure.</p></div><button id="closeSpellPicker" class="dialog-close" type="button" aria-label="Close spell picker">×</button></div><label class="spell-search">Search spells<input id="spellSearch" type="search" placeholder="Bless, Fireball, Shield…" autocomplete="off"></label><div id="spellPickerLists" class="spell-picker-lists"></div><div class="spell-dialog-foot"><span id="spellDialogSummary">All spell choices Random</span><button id="doneSpellPicker" class="secondary-button" type="button">Done</button></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-
-  <footer class="site-footer">
-    <details class="license-notice">
-      <summary>Open-game licensing</summary>
-      <p>This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.</p>
-      <p>This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.</p>
-    </details>
-  </footer>
-
+  <footer class="site-footer"><details class="license-notice"><summary>Open-game licensing</summary><p>This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.</p><p>This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.</p></details></footer>
   <script type="module" src="src/app.js"></script>
 </body>
 </html>
