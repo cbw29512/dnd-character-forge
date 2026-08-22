@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { monkFeatures, monkProgression, monkResources, monkSaveDC } from "../src/rules/monk.js";
+import { applyMonkAbilityProgression, monkAttackCount, monkExtraSaveProficiencies, monkFeatures, monkFlurryStrikes, monkProgression, monkResources, monkSaveDC, monkSpeed, monkUnarmoredAc } from "../src/rules/monk.js";
 
 test("Monk progression covers every level 1-20 in both editions",()=>{
   for(const ruleset of ["2014","2024"])for(let level=1;level<=20;level++){
@@ -34,14 +34,26 @@ test("high-level Monk features remain edition-isolated",()=>{
   assert.ok(!oldFeatures.includes("Body and Mind"));assert.ok(!newFeatures.includes("Perfect Self"));
 });
 
-test("Monk resources expose Martial Arts, Ki or Focus, and movement",()=>{
+test("Monk resources expose Martial Arts, Ki or Focus, movement, and Flurry count",()=>{
   const oldResources=monkResources("2014",10),newResources=monkResources("2024",10);
-  assert.deepEqual(oldResources.map(item=>item.name),["Martial Arts","Ki Points","Unarmored Movement"]);
-  assert.deepEqual(newResources.map(item=>item.name),["Martial Arts","Focus Points","Unarmored Movement"]);
-  assert.equal(oldResources[0].value,"1d6");assert.equal(newResources[0].value,"1d8");
+  assert.deepEqual(oldResources.map(item=>item.name),["Martial Arts","Ki Points","Unarmored Movement","Flurry of Blows"]);
+  assert.deepEqual(newResources.map(item=>item.name),["Martial Arts","Focus Points","Unarmored Movement","Flurry of Blows"]);
+  assert.equal(oldResources[0].value,"1d6");assert.equal(newResources[0].value,"1d8");assert.equal(oldResources.at(-1).value,"2 strikes");assert.equal(newResources.at(-1).value,"3 strikes");
 });
 
-test("Monk save DC uses 8 + Wisdom modifier + proficiency",()=>{assert.equal(monkSaveDC(4,3),15);assert.equal(monkSaveDC(5,6),19);});
+test("Monk combat math derives AC, speed, attacks, and save DC",()=>{
+  const abilities={str:10,dex:18,con:14,int:8,wis:16,cha:10};assert.equal(monkUnarmoredAc(abilities),17);assert.equal(monkSpeed(30,"2024",10),50);assert.equal(monkSpeed(30,"2024",10,{armored:true}),30);assert.equal(monkAttackCount(4),1);assert.equal(monkAttackCount(5),2);assert.equal(monkSaveDC(3,4),15);
+});
+
+test("all-save proficiency begins at level 14 in both editions",()=>{assert.deepEqual(monkExtraSaveProficiencies(13),[]);assert.deepEqual(monkExtraSaveProficiencies(14),["str","dex","con","int","wis","cha"]);});
+
+test("2024 Heightened Focus increases Flurry to three strikes at level 10",()=>{assert.equal(monkFlurryStrikes("2024",9),2);assert.equal(monkFlurryStrikes("2024",10),3);assert.equal(monkFlurryStrikes("2014",20),2);});
+
+test("2024 Body and Mind raises Dexterity and Wisdom by four to a maximum of 25",()=>{
+  assert.deepEqual(applyMonkAbilityProgression({str:10,dex:20,con:14,int:8,wis:19,cha:10},"2024",20),{str:10,dex:24,con:14,int:8,wis:23,cha:10});
+  assert.deepEqual(applyMonkAbilityProgression({str:10,dex:23,con:14,int:8,wis:24,cha:10},"2024",20),{str:10,dex:25,con:14,int:8,wis:25,cha:10});
+  assert.equal(applyMonkAbilityProgression({str:10,dex:20,con:14,int:8,wis:20,cha:10},"2014",20).dex,20);
+});
 
 test("invalid Monk levels, rulesets, and subclasses fail closed",()=>{
   assert.throws(()=>monkProgression("2014",0),/integer from 1 to 20/i);assert.throws(()=>monkProgression("2024",21),/integer from 1 to 20/i);assert.throws(()=>monkProgression("2099",5),/Unsupported Monk ruleset/i);assert.throws(()=>monkFeatures("2024",5,"shadow"),/Unsupported Monk subclass/i);
