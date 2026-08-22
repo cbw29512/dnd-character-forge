@@ -54,8 +54,10 @@
 .character-sheet[data-class="rogue"] .sheet-section-attacks,
 .character-sheet[data-class="rogue"] .sheet-section-skills { border-left:4px solid var(--sheet-accent); }
 .character-sheet[data-class="rogue"] .skill.is-proficient { background:linear-gradient(90deg,var(--sheet-accent-soft),transparent); border-radius:5px; padding-inline:5px; }
+.character-sheet[data-class="fighter"] .sheet-section-resources,
 .character-sheet[data-class="fighter"] .sheet-section-attacks,
 .character-sheet[data-class="fighter"] .sheet-section-play-reference { border-left:4px solid var(--sheet-accent); }
+.character-sheet[data-class="fighter"] .sheet-section-resources .resource-card:first-child { border-width:2px; }
 .character-sheet[data-class="wizard"] .sheet-section-spellcasting,
 .character-sheet[data-class="wizard"] .sheet-section-spell-reference { border-left:4px solid var(--sheet-accent); }
 .character-sheet[data-class="cleric"] .sheet-section-spellcasting,
