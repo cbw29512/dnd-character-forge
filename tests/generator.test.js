@@ -27,4 +27,6 @@ test("2024 Monk owns the exact tool selected for class proficiency",()=>{try{for
 
 test("Rogue retains Thieves' Tools proficiency in both editions",()=>{try{for(const ruleset of ["2014","2024"]){const c=generateCharacter(classState(ruleset,"rogue"));assert.ok(c.tools.includes("Thieves' Tools"));}}catch(error){console.error("[test] Rogue tools",error);throw error;}});
 
+test("2024 Criminal Rogue deduplicates overlapping Thieves' Tools proficiency without inventing a replacement",()=>{try{const s=classState("2024","rogue");s.constraints.background="criminal";for(let i=0;i<100;i++){const c=generateCharacter(s);assert.deepEqual(c.tools,["Thieves' Tools"]);assert.equal(c.validation.valid,true);}}catch(error){console.error("[test] Criminal Rogue duplicate tool",error);throw error;}});
+
 test("proficiency validation fails closed when generated Monk tool data is removed",()=>{try{const c=generateCharacter(classState("2024","monk"));const tampered=structuredClone(c);tampered.tools=[];const result=validateCharacter(tampered,SOURCE.RAW);assert.equal(result.valid,false);assert.ok(result.errors.some(error=>/tool proficiency/i.test(error)));}catch(error){console.error("[test] tool validation fail closed",error);throw error;}});
