@@ -1,8 +1,10 @@
 import { fighterFeatures, wizardFeatures, clericFeatures } from "./features.js";
 import { barbarianFeatures } from "./barbarian.js";
+import { rogueFeatures } from "./rogue.js";
 
 const RESOLVERS = Object.freeze({
   barbarian: ({ ruleset, level, subclassId }) => barbarianFeatures(ruleset, level, subclassId),
+  rogue: ({ ruleset, level, subclassId }) => rogueFeatures(ruleset, level, subclassId),
   fighter: ({ ruleset, level, subclassId }) => fighterFeatures(ruleset, level, subclassId),
   wizard: ({ ruleset, level, subclassId }) => wizardFeatures(ruleset, level, subclassId),
   cleric: ({ ruleset, level, subclassId, divineOrder }) => clericFeatures(ruleset, level, subclassId, divineOrder)
