@@ -1,6 +1,8 @@
 import { fighterFeatures, wizardFeatures, clericFeatures } from "./features.js";
+import { barbarianFeatures } from "./barbarian.js";
 
 const RESOLVERS = Object.freeze({
+  barbarian: ({ ruleset, level, subclassId }) => barbarianFeatures(ruleset, level, subclassId),
   fighter: ({ ruleset, level, subclassId }) => fighterFeatures(ruleset, level, subclassId),
   wizard: ({ ruleset, level, subclassId }) => wizardFeatures(ruleset, level, subclassId),
   cleric: ({ ruleset, level, subclassId, divineOrder }) => clericFeatures(ruleset, level, subclassId, divineOrder)
@@ -20,10 +22,6 @@ export function resolveClassFeatures({ ruleset, classId, level, subclassId = nul
 }
 
 export function supportedFeatureClasses() {
-  try {
-    return Object.keys(RESOLVERS);
-  } catch (error) {
-    console.error("[class-features] supported class lookup failed", error);
-    throw error;
-  }
+  try { return Object.keys(RESOLVERS); }
+  catch(error){console.error("[class-features] supported class lookup failed",error);throw error;}
 }
