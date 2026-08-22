@@ -35,9 +35,13 @@ Core generated-character state:
   - `cantrips`
   - `spellbook`
   - `prepared`
+- `advancementSelections`
+  - keyed by eligible class advancement level
+  - every value defaults to `Random`
+  - a selected ASI, feat, or Epic Boon becomes a hard generation constraint
 - `currentCharacter`
 
-Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive Perception, spell save DC, spell attack bonus, attack bonuses, damage bonuses, spell slots, legal prepared/spellbook counts, class resource uses, resource scaling, and class feature scaling must be calculated from source mechanics.
+Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive Perception, spell save DC, spell attack bonus, attack bonuses, damage bonuses, spell slots, legal prepared/spellbook counts, class resource uses, resource scaling, feat-derived ability changes, and class feature scaling must be calculated from source mechanics.
 
 ## State rules
 
@@ -46,9 +50,10 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 3. Random filling may choose only from the legal pool remaining after all fixed constraints are applied.
 4. Impossible combinations produce a visible error; they never produce a best-effort character.
 5. Changing editions clears edition-specific selections.
-6. Changing class or level clears or revalidates dependent subclass/spell choices.
-7. Saved pregens must be revalidated before use.
-8. Any character containing Homebrew mechanics is rejected by the RAW production generator.
+6. Changing class or level clears or revalidates dependent subclass, spell, feat, and advancement choices.
+7. A locked advancement choice constrains a Random character level to a level where that choice legally exists.
+8. Saved pregens must be revalidated before use.
+9. Any character containing Homebrew mechanics is rejected by the RAW production generator.
 
 ## Completion gates
 
@@ -59,6 +64,7 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 - All supported SRD classes are encoded through level 20.
 - The SRD subclass for each class is encoded at the correct acquisition level.
 - All SRD feats required by character creation/class progression are encoded.
+- ASI-versus-feat and Epic Boon decisions are edition-correct, prerequisite-aware, and represented as explicit advancement choices.
 - Equipment, armor, weapons, fighting styles, masteries, class choices, and spellcasting progression required by those classes are encoded.
 - Every spell that the Forge can select has edition-correct spell-list membership and a playable reference entry.
 
@@ -69,6 +75,7 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 - Level 1-20 progression is tested.
 - Class/subclass acquisition timing is tested.
 - Ability-score maximums are tested.
+- Advancement choice levels, prerequisites, eligibility, uniqueness, and ability-score effects are tested.
 - Skill/save/language/feat/mastery duplicates are blocked.
 - Spell list, spellbook, preparation, always-prepared, and slot-count rules are tested.
 - Class resource counts and level scaling are tested against the correct SRD tables.
@@ -78,6 +85,8 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 
 - A player can forge a valid character with every field left Random.
 - A player can lock any supported exposed choice and let Forge legally fill the remainder.
+- Feat/ASI/Epic Boon controls show only choices legal for the selected edition, class, and advancement level.
+- Generated sheets give active feats and boons a distinct at-table reference section rather than hiding them in level-up bookkeeping.
 - The generated sheet contains the information needed to play the character at the table without relying on guessed mechanics.
 - Every SRD class has an explicit sheet profile; unknown classes fail closed instead of receiving a generic layout.
 - Class identity changes information hierarchy, not rules. Fighter sheets prioritize attacks/actions, caster sheets prioritize spellcasting, and resource-driven classes prioritize their current-level resources.
@@ -85,7 +94,7 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 - No generic placeholder may state a class resource count or scaling value.
 - Printed sections and individual rules cards avoid destructive page splits where browser print engines permit it.
 - Print output is legible in color and monochrome.
-- The first printed page prioritizes at-table information: identity, ability scores, AC, HP, initiative, speed, proficiency, core attacks/spellcasting, and primary class resources.
+- The first printed page prioritizes at-table information: identity, ability scores, AC, HP, initiative, speed, proficiency, saving throws, active feats/boons, core attacks/spellcasting, and primary class resources.
 - Mobile layout remains usable at narrow phone widths.
 
 ### Class sheet identity
