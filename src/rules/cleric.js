@@ -6,8 +6,8 @@ import { duplicateValues, uniqueStrings } from "./duplicates.js";
 import { maxFullCasterSpellLevel } from "./full-caster.js";
 import { clericProgression } from "./cleric-progression.js";
 
-const LIFE_2014=[[1,["bless","cure-wounds"]],[3,["lesser-restoration","spiritual-weapon"]],[5,["beacon-of-hope","revivify"]]];
-const LIFE_2024=[[3,["aid","bless","cure-wounds","lesser-restoration"]],[5,["mass-healing-word","revivify"]]];
+const LIFE_2014=[[1,["bless","cure-wounds"]],[3,["lesser-restoration","spiritual-weapon"]],[5,["beacon-of-hope","revivify"]],[7,["death-ward","guardian-of-faith"]],[9,["mass-cure-wounds","raise-dead"]]];
+const LIFE_2024=[[3,["aid","bless","cure-wounds","lesser-restoration"]],[5,["mass-healing-word","revivify"]],[7,["aura-of-life","death-ward"]],[9,["greater-restoration","mass-cure-wounds"]]];
 
 export function lifeDomainAlwaysPrepared(ruleset,level){
   try{return uniqueStrings((ruleset==="2014"?LIFE_2014:LIFE_2024).filter(([minimum])=>level>=minimum).flatMap(([,ids])=>ids));}
