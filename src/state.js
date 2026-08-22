@@ -1,8 +1,10 @@
 import { RANDOM, SOURCE } from "./schema.js";
+import { DND_SYSTEM_ID } from "./systems/dnd.js";
 
 export function createInitialState() {
   try {
     return {
+      systemId: DND_SYSTEM_ID,
       sourceMode: SOURCE.RAW,
       ruleset: "2024",
       constraints: { level:RANDOM, species:RANDOM, class:RANDOM, subclass:RANDOM, background:RANDOM, name:"" },
