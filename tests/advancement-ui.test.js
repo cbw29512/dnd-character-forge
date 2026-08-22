@@ -16,9 +16,13 @@ test("Forge exposes one class-aware advancement panel wired to application state
   assert.match(app,/advancementSelections/);
 });
 
-test("advancement picker preserves edition-specific ASI identifiers and Barbarian Epic Boon pool",()=>{
+test("advancement picker preserves edition-specific choices for Barbarian and Rogue",()=>{
+  assert.match(picker,/ROGUE_ADVANCEMENT/);
+  assert.match(picker,/\["barbarian","rogue"\]/);
+  assert.match(picker,/ROGUE_2014/);
   assert.match(picker,/\["asi","Ability Score Improvement"\]/);
   assert.match(picker,/\["ability-score-improvement","Ability Score Improvement"\]/);
+  assert.match(picker,/10:RANDOM/);
   for(const id of ["boon-combat-prowess","boon-dimensional-travel","boon-fate","boon-irresistible-offense","boon-night-spirit","boon-truesight"])assert.match(picker,new RegExp(id));
   assert.doesNotMatch(picker,/boon-spell-recall/);
 });
