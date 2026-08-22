@@ -14,27 +14,12 @@ export function barbarianProgression(ruleset,level){try{const numeric=Number(lev
 export function barbarianFeatures(ruleset,level,subclassId){try{const numeric=Number(level),table=tableFor(ruleset),features=[];for(let current=1;current<=numeric;current++)features.push(...table[current].features);const subclassFeatures=ruleset==="2014"?BERSERKER_2014:BERSERKER_2024;if(subclassId&&subclassId!=="path-berserker")throw new Error(`Unsupported Barbarian subclass for ${ruleset}: ${subclassId}`);if(subclassId)for(const feature of subclassFeatures)if(numeric>=feature.level)features.push(feature.name);return [...new Set(features)].filter(name=>!["Path Feature","Subclass feature"].includes(name));}catch(error){console.error("[barbarian] failed to resolve features",error);throw error;}}
 
 export function applyBarbarianAbilityProgression(scores,ruleset,level){
-  try{
-    const next={...scores},numeric=Number(level),asiLevels=ruleset==="2014"?[4,8,12,16,19]:[4,8,12,16];
-    for(const threshold of asiLevels)if(numeric>=threshold)raiseTwo(next);
-    if(ruleset==="2024"&&numeric>=19)next.str=Math.min(30,next.str+1); // Recommended SRD Epic Boon: Boon of Irresistible Offense.
-    if(numeric>=20){const maximum=ruleset==="2014"?24:25;next.str=Math.min(maximum,next.str+4);next.con=Math.min(maximum,next.con+4);}
-    return next;
-  }catch(error){console.error("[barbarian] ability progression failed",error);throw error;}
+  try{const next={...scores},numeric=Number(level);if(numeric>=20){const maximum=ruleset==="2014"?24:25;next.str=Math.min(maximum,next.str+4);next.con=Math.min(maximum,next.con+4);}return next;}
+  catch(error){console.error("[barbarian] capstone ability progression failed",error);throw error;}
 }
-function raiseTwo(scores){const target=scores.str<20?"str":scores.con<20?"con":scores.dex<20?"dex":null;if(target)scores[target]=Math.min(20,scores[target]+2);}
-
 export function barbarianAbilityMaximums(ruleset,level){
-  try{
-    const numeric=Number(level);
-    if(ruleset==="2014")return numeric>=20?{str:24,con:24}:{str:20,con:20};
-    if(ruleset==="2024"){
-      if(numeric>=20)return{str:25,con:25};
-      if(numeric>=19)return{str:30,con:20};
-      return{str:20,con:20};
-    }
-    throw new Error(`Unsupported Barbarian ruleset: ${ruleset}`);
-  }catch(error){console.error("[barbarian] maximum lookup failed",error);throw error;}
+  try{const numeric=Number(level);if(ruleset==="2014")return numeric>=20?{str:24,con:24}:{str:20,con:20};if(ruleset==="2024")return numeric>=20?{str:25,con:25}:{str:20,con:20};throw new Error(`Unsupported Barbarian ruleset: ${ruleset}`);}
+  catch(error){console.error("[barbarian] maximum lookup failed",error);throw error;}
 }
 export function barbarianUnarmoredAc(abilities,shield=false){try{const mod=score=>Math.floor((score-10)/2);return 10+mod(abilities.dex)+mod(abilities.con)+(shield?2:0);}catch(error){console.error("[barbarian] unarmored AC failed",error);throw error;}}
 export function barbarianSpeed(baseSpeed,level,wearingHeavyArmor=false){try{return Number(level)>=5&&!wearingHeavyArmor?baseSpeed+10:baseSpeed;}catch(error){console.error("[barbarian] speed failed",error);throw error;}}
