@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Forge complete, rules-validated RAW D&D pre-generated characters in seconds.">
+  <meta name="description" content="Generate complete, rules-validated RAW D&D pre-generated characters in seconds. Choose what matters, randomize the rest, then print and play.">
   <meta name="theme-color" content="#0f1115">
-  <title>D&D Character Forge — Instant, Accurate RAW Pregens</title>
+  <title>Character Forge — Instant RAW D&D Pregens</title>
   <link rel="stylesheet" href="styles/base.css">
   <link rel="stylesheet" href="styles/layout.css">
   <link rel="stylesheet" href="styles/components.css">
@@ -20,16 +20,16 @@
 <body>
   <div class="ambient" aria-hidden="true"></div>
   <header class="site-header">
-    <a class="brand" href="#" aria-label="D&D Character Forge home"><span class="brand-mark" aria-hidden="true">CF</span><span><strong>Character Forge</strong><small>Instant. RAW. Playable.</small></span></a>
+    <a class="brand" href="#" aria-label="Character Forge home"><span class="brand-mark" aria-hidden="true">CF</span><span><strong>Character Forge</strong><small>Instant. RAW. Playable.</small></span></a>
     <nav class="primary-nav" aria-label="Primary"><button class="nav-link is-active" data-tab="forge">Forge</button><button class="nav-link" data-tab="pregens">Pregens</button></nav>
     <span class="header-proof">✓ RAW-only</span>
   </header>
   <main class="site-shell">
     <section data-view="forge">
       <div class="hero-copy">
-        <p class="eyebrow">PREGENERATED CHARACTERS WITHOUT THE RULES HEADACHE</p><h1>Ready to play.<br><span>Right now.</span></h1>
-        <p class="hero-lede">Choose only what matters. Leave everything else Random. Character Forge builds the rest from the selected SRD and validates the result before you see it.</p>
-        <div class="trust-row" aria-label="Forge guarantees"><span>✓ RAW only</span><span>✓ Edition isolated</span><span>✓ Class-specific play sheets</span></div>
+        <p class="eyebrow">NEED A D&D CHARACTER RIGHT NOW?</p><h1>A legal pregen.<br><span>Ready in seconds.</span></h1>
+        <p class="hero-lede">Pick the level, class, species, background, or spells you care about. Leave anything else Random. Character Forge fills every remaining legal choice, validates the finished character, and gives you a class-specific sheet built to use at the table.</p>
+        <div class="trust-row" aria-label="Forge guarantees"><span>✓ RAW only</span><span>✓ Edition isolated</span><span>✓ Print-ready</span><span>✓ No account required</span></div>
       </div>
       <div class="forge-workspace">
         <aside class="forge-panel" aria-labelledby="forge-title">
@@ -52,7 +52,17 @@
         <section class="result-stage" aria-live="polite" aria-label="Generated character"><div class="result-label"><p class="section-kicker">02 · PLAYABLE RESULT</p><span>Validated before display · class-aware print layout</span></div><div id="result"></div></section>
       </div>
     </section>
-    <section data-view="pregens" hidden class="library-page"><div class="library-hero"><div><p class="section-kicker">MY LIBRARY</p><h2>Saved RAW Pregens</h2><p>Keep ready-to-play RAW characters without filling the library with copies. Mechanical fingerprints block exact duplicates automatically.</p></div><span id="pregenCount" class="library-count">0 RAW saved</span></div><div class="library-toolbar"><label class="library-search">Search<input id="pregenSearch" placeholder="Name, class, species…"></label><label>Rules<select id="pregenRuleset"><option value="all">All editions</option><option value="2024">2024</option><option value="2014">2014</option></select></label></div><div id="pregenGrid" class="library-grid"></div></section>
+    <section data-view="pregens" hidden class="library-page">
+      <div class="library-hero"><div><p class="section-kicker">MY READY CHARACTERS</p><h2>Your Ready-to-Play Pregens</h2><p>Save the characters you want to keep, then find them fast by system, edition, class, level, or name. Exact mechanical duplicates are blocked automatically.</p></div><span id="pregenCount" class="library-count">0 RAW saved</span></div>
+      <div class="library-toolbar">
+        <label class="library-search">Search<input id="pregenSearch" type="search" placeholder="Name, class, species, subclass…" autocomplete="off"></label>
+        <label>System<select id="pregenSystem"><option value="all">All systems</option></select></label>
+        <label>Edition<select id="pregenRuleset"><option value="all">All editions</option></select></label>
+        <label>Class<select id="pregenClass"><option value="all">All classes</option></select></label>
+        <label>Level<select id="pregenLevel"><option value="all">All levels</option></select></label>
+      </div>
+      <div id="pregenGrid" class="library-grid"></div>
+    </section>
   </main>
   <dialog id="spellDialog" class="spell-dialog" aria-labelledby="spellDialogTitle"><div class="spell-dialog-head"><div><p class="section-kicker">SPELL PICKER</p><h2 id="spellDialogTitle">Choose what matters.</h2><p>Every unchecked legal choice remains Random. Class rules decide spellbook, prepared, and always-prepared structure.</p></div><button id="closeSpellPicker" class="dialog-close" type="button" aria-label="Close spell picker">×</button></div><label class="spell-search">Search spells<input id="spellSearch" type="search" placeholder="Bless, Fireball, Shield…" autocomplete="off"></label><div id="spellPickerLists" class="spell-picker-lists"></div><div class="spell-dialog-foot"><span id="spellDialogSummary">All spell choices Random</span><button id="doneSpellPicker" class="secondary-button" type="button">Done</button></div></dialog>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
