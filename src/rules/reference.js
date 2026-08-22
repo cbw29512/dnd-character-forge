@@ -17,10 +17,11 @@ export function buildQuickReference(character){
   }catch(error){console.error("[reference] build failed",error);throw error;}
 }
 export function masteryEntries(character){try{if(character.ruleset!=="2024"||!character.masteryIds?.length)return[];const data=dataFor(character.ruleset);return character.masteryIds.map(weaponId=>{const weapon=data.weapons[weaponId];if(!weapon)throw new Error(`Unknown mastery weapon ${weaponId}.`);if(!weapon.mastery)throw new Error(`${weapon.name} is missing its Weapon Mastery property.`);if(!MASTERY_REFERENCE[weapon.mastery])throw new Error(`Missing quick reference for ${weapon.mastery}.`);return{weaponId,weaponName:weapon.name,property:weapon.mastery};});}catch(error){console.error("[reference] mastery lookup failed",error);throw error;}}
-function dynamicFeat(character,feat){try{if(feat.id==="boon-irresistible-offense")return{category:"Epic Boon",timing:"Passive / on natural 20",text:"STR is increased by 1 in the generated scores. Your Bludgeoning, Piercing, and Slashing damage ignores Resistance; on an attack-roll natural 20, deal extra damage equal to the ability score this boon increased."};return null;}catch(error){console.error("[reference] dynamic feat failed",error);throw error;}}
+function dynamicFeat(){return null;}
 function dynamicFeature(character,name){
   try{
     if(character.class.id==="barbarian")return barbarianReference(character,name);
+    if(character.class.id==="rogue")return rogueReference(character,name);
     if(name==="Spellcasting")return spellcasting(character);
     if(name==="Second Wind")return secondWind(character);
     if(name==="Weapon Mastery")return{category:"Fighter",timing:"Passive",text:`Use the mastery properties for ${character.masteryIds.length} chosen weapons listed below. After a Long Rest, you can change one chosen weapon.`};
@@ -31,6 +32,37 @@ function dynamicFeature(character,name){
     if(name==="Sear Undead")return searUndead(character);
     return null;
   }catch(error){console.error(`[reference] dynamic ${name} failed`,error);throw error;}
+}
+function rogueReference(character,name){
+  try{
+    const old=character.ruleset==="2014",sneak=Object.fromEntries((character.classResources||[]).map(item=>[item.id,item.value]))["sneak-attack"],dc=8+character.proficiency+abilityMod(character.abilities.dex);
+    const common={
+      "Expertise":{category:"Rogue",timing:"Passive",text:`Expertise is already applied to ${character.expertise.map(pretty).join(", ")}; those checks add double Proficiency Bonus.`},
+      "Sneak Attack":{category:"Rogue",timing:"Once per turn",text:`Deal ${sneak} extra damage on one qualifying Finesse or Ranged weapon hit when you have Advantage, or when the edition-specific adjacent-ally condition is met and you don't have Disadvantage.`},
+      "Thieves' Cant":{category:"Rogue",timing:"Language",text:old?"You know the secret Rogue cant used to hide messages in ordinary conversation and recognize its signs.":"Thieves' Cant and the additional Rogue language are already included in Languages."},
+      "Cunning Action":{category:"Rogue",timing:"Bonus Action",text:"Take Dash, Disengage, or Hide as a Bonus Action on your turn."},
+      "Uncanny Dodge":{category:"Rogue",timing:"Reaction",text:"When an attacker you can see hits you with an attack roll, halve that attack's damage against you."},
+      "Evasion":{category:"Rogue",timing:"Dexterity save",text:old?"On an effect that normally deals half damage on a successful Dexterity save, take no damage on a success and half on a failure.":"On an effect that normally deals half damage on a successful Dexterity save, take no damage on a success and half on a failure; unavailable while Incapacitated."},
+      "Reliable Talent":{category:"Rogue",timing:"Proficient ability check",text:old?"For an ability check that adds your Proficiency Bonus, treat a d20 roll of 9 or lower as 10.":"For an ability check using a skill or tool proficiency, treat a d20 roll of 9 or lower as 10."},
+      "Slippery Mind":{category:"Rogue",timing:"Passive",text:old?"Wisdom saving throw proficiency is already included in Saving Throws.":"Wisdom and Charisma saving throw proficiencies are already included in Saving Throws."},
+      "Elusive":{category:"Rogue",timing:"Passive",text:old?"While you aren't Incapacitated, no attack roll can have Advantage against you.":"No attack roll can have Advantage against you unless you have the Incapacitated condition."},
+      "Stroke of Luck":{category:"Rogue",timing:old?"Miss or failed check":"Failed D20 Test",text:old?"Turn one missed attack into a hit, or treat a failed ability-check d20 as 20. One use; regain after a Short or Long Rest.":"Turn a failed D20 Test into a 20. One use; regain after a Short or Long Rest."},
+      "Fast Hands":{category:"Thief",timing:"Bonus Action",text:old?"Use Cunning Action for Sleight of Hand, Thieves' Tools to disarm a trap/open a lock, or Use an Object.":"As a Bonus Action, make the specified Sleight of Hand/Thieves' Tools check, take Utilize, or take the Magic action to use a magic item requiring that action."},
+      "Second-Story Work":{category:"Thief",timing:"Movement",text:old?"Climbing no longer costs extra movement; running jump distance increases by your DEX modifier in feet.":"You have a Climb Speed equal to your Speed and can determine jump distance using Dexterity instead of Strength."},
+      "Use Magic Device":{category:"Thief",timing:"Magic items",text:old?"Ignore class, race, and level requirements for using magic items.":"Attune to up to four magic items; on a 6 on 1d6, a charged property spends no charge; use any Spell Scroll with Intelligence, with an Arcana check of DC 10 + spell level for level 2+ scrolls."},
+      "Thief's Reflexes":{category:"Thief",timing:"First combat round",text:old?"Take two turns in round one, at normal Initiative and Initiative −10; unavailable while surprised.":"Take two turns in round one, at normal Initiative and Initiative −10."}
+    };
+    if(common[name])return common[name];
+    if(name==="Weapon Mastery")return{category:"Rogue",timing:"Passive",text:`Use the mastery properties for ${character.masteryIds.length} proficient weapon choices listed below; choices can change after a Long Rest.`};
+    if(name==="Steady Aim")return{category:"Rogue",timing:"Bonus Action",text:"If you haven't moved this turn, gain Advantage on your next attack this turn; after using it, your Speed is 0 until the turn ends."};
+    if(name==="Cunning Strike")return{category:"Rogue",timing:"With Sneak Attack",text:`Forgo Sneak Attack dice for an effect (save DC ${dc}): Poison costs 1d6 and requires a Poisoner's Kit; Trip costs 1d6; Withdraw costs 1d6 and moves you up to half Speed without Opportunity Attacks.`};
+    if(name==="Improved Cunning Strike")return{category:"Rogue",timing:"With Sneak Attack",text:"Use up to two Cunning Strike effects on the same Sneak Attack, paying each effect's die cost."};
+    if(name==="Devious Strikes")return{category:"Rogue",timing:"With Sneak Attack",text:`Additional Cunning Strike choices (save DC ${dc}): Daze costs 2d6, Obscure costs 3d6, and Knock Out costs 6d6.`};
+    if(name==="Blindsense")return{category:"Rogue",timing:"Passive",text:"If you can hear, you know the location of hidden or invisible creatures within 10 feet of you."};
+    if(name==="Supreme Sneak")return{category:"Thief",timing:old?"Stealth":"Cunning Strike",text:old?"You have Advantage on Dexterity (Stealth) checks if you move no more than half your Speed on the same turn.":"Stealth Attack costs 1d6 Sneak Attack damage; when attacking from the Hide action's Invisible condition, the attack need not end it if you finish the turn behind Three-Quarters or Total Cover."};
+    if(name==="Roguish Archetype"||name==="Rogue Subclass")return{category:"Rogue",timing:"Level 3",text:"Thief is the SRD subclass used by this generated Rogue."};
+    return null;
+  }catch(error){console.error(`[reference] Rogue ${name} failed`,error);throw error;}
 }
 function barbarianReference(character,name){
   try{
@@ -60,7 +92,7 @@ function barbarianReference(character,name){
     if(name==="Persistent Rage")return{category:"Barbarian",timing:"Rage / Initiative",text:old?"Rage ends early only if you fall unconscious or choose to end it.":"Once per Long Rest when rolling Initiative, regain all expended Rages. Rage lasts up to 10 minutes without round-by-round extension and has narrower early-ending conditions."};
     if(name==="Intimidating Presence")return{category:"Berserker",timing:old?"Action":"Bonus Action",text:old?`Choose a creature you can see within 30 ft; WIS save DC ${8+character.proficiency+abilityMod(character.abilities.cha)} or Frightened until the end of your next turn, with Action-based extension.`:`Creatures of your choice in a 30-ft Emanation make WIS saves against DC ${8+character.proficiency+abilityMod(character.abilities.str)} or become Frightened for up to 1 minute. One free use per Long Rest; expend a Rage use to restore it.`};
     if(name==="Ability Score Improvement")return{category:"Barbarian",timing:"Level progression",text:"Character Forge selected the repeatable RAW Ability Score Improvement option and already applied it to the generated ability scores."};
-    if(name==="Epic Boon")return{category:"Barbarian",timing:"Level 19",text:"Character Forge selected the SRD-recommended Boon of Irresistible Offense; its separate feat reference is included on this sheet."};
+    if(name==="Epic Boon")return{category:"Barbarian",timing:"Level 19",text:"Character Forge selected an eligible SRD Epic Boon; its separate feat reference is included on this sheet."};
     if(name==="Primal Path"||name==="Barbarian Subclass")return{category:"Barbarian",timing:"Level 3",text:"Path of the Berserker is the SRD subclass used by this generated Barbarian."};
     return null;
   }catch(error){console.error(`[reference] Barbarian ${name} failed`,error);throw error;}
