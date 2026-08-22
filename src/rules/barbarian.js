@@ -17,14 +17,25 @@ export function applyBarbarianAbilityProgression(scores,ruleset,level){
   try{
     const next={...scores},numeric=Number(level),asiLevels=ruleset==="2014"?[4,8,12,16,19]:[4,8,12,16];
     for(const threshold of asiLevels)if(numeric>=threshold)raiseTwo(next);
-    if(ruleset==="2024"&&numeric>=19)next.str+=1; // Recommended SRD Epic Boon: Boon of Irresistible Offense.
+    if(ruleset==="2024"&&numeric>=19)next.str=Math.min(30,next.str+1); // Recommended SRD Epic Boon: Boon of Irresistible Offense.
     if(numeric>=20){const maximum=ruleset==="2014"?24:25;next.str=Math.min(maximum,next.str+4);next.con=Math.min(maximum,next.con+4);}
     return next;
   }catch(error){console.error("[barbarian] ability progression failed",error);throw error;}
 }
 function raiseTwo(scores){const target=scores.str<20?"str":scores.con<20?"con":scores.dex<20?"dex":null;if(target)scores[target]=Math.min(20,scores[target]+2);}
 
-export function barbarianAbilityMaximums(ruleset,level){try{const max=Number(level)>=20?(ruleset==="2014"?24:25):20;return{str:max,con:max};}catch(error){console.error("[barbarian] maximum lookup failed",error);throw error;}}
+export function barbarianAbilityMaximums(ruleset,level){
+  try{
+    const numeric=Number(level);
+    if(ruleset==="2014")return numeric>=20?{str:24,con:24}:{str:20,con:20};
+    if(ruleset==="2024"){
+      if(numeric>=20)return{str:25,con:25};
+      if(numeric>=19)return{str:30,con:20};
+      return{str:20,con:20};
+    }
+    throw new Error(`Unsupported Barbarian ruleset: ${ruleset}`);
+  }catch(error){console.error("[barbarian] maximum lookup failed",error);throw error;}
+}
 export function barbarianUnarmoredAc(abilities,shield=false){try{const mod=score=>Math.floor((score-10)/2);return 10+mod(abilities.dex)+mod(abilities.con)+(shield?2:0);}catch(error){console.error("[barbarian] unarmored AC failed",error);throw error;}}
 export function barbarianSpeed(baseSpeed,level,wearingHeavyArmor=false){try{return Number(level)>=5&&!wearingHeavyArmor?baseSpeed+10:baseSpeed;}catch(error){console.error("[barbarian] speed failed",error);throw error;}}
 export function barbarianResources(ruleset,level){try{const row=barbarianProgression(ruleset,level),resources=[{id:"rage-uses",name:"Rages",value:String(row.rages),detail:ruleset==="2024"?"Regain 1 on a Short Rest; all on a Long Rest.":"Regain all uses on a Long Rest."},{id:"rage-damage",name:"Rage Damage",value:`+${row.rageDamage}`,detail:"Add only when the edition-specific Rage requirements are met."}];if(ruleset==="2024")resources.push({id:"weapon-masteries",name:"Weapon Masteries",value:String(row.masteries),detail:"Chosen melee weapon mastery properties usable after the required training."});if(Number(level)>=11)resources.push({id:"relentless-rage",name:"Relentless Rage",value:"DC 10",detail:"DC increases by 5 after each use and resets after a Short or Long Rest."});return resources;}catch(error){console.error("[barbarian] failed to build resources",error);throw error;}}
