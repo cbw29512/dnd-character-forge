@@ -2,15 +2,14 @@ import { ABILITIES, SOURCE } from "../schema.js";
 import { abilityMod } from "./math.js";
 import { lifeDomainAlwaysPrepared } from "./cleric.js";
 import { barbarianProgression, barbarianUnarmoredAc, barbarianSpeed } from "./barbarian.js";
+import { BARBARIAN_ADVANCEMENT } from "./barbarian-advancement.js";
 import { duplicateValues } from "./duplicates.js";
 
 const CLERIC_CANTRIPS={1:3,2:3,3:3,4:4,5:4},CLERIC_PREPARED_2024={1:4,2:5,3:6,4:7,5:9};
 export function validateCharacter(character,mode){
   try{
     const errors=[];
-    if(mode!==SOURCE.RAW)errors.push("Production Character Forge accepts RAW characters only.");
-    if(character.sourceMode!==SOURCE.RAW)errors.push("Generated character source must be RAW.");
-    if(character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");
+    if(mode!==SOURCE.RAW)errors.push("Production Character Forge accepts RAW characters only.");if(character.sourceMode!==SOURCE.RAW)errors.push("Generated character source must be RAW.");if(character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");
     const maxLevel=character.class.maxLevel||5;if(character.level<1||character.level>maxLevel)errors.push(`${character.class.name} is validated through level ${maxLevel}.`);
     for(const ability of ABILITIES){const max=character.abilityMaximums[ability]??20;if(character.abilities[ability]>max)errors.push(`${ability.toUpperCase()} exceeds its maximum.`);if(character.abilities[ability]<1)errors.push(`${ability.toUpperCase()} is below 1.`);}
     checkDuplicates(errors,"skill proficiencies",character.skills);checkDuplicates(errors,"expertise entries",character.expertise);checkDuplicates(errors,"saving throw proficiencies",character.saves);checkDuplicates(errors,"languages",character.languages);checkDuplicates(errors,"feats",character.feats,item=>item.id);checkDuplicates(errors,"feat names",character.feats,item=>item.name);checkDuplicates(errors,"Homebrew entries",character.homebrew,item=>item.id);checkDuplicates(errors,"Homebrew names",character.homebrew,item=>item.name);checkDuplicates(errors,"weapon masteries",character.masteryIds);checkDuplicates(errors,"attack entries",character.attacks,item=>item.name);checkDuplicates(errors,"features",character.features);
@@ -24,11 +23,24 @@ function validateBarbarian(errors,character){
     if(resources["rage-uses"]!==String(row.rages))errors.push("Barbarian Rage uses do not match the class table.");if(resources["rage-damage"]!==`+${row.rageDamage}`)errors.push("Barbarian Rage Damage does not match the class table.");
     const expectedMasteries=character.ruleset==="2024"?row.masteries:0;if(character.masteryIds.length!==expectedMasteries)errors.push(`Barbarian Weapon Mastery count should be ${expectedMasteries}.`);
     const expectedSkills=character.class.skillCount+(character.ruleset==="2024"&&character.level>=3?1:0);if(character.skills.length<expectedSkills)errors.push(`Barbarian should have at least ${expectedSkills} class/background skill proficiencies at this level.`);
-    if(!character.equipment.armor){const expectedAc=barbarianUnarmoredAc(character.abilities,character.equipment.shield);if(character.ac!==expectedAc)errors.push(`Barbarian Unarmored Defense should produce AC ${expectedAc}.`);}
-    const expectedSpeed=barbarianSpeed(character.species.speed,character.level,false);if(character.speed!==expectedSpeed)errors.push(`Barbarian speed should be ${expectedSpeed} ft at this level.`);
+    if(!character.equipment.armor){const expectedAc=barbarianUnarmoredAc(character.abilities,character.equipment.shield);if(character.ac!==expectedAc)errors.push(`Barbarian Unarmored Defense should produce AC ${expectedAc}.`);}const expectedSpeed=barbarianSpeed(character.species.speed,character.level,false);if(character.speed!==expectedSpeed)errors.push(`Barbarian speed should be ${expectedSpeed} ft at this level.`);
     if(character.level>=3&&character.subclass?.id!=="path-berserker")errors.push("Verified Barbarian levels 3+ require the SRD Path of the Berserker subclass.");
-    if(character.ruleset==="2024"&&character.level>=19&&!character.feats.some(feat=>feat.id==="boon-irresistible-offense"))errors.push("Level 19+ 2024 Barbarian is missing the verified Epic Boon choice.");
+    validateBarbarianAdvancement(errors,character);
   }catch(error){console.error("[validation] Barbarian validation failed",error);throw error;}
+}
+function validateBarbarianAdvancement(errors,character){
+  try{
+    const choices=character.advancementChoices||[],levels=character.ruleset==="2014"?BARBARIAN_ADVANCEMENT.levels2014:BARBARIAN_ADVANCEMENT.normal2024,expected=levels.filter(level=>character.level>=level);
+    if(character.ruleset==="2024"&&character.level>=19)expected.push(19);
+    if(choices.length!==expected.length)errors.push(`Barbarian advancement choice count should be ${expected.length}.`);
+    if(choices.some((choice,index)=>choice.level!==expected[index]))errors.push("Barbarian advancement levels are out of sequence.");
+    if(character.feats.filter(feat=>feat.id==="grappler").length>1)errors.push("Grappler cannot be selected more than once.");
+    if(character.feats.some(feat=>feat.id==="grappler")&&character.ruleset==="2014"&&character.abilities.str<13)errors.push("2014 Grappler requires Strength 13+.");
+    if(character.ruleset==="2024"){
+      const normal=choices.filter(choice=>choice.level<19);if(normal.some(choice=>!["ability-score-improvement","grappler"].includes(choice.id)))errors.push("2024 Barbarian normal feat levels contain an ineligible General feat.");
+      if(character.level>=19){const epic=choices.find(choice=>choice.level===19);if(!epic||!BARBARIAN_ADVANCEMENT.epicBoons.includes(epic.id))errors.push("Level 19+ Barbarian is missing an eligible SRD Epic Boon.");if(epic&&!character.feats.some(feat=>feat.id===epic.id))errors.push("Selected Epic Boon is missing from feat records.");}
+    }else if(choices.some(choice=>choice.type==="feat"&&choice.id!=="grappler"))errors.push("2014 SRD Barbarian may replace an ASI only with Grappler.");
+  }catch(error){console.error("[validation] Barbarian advancement validation failed",error);throw error;}
 }
 function validateWizard(errors,character){try{if(!character.spells){errors.push("Wizard spellcasting data is missing.");return;}checkDuplicates(errors,"Wizard cantrips",character.spells.cantrips.all);checkDuplicates(errors,"Wizard spellbook spells",character.spells.spellbook.all);checkDuplicates(errors,"prepared Wizard spells",character.spells.prepared.all);const book=new Set(character.spells.spellbook.all),outside=character.spells.prepared.all.filter(id=>!book.has(id));if(outside.length)errors.push(`Prepared Wizard spells missing from spellbook: ${outside.join(", ")}.`);if(!Number.isInteger(character.spells.saveDc)||!Number.isInteger(character.spells.attackBonus))errors.push("Wizard spellcasting math failed.");}catch(error){console.error("[validation] Wizard validation failed",error);throw error;}}
 function validateCleric(errors,character){try{if(!character.spells){errors.push("Cleric spellcasting data is missing.");return;}const spells=character.spells,always=spells.alwaysPrepared||[];checkDuplicates(errors,"Cleric cantrips",spells.cantrips.all);checkDuplicates(errors,"prepared Cleric spells",spells.prepared.all);checkDuplicates(errors,"always-prepared Cleric spells",always);const overlap=spells.prepared.all.filter(id=>always.includes(id));if(overlap.length)errors.push(`Life Domain spells must not consume normal prepared slots: ${overlap.join(", ")}.`);const expectedCantrips=CLERIC_CANTRIPS[character.level]+(character.ruleset==="2024"&&character.divineOrder==="thaumaturge"?1:0),expectedPrepared=character.ruleset==="2024"?CLERIC_PREPARED_2024[character.level]:Math.max(1,character.level+abilityMod(character.abilities.wis)),expectedAlways=lifeDomainAlwaysPrepared(character.ruleset,character.level);if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==expectedPrepared)errors.push(`Cleric prepared-spell count should be ${expectedPrepared}.`);if(always.length!==expectedAlways.length||expectedAlways.some(id=>!always.includes(id)))errors.push("Life Domain always-prepared spells are incomplete.");if(character.ruleset==="2024"&&!['protector','thaumaturge'].includes(character.divineOrder))errors.push("2024 Cleric Divine Order is invalid.");if(!Number.isInteger(spells.saveDc)||!Number.isInteger(spells.attackBonus))errors.push("Cleric spellcasting math failed.");}catch(error){console.error("[validation] Cleric validation failed",error);throw error;}}
