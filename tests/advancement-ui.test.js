@@ -5,7 +5,7 @@ import fs from "node:fs";
 const html=fs.readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const picker=fs.readFileSync(new URL("../src/ui/advancement-picker.js",import.meta.url),"utf8");
 const app=fs.readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
-const renderer=fs.readFileSync(new URL("../src/ui/render.js",import.meta.url),"utf8");
+const renderer=fs.readFileSync(new URL("../src/ui/render.js",import.meta.url),"utf8")+fs.readFileSync(new URL("../src/ui/render-core.js",import.meta.url),"utf8");
 
 test("Forge exposes one class-aware advancement panel wired to application state",()=>{
   assert.equal((html.match(/id="advancementPanel"/g)||[]).length,1);
@@ -31,9 +31,11 @@ test("advancement picker preserves edition-specific choices for Barbarian Rogue 
   assert.doesNotMatch(picker,/boon-spell-recall/);
 });
 
-test("printed class sheet gives feats and saving throws explicit sections",()=>{
+test("printed class sheet gives feats saving throws languages and tools explicit sections",()=>{
   assert.match(renderer,/Feats & Boons/);
   assert.match(renderer,/sheet-section-feats/);
   assert.match(renderer,/save-grid/);
   assert.match(renderer,/item\.id\.startsWith\("feat:"\)/);
+  assert.match(renderer,/Languages/);
+  assert.match(renderer,/Tool Proficiencies/);
 });
