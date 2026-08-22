@@ -16,10 +16,11 @@ test("Forge exposes one class-aware advancement panel wired to application state
   assert.match(app,/advancementSelections/);
 });
 
-test("advancement picker preserves edition-specific choices for Barbarian Rogue and Fighter",()=>{
+test("advancement picker preserves edition-specific choices for Barbarian Rogue Fighter and Monk",()=>{
   assert.match(picker,/ROGUE_ADVANCEMENT/);
   assert.match(picker,/FIGHTER_ADVANCEMENT/);
-  assert.match(picker,/\["barbarian","rogue","fighter"\]/);
+  assert.match(picker,/MONK_ADVANCEMENT/);
+  assert.match(picker,/\["barbarian","rogue","fighter","monk"\]/);
   assert.match(picker,/ROGUE_2014/);
   assert.match(picker,/\["asi","Ability Score Improvement"\]/);
   assert.match(picker,/\["ability-score-improvement","Ability Score Improvement"\]/);
