@@ -6,6 +6,8 @@ Character Forge is release-ready only when every option exposed in the public UI
 
 The public Forge is RAW-only. It does not expose Homebrew mode, accept Homebrew effects, or load Homebrew mechanics into generated characters.
 
+A class is not considered complete merely because the generator can create it. It must also produce a class-aware, table-ready character sheet whose displayed resources and reminders are derived from that character's validated RAW mechanics at the selected level.
+
 ## Authoritative rules boundaries
 
 - **2014 mode:** System Reference Document 5.1 (Creative Commons release).
@@ -35,7 +37,7 @@ Core generated-character state:
   - `prepared`
 - `currentCharacter`
 
-Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive Perception, spell save DC, spell attack bonus, attack bonuses, damage bonuses, spell slots, and legal prepared/spellbook counts must be calculated from source mechanics.
+Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive Perception, spell save DC, spell attack bonus, attack bonuses, damage bonuses, spell slots, legal prepared/spellbook counts, class resource uses, resource scaling, and class feature scaling must be calculated from source mechanics.
 
 ## State rules
 
@@ -69,6 +71,7 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 - Ability-score maximums are tested.
 - Skill/save/language/feat/mastery duplicates are blocked.
 - Spell list, spellbook, preparation, always-prepared, and slot-count rules are tested.
+- Class resource counts and level scaling are tested against the correct SRD tables.
 - At least 1,000 randomized generations per supported class/ruleset complete without an invalid character.
 
 ### Player usability
@@ -76,7 +79,33 @@ Derived values such as AC, HP, initiative, save bonuses, skill bonuses, passive 
 - A player can forge a valid character with every field left Random.
 - A player can lock any supported exposed choice and let Forge legally fill the remainder.
 - The generated sheet contains the information needed to play the character at the table without relying on guessed mechanics.
-- Print output is usable on paper and mobile layout remains usable at narrow phone widths.
+- Every SRD class has an explicit sheet profile; unknown classes fail closed instead of receiving a generic layout.
+- Class identity changes information hierarchy, not rules. Fighter sheets prioritize attacks/actions, caster sheets prioritize spellcasting, and resource-driven classes prioritize their current-level resources.
+- A resource is printed only when the validated character model contains that resource and its RAW value.
+- No generic placeholder may state a class resource count or scaling value.
+- Printed sections and individual rules cards avoid destructive page splits where browser print engines permit it.
+- Print output is legible in color and monochrome.
+- The first printed page prioritizes at-table information: identity, ability scores, AC, HP, initiative, speed, proficiency, core attacks/spellcasting, and primary class resources.
+- Mobile layout remains usable at narrow phone widths.
+
+### Class sheet identity
+
+The twelve SRD classes have dedicated presentation profiles:
+
+- Barbarian: primal/resource-forward
+- Bard: performance/support/spell-forward
+- Cleric: divine/resource/spell-forward
+- Druid: wild/resource/spell-forward
+- Fighter: martial/attack-forward
+- Monk: discipline/resource/attack-forward
+- Paladin: oath/attack/resource/spell-forward
+- Ranger: wilderness/attack/spell-forward
+- Rogue: cunning/skill/attack-forward
+- Sorcerer: innate-arcane/resource/spell-forward
+- Warlock: pact/resource/spell/attack-forward
+- Wizard: scholarly-arcane/spell-forward
+
+These are presentation identities only. They cannot add, remove, or alter mechanics.
 
 ### Release safety
 
