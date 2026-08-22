@@ -17,62 +17,38 @@ export function applyBarbarianAdvancement(character,data){
         if(character.level<level)continue;
         const canGrapple=!grapplerTaken&&next.abilities.str>=13;
         const useFeat=canGrapple&&Math.random()<.25;
-        if(useFeat){
-          const feat=requiredFeat(data,"grappler");next.feats.push(feat);grapplerTaken=true;
-          choices.push({level,type:"feat",id:feat.id,name:feat.name});
-        }else{
-          const increases=applyAsi(next.abilities,["str","con","dex"],20);
-          choices.push({level,type:"asi",name:"Ability Score Improvement",increases});
-        }
+        if(useFeat){const feat=requiredFeat(data,"grappler");next.feats.push(feat);grapplerTaken=true;choices.push({level,type:"feat",id:feat.id,name:feat.name});}
+        else choices.push({level,type:"asi",name:"Ability Score Improvement",increases:applyAsi(next.abilities,["str","con","dex"],20)});
       }
     }else if(character.ruleset==="2024"){
       let grapplerTaken=next.feats.some(feat=>feat.id==="grappler");
       for(const level of NORMAL_LEVELS){
         if(character.level<level)continue;
-        const canGrapple=!grapplerTaken&&(next.abilities.str>=13||next.abilities.dex>=13);
-        const useGrappler=canGrapple&&Math.random()<.25;
+        const canGrapple=!grapplerTaken&&(next.abilities.str>=13||next.abilities.dex>=13),useGrappler=canGrapple&&Math.random()<.25;
         if(useGrappler){
-          const feat=requiredFeat(data,"grappler"),ability=bestAbility(next.abilities,["str","dex"],20);
-          next.abilities[ability]+=1;next.feats.push(feat);grapplerTaken=true;
+          const feat=requiredFeat(data,"grappler"),ability=bestAbility(next.abilities,["str","dex"],20);next.abilities[ability]+=1;next.feats.push(feat);grapplerTaken=true;
           choices.push({level,type:"feat",id:feat.id,name:feat.name,increases:{[ability]:1}});
         }else{
-          const feat=requiredFeat(data,"ability-score-improvement"),increases=applyAsi(next.abilities,["str","con","dex"],20);
-          next.feats.push(feat);choices.push({level,type:"feat",id:feat.id,name:feat.name,increases});
+          const feat=requiredFeat(data,"ability-score-improvement"),increases=applyAsi(next.abilities,["str","con","dex"],20);next.feats.push(feat);
+          choices.push({level,type:"feat",id:feat.id,name:feat.name,increases});
         }
       }
       if(character.level>=19){
-        const feat=requiredFeat(data,pick(EPIC_BOONS)),ability=epicAbility(next.abilities,feat.id);
-        next.abilities[ability]+=1;next.abilityMaximums[ability]=30;next.feats.push(feat);
+        const feat=requiredFeat(data,pick(EPIC_BOONS)),ability=epicAbility(next.abilities,feat.id);next.abilities[ability]+=1;
+        next.abilityMaximums[ability]=Math.max(next.abilityMaximums[ability]||20,next.abilities[ability]);next.feats.push(feat);
         choices.push({level:19,type:"epic-boon",id:feat.id,name:feat.name,increases:{[ability]:1}});
       }
     }else throw new Error(`Unsupported Barbarian advancement ruleset: ${character.ruleset}`);
-    next.feats=dedupeRepeatable(next.feats);
-    next.advancementChoices=choices;
-    return next;
+    next.feats=dedupeRepeatable(next.feats);next.advancementChoices=choices;return next;
   }catch(error){console.error("[barbarian-advancement] advancement failed",error);throw error;}
 }
 
 function applyAsi(abilities,priority,max){
-  try{
-    const first=bestAbility(abilities,priority,max),result={};
-    const room=max-abilities[first];
-    if(room>=2){abilities[first]+=2;result[first]=2;return result;}
-    if(room===1){abilities[first]+=1;result[first]=1;}
-    const second=bestAbility(abilities,priority.filter(a=>a!==first),max);
-    if(abilities[second]<max){abilities[second]+=1;result[second]=(result[second]||0)+1;}
-    return result;
-  }catch(error){console.error("[barbarian-advancement] ASI failed",error);throw error;}
+  try{const first=bestAbility(abilities,priority,max),result={},room=max-abilities[first];if(room>=2){abilities[first]+=2;result[first]=2;return result;}if(room===1){abilities[first]+=1;result[first]=1;}const remaining=priority.filter(a=>a!==first&&abilities[a]<max);if(remaining.length){const second=bestAbility(abilities,remaining,max);abilities[second]+=1;result[second]=(result[second]||0)+1;}return result;}
+  catch(error){console.error("[barbarian-advancement] ASI failed",error);throw error;}
 }
-
-function bestAbility(abilities,priority,max){
-  const legal=priority.filter(id=>abilities[id]<max);
-  if(!legal.length)throw new Error(`No legal ability remains below ${max}.`);
-  return legal.sort((a,b)=>abilities[b]-abilities[a]||priority.indexOf(a)-priority.indexOf(b))[0];
-}
+function bestAbility(abilities,priority,max){const legal=priority.filter(id=>abilities[id]<max);if(!legal.length)throw new Error(`No legal ability remains below ${max}.`);return legal.sort((a,b)=>abilities[b]-abilities[a]||priority.indexOf(a)-priority.indexOf(b))[0];}
 function epicAbility(abilities,featId){return featId==="boon-irresistible-offense"?bestAbility(abilities,["str","dex"],30):bestAbility(abilities,["str","con","dex","wis","cha","int"],30);}
 function requiredFeat(data,id){const feat=data.feats.find(item=>item.id===id);if(!feat)throw new Error(`Required RAW feat is missing: ${id}`);return feat;}
-function dedupeRepeatable(feats){
-  const seen=new Set();return feats.filter(feat=>{if(feat.id==="ability-score-improvement")return true;if(seen.has(feat.id))return false;seen.add(feat.id);return true;});
-}
-
+function dedupeRepeatable(feats){const seen=new Set();return feats.filter(feat=>{if(feat.id==="ability-score-improvement")return true;if(seen.has(feat.id))return false;seen.add(feat.id);return true;});}
 export const BARBARIAN_ADVANCEMENT=Object.freeze({normal2024:NORMAL_LEVELS,levels2014:LEVELS_2014,epicBoons:EPIC_BOONS});
