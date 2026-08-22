@@ -1,5 +1,6 @@
 import { SPELL_REFERENCE_2024_LEVEL1_CLERIC } from "./spell-reference-2024-level1-cleric.js";
 import { SPELL_REFERENCE_2024_LEVEL4_CLERIC } from "./spell-reference-2024-level4-cleric.js";
+import { SPELL_REFERENCE_2024_LEVEL5_CLERIC } from "./spell-reference-2024-level5-cleric.js";
 
 const s=(id,name,school,castingTime,range,components,duration,resolution,effect,srdPage,extra={})=>({id,name,level:0,school,castingTime,range,components,duration,resolution,effect,concentration:false,ritual:false,upcast:null,source:"SRD 5.2.1",srdPage,...extra});
 const CANTRIPS=[
@@ -24,5 +25,5 @@ const CANTRIPS=[
   s("thaumaturgy","Thaumaturgy","Transmutation","Action","30 ft","V","Up to 1 min","Utility","Create a minor wonder: alter your eyes, boom your voice and gain Advantage on Intimidation, manipulate nearby flames, open or slam an unlocked door/window, create a phantom sound, or cause harmless tremors. Up to three 1-minute effects can coexist.",169),
   s("true-strike","True Strike","Divination","Action","Self","S, M","Instantaneous","Weapon attack","Make one attack with the material weapon, using your spellcasting ability for its attack and damage rolls. The damage can be Radiant or the weapon's normal type; higher character levels add Radiant damage.",171,{trueStrikeScaling:true})
 ];
-export const SPELL_REFERENCE_2024=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC,...SPELL_REFERENCE_2024_LEVEL4_CLERIC];
+export const SPELL_REFERENCE_2024=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC,...SPELL_REFERENCE_2024_LEVEL4_CLERIC,...SPELL_REFERENCE_2024_LEVEL5_CLERIC];
 export const SPELL_REFERENCE_2024_BY_ID=Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell]));
