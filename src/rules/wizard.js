@@ -3,15 +3,13 @@ import { abilityMod } from "./math.js";
 import { resolveSpellChoices } from "./spells.js";
 import { pick } from "./random.js";
 import { duplicateValues, uniqueStrings } from "./duplicates.js";
-
-const CANTRIPS={1:3,2:3,3:3,4:4,5:4};
-const PREPARED_2024={1:4,2:5,3:6,4:7,5:9};
-const SLOTS={1:{1:2},2:{1:3},3:{1:4,2:2},4:{1:4,2:3},5:{1:4,2:3,3:2}};
+import { maxFullCasterSpellLevel } from "./full-caster.js";
+import { wizardProgression } from "./wizard-progression.js";
 
 export function wizardPickerLimits({ruleset,level,subclassId}){
   try{
-    const character={ruleset,level:Number(level),subclass:subclassId?{id:subclassId}:null};
-    return {cantrips:CANTRIPS[character.level],spellbook:acquisitionSlots(character).length,prepared:ruleset==="2024"?PREPARED_2024[character.level]:null};
+    const character={ruleset,level:Number(level),subclass:subclassId?{id:subclassId}:null},row=wizardProgression(ruleset,level);
+    return {cantrips:row.cantrips,spellbook:acquisitionSlots(character).length,prepared:row.prepared};
   }catch(error){console.error("[wizard] picker limits failed",error);throw error;}
 }
 export function validateWizardSelections({ruleset,level,subclassId,selections={}}){
@@ -29,17 +27,17 @@ export function validateWizardSelections({ruleset,level,subclassId,selections={}
 }
 export function buildWizardSpellcasting(character,selections={}){
   try{
-    const spells=wizardSpellsFor(character.ruleset),cantripPool=spells.filter(spell=>spell.level===0).map(spell=>spell.id);
-    const cantrips=resolveSpellChoices({available:cantripPool,selected:selections.cantrips||[],required:CANTRIPS[character.level],label:"cantrips"});
+    const row=wizardProgression(character.ruleset,character.level),spells=wizardSpellsFor(character.ruleset),cantripPool=spells.filter(spell=>spell.level===0).map(spell=>spell.id);
+    const cantrips=resolveSpellChoices({available:cantripPool,selected:selections.cantrips||[],required:row.cantrips,label:"cantrips"});
     const spellbook=buildSpellbook(character,spells,selections);
-    const preparedCount=character.ruleset==="2024"?PREPARED_2024[character.level]:Math.max(1,character.level+abilityMod(character.abilities.int));
+    const preparedCount=character.ruleset==="2024"?row.prepared:Math.max(1,character.level+abilityMod(character.abilities.int));
     const prepared=resolveSpellChoices({available:spellbook.all,selected:selections.prepared||[],required:Math.min(preparedCount,spellbook.all.length),label:"prepared spells"});
-    return {ability:"int",saveDc:8+character.proficiency+abilityMod(character.abilities.int),attackBonus:character.proficiency+abilityMod(character.abilities.int),slots:SLOTS[character.level],cantrips,spellbook,prepared,all:uniqueStrings([...cantrips.all,...prepared.all].map(id=>spells.find(spell=>spell.id===id)?.name||id))};
+    return {ability:"int",saveDc:8+character.proficiency+abilityMod(character.abilities.int),attackBonus:character.proficiency+abilityMod(character.abilities.int),slots:row.slots,cantrips,spellbook,prepared,all:uniqueStrings([...cantrips.all,...prepared.all].map(id=>spells.find(spell=>spell.id===id)?.name||id))};
   }catch(error){console.error("[wizard] spellcasting build failed",error);throw error;}
 }
 function validateMandatoryBook(character,spells,selections){
   try{
-    const levelSpells=spells.filter(spell=>spell.level>0&&spell.level<=maxSpellLevel(character.level)),byId=new Map(levelSpells.map(spell=>[spell.id,spell]));
+    const levelSpells=spells.filter(spell=>spell.level>0&&spell.level<=maxFullCasterSpellLevel(character.level)),byId=new Map(levelSpells.map(spell=>[spell.id,spell]));
     const mandatory=uniqueStrings([...(selections.spellbook||[]),...(selections.prepared||[])]),illegal=mandatory.filter(id=>!byId.has(id)),slots=acquisitionSlots(character),assignments=new Map(),free=slots.map((slot,index)=>({...slot,index}));
     if(illegal.length)throw new Error(`Illegal Wizard spell selection: ${illegal.join(", ")}`);
     if(mandatory.length>slots.length)throw new Error(`Too many unique spellbook requirements: ${mandatory.length} of ${slots.length}.`);
@@ -61,7 +59,13 @@ function assignMandatory(spell,free,assignments){
   catch(error){console.error("[wizard] mandatory spell assignment failed",error);throw error;}
 }
 function acquisitionSlots(character){
-  try{const slots=Array.from({length:6},()=>({characterLevel:1,maxLevel:1,school:null,label:"Level 1 apprenticeship"}));for(let level=2;level<=character.level;level++)for(let i=0;i<2;i++)slots.push({characterLevel:level,maxLevel:maxSpellLevel(level),school:null,label:`Wizard level ${level}`});if(character.ruleset==="2024"&&character.subclass?.id==="evoker"&&character.level>=3){slots.push({characterLevel:3,maxLevel:2,school:"Evocation",label:"Evocation Savant"},{characterLevel:3,maxLevel:2,school:"Evocation",label:"Evocation Savant"});if(character.level>=5)slots.push({characterLevel:5,maxLevel:3,school:"Evocation",label:"Evocation Savant — new slot level"});}return slots;}
-  catch(error){console.error("[wizard] acquisition slots failed",error);throw error;}
+  try{
+    const slots=Array.from({length:6},()=>({characterLevel:1,maxLevel:1,school:null,label:"Level 1 apprenticeship"}));
+    for(let level=2;level<=character.level;level++)for(let i=0;i<2;i++)slots.push({characterLevel:level,maxLevel:maxFullCasterSpellLevel(level),school:null,label:`Wizard level ${level}`});
+    if(character.ruleset==="2024"&&character.subclass?.id==="evoker"&&character.level>=3){
+      slots.push({characterLevel:3,maxLevel:2,school:"Evocation",label:"Evocation Savant"},{characterLevel:3,maxLevel:2,school:"Evocation",label:"Evocation Savant"});
+      for(let level=5;level<=character.level&&level<=17;level+=2)slots.push({characterLevel:level,maxLevel:maxFullCasterSpellLevel(level),school:"Evocation",label:"Evocation Savant — new slot level"});
+    }
+    return slots;
+  }catch(error){console.error("[wizard] acquisition slots failed",error);throw error;}
 }
-const maxSpellLevel=level=>Math.min(3,Math.ceil(level/2));

@@ -1,74 +1,81 @@
 const r=(category,timing,text)=>({category,timing,text});
 export const REFERENCE_2014={
-  species:{
-    "Ability Score Increase":r("Human","Passive","Already applied: all six ability scores increased by 1."),
-    "Extra Language":r("Human","Passive","Your additional Human language is already included in Languages.")
-  },
+  species:{"Ability Score Increase":r("Human","Passive","Already applied: all six ability scores increased by 1."),"Extra Language":r("Human","Passive","Your additional Human language is already included in Languages.")},
   background:{"Shelter of the Faithful":r("Acolyte","Downtime","Temples of your faith can provide free care and healing; you can receive modest personal support and nonhazardous temple assistance while in good standing.")},
+  feat:{"Grappler":r("Feat","While grappling","You have advantage on attack rolls against a creature you are grappling. You can use your action to make another grapple check to pin it; on success, both of you are restrained until the grapple ends.")},
   style:{
     "Defense":r("Fighting Style","Passive","While wearing armor, gain +1 AC; this bonus is already included above."),
     "Archery":r("Fighting Style","Passive","Gain +2 on attack rolls made with ranged weapons; this is already included in ranged attacks above."),
-    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll.")
+    "Dueling":r("Fighting Style","One-handed melee damage","When wielding a melee weapon in one hand and no other weapons, gain +2 damage with that weapon; a shield does not prevent this style."),
+    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll."),
+    "Protection":r("Fighting Style","Reaction","While wielding a shield, impose Disadvantage on an attack against a creature other than you within 5 feet when you can see the attacker."),
+    "Two-Weapon Fighting":r("Fighting Style","Two-weapon damage","When you engage in two-weapon fighting, add your ability modifier to the damage of the second attack.")
   },
   feature:{
-    "Action Surge":r("Fighter","On your turn","Take one additional action. One use; regain it after a Short or Long Rest."),
+    "Martial Archetype":r("Fighter","Level 3","Champion is the SRD Martial Archetype used by this generated Fighter."),
+    "Action Surge":r("Fighter","On your turn","Take one additional action on top of your regular action and possible Bonus Action. The current number of uses is shown in Class Resources; regain expended uses after a Short or Long Rest."),
+    "Indomitable":r("Fighter","Failed saving throw","Reroll a failed saving throw and use the new roll. Your current uses per Long Rest are shown in Class Resources."),
     "Improved Critical":r("Champion","Passive","Your weapon attacks score a Critical Hit on a d20 roll of 19 or 20."),
-    "Extra Attack":r("Class","Attack action","Attack twice instead of once when you take the Attack action."),
-    "Ability Score Improvement":r("Class","Applied","The generated level-4 ability increase is already included in the ability scores above."),
-    "Evocation Savant":r("School of Evocation","Spellbook","Copying an Evocation spell into your spellbook takes half the normal time and gold."),
-    "Sculpt Spells":r("School of Evocation","When casting","For an Evocation spell that affects other creatures you can see, protect up to 1 + spell level creatures. They automatically succeed on saves and take no damage when a successful save would normally halve damage."),
-    "Divine Domain: Life Domain":r("Life Domain","Passive","Your Life Domain spells are always prepared and do not count against your normal prepared-spell total."),
-    "Bonus Proficiency: Heavy Armor":r("Life Domain","Passive","You are proficient with Heavy armor; the generated armor and AC already account for this."),
-    "Disciple of Life":r("Life Domain","Healing spell","When a level 1+ spell restores Hit Points, the target regains an extra 2 + the spell's level."),
-    "Channel Divinity (1/rest)":r("Cleric","Resource","One Channel Divinity use fuels Turn Undead or Preserve Life; regain it after a Short or Long Rest."),
-    "Turn Undead":r("Cleric","Action","Undead within 30 ft that can see or hear you make a Wisdom save. A failure turns the creature for 1 minute or until damaged: it must move away, cannot willingly come within 30 ft or take Reactions, and normally can only Dash or escape movement restraints; with nowhere to move, it can Dodge."),
-    "Destroy Undead (CR 1/2)":r("Cleric","Turn Undead","An Undead of CR 1/2 or lower that fails its save against Turn Undead is destroyed instead."),
-    "Life Domain":r("Life Domain","Passive","Life Domain features and always-prepared spells are reflected elsewhere on this sheet.")
+    "Remarkable Athlete":r("Champion","Ability checks / jumping","Add half your Proficiency Bonus, rounded up, to STR, DEX, or CON checks that don't already use it. Your running long-jump distance also increases by your STR modifier in feet."),
+    "Additional Fighting Style":r("Champion","Passive","You have a second, distinct Fighting Style. Its specific rule appears as a separate reference on this sheet."),
+    "Additional Fighting Style: Defense":r("Champion Fighting Style","Passive","While wearing armor, gain +1 AC; already included above."),
+    "Additional Fighting Style: Archery":r("Champion Fighting Style","Passive","Gain +2 on ranged-weapon attack rolls; already included in qualifying attacks above."),
+    "Additional Fighting Style: Dueling":r("Champion Fighting Style","One-handed melee damage","When wielding a melee weapon in one hand and no other weapons, gain +2 damage with that weapon; a shield is allowed."),
+    "Additional Fighting Style: Great Weapon Fighting":r("Champion Fighting Style","On damage","With a qualifying two-handed or versatile melee weapon, reroll a weapon damage die result of 1 or 2 once and use the new result."),
+    "Additional Fighting Style: Protection":r("Champion Fighting Style","Reaction","While wielding a shield, impose Disadvantage on an attack against another creature within 5 feet when you can see the attacker."),
+    "Additional Fighting Style: Two-Weapon Fighting":r("Champion Fighting Style","Two-weapon damage","Add your ability modifier to the damage of the second attack when engaging in two-weapon fighting."),
+    "Superior Critical":r("Champion","Passive","Your weapon attacks score a Critical Hit on a d20 roll of 18–20."),
+    "Survivor":r("Champion","Start of turn","If you have 1 or more HP and no more than half your maximum HP, regain HP equal to 5 + your Constitution modifier."),
+    "Extra Attack":r("Fighter","Attack action","Attack twice instead of once when you take the Attack action."),
+    "Extra Attack (2)":r("Fighter","Attack action","Attack three times instead of once when you take the Attack action."),
+    "Extra Attack (3)":r("Fighter","Attack action","Attack four times instead of once when you take the Attack action."),
+    "Ability Score Improvement":r("Class","Applied","Your legal ASI-or-feat advancement choices are already reflected in the scores and feat entries on this sheet."),
+    "Evocation Savant":r("School of Evocation","Spellbook","Copying an Evocation spell into your spellbook takes half the normal time and gold."),"Sculpt Spells":r("School of Evocation","When casting","For an Evocation spell that affects other creatures you can see, protect up to 1 + spell level creatures. They automatically succeed on saves and take no damage when a successful save would normally halve damage."),"Divine Domain: Life Domain":r("Life Domain","Passive","Your Life Domain spells are always prepared and do not count against your normal prepared-spell total."),"Bonus Proficiency: Heavy Armor":r("Life Domain","Passive","You are proficient with Heavy armor; the generated armor and AC already account for this."),"Disciple of Life":r("Life Domain","Healing spell","When a level 1+ spell restores Hit Points, the target regains an extra 2 + the spell's level."),"Channel Divinity (1/rest)":r("Cleric","Resource","One Channel Divinity use fuels Turn Undead or Preserve Life; regain it after a Short or Long Rest."),"Turn Undead":r("Cleric","Action","Undead within 30 ft that can see or hear you make a Wisdom save. A failure turns the creature for 1 minute or until damaged: it must move away, cannot willingly come within 30 ft or take Reactions, and normally can only Dash or escape movement restraints; with nowhere to move, it can Dodge."),"Destroy Undead (CR 1/2)":r("Cleric","Turn Undead","An Undead of CR 1/2 or lower that fails its save against Turn Undead is destroyed instead."),"Life Domain":r("Life Domain","Passive","Life Domain features and always-prepared spells are reflected elsewhere on this sheet.")
   }
 };
 export const REFERENCE_2024={
-  species:{
-    "Resourceful":r("Human","Long Rest","After you finish a Long Rest, gain Heroic Inspiration."),
-    "Skillful":r("Human","Passive","Your extra Human skill proficiency is already included in Skills."),
-    "Versatile":r("Human","Passive","Your extra Origin feat is listed in your feat/reference entries.")
-  },
+  species:{"Resourceful":r("Human","Long Rest","After you finish a Long Rest, gain Heroic Inspiration."),"Skillful":r("Human","Passive","Your extra Human skill proficiency is already included in Skills."),"Versatile":r("Human","Passive","Your extra Origin feat is listed in your feat/reference entries.")},
   feat:{
     "Alert":r("Origin Feat","Initiative","Add your Proficiency Bonus to Initiative; already included above. Immediately after Initiative, you may swap with a willing ally in the same combat if neither of you is Incapacitated."),
     "Savage Attacker":r("Origin Feat","Once per turn","When you hit with a weapon, roll the weapon's damage dice twice and use either roll."),
-    "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills.")
+    "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills."),
+    "Ability Score Improvement":r("General Feat","Applied","The selected legal ability-score increase is already included in the scores above. This feat can be selected repeatedly at eligible feat levels."),
+    "Grappler":r("General Feat","Unarmed / grapple","The +1 Strength or Dexterity is already applied. Once per turn, a qualifying Unarmed Strike can both deal damage and grapple; you have Advantage against creatures you grapple and can move same-size or smaller grappled creatures without extra movement cost."),
+    "Boon of Combat Prowess":r("Epic Boon","After a missed attack","The boon ability increase is already applied. Once per turn when you miss with an attack roll, you can turn that miss into a hit."),
+    "Boon of Dimensional Travel":r("Epic Boon","After Attack or Magic action","The boon ability increase is already applied. After taking the Attack or Magic action, teleport up to 30 feet to an unoccupied space you can see."),
+    "Boon of Fate":r("Epic Boon","D20 Test reaction","The boon ability increase is already applied. When a creature within 60 feet succeeds or fails a D20 Test, roll 2d4 and add or subtract the total; recharge after Initiative or a Short or Long Rest."),
+    "Boon of Irresistible Offense":r("Epic Boon","Weapon offense","The +1 Strength or Dexterity is already applied. Your Bludgeoning, Piercing, and Slashing damage ignores Resistance; on an attack-roll natural 20, deal extra damage equal to the increased ability score."),
+    "Boon of the Night Spirit":r("Epic Boon","Dim light / darkness","The boon ability increase is already applied. In Dim Light or Darkness you can become Invisible as a Bonus Action until you act, and you resist all damage except Psychic and Radiant while you remain there."),
+    "Boon of Truesight":r("Epic Boon","Passive","The boon ability increase is already applied, and you have Truesight out to 60 feet.")
   },
-  style:{
-    "Defense":r("Fighting Style","Passive","While wearing Light, Medium, or Heavy armor, gain +1 AC; already included above."),
-    "Archery":r("Fighting Style","Passive","Gain +2 on attack rolls with ranged weapons; already included in ranged attacks above."),
-    "Great Weapon Fighting":r("Fighting Style","On damage","For a qualifying two-handed or versatile melee weapon, treat a weapon damage die result of 1 or 2 as 3."),
-    "Two-Weapon Fighting":r("Fighting Style","Light extra attack","Add your ability modifier to the damage of the extra attack from the Light property when it would otherwise be omitted.")
-  },
+  style:{"Defense":r("Fighting Style","Passive","While wearing Light, Medium, or Heavy armor, gain +1 AC; already included above."),"Archery":r("Fighting Style","Passive","Gain +2 on attack rolls with ranged weapons; already included in ranged attacks above."),"Great Weapon Fighting":r("Fighting Style","On damage","For a qualifying two-handed or versatile melee weapon, treat a weapon damage die result of 1 or 2 as 3."),"Two-Weapon Fighting":r("Fighting Style","Light extra attack","Add your ability modifier to the damage of the extra attack from the Light property when it would otherwise be omitted.")},
   feature:{
-    "Action Surge":r("Fighter","On your turn","Take one additional action other than the Magic action. One use; regain it after a Short or Long Rest."),
-    "Tactical Mind":r("Fighter","After failed check","Spend a Second Wind use to add 1d10 to the failed ability check. If it still fails, that Second Wind use is not spent."),
+    "Fighter Subclass":r("Fighter","Level 3","Champion is the SRD Fighter subclass used by this generated Fighter."),
+    "Action Surge":r("Fighter","On your turn","Take one additional action other than the Magic action. The current number of uses is shown in Class Resources; regain expended uses after a Short or Long Rest."),
+    "Tactical Mind":r("Fighter","After failed ability check","Spend a Second Wind use to add 1d10 to the failed check; if the check still fails, that Second Wind use isn't expended."),
+    "Tactical Shift":r("Fighter","With Second Wind","After using Second Wind as a Bonus Action, move up to half your Speed without provoking Opportunity Attacks."),
+    "Indomitable":r("Fighter","Failed saving throw","Reroll the failed save with a bonus equal to your Fighter level. Your current uses per Long Rest are shown in Class Resources."),
+    "Tactical Master":r("Fighter","Weapon attack","When attacking with a weapon whose mastery property you can use, you can replace that property with Push, Sap, or Slow for that attack."),
+    "Studied Attacks":r("Fighter","After a miss","If you miss a creature with an attack roll, you have Advantage on your next attack roll against that creature before the end of your next turn."),
     "Improved Critical":r("Champion","Passive","Weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 19 or 20."),
     "Remarkable Athlete":r("Champion","Passive / after crit","You have Advantage on Initiative and Athletics checks. After a Critical Hit, move up to half your Speed without provoking Opportunity Attacks."),
-    "Extra Attack":r("Class","Attack action","Attack twice instead of once when you take the Attack action."),
-    "Ability Score Improvement":r("Class","Applied","The generated level-4 ability increase is already included in the ability scores above."),
-    "Ritual Adept":r("Wizard","Ritual","A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared, but you must read it from the spellbook."),
-    "Evocation Savant":r("Evoker","Spellbook","The free Evocation spells from this feature are already included in your spellbook; later grants follow the Forge Rules Note for the published timing ambiguity."),
-    "Potent Cantrip":r("Evoker","Damaging cantrip","If a damaging cantrip's attack misses or its target succeeds on the save, the target still takes half the cantrip's damage, with no additional effect."),
-    "Memorize Spell":r("Wizard","After Short Rest","Replace one prepared level 1+ Wizard spell with another level 1+ spell from your spellbook."),
-    "Divine Order: Protector":r("Cleric","Passive","You gain Martial weapon proficiency and Heavy armor training."),
-    "Divine Order: Thaumaturge":r("Cleric","Passive","You know one extra Cleric cantrip. Add your Wisdom modifier (minimum +1) to Intelligence (Arcana) and Intelligence (Religion) checks; already included above."),
-    "Channel Divinity (2 uses)":r("Cleric","Resource","Two uses fuel Divine Spark, Turn Undead, or a subclass option. Regain one use after a Short Rest and all uses after a Long Rest."),
-    "Divine Spark":r("Cleric","Magic action","Choose another creature you can see within 30 ft. Roll 1d8 + Wisdom modifier to heal it, or force a Constitution save for that much Radiant or Necrotic damage; success takes half."),
-    "Turn Undead":r("Cleric","Magic action","Each Undead you choose within 30 ft makes a Wisdom save. A failure makes it Frightened and Incapacitated for 1 minute and it tries to move as far from you as it can. The effect ends on that creature if it takes damage, or if you become Incapacitated or die."),
-    "Life Domain":r("Life Domain","Passive","Life Domain spells shown above are always prepared and do not count against your normal prepared-spell total."),
-    "Disciple of Life":r("Life Domain","Healing spell","When a spell cast with a spell slot restores Hit Points, add 2 + the slot's level to that creature's healing on the turn you cast it.")
+    "Additional Fighting Style":r("Champion","Passive","You gain a second, distinct Fighting Style feat. Its specific rule appears as a separate reference on this sheet."),
+    "Additional Fighting Style: Defense":r("Champion Fighting Style","Passive","While wearing Light, Medium, or Heavy armor, gain +1 AC; already included above."),
+    "Additional Fighting Style: Archery":r("Champion Fighting Style","Passive","Gain +2 on ranged-weapon attack rolls; already included in qualifying attacks above."),
+    "Additional Fighting Style: Great Weapon Fighting":r("Champion Fighting Style","On damage","For a qualifying two-handed or versatile melee weapon, treat a weapon damage die result of 1 or 2 as 3."),
+    "Additional Fighting Style: Two-Weapon Fighting":r("Champion Fighting Style","Light extra attack","Add your ability modifier to the damage of the Light property's extra attack when it would otherwise be omitted."),
+    "Heroic Warrior":r("Champion","Start of turn in combat","If you start your turn without Heroic Inspiration, you can give yourself Heroic Inspiration."),
+    "Superior Critical":r("Champion","Passive","Weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 18–20."),
+    "Survivor":r("Champion","Death saves / start of turn","You have Advantage on Death Saving Throws, and an 18–20 gives the benefit of rolling a 20. At the start of your turn, if Bloodied and at 1+ HP, regain 5 + your Constitution modifier HP."),
+    "Extra Attack":r("Fighter","Attack action","Attack twice instead of once when you take the Attack action."),
+    "Two Extra Attacks":r("Fighter","Attack action","Attack three times instead of once when you take the Attack action."),
+    "Three Extra Attacks":r("Fighter","Attack action","Attack four times instead of once when you take the Attack action."),
+    "Epic Boon":r("Fighter","Level 19","An eligible Epic Boon feat is selected and shown separately in Feats & Boons."),
+    "Ability Score Improvement":r("Class","Applied","Your eligible General-feat selections are reflected in the feat entries and derived scores on this sheet."),
+    "Ritual Adept":r("Wizard","Ritual","A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared, but you must read it from the spellbook."),"Evocation Savant":r("Evoker","Spellbook","The free Evocation spells from this feature are already included in your spellbook; later grants follow the Forge Rules Note for the published timing ambiguity."),"Potent Cantrip":r("Evoker","Damaging cantrip","If a damaging cantrip's attack misses or its target succeeds on the save, the target still takes half the cantrip's damage, with no additional effect."),"Memorize Spell":r("Wizard","After Short Rest","Replace one prepared level 1+ Wizard spell with another level 1+ spell from your spellbook."),"Divine Order: Protector":r("Cleric","Passive","You gain Martial weapon proficiency and Heavy armor training."),"Divine Order: Thaumaturge":r("Cleric","Passive","You know one extra Cleric cantrip. Add your Wisdom modifier (minimum +1) to Intelligence (Arcana) and Intelligence (Religion) checks; already included above."),"Channel Divinity (2 uses)":r("Cleric","Resource","Two uses fuel Divine Spark, Turn Undead, or a subclass option. Regain one use after a Short Rest and all uses after a Long Rest."),"Divine Spark":r("Cleric","Magic action","Choose another creature you can see within 30 ft. Roll 1d8 + Wisdom modifier to heal it, or force a Constitution save for that much Radiant or Necrotic damage; success takes half."),"Turn Undead":r("Cleric","Magic action","Each Undead you choose within 30 ft makes a Wisdom save. A failure makes it Frightened and Incapacitated for 1 minute and it tries to move as far from you as it can. The effect ends on that creature if it takes damage, or if you become Incapacitated or die."),"Life Domain":r("Life Domain","Passive","Life Domain spells shown above are always prepared and do not count against your normal prepared-spell total."),"Disciple of Life":r("Life Domain","Healing spell","When a spell cast with a spell slot restores Hit Points, add 2 + the slot's level to that creature's healing on the turn you cast it.")
   }
 };
 export const MASTERY_REFERENCE={
-  Graze:r("Weapon Mastery","On a miss","Deal damage equal to the ability modifier used for the attack, of the weapon's damage type. Only that ability modifier can increase this Graze damage."),
-  Nick:r("Weapon Mastery","Light extra attack","Make the Light property's extra attack as part of the Attack action instead of as a Bonus Action. This can happen only once per turn."),
-  Push:r("Weapon Mastery","On hit","Push a Large or smaller target up to 10 feet straight away from you."),
-  Sap:r("Weapon Mastery","On hit","The target has Disadvantage on its next attack roll before the start of your next turn."),
-  Slow:r("Weapon Mastery","On hit + damage","Reduce the target's Speed by 10 feet until the start of your next turn. Multiple Slow effects do not stack."),
-  Topple:r("Weapon Mastery","On hit","The target makes a Constitution save (DC 8 + attack ability modifier + Proficiency Bonus); on a failure, it is Prone."),
-  Vex:r("Weapon Mastery","On hit + damage","Gain Advantage on your next attack roll against that target before the end of your next turn.")
+  Cleave:r("Weapon Mastery","On qualifying melee hit","After you hit a creature with a melee attack using this weapon, make one melee attack with the same weapon against a second creature within 5 feet of the first and within your reach. The extra attack can happen only once per turn, and its damage omits your ability modifier unless that modifier is negative."),
+  Graze:r("Weapon Mastery","On a miss","Deal damage equal to the ability modifier used for the attack, of the weapon's damage type. Only that ability modifier can increase this Graze damage."),Nick:r("Weapon Mastery","Light extra attack","Make the Light property's extra attack as part of the Attack action instead of as a Bonus Action. This can happen only once per turn."),Push:r("Weapon Mastery","On hit","Push a Large or smaller target up to 10 feet straight away from you."),Sap:r("Weapon Mastery","On hit","The target has Disadvantage on its next attack roll before the start of your next turn."),Slow:r("Weapon Mastery","On hit + damage","Reduce the target's Speed by 10 feet until the start of your next turn. Multiple Slow effects do not stack."),Topple:r("Weapon Mastery","On hit","The target makes a Constitution save (DC 8 + attack ability modifier + Proficiency Bonus); on a failure, it is Prone."),Vex:r("Weapon Mastery","On hit + damage","Gain Advantage on your next attack roll against that target before the end of your next turn.")
 };

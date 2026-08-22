@@ -1,0 +1,85 @@
+.character-sheet {
+  --sheet-accent:#8c3038;
+  --sheet-accent-soft:#f4e6e7;
+  --sheet-hero-start:#20252c;
+  --sheet-hero-end:#191c21;
+}
+
+/* Visual identity is presentation only. Rules values still come from the validated model. */
+.sheet-theme-primal { --sheet-accent:#7a2e22; --sheet-accent-soft:#f2e4df; --sheet-hero-start:#38251f; --sheet-hero-end:#1f1714; }
+.sheet-theme-performance { --sheet-accent:#714080; --sheet-accent-soft:#eee5f1; --sheet-hero-start:#30223a; --sheet-hero-end:#1d1722; }
+.sheet-theme-divine { --sheet-accent:#9a7429; --sheet-accent-soft:#f5edd9; --sheet-hero-start:#343126; --sheet-hero-end:#1d1c18; }
+.sheet-theme-wild { --sheet-accent:#426b43; --sheet-accent-soft:#e5eee3; --sheet-hero-start:#25342a; --sheet-hero-end:#171e19; }
+.sheet-theme-martial { --sheet-accent:#7d3b35; --sheet-accent-soft:#f0e4e2; --sheet-hero-start:#2c3035; --sheet-hero-end:#191c20; }
+.sheet-theme-discipline { --sheet-accent:#98612f; --sheet-accent-soft:#f3e8dd; --sheet-hero-start:#34302b; --sheet-hero-end:#1d1b19; }
+.sheet-theme-oath { --sheet-accent:#526790; --sheet-accent-soft:#e6eaf2; --sheet-hero-start:#273142; --sheet-hero-end:#171c27; }
+.sheet-theme-wilderness { --sheet-accent:#4e6b38; --sheet-accent-soft:#e8eee1; --sheet-hero-start:#2c3927; --sheet-hero-end:#191f17; }
+.sheet-theme-cunning { --sheet-accent:#4b5967; --sheet-accent-soft:#e7eaed; --sheet-hero-start:#252a30; --sheet-hero-end:#15191d; }
+.sheet-theme-arcane-blood { --sheet-accent:#8a3b52; --sheet-accent-soft:#f2e3e8; --sheet-hero-start:#37222b; --sheet-hero-end:#20151a; }
+.sheet-theme-pact { --sheet-accent:#66508a; --sheet-accent-soft:#ebe6f1; --sheet-hero-start:#2c2437; --sheet-hero-end:#19151f; }
+.sheet-theme-arcane { --sheet-accent:#385d88; --sheet-accent-soft:#e3eaf2; --sheet-hero-start:#263241; --sheet-hero-end:#171d25; }
+
+.character-sheet .character-hero { background:linear-gradient(120deg,var(--sheet-hero-start),var(--sheet-hero-end)); }
+.character-sheet .attack-row strong,.character-sheet .reference-tag { color:var(--sheet-accent); }
+.character-sheet .detail-card h3 { border-bottom:2px solid var(--sheet-accent); padding-bottom:8px; }
+.character-sheet .sheet-section-resources { background:linear-gradient(180deg,var(--sheet-accent-soft),#fffdf9 55%); border-color:color-mix(in srgb,var(--sheet-accent) 28%,#ddd3c4); }
+
+.class-ribbon { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:-28px -28px 22px; padding:9px 28px; background:var(--sheet-accent); color:#fff; text-transform:uppercase; letter-spacing:.14em; }
+.class-ribbon span { font-weight:950; font-size:.74rem; }
+.class-ribbon small { opacity:.78; font-size:.58rem; font-weight:800; }
+.resource-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:9px; }
+.resource-card { min-width:0; padding:11px; border:1px solid color-mix(in srgb,var(--sheet-accent) 22%,#ddd3c4); border-radius:10px; background:#fffdf9; }
+.resource-card span,.resource-card strong,.resource-card small { display:block; }
+.resource-card span { color:#756e64; font-size:.62rem; font-weight:900; letter-spacing:.08em; text-transform:uppercase; }
+.resource-card strong { margin-top:4px; color:var(--sheet-accent); font:700 1.35rem/1.1 Georgia,serif; }
+.resource-card small { margin-top:5px; color:#716a61; font-size:.65rem; line-height:1.35; }
+
+.feat-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:9px; }
+.feat-card { padding:11px; border:1px solid color-mix(in srgb,var(--sheet-accent) 22%,#ddd3c4); border-radius:10px; background:linear-gradient(180deg,var(--sheet-accent-soft),#fffdf9 58%); }
+.feat-card>div { display:flex; justify-content:space-between; gap:9px; align-items:baseline; }
+.feat-card strong { color:#28231f; font:700 .82rem/1.2 Georgia,serif; }
+.feat-card span { color:var(--sheet-accent); font-size:.6rem; font-weight:900; text-transform:uppercase; }
+.feat-card p { margin-top:7px; }
+.feat-card small { display:block; margin-top:6px; color:#786f64; font-size:.63rem; font-weight:800; }
+.save-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; }
+.save-entry { display:flex; justify-content:space-between; gap:5px; padding:7px; border:1px solid #e3dacd; border-radius:8px; color:#777067; font-size:.68rem; }
+.save-entry.is-proficient { border-color:color-mix(in srgb,var(--sheet-accent) 32%,#ddd3c4); background:var(--sheet-accent-soft); color:#28231f; }
+.save-entry strong { color:var(--sheet-accent); }
+
+/* Give implemented classes a visibly different at-table hierarchy. */
+.character-sheet[data-class="barbarian"] .sheet-section-resources,
+.character-sheet[data-class="barbarian"] .sheet-section-attacks,
+.character-sheet[data-class="barbarian"] .sheet-section-feats { border-left:4px solid var(--sheet-accent); }
+.character-sheet[data-class="rogue"] .sheet-section-resources,
+.character-sheet[data-class="rogue"] .sheet-section-attacks,
+.character-sheet[data-class="rogue"] .sheet-section-skills { border-left:4px solid var(--sheet-accent); }
+.character-sheet[data-class="rogue"] .skill.is-proficient { background:linear-gradient(90deg,var(--sheet-accent-soft),transparent); border-radius:5px; padding-inline:5px; }
+.character-sheet[data-class="fighter"] .sheet-section-resources,
+.character-sheet[data-class="fighter"] .sheet-section-attacks,
+.character-sheet[data-class="fighter"] .sheet-section-play-reference { border-left:4px solid var(--sheet-accent); }
+.character-sheet[data-class="fighter"] .sheet-section-resources .resource-card:first-child { border-width:2px; }
+.character-sheet[data-class="wizard"] .sheet-section-spellcasting,
+.character-sheet[data-class="wizard"] .sheet-section-spell-reference { border-left:4px solid var(--sheet-accent); }
+.character-sheet[data-class="cleric"] .sheet-section-spellcasting,
+.character-sheet[data-class="cleric"] .sheet-section-play-reference { border-left:4px solid var(--sheet-accent); }
+
+@media (max-width:680px) { .save-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media print {
+  @page { size:auto; margin:.38in; }
+  html,body { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  .character-sheet { --sheet-accent:#222; --sheet-accent-soft:#f1f1f1; --sheet-hero-start:#222; --sheet-hero-end:#111; font-size:10pt; }
+  .class-ribbon { margin:-20px -20px 14px; padding:7px 20px; }
+  .character-hero { padding:20px; }
+  .character-name { font-size:27pt; }
+  .ability-grid { margin-top:14px; }
+  .ability-card { padding:7px 5px; }
+  .metric { padding:9px 6px; }
+  .detail-grid { gap:8px; padding:10px; }
+  .detail-card { padding:10px; border-radius:7px; break-inside:avoid-page; page-break-inside:avoid; }
+  .sheet-section-spell-reference { break-inside:auto; page-break-inside:auto; }
+  .spell-reference-card,.reference-item,.attack-row,.resource-card,.feat-card,.save-entry { break-inside:avoid-page; page-break-inside:avoid; }
+  .feat-card { padding:8px; }
+  .save-entry { padding:5px; }
+  .sheet-footer { padding:7px 10px 9px; }
+  .validation-badge.raw { background:#eee; border-color:#888; color:#111; }
+}
