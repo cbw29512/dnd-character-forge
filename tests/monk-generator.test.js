@@ -17,6 +17,19 @@ test("both editions generate valid Open Hand Monks at every level 1-20",()=>{
   }
 });
 
+test("Monk weapon attacks use the best legal normal or Martial Arts damage die",()=>{
+  const old1=generateCharacter(monkState("2014",1)),old17=generateCharacter(monkState("2014",17));
+  assert.equal(old1.attacks.find(attack=>attack.id==="quarterstaff").damage,"1d8");
+  assert.equal(old17.attacks.find(attack=>attack.id==="quarterstaff").damage,"1d10");
+  const new1=generateCharacter(monkState("2024",1)),new11=generateCharacter(monkState("2024",11)),new17=generateCharacter(monkState("2024",17));
+  assert.equal(new1.attacks.find(attack=>attack.id==="spear").damage,"1d8");
+  assert.equal(new1.attacks.find(attack=>attack.id==="dagger").damage,"1d6");
+  assert.equal(new11.attacks.find(attack=>attack.id==="spear").damage,"1d10");
+  assert.equal(new11.attacks.find(attack=>attack.id==="dagger").damage,"1d10");
+  assert.equal(new17.attacks.find(attack=>attack.id==="spear").damage,"1d12");
+  assert.equal(new17.attacks.find(attack=>attack.id==="dagger").damage,"1d12");
+});
+
 test("level 14 Monk generation is proficient in all saving throws",()=>{
   for(const ruleset of ["2014","2024"]){const character=generateCharacter(monkState(ruleset,14));assert.deepEqual([...character.saves].sort(),["cha","con","dex","int","str","wis"]);for(const value of Object.values(character.saveBonuses))assert.ok(Number.isInteger(value));}
 });
