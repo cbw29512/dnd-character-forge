@@ -7,6 +7,7 @@ export function createInitialState() {
       ruleset: "2024",
       constraints: { level:RANDOM, species:RANDOM, class:RANDOM, subclass:RANDOM, background:RANDOM, name:"" },
       spellSelections: { cantrips:[], spellbook:[], prepared:[] },
+      advancementSelections: { 4:RANDOM, 8:RANDOM, 12:RANDOM, 16:RANDOM, 19:RANDOM },
       homebrew: [],
       currentCharacter: null,
       activeTab: "forge"
