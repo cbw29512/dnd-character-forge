@@ -1,8 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
+import { SKILLS } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildQuickReference } from "../src/rules/reference.js";
+import { abilityMod } from "../src/rules/math.js";
 import { fighterProgression } from "../src/rules/fighter.js";
 import { FIGHTER_ADVANCEMENT } from "../src/rules/fighter-advancement.js";
 
@@ -34,6 +36,16 @@ test("Champion receives exactly one second distinct Fighting Style at edition-co
     assert.ok(buildQuickReference(old10).some(item=>item.name===`Additional Fighting Style: ${old10.fightingStyles[1].name}`));
     assert.ok(buildQuickReference(new7).some(item=>item.name===`Additional Fighting Style: ${new7.fightingStyles[1].name}`));
   }catch(error){console.error("[test] Champion multiple styles",error);throw error;}
+});
+
+test("Remarkable Athlete changes 2014 check math but marks 2024 Initiative as Advantage",()=>{
+  try{
+    const old=generateCharacter(fighterState("2014",7)),modern=generateCharacter(fighterState("2024",3)),half=Math.ceil(old.proficiency/2);
+    assert.equal(old.initiative,abilityMod(old.abilities.dex)+half);assert.equal(old.initiativeAdvantage,false);
+    const untrained=Object.entries(SKILLS).find(([skill,ability])=>["str","dex","con"].includes(ability)&&!old.skills.includes(skill));
+    assert.ok(untrained);assert.equal(old.skillBonuses[untrained[0]],abilityMod(old.abilities[untrained[1]])+half);
+    assert.equal(modern.initiativeAdvantage,true);
+  }catch(error){console.error("[test] Champion Remarkable Athlete derived math",error);throw error;}
 });
 
 test("Fighter advancement uses all extra Fighter feat levels",()=>{
