@@ -36,6 +36,12 @@
 .wizard-resource span,.wizard-resource strong { display:block; }
 .wizard-resource span { color:#717587; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
 .wizard-resource strong { margin-top:4px; color:#303341; font:700 .78rem/1.3 Georgia,serif; overflow-wrap:anywhere; }
+.cleric-resources-card { background:#f7f4fb; border-color:#d8cde2; }
+.cleric-resource-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+.cleric-resource { min-width:0; padding:9px; border:1px solid #e0d7e8; border-radius:9px; background:#fefcff; }
+.cleric-resource span,.cleric-resource strong { display:block; }
+.cleric-resource span { color:#7d7187; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+.cleric-resource strong { margin-top:4px; color:#352f3c; font:700 .78rem/1.3 Georgia,serif; overflow-wrap:anywhere; }
 .spell-summary { display:grid; gap:12px; }
 .spell-stat-row { display:flex; flex-wrap:wrap; gap:8px; }
 .spell-stat { padding:7px 9px; border:1px solid #ded6ca; border-radius:8px; background:#faf7f1; }
@@ -49,5 +55,5 @@
 .spellbook-level span { display:block; margin-bottom:3px; color:#867d70; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
 .spellbook-level p { color:#504b44; font-size:.7rem; line-height:1.45; }
 @media (max-width:850px) { .spell-picker-lists { grid-template-columns:1fr; } .spell-list { max-height:260px; } .wizard-special-bucket{grid-column:1}.wizard-special-fields{grid-template-columns:1fr;} }
-@media (max-width:680px) { .wizard-resource-grid,.spellbook-levels { grid-template-columns:1fr; } }
+@media (max-width:680px) { .wizard-resource-grid,.cleric-resource-grid,.spellbook-levels { grid-template-columns:1fr; } }
 @media (max-width:520px) { .spell-dialog { width:calc(100vw - 16px); max-height:calc(100vh - 16px); } .spell-dialog-head,.spell-search,.spell-picker-lists,.spell-dialog-foot { padding-left:14px; padding-right:14px; } .spell-dialog-foot { align-items:flex-start; } }
