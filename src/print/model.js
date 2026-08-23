@@ -65,16 +65,19 @@ function auditAppendix(character){
 function roguePrintModel(character){
   try{
     if(character.class?.id!=="rogue")return null;const rogue=character.rogue;if(!rogue)throw new Error("Premium Rogue print requires Rogue progression state.");
-    const options=rogue.cunningStrikeOptions.map(id=>CUNNING_STRIKE_OPTIONS_2024.find(option=>option.id===id)).filter(Boolean).map(option=>({name:option.name,cost:`${option.cost}d6`,save:option.save?option.save.toUpperCase():null,effect:shorten(option.effect,105),requires:option.requires||null}));
+    const is2024=character.ruleset==="2024",options=is2024?rogue.cunningStrikeOptions.map(id=>CUNNING_STRIKE_OPTIONS_2024.find(option=>option.id===id)).filter(Boolean).map(option=>({name:option.name,cost:`${option.cost}d6`,save:option.save?option.save.toUpperCase():null,effect:shorten(option.effect,105),requires:option.requires||null})):[];
     return{
+      ruleset:character.ruleset,
       sneakAttack:`${rogue.sneakAttackDice}d6`,
       expertise:rogue.expertiseCount,
       masteries:rogue.masteryCount,
-      cunningStrikeDc:character.level>=5?rogueCunningStrikeDc(character):null,
-      effectsPerSneak:rogue.maxCunningStrikeEffects||0,
+      cunningStrikeDc:is2024&&character.level>=5?rogueCunningStrikeDc(character):null,
+      effectsPerSneak:is2024?(rogue.maxCunningStrikeEffects||0):0,
       reliableTalent:Boolean(rogue.reliableTalent),
+      blindsense:rogue.blindsenseRange?`${rogue.blindsenseRange} ft`:null,
+      thiefReflexes:Boolean(rogue.thiefReflexes),
       options,
-      scrollWarning:character.subclass?.id==="thief"&&character.level>=13?"Spell Scrolls use Intelligence. Above level 1: Intelligence (Arcana) DC 10 + spell level; a failed check disintegrates the scroll.":null
+      scrollWarning:is2024&&character.subclass?.id==="thief"&&character.level>=13?"Spell Scrolls use Intelligence. Above level 1: Intelligence (Arcana) DC 10 + spell level; a failed check disintegrates the scroll.":null
     };
   }catch(error){console.error("[print-model] Rogue resources failed",error);throw error;}
 }
