@@ -52,7 +52,7 @@ export const REFERENCE_2024={
     "Extra Attack":r("Fighter","Attack action","Attack twice instead of once when you take the Attack action."),
     "Two Extra Attacks":r("Fighter","Attack action","Attack three times instead of once when you take the Attack action."),
     "Three Extra Attacks":r("Fighter","Attack action","Attack four times instead of once when you take the Attack action."),
-    "Ability Score Improvement":r("Class","Applied","All Fighter Ability Score Improvement selections earned at this level are already applied to the ability scores above."),
+    "Ability Score Improvement":r("Class","Applied","All Ability Score Improvement selections earned at this level are already applied to the ability scores above."),
     "Additional Fighting Style":r("Champion","Passive","You gain a second Fighting Style feat. Both active styles are listed separately on this sheet."),
     "Indomitable":r("Fighter","Failed save","Reroll a failed saving throw and add your Fighter level to the reroll. You must use the new result; your current uses are shown in Fighter Resources and return after a Long Rest."),
     "Tactical Master":r("Fighter","Weapon attack","For an attack made with a weapon whose mastery you can use, you can replace that mastery property with Push, Sap, or Slow for that attack."),
