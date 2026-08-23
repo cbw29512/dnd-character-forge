@@ -1,0 +1,5 @@
+.premium-sheet{--ps-primary:#6f5432;--ps-dark:#2c241a;--ps-accent:#b8955e;--ps-ink:#241f18;--ps-muted:#6d6254;--ps-panel:#f6ecd8;--ps-panel-2:#ead9b9;--ps-frame:#4b3925;--ps-glow:rgba(86,58,30,.22)}
+.premium-sheet.theme-martial-red{--ps-primary:#7b211d;--ps-dark:#2d1713;--ps-accent:#b18a53;--ps-panel:#f1dfc2;--ps-panel-2:#dec49a;--ps-frame:#3b2117;--ps-glow:rgba(92,28,22,.28)}
+.premium-sheet.theme-holy-gold{--ps-primary:#9b7319;--ps-dark:#463510;--ps-accent:#c3a14c;--ps-panel:#f7efd8;--ps-panel-2:#eadba9;--ps-frame:#6a5118;--ps-glow:rgba(154,113,24,.22)}
+.premium-sheet.theme-shadow-teal{--ps-primary:#23545b;--ps-dark:#17282b;--ps-accent:#7f9b93;--ps-panel:#edf0e5;--ps-panel-2:#d1d9cb;--ps-frame:#22393d;--ps-glow:rgba(28,71,78,.24)}
+.premium-sheet.theme-arcane-blue{--ps-primary:#31547b;--ps-dark:#1d2f44;--ps-accent:#a48d61;--ps-panel:#eef0e9;--ps-panel-2:#d5d9cf;--ps-frame:#263b52;--ps-glow:rgba(44,76,112,.24)}
