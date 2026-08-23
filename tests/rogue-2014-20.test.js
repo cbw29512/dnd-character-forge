@@ -55,8 +55,8 @@ test("2014 Rogue Quick Turn never calls Cunning Strike or Steady Aim",()=>{
   const five=buildQuickTurn(rogueAt(5)).join(" "),seventeen=buildQuickTurn(rogueAt(17)).join(" ");assert.match(five,/Cunning Action/);assert.doesNotMatch(five,/Cunning Strike|Steady Aim/);assert.match(seventeen,/Initiative minus 10/);assert.doesNotMatch(seventeen,/Cunning Strike|Steady Aim/);
 });
 
-test("2014 level-20 browser sheet shows legacy resources without 2024 leakage",()=>{
-  const c=rogueAt(20),target={innerHTML:""};renderCharacter(c,target);assert.match(target.innerHTML,/Rogue Resources/);assert.match(target.innerHTML,/10d6/);assert.match(target.innerHTML,/Reliable Talent/);assert.match(target.innerHTML,/Blindsense/);assert.match(target.innerHTML,/10 ft/);assert.match(target.innerHTML,/Thief’s Reflexes/);assert.match(target.innerHTML,/Wisdom Save/);assert.doesNotMatch(target.innerHTML,/Cunning Strike DC/);assert.doesNotMatch(target.innerHTML,/Effects \/ Sneak Attack/);assert.doesNotMatch(target.innerHTML,/Steady Aim/);assert.match(target.innerHTML,/Rules Audit/);
+test("2014 level-20 browser sheet shows legacy resources without functional 2024 leakage",()=>{
+  const c=rogueAt(20),target={innerHTML:""};renderCharacter(c,target);assert.match(target.innerHTML,/Rogue Resources/);assert.match(target.innerHTML,/10d6/);assert.match(target.innerHTML,/Reliable Talent/);assert.match(target.innerHTML,/Blindsense/);assert.match(target.innerHTML,/10 ft/);assert.match(target.innerHTML,/Thief’s Reflexes/);assert.match(target.innerHTML,/Wisdom Save/);assert.match(target.innerHTML,/no Weapon Mastery, Steady Aim, or Cunning Strike mechanics/);assert.doesNotMatch(target.innerHTML,/Cunning Strike DC/);assert.doesNotMatch(target.innerHTML,/Effects \/ Sneak Attack/);assert.doesNotMatch(target.innerHTML,/Cunning Strike options/);assert.match(target.innerHTML,/Rules Audit/);
 });
 
 test("2014 premium Rogue model exposes legacy resources only",()=>{
