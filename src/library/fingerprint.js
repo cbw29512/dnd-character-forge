@@ -18,6 +18,7 @@ export function pregenFingerprintPayload(character) {
       speciesChoices:character.speciesChoices||null,
       class:character.class?.id,
       subclass:character.subclass?.id ?? null,
+      classChoices:{divineOrder:character.divineOrder||null,blessedStrikes:character.blessedStrikes||null},
       background:character.background?.id,
       backgroundChoices:character.backgroundChoices||null,
       toolProficiencies:[...(character.toolProficiencies||[])].sort(),
