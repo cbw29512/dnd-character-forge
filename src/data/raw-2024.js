@@ -4,8 +4,20 @@ import { SPECIES_2024 } from "./species-2024.js";
 export const RAW_2024={
   ruleset:"2024",source:"RAW",
   species:SPECIES_2024,
-  backgrounds:[{id:"criminal",name:"Criminal",abilities:["dex","con","int"],feat:"alert",skills:["sleightOfHand","stealth"],tool:"Thieves' Tools",equipment:["2 Daggers","Thieves' Tools","Crowbar","2 Pouches","Traveler's Clothes","16 GP"]},{id:"soldier",name:"Soldier",abilities:["str","dex","con"],feat:"savage-attacker",skills:["athletics","intimidation"],tool:"Gaming Set",equipment:["Spear","Shortbow","20 Arrows","Gaming Set","Healer's Kit","Quiver","Traveler's Clothes","14 GP"]}],
-  feats:[{id:"alert",name:"Alert",category:"Origin"},{id:"savage-attacker",name:"Savage Attacker",category:"Origin"},{id:"skilled",name:"Skilled",category:"Origin",extraSkills:3},{id:"boon-combat-prowess",name:"Boon of Combat Prowess",category:"Epic Boon",abilityAdd:1,abilityMaximum:30}],
+  backgrounds:[
+    {id:"acolyte",name:"Acolyte",abilities:["int","wis","cha"],feat:"magic-initiate-cleric",magicInitiateList:"cleric",skills:["insight","religion"],tool:"Calligrapher's Supplies",equipment:["Calligrapher's Supplies","Book (prayers)","Holy Symbol","Parchment (10 sheets)","Robe","8 GP"]},
+    {id:"criminal",name:"Criminal",abilities:["dex","con","int"],feat:"alert",skills:["sleightOfHand","stealth"],tool:"Thieves' Tools",equipment:["2 Daggers","Thieves' Tools","Crowbar","2 Pouches","Traveler's Clothes","16 GP"]},
+    {id:"sage",name:"Sage",abilities:["con","int","wis"],feat:"magic-initiate-wizard",magicInitiateList:"wizard",skills:["arcana","history"],tool:"Calligrapher's Supplies",equipment:["Quarterstaff","Calligrapher's Supplies","Book (history)","Parchment (8 sheets)","Robe","8 GP"]},
+    {id:"soldier",name:"Soldier",abilities:["str","dex","con"],feat:"savage-attacker",skills:["athletics","intimidation"],toolChoices:["Dice Set","Dragonchess Set","Playing Card Set","Three-Dragon Ante Set"],equipment:["Spear","Shortbow","20 Arrows","Gaming Set","Healer's Kit","Quiver","Traveler's Clothes","14 GP"]}
+  ],
+  feats:[
+    {id:"alert",name:"Alert",category:"Origin"},
+    {id:"magic-initiate-cleric",name:"Magic Initiate (Cleric)",category:"Origin",spellList:"cleric",backgroundOnly:true},
+    {id:"magic-initiate-wizard",name:"Magic Initiate (Wizard)",category:"Origin",spellList:"wizard",backgroundOnly:true},
+    {id:"savage-attacker",name:"Savage Attacker",category:"Origin"},
+    {id:"skilled",name:"Skilled",category:"Origin",extraSkills:3},
+    {id:"boon-combat-prowess",name:"Boon of Combat Prowess",category:"Epic Boon",abilityAdd:1,abilityMaximum:30}
+  ],
   classes:[
     {id:"fighter",name:"Fighter",maxLevel:20,asiLevels:[4,6,8,12,14,16],epicBoon:{level:19,feat:"boon-combat-prowess"},hitDie:10,saves:["str","con"],skillCount:2,skillChoices:["acrobatics","animalHandling","athletics","history","insight","intimidation","persuasion","perception","survival"],primary:["str","dex"],abilityPriority:["str","dex","con","wis","cha","int"],subclassLevel:3,equipmentPackages:[{id:"heavy",armor:"chain-mail",weapons:["greatsword","flail","javelin"],shield:false,styles:["defense","great-weapon"],gear:["Javelin x8","Dungeoneer's Pack","4 GP"]},{id:"light",armor:"studded-leather",weapons:["scimitar","shortsword","longbow"],shield:false,styles:["defense","archery","two-weapon"],gear:["20 Arrows","Quiver","Dungeoneer's Pack","11 GP"]}]},
     {id:"wizard",name:"Wizard",maxLevel:5,asiLevels:[4],hitDie:6,saves:["int","wis"],skillCount:2,skillChoices:["arcana","history","insight","investigation","medicine","nature","religion"],primary:["int"],abilityPriority:["int","con","dex","wis","cha","str"],subclassLevel:3,spellcasting:"wizard",equipmentPackages:[{id:"scholar",armor:null,weapons:["dagger","quarterstaff"],shield:false,focus:"quarterstaff",gear:["Dagger","Robe","Spellbook","Scholar's Pack","5 GP"]}]},
