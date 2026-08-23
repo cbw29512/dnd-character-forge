@@ -3,14 +3,14 @@ import { validateClericClassSelections } from "../rules/cleric.js";
 const DIVINE_ORDERS=[{id:"protector",name:"Protector"},{id:"thaumaturge",name:"Thaumaturge"}];
 const BLESSED_STRIKES=[{id:"divine-strike",name:"Divine Strike"},{id:"potent-spellcasting",name:"Potent Spellcasting"}];
 
-export function bindClassOptions(state,onChange=()=>{}){
+export function bindClassOptions(state,{onChange=()=>{},showToast=()=>{}}={}){
   try{
     const panel=document.getElementById("classChoicePanel");if(!panel)throw new Error("Class options panel is missing.");
     panel.addEventListener("change",event=>{
       try{
         const select=event.target.closest("[data-class-choice]");if(!select)return;const key=select.dataset.classChoice,previous={...(state.classSelections||{})},proposed={...previous};if(select.value==="random")delete proposed[key];else proposed[key]=select.value;
         validateClericClassSelections({ruleset:state.ruleset,level:resolvedLevel(state),selections:proposed,spellSelections:state.spellSelections||{}});state.classSelections=proposed;renderClassOptions(state);onChange();
-      }catch(error){console.error("[class-ui] change blocked",error);renderClassOptions(state);throw error;}
+      }catch(error){console.error("[class-ui] change blocked",error);renderClassOptions(state);showToast(error.message,true);}
     });
     renderClassOptions(state);
   }catch(error){console.error("[class-ui] bind failed",error);throw error;}
