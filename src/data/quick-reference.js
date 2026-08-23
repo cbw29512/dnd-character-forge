@@ -35,7 +35,8 @@ export const REFERENCE_2024={
   feat:{
     "Alert":r("Origin Feat","Initiative","Add your Proficiency Bonus to Initiative; already included above. Immediately after Initiative, you may swap with a willing ally in the same combat if neither of you is Incapacitated."),
     "Savage Attacker":r("Origin Feat","Once per turn","When you hit with a weapon, roll the weapon's damage dice twice and use either roll."),
-    "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills.")
+    "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills."),
+    "Boon of Combat Prowess":r("Epic Boon","Missed attack","The feat's +1 ability increase and maximum of 30 are already applied. When an attack roll misses, you can turn that miss into a hit; this benefit refreshes at the start of your next turn.")
   },
   style:{
     "Defense":r("Fighting Style","Passive","While wearing Light, Medium, or Heavy armor, gain +1 AC; already included above."),
@@ -44,12 +45,22 @@ export const REFERENCE_2024={
     "Two-Weapon Fighting":r("Fighting Style","Light extra attack","Add your ability modifier to the damage of the extra attack from the Light property when it would otherwise be omitted.")
   },
   feature:{
-    "Action Surge":r("Fighter","On your turn","Take one additional action other than the Magic action. One use; regain it after a Short or Long Rest."),
+    "Action Surge":r("Fighter","On your turn","Take one additional action other than the Magic action. Your current number of uses is shown in Fighter Resources; regain all uses after a Short or Long Rest, and you can use it only once per turn."),
     "Tactical Mind":r("Fighter","After failed check","Spend a Second Wind use to add 1d10 to the failed ability check. If it still fails, that Second Wind use is not spent."),
     "Improved Critical":r("Champion","Passive","Weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 19 or 20."),
     "Remarkable Athlete":r("Champion","Passive / after crit","You have Advantage on Initiative and Athletics checks. After a Critical Hit, move up to half your Speed without provoking Opportunity Attacks."),
-    "Extra Attack":r("Class","Attack action","Attack twice instead of once when you take the Attack action."),
-    "Ability Score Improvement":r("Class","Applied","The generated level-4 ability increase is already included in the ability scores above."),
+    "Extra Attack":r("Fighter","Attack action","Attack twice instead of once when you take the Attack action."),
+    "Two Extra Attacks":r("Fighter","Attack action","Attack three times instead of once when you take the Attack action."),
+    "Three Extra Attacks":r("Fighter","Attack action","Attack four times instead of once when you take the Attack action."),
+    "Ability Score Improvement":r("Class","Applied","All Fighter Ability Score Improvement selections earned at this level are already applied to the ability scores above."),
+    "Additional Fighting Style":r("Champion","Passive","You gain a second Fighting Style feat. Both active styles are listed separately on this sheet."),
+    "Indomitable":r("Fighter","Failed save","Reroll a failed saving throw and add your Fighter level to the reroll. You must use the new result; your current uses are shown in Fighter Resources and return after a Long Rest."),
+    "Tactical Master":r("Fighter","Weapon attack","For an attack made with a weapon whose mastery you can use, you can replace that mastery property with Push, Sap, or Slow for that attack."),
+    "Heroic Warrior":r("Champion","Start of turn","During combat, if you begin your turn without Heroic Inspiration, you can give yourself Heroic Inspiration."),
+    "Studied Attacks":r("Fighter","After a miss","After you miss a creature with an attack roll, you have Advantage on your next attack roll against that creature before the end of your next turn."),
+    "Superior Critical":r("Champion","Passive","Weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 18, 19, or 20."),
+    "Survivor":r("Champion","Passive / start of turn","You have Advantage on Death Saving Throws, and a death save roll of 18–20 gains the benefit of a 20. While Bloodied with at least 1 HP, Heroic Rally restores 5 + your Constitution modifier HP at the start of your turn."),
+    "Epic Boon":r("Fighter","Applied","Your level-19 Epic Boon is listed in the feat references and its legal ability adjustment is already applied."),
     "Ritual Adept":r("Wizard","Ritual","A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared, but you must read it from the spellbook."),
     "Evocation Savant":r("Evoker","Spellbook","The free Evocation spells from this feature are already included in your spellbook; later grants follow the Forge Rules Note for the published timing ambiguity."),
     "Potent Cantrip":r("Evoker","Damaging cantrip","If a damaging cantrip's attack misses or its target succeeds on the save, the target still takes half the cantrip's damage, with no additional effect."),
