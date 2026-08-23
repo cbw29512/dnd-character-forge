@@ -1,4 +1,14 @@
 .choice-summary { display:block; margin-top:6px; color:#8e877c; font-size:.66rem; font-weight:800; }
+.class-choice-panel { margin-top:17px; padding:15px; border:1px solid #d4c9df; border-radius:13px; background:#faf7fc; }
+.class-choice-heading { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:12px; }
+.class-choice-heading strong,.class-choice-heading small { display:block; }
+.class-choice-heading strong { color:#443b4b; font-size:.78rem; }
+.class-choice-heading small { margin-top:3px; color:#7f7486; font-size:.67rem; line-height:1.4; }
+.class-choice-badge { flex:0 0 auto; padding:5px 7px; border:1px solid #d4c6df; border-radius:999px; background:#fffaff; color:#765b87; font-size:.56rem; font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
+.class-choice-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+.class-choice-field { min-width:0; display:grid; gap:5px; color:#564b5d; font-size:.68rem; font-weight:800; }
+.class-choice-field select { min-height:40px; font-size:.72rem; }
+.class-choice-panel .choice-summary { margin-top:9px; }
 .rules-note { margin-top:10px; color:#77736c; font-size:.66rem; line-height:1.5; }
 .rules-note summary { cursor:pointer; color:#8c877e; font-weight:800; }
 .rules-note p { margin:8px 0 0; }
@@ -36,6 +46,12 @@
 .wizard-resource span,.wizard-resource strong { display:block; }
 .wizard-resource span { color:#717587; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
 .wizard-resource strong { margin-top:4px; color:#303341; font:700 .78rem/1.3 Georgia,serif; overflow-wrap:anywhere; }
+.cleric-resources-card { background:#f7f4fb; border-color:#d8cde2; }
+.cleric-resource-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+.cleric-resource { min-width:0; padding:9px; border:1px solid #e0d7e8; border-radius:9px; background:#fefcff; }
+.cleric-resource span,.cleric-resource strong { display:block; }
+.cleric-resource span { color:#7d7187; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+.cleric-resource strong { margin-top:4px; color:#352f3c; font:700 .78rem/1.3 Georgia,serif; overflow-wrap:anywhere; }
 .spell-summary { display:grid; gap:12px; }
 .spell-stat-row { display:flex; flex-wrap:wrap; gap:8px; }
 .spell-stat { padding:7px 9px; border:1px solid #ded6ca; border-radius:8px; background:#faf7f1; }
@@ -49,5 +65,5 @@
 .spellbook-level span { display:block; margin-bottom:3px; color:#867d70; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
 .spellbook-level p { color:#504b44; font-size:.7rem; line-height:1.45; }
 @media (max-width:850px) { .spell-picker-lists { grid-template-columns:1fr; } .spell-list { max-height:260px; } .wizard-special-bucket{grid-column:1}.wizard-special-fields{grid-template-columns:1fr;} }
-@media (max-width:680px) { .wizard-resource-grid,.spellbook-levels { grid-template-columns:1fr; } }
+@media (max-width:680px) { .class-choice-fields,.wizard-resource-grid,.cleric-resource-grid,.spellbook-levels { grid-template-columns:1fr; } }
 @media (max-width:520px) { .spell-dialog { width:calc(100vw - 16px); max-height:calc(100vh - 16px); } .spell-dialog-head,.spell-search,.spell-picker-lists,.spell-dialog-foot { padding-left:14px; padding-right:14px; } .spell-dialog-foot { align-items:flex-start; } }

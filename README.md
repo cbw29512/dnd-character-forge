@@ -37,9 +37,9 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - **All four SRD backgrounds:** Acolyte, Criminal, Sage, Soldier
 - Fighter / Champion, **levels 1–20**
 - Wizard / Evoker, **levels 1–20**
-- Cleric / Life Domain, levels 1–5
+- Cleric / Life Domain, **levels 1–20**
 
-The level picker is class-aware: 2024 Fighter and Wizard expose levels 1–20; 2014 Fighter exposes levels 1–20; classes whose verified implementation still ends at level 5 never offer unsupported higher levels.
+The level picker is class-aware: 2024 Fighter, Wizard, and Cleric expose levels 1–20; 2014 Fighter exposes levels 1–20; 2014 Wizard and Cleric remain limited to their verified level-5 slices.
 
 ## 2024 species vertical slice
 - Species-specific choices are structured state rather than display text: Dragonborn ancestry, Elf lineage/Keen Senses/spell ability, Gnome lineage/spell ability, Goliath Giant Ancestry, Human size/Skillful choice, and Tiefling size/legacy/spell ability.
@@ -97,10 +97,26 @@ The level picker is class-aware: 2024 Fighter and Wizard expose levels 1–20; 2
 
 **Wizard reference scope note:** this milestone completes Wizard/Evoker mechanics, legal spell access, spellbook history, preparation, slots, class/subclass features, and source-backed feature references through level 20. Full structured description cards for every level-1–9 Wizard spell remain a separate reference-content expansion; the Forge does not claim those missing descriptions are complete.
 
+## 2024 Cleric / Life Domain vertical slice
+- Complete Cleric class-table progression through level 20: cantrips, normal prepared-spell counts, spell slots through 9th level, Channel Divinity uses, Divine Spark scaling, four Ability Score Improvement opportunities, and the level-19 Epic Boon.
+- The complete SRD 5.2.1 Cleric spell-name pool through level 9 is available for legal preparation generation and constraint validation.
+- **Divine Order** is structured Random-by-default state. Protector grants Martial weapon proficiency and Heavy armor training; Thaumaturge grants the extra Cleric cantrip and the Wisdom bonus to Arcana/Religion checks. An extra fixed cantrip can legally constrain a Random Divine Order to Thaumaturge; an incompatible fixed Protector choice fails closed.
+- Life Domain always-prepared spells progress through Aid, Bless, Cure Wounds, Lesser Restoration, Mass Healing Word, Revivify, Aura of Life, Death Ward, Greater Restoration, and Mass Cure Wounds without consuming the normal prepared count.
+- Life Domain progression includes Disciple of Life, Preserve Life, Blessed Healer at 6, and Supreme Healing at 17.
+- **Blessed Strikes** at 7 is a persisted Random-by-default choice between Divine Strike and Potent Spellcasting. Improved Blessed Strikes at 14 renders the correct upgrade for the resolved choice.
+- **Divine Intervention** at 10 is represented correctly as an at-use choice of a qualifying Cleric spell rather than incorrectly freezing one spell into character creation.
+- Level 19 uses the SRD-recommended **Boon of Fate**, including its legal +1 ability adjustment with a maximum of 30 and Improve Fate's 2d4 D20-Test modifier.
+- **Greater Divine Intervention** at 20 exposes Wish and the 2d4-Long-Rest Divine Intervention lockout after using Wish.
+- The character sheet includes a compact Cleric Resources block and groups both normal prepared and Life Domain always-prepared spells by spell level for practical PDF use.
+- Cleric class features cite SRD 5.2.1 pp.36–38, Life Domain features cite p.40, and Boon of Fate cites p.88.
+
+**Cleric reference scope note:** this milestone completes Cleric/Life Domain mechanics, legal spell access, preparation, slots, class/subclass features, and source-backed feature references through level 20. The separate structured spell-description-card layer remains partial; high-level spells still appear as legal, level-grouped spell names even when a dedicated detailed reference card has not yet been authored.
+
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
 - Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - Wizard sheets include compact resources for spellbook size, normal/always-prepared counts, Arcane Recovery, Spell Mastery, and Signature Spells; high-level spellbooks are grouped by spell level instead of rendered as one giant paragraph.
+- Cleric sheets include Divine Order, Channel Divinity uses, scaled Divine Spark, normal/always-prepared counts, and the current Blessed Strikes choice; large prepared lists are grouped by spell level.
 - Background tool proficiencies and Magic Initiate Origin Magic are visible rather than hidden in source data.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each structured 2024 spell reference records its SRD 5.2.1 source page for audit traceability.
@@ -108,7 +124,7 @@ The level picker is class-aware: 2024 Fighter and Wizard expose levels 1–20; 2
 - Weapon Mastery choices display friendly weapon/property mechanics and cite the SRD mastery-property page instead of exposing raw IDs.
 
 ## SRD spell boundary
-The 2024 Wizard spell pool is regression-tested as SRD 5.2.1 content. **Elementalism is included; Thunderclap is excluded** from the Wizard cantrip pool because Thunderclap is not a Wizard spell entry in SRD 5.2.1. The broader 2024 Player's Handbook/Basic Rules list is not used as the site's redistributable RAW spell pool.
+The 2024 Wizard and Cleric spell-name pools are regression-tested as SRD 5.2.1 content. **Elementalism is included; Thunderclap is excluded** from the Wizard cantrip pool because Thunderclap is not a Wizard spell entry in SRD 5.2.1. The broader 2024 Player's Handbook/Basic Rules list is not used as the site's redistributable RAW spell pool.
 
 ## Spell picker
 - Wizard and Cleric support fixed cantrip/prepared choices with Random filling every remaining legal choice.
@@ -116,14 +132,14 @@ The 2024 Wizard spell pool is regression-tested as SRD 5.2.1 content. **Elementa
 - Level-18+ Wizard exposes legal Spell Mastery constraints; level 20 exposes Signature Spell constraints. Unspecified capstone choices remain Random.
 - If Subclass remains Random but only one verified legal subclass exists, spell-picker limits resolve the same subclass the generator will use, preventing spellbook-count drift.
 - Cleric has no spellbook; Life Domain spells are always prepared and never consume normal prepared slots.
-- 2014 Cleric prepared-spell count follows final Wisdom; 2024 follows the Cleric class table.
-- A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
+- 2014 Cleric prepared-spell count follows final Wisdom; 2024 follows the Cleric class table through level 20.
+- A fixed 2024 Cleric cantrip beyond the class-table base count constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, and class-specific high-level mechanical state. Wizard capstone spell choices are restored when a saved pregen is reopened.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, Cleric Divine Order/Blessed Strikes choices, and class-specific high-level mechanical state. Wizard capstone spell choices and Cleric class choices are restored when a saved pregen is reopened.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, species/background/Wizard UI contract tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`

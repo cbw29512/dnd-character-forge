@@ -8,6 +8,7 @@ export function createInitialState() {
       constraints: { level:RANDOM, species:RANDOM, class:RANDOM, subclass:RANDOM, background:RANDOM, name:"" },
       speciesSelections: {},
       backgroundSelections: {},
+      classSelections: {},
       spellSelections: { cantrips:[], spellbook:[], prepared:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
       homebrew: [],
       currentCharacter: null,

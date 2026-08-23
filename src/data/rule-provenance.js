@@ -32,14 +32,14 @@ const REFERENCE_PAGES=Object.freeze({
     "species:human:Resourceful":"86","species:human:Skillful":"86","species:human:Versatile":"86",
     "species:orc:Adrenaline Rush":"86","species:orc:Darkvision":"86","species:orc:Relentless Endurance":"86",
     "species:tiefling:Darkvision":"86","species:tiefling:Fiendish Legacy":"86","species:tiefling:Otherworldly Presence":"86",
-    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Spell Recall":"88",
+    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Fate":"88","feat:Boon of Spell Recall":"88",
     "style:Archery":"87","style:Defense":"88","style:Great Weapon Fighting":"88","style:Two-Weapon Fighting":"88",
     "feature:Second Wind":"48","feature:Weapon Mastery":"48","feature:Action Surge":"48","feature:Tactical Mind":"48","feature:Ability Score Improvement":"87","feature:Extra Attack":"48","feature:Tactical Shift":"48",
     "feature:Indomitable":"48","feature:Tactical Master":"48","feature:Two Extra Attacks":"48","feature:Studied Attacks":"48","feature:Epic Boon:fighter":"48","feature:Three Extra Attacks":"48",
     "feature:Improved Critical":"49","feature:Remarkable Athlete":"49","feature:Additional Fighting Style":"49","feature:Heroic Warrior":"49","feature:Superior Critical":"49","feature:Survivor":"49",
     "feature:Spellcasting:wizard":"77–78","feature:Arcane Recovery":"78","feature:Ritual Adept":"78","feature:Scholar":"78","feature:Evocation Savant":"82","feature:Potent Cantrip":"82","feature:Memorize Spell":"79","feature:Sculpt Spells":"82","feature:Empowered Evocation":"82","feature:Overchannel":"82","feature:Spell Mastery":"79","feature:Epic Boon:wizard":"79","feature:Signature Spells":"79",
-    "feature:Spellcasting:cleric":"36–37","feature:Divine Order: Protector":"37","feature:Divine Order: Thaumaturge":"37","feature:Channel Divinity (2 uses)":"37","feature:Divine Spark":"37","feature:Turn Undead":"37","feature:Sear Undead":"37",
-    "feature:Life Domain":"40","feature:Disciple of Life":"40","feature:Preserve Life":"40",
+    "feature:Spellcasting:cleric":"36–37","feature:Divine Order: Protector":"37","feature:Divine Order: Thaumaturge":"37","feature:Channel Divinity":"37","feature:Channel Divinity (2 uses)":"37","feature:Divine Spark":"37","feature:Turn Undead":"37","feature:Sear Undead":"37","feature:Blessed Strikes":"38","feature:Divine Intervention":"38","feature:Improved Blessed Strikes":"38","feature:Epic Boon:cleric":"38","feature:Greater Divine Intervention":"38",
+    "feature:Life Domain":"40","feature:Disciple of Life":"40","feature:Preserve Life":"40","feature:Blessed Healer":"40","feature:Supreme Healing":"40",
     "mastery:Graze":"90","mastery:Nick":"90","mastery:Push":"90","mastery:Sap":"90","mastery:Slow":"90","mastery:Topple":"90","mastery:Vex":"90"
   })
 });
