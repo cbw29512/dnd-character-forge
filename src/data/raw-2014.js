@@ -1,7 +1,9 @@
+import { SPECIES_2014 } from "./species-2014.js";
+
 // Verified launch slices use only SRD 5.1 content encoded and tested by Character Forge.
 export const RAW_2014={
   ruleset:"2014",source:"RAW",
-  species:[{id:"human",name:"Human",speed:30,size:"Medium",traits:["Ability Score Increase","Extra Language"],abilityAdds:{str:1,dex:1,con:1,int:1,wis:1,cha:1},extraSkills:0}],
+  species:SPECIES_2014,
   backgrounds:[{id:"acolyte",name:"Acolyte",skills:["insight","religion"],languages:2,feature:"Shelter of the Faithful",equipment:["Holy Symbol","Prayer Book or Prayer Wheel","5 Incense","Vestments","Common Clothes","15 GP"]}],
   classes:[
     {id:"fighter",name:"Fighter",maxLevel:20,asiLevels:[4,6,8,12,14,16,19],hitDie:10,saves:["str","con"],skillCount:2,skillChoices:["acrobatics","animalHandling","athletics","history","insight","intimidation","perception","survival"],primary:["str","dex"],abilityPriority:["str","dex","con","wis","cha","int"],subclassLevel:3,equipmentPackages:[{id:"shield",armor:"chain-mail",weapons:["longsword","light-crossbow"],shield:true,styles:["defense","archery"],gear:["20 Bolts","Dungeoneer's Pack"]},{id:"greatsword",armor:"chain-mail",weapons:["greatsword","longsword","handaxe"],shield:false,styles:["defense","great-weapon"],gear:["Handaxe x2","Explorer's Pack"]}]},

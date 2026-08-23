@@ -4,9 +4,9 @@ import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { clericPickerLimits, validateClericSelections } from "../src/rules/cleric.js";
 
-function clericState(ruleset,level){const state=createInitialState();state.ruleset=ruleset;state.constraints.class="cleric";state.constraints.level=String(level);return state;}
+function clericState(ruleset,level){const state=createInitialState();state.ruleset=ruleset;state.constraints.class="cleric";state.constraints.level=String(level);if(ruleset==="2014")state.constraints.species="human";return state;}
 test("2014 Life Cleric levels 1-5 use WIS-based prepared counts and domain spells",()=>{
-  try{const prepared={1:4,2:5,3:6,4:8,5:9},cantrips={1:3,2:3,3:3,4:4,5:4},always={1:2,2:2,3:4,4:4,5:6};for(let level=1;level<=5;level++){const c=generateCharacter(clericState("2014",level));assert.equal(c.subclass.id,"life-domain");assert.equal(c.spells.prepared.all.length,prepared[level]);assert.equal(c.spells.cantrips.all.length,cantrips[level]);assert.equal(c.spells.alwaysPrepared.length,always[level]);assert.equal(c.ac,18);}}
+  try{const prepared={1:4,2:5,3:6,4:8,5:9},cantrips={1:3,2:3,3:3,4:4,5:4},always={1:2,2:2,3:4,4:4,5:6};for(let level=1;level<=5;level++){const c=generateCharacter(clericState("2014",level));assert.equal(c.species.id,"human");assert.equal(c.subclass.id,"life-domain");assert.equal(c.spells.prepared.all.length,prepared[level]);assert.equal(c.spells.cantrips.all.length,cantrips[level]);assert.equal(c.spells.alwaysPrepared.length,always[level]);assert.equal(c.ac,18);}}
   catch(error){console.error("[test] 2014 Cleric progression",error);throw error;}
 });
 test("2024 Cleric levels 1-5 use fixed prepared-spell table and Life Domain timing",()=>{

@@ -4,7 +4,7 @@ const SOURCES=Object.freeze({
 });
 
 const ENTITY_PAGES=Object.freeze({
-  "2014":Object.freeze({species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15",rogue:"39"},subclass:{champion:"25","school-evocation":"54","life-domain":"17",thief:"40"}}),
+  "2014":Object.freeze({species:{dwarf:"3–4",elf:"4",halfling:"4–5",human:"5",dragonborn:"5–6",gnome:"6","half-elf":"6–7","half-orc":"7",tiefling:"7"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15",rogue:"39"},subclass:{champion:"25","school-evocation":"54","life-domain":"17",thief:"40"}}),
   "2024":Object.freeze({
     species:{dragonborn:"84",dwarf:"84",elf:"84",gnome:"85",goliath:"85",halfling:"86",human:"86",orc:"86",tiefling:"86"},
     background:{acolyte:"83",criminal:"83",sage:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36",rogue:"61"},subclass:{champion:"49",evoker:"82","life-domain":"40",thief:"64"}
@@ -13,7 +13,16 @@ const ENTITY_PAGES=Object.freeze({
 
 const REFERENCE_PAGES=Object.freeze({
   "2014":Object.freeze({
-    "species:Ability Score Increase":"5","species:Extra Language":"5","background:Shelter of the Faithful":"61",
+    "species:dwarf:Ability Score Increase":"3–4","species:dwarf:Darkvision":"3","species:dwarf:Dwarven Resilience":"3","species:dwarf:Dwarven Combat Training":"3","species:dwarf:Tool Proficiency":"3","species:dwarf:Stonecunning":"3–4","species:dwarf:Dwarven Toughness":"4",
+    "species:elf:Ability Score Increase":"4","species:elf:Darkvision":"4","species:elf:Keen Senses":"4","species:elf:Fey Ancestry":"4","species:elf:Trance":"4","species:elf:Elf Weapon Training":"4","species:elf:Cantrip":"4","species:elf:Extra Language":"4",
+    "species:halfling:Ability Score Increase":"4–5","species:halfling:Lucky":"4","species:halfling:Brave":"4","species:halfling:Halfling Nimbleness":"4","species:halfling:Naturally Stealthy":"5",
+    "species:human:Ability Score Increase":"5","species:human:Extra Language":"5",
+    "species:dragonborn:Ability Score Increase":"5","species:dragonborn:Draconic Ancestry":"5–6","species:dragonborn:Breath Weapon":"5–6","species:dragonborn:Damage Resistance":"6",
+    "species:gnome:Ability Score Increase":"6","species:gnome:Darkvision":"6","species:gnome:Gnome Cunning":"6","species:gnome:Artificer's Lore":"6","species:gnome:Tinker":"6",
+    "species:half-elf:Ability Score Increase":"6–7","species:half-elf:Darkvision":"6–7","species:half-elf:Fey Ancestry":"6–7","species:half-elf:Skill Versatility":"7","species:half-elf:Extra Language":"7",
+    "species:half-orc:Ability Score Increase":"7","species:half-orc:Darkvision":"7","species:half-orc:Menacing":"7","species:half-orc:Relentless Endurance":"7","species:half-orc:Savage Attacks":"7",
+    "species:tiefling:Ability Score Increase":"7","species:tiefling:Darkvision":"7","species:tiefling:Hellish Resistance":"7","species:tiefling:Infernal Legacy":"7",
+    "background:Shelter of the Faithful":"61",
     "style:Defense":"24","style:Archery":"24","style:Great Weapon Fighting":"24",
     "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25","feature:Indomitable":"25",
     "feature:Remarkable Athlete":"25","feature:Additional Fighting Style":"25","feature:Superior Critical":"25","feature:Survivor":"25",
@@ -56,7 +65,7 @@ export function entityProvenance(ruleset,kind,id){try{const page=ENTITY_PAGES[ru
 export function referenceProvenance(character,kind,name){
   try{
     if(!character?.ruleset)throw new Error("Reference provenance requires a character ruleset.");
-    const classSpecific=kind==="feature"&&(name==="Spellcasting"||name==="Epic Boon"||(name==="Ability Score Improvement"&&(character.ruleset==="2014"||character.class?.id==="rogue"))),classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"",speciesPrefix=kind==="species"&&character.ruleset==="2024"?`${character.species?.id||"unknown"}:`:"",masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name,key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`,page=REFERENCE_PAGES[character.ruleset]?.[key];
+    const classSpecific=kind==="feature"&&(name==="Spellcasting"||name==="Epic Boon"||(name==="Ability Score Improvement"&&(character.ruleset==="2014"||character.class?.id==="rogue"))),classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"",speciesPrefix=kind==="species"?`${character.species?.id||"unknown"}:`:"",masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name,key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`,page=REFERENCE_PAGES[character.ruleset]?.[key];
     if(!page)throw new Error(`Missing reference provenance: ${character.ruleset} ${key}.`);return sourceAt(character.ruleset,page);
   }catch(error){console.error("[provenance] reference lookup failed",error);throw error;}
 }

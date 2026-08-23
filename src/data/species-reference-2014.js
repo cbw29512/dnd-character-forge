@@ -1,0 +1,33 @@
+const rr=(category,timing,text)=>Object.freeze({category,timing,text});
+
+export const SPECIES_REFERENCE_2014=Object.freeze({
+  "Ability Score Increase":rr("Race","Applied","Your racial ability score increases are already included in the ability scores on this character."),
+  "Extra Language":rr("Race","Applied","Your race-granted extra language choice is already included in Languages."),
+  "Darkvision":rr("Race","Passive","Within 60 feet, treat dim light as bright light and darkness as dim light. In darkness, you cannot discern color, only shades of gray."),
+  "Dwarven Resilience":rr("Dwarf","Passive","You have Advantage on saving throws against poison and Resistance to poison damage."),
+  "Dwarven Combat Training":rr("Dwarf","Passive","You have proficiency with the battleaxe, handaxe, light hammer, and warhammer."),
+  "Tool Proficiency":rr("Hill Dwarf","Applied","You gain proficiency with your selected Smith's Tools, Brewer's Supplies, or Mason's Tools; the chosen tool appears in Tool Proficiencies."),
+  "Stonecunning":rr("Dwarf","History check","When making an Intelligence (History) check related to the origin of stonework, you are considered proficient in History and add double your Proficiency Bonus instead of the normal bonus."),
+  "Dwarven Toughness":rr("Hill Dwarf","Applied","Your Hit Point maximum increases by 1, and it increases by 1 again whenever you gain a level. The current bonus is already included in Hit Points."),
+  "Keen Senses":rr("Elf","Applied","You have proficiency in Perception; it is already included in Skills."),
+  "Fey Ancestry":rr("Elf / Half-Elf","Passive","You have Advantage on saving throws against being Charmed, and magic cannot put you to sleep."),
+  "Trance":rr("Elf","Rest","You do not need to sleep. After meditating deeply for 4 hours, you gain the same benefit a human gains from 8 hours of sleep."),
+  "Elf Weapon Training":rr("High Elf","Passive","You have proficiency with the longsword, shortsword, shortbow, and longbow."),
+  "Cantrip":rr("High Elf","Spellcasting","You know one Wizard cantrip chosen at character creation. Intelligence is your spellcasting ability for it."),
+  "Lucky":rr("Halfling","D20 roll","When you roll a 1 on an attack roll, ability check, or saving throw, reroll the die and use the new roll."),
+  "Brave":rr("Halfling","Passive","You have Advantage on saving throws against being Frightened."),
+  "Halfling Nimbleness":rr("Halfling","Movement","You can move through the space of any creature that is a size larger than you."),
+  "Naturally Stealthy":rr("Lightfoot Halfling","Hide","You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."),
+  "Draconic Ancestry":rr("Dragonborn","Chosen at creation","Your selected draconic ancestry determines the damage type, shape, and saving throw of your Breath Weapon and the damage type of your resistance."),
+  "Breath Weapon":rr("Dragonborn","Action","Exhale destructive energy in your ancestry's line or cone. The target makes the ancestry's Dexterity or Constitution save against DC 8 + your Constitution modifier + Proficiency Bonus. Damage is 2d6, 3d6 at level 6, 4d6 at level 11, and 5d6 at level 16; a successful save takes half. After use, regain it after a Short or Long Rest."),
+  "Damage Resistance":rr("Dragonborn","Passive","You have Resistance to the damage type associated with your draconic ancestry."),
+  "Gnome Cunning":rr("Gnome","Passive","You have Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic."),
+  "Artificer's Lore":rr("Rock Gnome","History check","When making an Intelligence (History) check related to magic items, alchemical objects, or technological devices, add twice your Proficiency Bonus instead of the normal bonus."),
+  "Tinker":rr("Rock Gnome","1 hour + 10 GP","You are proficient with Tinker's Tools. Spend 1 hour and 10 GP of materials to build a Tiny clockwork device (AC 5, 1 HP) that functions for 24 hours unless maintained. You can have up to three active devices: Clockwork Toy, Fire Starter, or Music Box."),
+  "Skill Versatility":rr("Half-Elf","Applied","You gain proficiency in two skills of your choice; both selected skills are already included in Skills."),
+  "Menacing":rr("Half-Orc","Applied","You gain proficiency in Intimidation; it is already included in Skills."),
+  "Relentless Endurance":rr("Half-Orc","When reduced to 0 HP","When reduced to 0 Hit Points but not killed outright, drop to 1 Hit Point instead. After you use this trait, you cannot use it again until you finish a Long Rest."),
+  "Savage Attacks":rr("Half-Orc","Melee weapon critical hit","When you score a critical hit with a melee weapon attack, roll one of the weapon's damage dice one additional time and add it to the critical hit's extra damage."),
+  "Hellish Resistance":rr("Tiefling","Passive","You have Resistance to fire damage."),
+  "Infernal Legacy":rr("Tiefling","Spellcasting","You know Thaumaturgy. At level 3, cast Hellish Rebuke as a 2nd-level spell once per Long Rest. At level 5, cast Darkness once per Long Rest. Charisma is your spellcasting ability for these spells.")
+});
