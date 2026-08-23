@@ -2,7 +2,7 @@ import { rogueCunningStrikeDc } from "../rules/rogue.js";
 
 export function buildQuickTurn(character){
   try{
-    const builders={barbarian:barbarianTurn,fighter:fighterTurn,wizard:wizardTurn,cleric:clericTurn,rogue:rogueTurn};
+    const builders={barbarian:barbarianTurn,paladin:paladinTurn,fighter:fighterTurn,wizard:wizardTurn,cleric:clericTurn,rogue:rogueTurn};
     return (builders[character?.class?.id]||defaultTurn)(character).slice(0,3);
   }catch(error){console.error("[print-quick-turn] build failed",error);return defaultTurn(character);}
 }
@@ -14,6 +14,20 @@ function barbarianTurn(character){
     if(b.frenzy)steps.push(character.ruleset==="2014"?"If you chose Frenzy, remember the bonus-action melee attack starts on later turns and Exhaustion arrives when Rage ends.":`Berserker Frenzy adds ${b.rageDamage}d6 to your first Strength-based hit each turn when Reckless Attack is active during Rage.`);else if(b.relentlessRage)steps.push(`Relentless Rage can keep you standing at ${b.relentlessRageHp} HP if its Constitution save succeeds.`);else steps.push("End your turn where your Rage resistance and threat protect the rest of the party.");
     return steps;
   }catch(error){console.error("[print-quick-turn] Barbarian turn failed",error);throw error;}
+}
+function paladinTurn(character){
+  try{
+    const p=character.paladin;if(!p)throw new Error("Paladin Quick Turn requires progression data."),steps=[];
+    steps.push(p.auraProtection?`Fight where allies can stay inside your ${p.auraRange}-ft aura and benefit from its saving-throw bonus.`:"Protect the front line and preserve position for the allies who need you most.");
+    if(character.ruleset==="2014"){
+      if(p.divineSmite)steps.push("After a melee weapon hit, decide whether the target is important enough to spend a spell slot on Divine Smite.");else steps.push("Use Lay on Hands as an action when its healing or poison/disease cure changes the fight.");
+      steps.push(p.channelDivinityUses?"Use Sacred Weapon when its 1-minute attack bonus will pay off across several attacks; keep Turn the Unholy for Fiends or Undead.":"Keep Lay on Hands available for emergency healing instead of spending the pool too early.");
+      return steps;
+    }
+    if(p.paladinsSmite)steps.push("Use your free Divine Smite cast on a hit that matters; save spell slots when the free casting can do the job.");else steps.push("Use Lay On Hands as a Bonus Action when emergency healing is worth part of your pool.");
+    if(p.channelDivinityUses)steps.push(p.sacredWeapon?"Spend Channel Divinity on Sacred Weapon when the 10-minute attack bonus will matter; Divine Sense and Abjure Foes compete for the same resource.":"Spend Channel Divinity on Divine Sense or Abjure Foes only when the information or control will materially change the encounter.");else steps.push("Use your Weapon Masteries and prepared spells to create value without wasting limited resources.");
+    return steps;
+  }catch(error){console.error("[print-quick-turn] Paladin turn failed",error);throw error;}
 }
 function fighterTurn(character){
   const attacks=character.fighter?.attacksPerAction||1,steps=[`Take the Attack action: ${attacks} attack${attacks===1?"":"s"} with your best weapon.`];
