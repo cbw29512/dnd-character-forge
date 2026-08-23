@@ -4,6 +4,8 @@
 .reference-head strong { color:#2e2b26; font-size:.78rem; line-height:1.25; }
 .reference-tag { flex:0 0 auto; padding:4px 6px; border-radius:999px; background:#eee5d7; color:#75654c; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
 .reference-item p { margin:0; color:#666057; font-size:.7rem; line-height:1.5; }
-.reference-timing { display:block; margin-top:7px; color:#8c3038; font-size:.58rem; font-weight:900; letter-spacing:.05em; text-transform:uppercase; }
+.reference-foot { display:flex; justify-content:space-between; align-items:end; gap:10px; margin-top:7px; }
+.reference-timing { display:block; color:#8c3038; font-size:.58rem; font-weight:900; letter-spacing:.05em; text-transform:uppercase; }
+.reference-source { color:#817869; font-size:.56rem; font-weight:800; white-space:nowrap; }
 @media (max-width:680px) { .reference-list { grid-template-columns:1fr; } }
 @media print { .reference-item { break-inside:avoid; } }
