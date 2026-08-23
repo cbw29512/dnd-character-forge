@@ -1,4 +1,5 @@
 import { RANDOM, SOURCE } from "./schema.js";
+import { createDefaultSheetCustomization } from "./print/customization.js";
 
 export function createInitialState() {
   try {
@@ -11,6 +12,7 @@ export function createInitialState() {
       classSelections: {},
       spellSelections: { cantrips:[], spellbook:[], prepared:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
       portraitDataUrl: null,
+      sheetCustomization: createDefaultSheetCustomization(),
       homebrew: [],
       currentCharacter: null,
       activeTab: "forge"
