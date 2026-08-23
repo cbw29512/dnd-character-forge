@@ -1,13 +1,13 @@
 import { abilityMod } from "./math.js";
 
 export const CUNNING_STRIKE_OPTIONS_2024=Object.freeze([
-  Object.freeze({id:"poison",name:"Poison",minimumLevel:5,cost:1,save:"con",requires:"Poisoner's Kit"}),
-  Object.freeze({id:"trip",name:"Trip",minimumLevel:5,cost:1,save:"dex"}),
-  Object.freeze({id:"withdraw",name:"Withdraw",minimumLevel:5,cost:1,save:null}),
-  Object.freeze({id:"stealth-attack",name:"Stealth Attack",minimumLevel:9,cost:1,save:null,subclass:"thief"}),
-  Object.freeze({id:"daze",name:"Daze",minimumLevel:14,cost:2,save:"con"}),
-  Object.freeze({id:"knock-out",name:"Knock Out",minimumLevel:14,cost:6,save:"con"}),
-  Object.freeze({id:"obscure",name:"Obscure",minimumLevel:14,cost:3,save:"dex"})
+  Object.freeze({id:"poison",name:"Poison",minimumLevel:5,cost:1,save:"con",requires:"Poisoner's Kit",effect:"Failed save: Poisoned for 1 minute; repeat the save at the end of each turn, ending on a success."}),
+  Object.freeze({id:"trip",name:"Trip",minimumLevel:5,cost:1,save:"dex",effect:"Large or smaller target; failed save: Prone."}),
+  Object.freeze({id:"withdraw",name:"Withdraw",minimumLevel:5,cost:1,save:null,effect:"Immediately move up to half your Speed without provoking Opportunity Attacks."}),
+  Object.freeze({id:"stealth-attack",name:"Stealth Attack",minimumLevel:9,cost:1,save:null,subclass:"thief",effect:"If hidden, the attack doesn't end the Hide action's Invisible condition if you end the turn behind Three-Quarters or Total Cover."}),
+  Object.freeze({id:"daze",name:"Daze",minimumLevel:14,cost:2,save:"con",effect:"Failed save: on its next turn, the target can only move, take an action, or take a Bonus Action—one of those three."}),
+  Object.freeze({id:"knock-out",name:"Knock Out",minimumLevel:14,cost:6,save:"con",effect:"Failed save: Unconscious for 1 minute or until damaged; repeat the save at the end of each turn, ending on a success."}),
+  Object.freeze({id:"obscure",name:"Obscure",minimumLevel:14,cost:3,save:"dex",effect:"Failed save: Blinded until the end of the target's next turn."})
 ]);
 
 export function rogueProgressionFor(level,subclassId=null){
