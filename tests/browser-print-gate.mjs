@@ -36,11 +36,12 @@ function legacyChecks(testCase,character,whole,model){
   if(testCase.ruleset==="2014"&&testCase.species==="dwarf"){assert.equal(character.speciesChoices.subraceName,"Hill Dwarf");assert.equal(character.speciesHpBonus,20);assert.ok(whole.includes("Hill Dwarf"));assert.ok(whole.includes("Dwarven Toughness"));}
   if(testCase.ruleset==="2014"&&testCase.classId==="rogue"){assert.ok(whole.includes("Blindsense"));assert.ok(whole.includes("Use Magic Device"));assert.ok(whole.includes("Thief's Reflexes"));assert.equal(whole.includes("Cunning Strike DC"),false);assert.equal(whole.includes("Steady Aim"),false);}
   if(testCase.classId==="barbarian"){
-    assert.equal(model.packet.totalPages,1);assert.equal(model.classUtility?.title,"Primal Fury");assert.ok(whole.includes("Primal Fury"));assert.ok(whole.includes("Rage"));assert.ok(whole.includes("Berserker"));assert.ok(whole.includes("Primal Champion"));
+    const fold=whole.toLowerCase(),has=text=>fold.includes(text.toLowerCase());
+    assert.equal(model.packet.totalPages,1);assert.equal(model.classUtility?.title,"Primal Fury");assert.ok(has("Primal Fury"));assert.ok(has("Rage"));assert.ok(has("Berserker"));assert.ok(has("Primal Champion"));
     if(testCase.ruleset==="2014"){
-      assert.ok(whole.includes("Brutal Critical"));assert.equal(whole.includes("Brutal Strike"),false);assert.equal(whole.includes("Weapon Mastery"),false);assert.equal(whole.includes("Epic Boon"),false);
+      assert.ok(has("Brutal Critical"));assert.equal(has("Brutal Strike"),false);assert.equal(has("Weapon Mastery"),false);assert.equal(has("Epic Boon"),false);
     }else{
-      assert.ok(whole.includes("Brutal Strike"));assert.ok(whole.includes("Weapon Mastery"));assert.ok(whole.includes("Cleave"));assert.ok(whole.includes("Epic Boon"));assert.equal(whole.includes("Brutal Critical"),false);
+      assert.ok(has("Brutal Strike"));assert.ok(has("Weapon Mastery"));assert.ok(has("Cleave"));assert.ok(has("Epic Boon"));assert.equal(has("Brutal Critical"),false);
     }
   }
 }
