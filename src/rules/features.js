@@ -1,3 +1,42 @@
+export function barbarianFeatures(ruleset,level,subclass){
+  try{
+    if(ruleset==="2014"){
+      const features=["Rage","Unarmored Defense"];
+      if(level>=2)features.push("Reckless Attack","Danger Sense");
+      if(level>=3&&subclass==="path-berserker")features.push("Frenzy");
+      if(level>=4)features.push("Ability Score Improvement");
+      if(level>=5)features.push("Extra Attack","Fast Movement");
+      if(level>=6&&subclass==="path-berserker")features.push("Mindless Rage");
+      if(level>=7)features.push("Feral Instinct");
+      if(level>=9)features.push("Brutal Critical");
+      if(level>=10&&subclass==="path-berserker")features.push("Intimidating Presence");
+      if(level>=11)features.push("Relentless Rage");
+      if(level>=14&&subclass==="path-berserker")features.push("Retaliation");
+      if(level>=15)features.push("Persistent Rage");
+      if(level>=18)features.push("Indomitable Might");
+      if(level>=20)features.push("Primal Champion");
+      return features;
+    }
+    if(ruleset!=="2024")throw new Error("Barbarian is not verified for this ruleset.");
+    const features=["Rage","Unarmored Defense","Weapon Mastery — Barbarian"];
+    if(level>=2)features.push("Danger Sense","Reckless Attack");
+    if(level>=3){features.push("Primal Knowledge");if(subclass==="path-berserker")features.push("Frenzy");}
+    if(level>=4)features.push("Ability Score Improvement");
+    if(level>=5)features.push("Extra Attack","Fast Movement");
+    if(level>=6&&subclass==="path-berserker")features.push("Mindless Rage");
+    if(level>=7)features.push("Feral Instinct","Instinctive Pounce");
+    if(level>=9)features.push("Brutal Strike");
+    if(level>=10&&subclass==="path-berserker")features.push("Retaliation");
+    if(level>=11)features.push("Relentless Rage");
+    if(level>=13)features.push("Improved Brutal Strike");
+    if(level>=14&&subclass==="path-berserker")features.push("Intimidating Presence");
+    if(level>=15)features.push("Persistent Rage");
+    if(level>=18)features.push("Indomitable Might");
+    if(level>=19)features.push("Epic Boon");
+    if(level>=20)features.push("Primal Champion");
+    return features;
+  }catch(error){console.error("[features] barbarian feature resolution failed",error);throw error;}
+}
 export function fighterFeatures(ruleset,level,subclass){
   try{
     const features=[];
