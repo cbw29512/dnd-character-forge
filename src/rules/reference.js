@@ -11,7 +11,8 @@ export function buildQuickReference(character){
     for(const trait of character.species.traits||[])push(character,items,`species:${trait}`,trait,required(rules.species?.[trait],trait));
     if(character.background.feature)push(character,items,`background:${character.background.feature}`,character.background.feature,required(rules.background?.[character.background.feature],character.background.feature));
     for(const feat of character.feats||[])push(character,items,`feat:${feat.id}`,feat.name,required(rules.feat?.[feat.name],feat.name));
-    if(character.fightingStyle)push(character,items,`style:${character.fightingStyle.name}`,character.fightingStyle.name,required(rules.style?.[character.fightingStyle.name],character.fightingStyle.name));
+    const styles=character.fightingStyles?.length?character.fightingStyles:(character.fightingStyle?[character.fightingStyle]:[]);
+    for(const style of styles)push(character,items,`style:${style.name}`,style.name,required(rules.style?.[style.name],style.name));
     for(const name of character.features||[]){if(name==="Fighting Style"||name.startsWith("Fighting Style:"))continue;push(character,items,`feature:${name}`,name,dynamicFeature(character,name)||required(rules.feature?.[name],name));}
     for(const mastery of masteryEntries(character))push(character,items,`mastery:${mastery.weaponId}`,`${mastery.weaponName} — ${mastery.property}`,required(MASTERY_REFERENCE[mastery.property],mastery.property));
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate quick-reference entries detected.");return items;
@@ -33,6 +34,7 @@ function dynamicFeature(character,name){
     if(name==="Scholar")return{category:"Wizard",timing:"Passive",text:`Expertise is already applied to ${pretty(character.expertise[0])}.`};
     if(name==="Channel Divinity: Preserve Life"||name==="Preserve Life")return preserveLife(character);
     if(name==="Sear Undead")return searUndead(character);
+    if(name==="Survivor")return survivor(character);
     return null;
   }catch(error){console.error(`[reference] dynamic ${name} failed`,error);throw error;}
 }
@@ -46,9 +48,10 @@ function spellcasting(character){
   }catch(error){console.error("[reference] spellcasting failed",error);throw error;}
 }
 function secondWind(character){
-  try{const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};const uses=character.level>=4?3:2;return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. ${uses} uses; regain one after a Short Rest and all after a Long Rest.`};}
+  try{const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};const uses=character.fighter?.secondWindUses;if(!Number.isInteger(uses))throw new Error("2024 Second Wind reference requires Fighter progression data.");return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. ${uses} uses; regain one expended use after a Short Rest and all expended uses after a Long Rest.`};}
   catch(error){console.error("[reference] Second Wind failed",error);throw error;}
 }
+function survivor(character){try{const healing=5+abilityMod(character.abilities.con);return{category:"Champion",timing:"Passive / start of turn",text:`You have Advantage on Death Saving Throws, and a death save roll of 18–20 gains the benefit of a 20. While Bloodied with at least 1 HP, regain ${healing} HP at the start of each turn.`};}catch(error){console.error("[reference] Survivor failed",error);throw error;}}
 function arcaneRecovery(character){
   try{const levels=Math.ceil(character.level/2),limit=`up to ${levels} total spell-slot level${levels===1?"":"s"}`;return character.ruleset==="2014"?{category:"Wizard",timing:"After Short Rest",text:`Once per day, recover expended slots totaling ${limit}; none can be level 6+.`}:{category:"Wizard",timing:"After Short Rest",text:`Recover expended slots totaling ${limit}; none can be level 6+. Once used, it returns after a Long Rest.`};}
   catch(error){console.error("[reference] Arcane Recovery failed",error);throw error;}
