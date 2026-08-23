@@ -6,6 +6,7 @@ import { speciesChoiceLabel } from "../rules/species.js";
 import { RAW_2024 } from "../data/raw-2024.js";
 import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { clericSpellsFor } from "../data/cleric-spells.js";
+import { paladinSpellsFor } from "../data/paladin-spells.js";
 import { selectPrintTheme } from "./theme.js";
 import { buildQuickTurn } from "./quick-turn.js";
 import { buildClassUtility } from "./class-utility.js";
@@ -37,7 +38,7 @@ function spellPageModel(character){
   try{
     if(!character.spells)return null;const catalog=spellCatalogRecords(character),byId=new Map(catalog.map(spell=>[spell.id,spell])),cantrips=new Set(character.spells.cantrips?.all||[]),prepared=new Set(character.spells.prepared?.all||[]),always=new Set(character.spells.alwaysPrepared||[]),mastery=new Set(Object.values(character.spells.spellMastery||{}).filter(Boolean)),signature=new Set(character.spells.signatureSpells||[]),book=new Set(character.spells.spellbook?.all||[]),ids=character.class.id==="wizard"?[...cantrips,...book]:[...cantrips,...always,...prepared];
     const entries=[...new Set(ids)].map(id=>{const spell=byId.get(id);if(!spell)throw new Error(`Missing print spell ${id}.`);const tags=[];if(cantrips.has(id))tags.push("C");if(prepared.has(id))tags.push("P");if(always.has(id))tags.push("A");if(mastery.has(id))tags.push("M");if(signature.has(id))tags.push("S");return{id,name:spell.name,level:spell.level,tags:tags.join("")||"B"};}).sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name));
-    return{entries,source:character.ruleset==="2014"&&character.class.id==="cleric"?`${character.audit.sourceVersion} · Cleric spell list pp.106–107`:`${character.audit.sourceVersion} · validated ${character.class.name} spell catalog`,slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus)};
+    return{entries,source:spellSourceLabel(character),slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus)};
   }catch(error){console.error("[print-model] spell page failed",error);throw error;}
 }
 function roguePrintModel(character){
@@ -49,7 +50,21 @@ function roguePrintModel(character){
 function rogueExpertiseLabel(character,rogue){const tool=character.expertise?.includes("Thieves' Tools"),skills=rogue.expertiseCount-(tool?1:0);return tool?`${skills} skills + Thieves’ Tools`:`${skills} skills`;}
 function spellcastingModel(character){try{if(!character.spells)return null;const catalog=spellCatalog(character),names=ids=>(ids||[]).map(id=>catalog.get(id)||id),slots=Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · ");return{ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),slots,cantrips:names(character.spells.cantrips?.all),prepared:names(character.spells.prepared?.all),alwaysPrepared:names(character.spells.alwaysPrepared),spellbookCount:character.spells.spellbook?.all?.length||0};}catch(error){console.error("[print-model] spellcasting failed",error);throw error;}}
 function spellCatalog(character){return new Map(spellCatalogRecords(character).map(spell=>[spell.id,spell.name]));}
-function spellCatalogRecords(character){return character.class.id==="cleric"?clericSpellsFor(character.ruleset):character.class.id==="wizard"?wizardSpellsFor(character.ruleset):[];}
+function spellCatalogRecords(character){
+  try{
+    if(character.class.id==="cleric")return clericSpellsFor(character.ruleset);
+    if(character.class.id==="wizard")return wizardSpellsFor(character.ruleset);
+    if(character.class.id==="paladin"){const base=[...paladinSpellsFor(character.ruleset)];if(character.ruleset==="2024")base.push(...clericSpellsFor("2024").filter(spell=>spell.level===0));return base;}
+    return[];
+  }catch(error){console.error("[print-model] spell catalog resolution failed",error);throw error;}
+}
+function spellSourceLabel(character){
+  try{
+    if(character.class.id==="cleric"&&character.ruleset==="2014")return`${character.audit.sourceVersion} · Cleric spell list pp.106–107`;
+    if(character.class.id==="paladin")return`${character.audit.sourceVersion} · Paladin spell list pp.${character.ruleset==="2014"?"108–109":"55–56"}`;
+    return`${character.audit.sourceVersion} · validated ${character.class.name} spell catalog`;
+  }catch(error){console.error("[print-model] spell source label failed",error);throw error;}
+}
 function masteryLabels(character){
   try{if(character.ruleset!=="2024")return[];return(character.masteryIds||[]).map(id=>{const weapon=RAW_2024.weapons[id];if(!weapon?.mastery)throw new Error(`Missing print Weapon Mastery data for ${id}.`);return`${weapon.name} — ${weapon.mastery}`;});}
   catch(error){console.error("[print-model] Weapon Mastery labels failed",error);throw error;}
