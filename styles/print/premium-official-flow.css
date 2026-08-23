@@ -24,6 +24,7 @@
   .ps-center .ps-quick{flex:0 0 auto;margin-top:0}
   .ps-center .ps-list{font-size:6pt;line-height:1.22}
   .ps-center .ps-quick-list{font-size:5.6pt;line-height:1.22}
+  .ps-equipment-inline{margin:0;font:5.65pt/1.28 Arial,sans-serif;color:var(--ps-ink)}
 
   /* Features live on the right, where experienced 5e players expect them. */
   .ps-right .ps-features{flex:1 1 auto}
