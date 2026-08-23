@@ -16,7 +16,8 @@ const CASES=[
   {ruleset:"2024",classId:"cleric",subclass:"life-domain",species:"human",background:"criminal"},
   {ruleset:"2024",classId:"rogue",subclass:"thief",species:"human",background:"criminal"},
   {ruleset:"2014",classId:"wizard",subclass:"school-evocation",species:"human",background:"acolyte"},
-  {ruleset:"2014",classId:"cleric",subclass:"life-domain",species:"human",background:"acolyte"}
+  {ruleset:"2014",classId:"cleric",subclass:"life-domain",species:"human",background:"acolyte"},
+  {ruleset:"2014",classId:"rogue",subclass:"thief",species:"human",background:"acolyte"}
 ];
 
 rmSync(OUT,{recursive:true,force:true});mkdirSync(OUT,{recursive:true});
@@ -33,6 +34,7 @@ function verifyPacket(testCase){
   const whole=normalize(extracted),refs=model.appendix.referencePages.flat(),spells=model.appendix.spellPages.flatMap(page=>page.entries),tokens=[character.name,"Rules Audit",...refs.map(item=>item.name),...spells.map(item=>item.name)];for(const token of tokens)assert.ok(whole.includes(normalize(token)),`${slug}: printed PDF lost expected content: ${token}`);
   if(testCase.ruleset==="2014"&&testCase.classId==="wizard"){assert.equal(character.spells.spellbook.all.length,44);assert.equal(spells.length,49);assert.ok(whole.includes("SRD 5.1"));assert.ok(whole.includes("Spell Mastery"));assert.ok(whole.includes("Signature Spells"));}
   if(testCase.ruleset==="2014"&&testCase.classId==="cleric"){assert.equal(character.spells.cantrips.all.length,5);assert.equal(character.spells.prepared.all.length,25);assert.equal(character.spells.alwaysPrepared.length,10);assert.equal(spells.length,40);assert.ok(whole.includes("SRD 5.1"));assert.ok(whole.includes("Cleric spell list pp.106-107"));assert.ok(whole.includes("Destroy Undead (CR 4)"));assert.ok(whole.includes("Divine Intervention"));assert.ok(whole.includes("Supreme Healing"));}
+  if(testCase.ruleset==="2014"&&testCase.classId==="rogue"){assert.equal(character.rogue.sneakAttackDice,10);assert.equal(character.rogue.masteryCount,0);assert.equal(character.rogue.blindsenseRange,10);assert.equal(character.saves.includes("wis"),true);assert.equal(character.saves.includes("cha"),false);assert.ok(whole.includes("SRD 5.1"));assert.ok(whole.includes("Blindsense"));assert.ok(whole.includes("Use Magic Device"));assert.ok(whole.includes("Thief's Reflexes"));assert.ok(whole.includes("Initiative minus 10"));assert.equal(whole.includes("Cunning Strike DC"),false);assert.equal(whole.includes("Steady Aim"),false);}
   console.log(`[browser-print] ${slug}: ${pages} Letter pages · ${refs.length} rules · ${spells.length} spells`);
 }
 function characterAt({ruleset,classId,subclass,species,background}){const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class=classId;state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;return generateCharacter(state);}
