@@ -71,7 +71,7 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
 export function rogueFeatures(ruleset,level,subclass){
   try{
     if(ruleset!=="2024")throw new Error("Rogue is not yet verified for this ruleset.");
-    const features=["Expertise","Sneak Attack","Thieves’ Cant","Weapon Mastery"];
+    const features=["Expertise","Sneak Attack","Thieves’ Cant","Weapon Mastery — Rogue"];
     if(level>=2)features.push("Cunning Action");
     if(level>=3){features.push("Steady Aim");if(subclass==="thief")features.push("Fast Hands","Second-Story Work");}
     if(level>=4)features.push("Ability Score Improvement");
