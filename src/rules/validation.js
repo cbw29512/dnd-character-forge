@@ -9,7 +9,6 @@ import { validateBackgroundDetails } from "./background.js";
 import { lifeDomainAlwaysPrepared, clericProgressionFor } from "./cleric.js";
 import { duplicateValues } from "./duplicates.js";
 
-const CLERIC_CANTRIPS_2014={1:3,2:3,3:3,4:4,5:4};
 export function validateCharacter(character,mode){
   try{
     const errors=[],maxLevel=character.class.maxLevel||5;if(mode===SOURCE.RAW&&character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");if(character.level<1||character.level>maxLevel)errors.push(`${character.class.name} currently validates levels 1-${maxLevel} only.`);
@@ -61,14 +60,17 @@ function validateCleric(errors,character){
     const spells=character.spells,always=spells.alwaysPrepared||[];checkDuplicates(errors,"Cleric cantrips",spells.cantrips.all);checkDuplicates(errors,"prepared Cleric spells",spells.prepared.all);checkDuplicates(errors,"always-prepared Cleric spells",always);const overlap=spells.prepared.all.filter(id=>always.includes(id));if(overlap.length)errors.push(`Life Domain spells must not consume normal prepared slots: ${overlap.join(", ")}.`);
     const expectedAlways=lifeDomainAlwaysPrepared(character.ruleset,character.level);if(always.length!==expectedAlways.length||expectedAlways.some(id=>!always.includes(id)))errors.push("Life Domain always-prepared spells are incomplete.");
     if(character.ruleset==="2024"){
-      const progression=clericProgressionFor(character.level),expectedCantrips=progression.cantrips+(character.divineOrder==="thaumaturge"?1:0),actual=character.cleric;
+      const progression=clericProgressionFor("2024",character.level),expectedCantrips=progression.cantrips+(character.divineOrder==="thaumaturge"?1:0),actual=character.cleric;
       if(!actual)errors.push("2024 Cleric progression data is missing.");else{if(actual.channelDivinityUses!==progression.channelDivinityUses)errors.push(`Cleric Channel Divinity uses should be ${progression.channelDivinityUses}.`);if(actual.divineSparkDice!==progression.divineSparkDice)errors.push(`Divine Spark dice should be ${progression.divineSparkDice}d8.`);}
       if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==progression.prepared)errors.push(`Cleric prepared-spell count should be ${progression.prepared}.`);if(JSON.stringify(spells.slots)!==JSON.stringify(progression.slots))errors.push("Cleric spell-slot progression is incorrect.");
       if(!['protector','thaumaturge'].includes(character.divineOrder))errors.push("2024 Cleric Divine Order is invalid.");
       if(character.level>=7&&!['divine-strike','potent-spellcasting'].includes(character.blessedStrikes))errors.push("Level 7+ Cleric Blessed Strikes choice is invalid or missing.");if(character.level<7&&character.blessedStrikes)errors.push("Blessed Strikes appeared before Cleric level 7.");
       const boon=character.feats.some(feat=>feat.id==="boon-fate");if(character.level>=19&&!boon)errors.push("Level 19+ Cleric is missing Boon of Fate.");if(character.level<19&&boon)errors.push("Boon of Fate appeared before Cleric level 19.");if(boon&&(!character.epicBoonAbility||character.abilityMaximums[character.epicBoonAbility]!==30))errors.push("Boon of Fate ability increase/max is incomplete.");
     }else{
-      const expectedCantrips=CLERIC_CANTRIPS_2014[character.level],expectedPrepared=Math.max(1,character.level+abilityMod(character.abilities.wis));if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==expectedPrepared)errors.push(`Cleric prepared-spell count should be ${expectedPrepared}.`);
+      const progression=clericProgressionFor("2014",character.level),actual=character.cleric,expectedPrepared=Math.max(1,character.level+abilityMod(character.abilities.wis));
+      if(!actual)errors.push("2014 Cleric progression data is missing.");else{for(const key of ["channelDivinityUses","destroyUndeadCr","divineInterventionThreshold"]){if(actual[key]!==progression[key])errors.push(`2014 Cleric ${key} should be ${progression[key]}.`);}if(actual.divineSparkDice!==0)errors.push("2014 Cleric cannot contain Divine Spark progression.");}
+      if(spells.cantrips.all.length!==progression.cantrips)errors.push(`Cleric cantrip count should be ${progression.cantrips}.`);if(spells.prepared.all.length!==expectedPrepared)errors.push(`Cleric prepared-spell count should be ${expectedPrepared}.`);if(JSON.stringify(spells.slots)!==JSON.stringify(progression.slots))errors.push("2014 Cleric spell-slot progression is incorrect.");
+      if(character.divineOrder!==null)errors.push("2014 Cleric cannot contain a 2024 Divine Order.");if(character.blessedStrikes!==null)errors.push("2014 Cleric cannot contain 2024 Blessed Strikes.");if(character.feats.some(feat=>feat.category==="Epic Boon"))errors.push("2014 Cleric cannot contain a 2024 Epic Boon.");
     }
     if(!Number.isInteger(spells.saveDc)||!Number.isInteger(spells.attackBonus))errors.push("Cleric spellcasting math failed.");
   }catch(error){console.error("[validation] Cleric validation failed",error);throw error;}

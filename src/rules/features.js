@@ -59,8 +59,14 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
     const features=["Spellcasting"];
     if(ruleset==="2014"){
       if(subclass==="life-domain")features.push("Divine Domain: Life Domain","Bonus Proficiency: Heavy Armor","Disciple of Life");
-      if(level>=2)features.push("Channel Divinity (1/rest)","Turn Undead","Channel Divinity: Preserve Life");
-      if(level>=4)features.push("Ability Score Improvement");if(level>=5)features.push("Destroy Undead (CR 1/2)");return features;
+      if(level>=2){const uses=level>=18?3:level>=6?2:1;features.push(`Channel Divinity (${uses}/rest)`,"Turn Undead","Channel Divinity: Preserve Life");}
+      if(level>=4)features.push("Ability Score Improvement");
+      if(level>=5)features.push(`Destroy Undead (CR ${legacyDestroyUndeadCr(level)})`);
+      if(level>=6&&subclass==="life-domain")features.push("Blessed Healer");
+      if(level>=8&&subclass==="life-domain")features.push("Divine Strike");
+      if(level>=10)features.push("Divine Intervention");
+      if(level>=17&&subclass==="life-domain")features.push("Supreme Healing");
+      return features;
     }
     features.push(`Divine Order: ${divineOrder==="thaumaturge"?"Thaumaturge":"Protector"}`);
     if(level>=2)features.push("Channel Divinity","Divine Spark","Turn Undead");
@@ -115,6 +121,7 @@ function applyLegalAsi(scores,priority){
     if(second)scores[second]+=1;
   }catch(error){console.error("[features] legal ASI allocation failed",error);throw error;}
 }
+function legacyDestroyUndeadCr(level){try{if(level<8)return"1/2";if(level<11)return"1";if(level<14)return"2";if(level<17)return"3";return"4";}catch(error){console.error("[features] Destroy Undead tier failed",error);throw error;}}
 export function applyEpicBoonAbility(scores,maximums,priority,feat){
   try{
     const nextScores={...scores},nextMaximums={...maximums};
