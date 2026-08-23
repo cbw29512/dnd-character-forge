@@ -23,7 +23,7 @@ A finished Character Forge character is intended to be something a player can pr
 - The export document title is generated from the character name, level, class, and subclass to produce a useful default PDF filename.
 - Unsupported rules remain unavailable rather than being filled with unverified assumptions.
 
-The Rules Audit is a provenance and validation report for Character Forge's **verified SRD slice**. Core species, background, class, subclass, spellcasting, feature, fighting-style, feat, and Weapon Mastery references in the current slice now carry source locators to the official SRD PDFs. New supported mechanics must add provenance before the quality gate can pass.
+The Rules Audit is a provenance and validation report for Character Forge's **verified SRD slice**. Core species, background, class, subclass, spellcasting, feature, fighting-style, feat, and Weapon Mastery references in the current slice carry source locators to the official SRD PDFs. New supported mechanics must add provenance before the quality gate can pass.
 
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
@@ -34,12 +34,23 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 
 ### RAW 2024 / SRD 5.2.1
 - Human / Criminal / Soldier
-- Fighter / Champion, levels 1–5
+- Fighter / Champion, **levels 1–20**
 - Wizard / Evoker, levels 1–5
 - Cleric / Life Domain, levels 1–5
 
+The level picker is class-aware: selecting 2024 Fighter exposes levels 1–20, while classes whose verified implementation still ends at level 5 never offer unsupported higher levels.
+
+## 2024 Fighter / Champion vertical slice
+- Complete level 1–20 Fighter progression: Second Wind, Weapon Mastery, Action Surge, Tactical Mind, six Ability Score Improvement opportunities, Extra Attack progression, Tactical Shift, Indomitable, Tactical Master, Studied Attacks, Epic Boon, and four attacks per Attack action at level 20.
+- Complete Champion progression in the SRD slice: Improved Critical, Remarkable Athlete, Additional Fighting Style, Heroic Warrior, Superior Critical, and Survivor.
+- Level 19 uses the SRD-recommended **Boon of Combat Prowess**, including its legal +1 ability adjustment with a maximum of 30 and its play-reference effect.
+- Fighter resources are represented as structured progression state and independently regression-validated against the level table.
+- The character sheet shows current attacks per Attack action, critical range, Second Wind uses, Action Surge uses, Indomitable uses, mastery count, both Champion Fighting Styles when applicable, and Initiative Advantage.
+- High-level Fighter references fail closed without verified SRD provenance.
+
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
+- 2024 Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each 2024 cantrip reference records its SRD 5.2.1 source page for audit traceability.
 - Current-level cantrip scaling is calculated for damage, True Strike extra damage, and Spare the Dying range.
@@ -57,10 +68,10 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 - A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fighter fingerprints include all active Fighting Styles, ability maxima, and Epic Boon ability state so mechanically distinct high-level characters cannot collapse into the same saved entry.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, Fighter level-1–20 breakpoint tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
