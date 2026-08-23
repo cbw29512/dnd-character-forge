@@ -1,0 +1,53 @@
+@media print{
+  /* Keep the premium skin, but restore the official 5e information rhythm. */
+  .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.5in;gap:.07in}
+  .ps-column{gap:.05in}
+
+  /* Ability scores stay as the left-side visual anchor; saves become their own scan-friendly block. */
+  .ps-ability{grid-template-columns:.22in minmax(0,1fr) .31in .31in;grid-template-rows:1fr;min-height:.32in;padding:.025in .03in}
+  .ps-ability i{grid-row:auto}
+  .ps-ability>span{font-size:6.7pt}
+  .ps-ability b{font-size:11.5pt;text-align:center}
+  .ps-ability em{font-size:8.2pt;text-align:right}
+  .ps-saving-throws .ps-panel-body{padding:.025in .05in}
+  .ps-save-list{display:grid}
+  .ps-save{display:flex;justify-content:space-between;gap:.05in;padding:.018in .01in;border-bottom:1px dotted rgba(65,49,31,.25);font:6pt Arial,sans-serif}
+  .ps-save.proficient{font-weight:700}
+  .ps-passive span{font-size:5.4pt}
+  .ps-proficiencies .ps-panel-body{padding:.035in .05in}
+  .ps-proficiencies p{font-size:5.55pt;line-height:1.2;margin:.018in 0}
+
+  /* Center column follows the familiar skills -> attacks -> equipment flow. */
+  .ps-center .ps-skills{flex:0 0 auto}
+  .ps-center .ps-attacks{flex:0 0 auto}
+  .ps-center .ps-equipment{flex:1 1 auto}
+  .ps-center .ps-quick{flex:0 0 auto;margin-top:0}
+  .ps-center .ps-list{font-size:6pt;line-height:1.22}
+  .ps-center .ps-quick-list{font-size:5.6pt;line-height:1.22}
+
+  /* Features live on the right, where experienced 5e players expect them. */
+  .ps-right .ps-features{flex:1 1 auto}
+  .ps-right .ps-feature-list{gap:.025in}
+  .ps-right .ps-feature-list strong{font-size:6.25pt}
+  .ps-right .ps-feature-list p{font-size:5.35pt;line-height:1.17;-webkit-line-clamp:2}
+  .ps-right .ps-feature-list small{font-size:4.7pt}
+  .ps-right .ps-feat p,.ps-right .ps-spells p{font-size:5.55pt;line-height:1.2}
+
+  /* Spell page: level blocks 0-9 with slot tracking, echoing the official sheet without copying its artwork. */
+  .ps-caster-spells{padding:.05in .06in}
+  .ps-caster-spells .ps-section-title{margin-bottom:.025in}
+  .ps-spell-key{margin:.015in 0 .025in;font-size:4.8pt}
+  .ps-spell-level-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.07in;height:5.68in;min-height:0}
+  .ps-spell-level-column{display:flex;flex-direction:column;gap:.04in;min-width:0;min-height:0}
+  .ps-spell-level{border:1px solid color-mix(in srgb,var(--ps-frame) 62%,#d5bf97);background:rgba(255,250,236,.48);min-height:0}
+  .ps-spell-level>header{display:grid;grid-template-columns:.24in minmax(0,1fr) auto;align-items:center;gap:.035in;min-height:.25in;border-bottom:1px solid var(--ps-primary);background:rgba(255,250,236,.78)}
+  .ps-spell-level>header>b{display:grid;place-items:center;align-self:stretch;background:var(--ps-primary);color:#fff;font:700 8pt Georgia,serif}
+  .ps-spell-level>header>span{font:700 6pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.04em}
+  .ps-spell-level>header>small{padding-right:.035in;font:4.4pt Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
+  .ps-spell-level>div{padding:0 .035in}
+  .ps-spell-entry{display:grid;grid-template-columns:.12in minmax(0,1fr) .24in;gap:.025in;align-items:center;min-height:.145in;border-bottom:1px dotted rgba(65,49,31,.24);font:5.15pt Arial,sans-serif}
+  .ps-spell-entry i{font-style:normal;text-align:center;color:var(--ps-primary)}
+  .ps-spell-entry b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ps-spell-entry em{font-style:normal;font-size:4.35pt;color:var(--ps-muted);text-align:right}
+  .ps-spell-empty{display:block;padding:.035in;font:5pt Arial,sans-serif;color:var(--ps-muted)}
+}
