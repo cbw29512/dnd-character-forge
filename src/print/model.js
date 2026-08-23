@@ -14,6 +14,7 @@ export function buildPremiumPrintModel(character){
     const references=buildQuickReference(character),theme=selectPrintTheme(character),species=speciesChoiceLabel(character),feat=chooseFeat(character,references);
     return{
       theme,
+      portraitDataUrl:safePortrait(character.presentation?.portraitDataUrl),
       identity:{name:character.name,level:character.level,className:character.class.name,subclassName:character.subclass?.name||null,species,background:character.background.name,size:character.size},
       stats:{ac:character.ac,hp:character.hp,initiative:fmt(character.initiative),initiativeAdvantage:Boolean(character.initiativeAdvantage),speed:`${character.speed} ft`,proficiency:fmt(character.proficiency),passivePerception:character.passivePerception,hitDice:`${character.level}d${character.class.hitDie}`},
       abilities:ABILITIES.map(id=>({id,name:abilityName(id),score:character.abilities[id],modifier:fmt(abilityMod(character.abilities[id])),save:fmt(character.saveBonuses[id]),proficient:character.saves.includes(id)})),
@@ -49,6 +50,7 @@ function spellCatalog(character){
   try{const source=character.class.id==="cleric"?clericSpellsFor(character.ruleset):character.class.id==="wizard"?wizardSpellsFor(character.ruleset):[];return new Map(source.map(spell=>[spell.id,spell.name]));}
   catch(error){console.error("[print-model] spell catalog failed",error);throw error;}
 }
+function safePortrait(value){const portrait=String(value||"");return /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(portrait)?portrait:null;}
 function equipmentLines(items){return items.slice(0,12).map(item=>`${item.quantity>1?`${item.quantity} × `:""}${item.name}`);}
 function shorten(value,max){const text=String(value||"").replace(/\s+/g," ").trim();return text.length<=max?text:`${text.slice(0,max-1).trimEnd()}…`;}
 function abilityName(id){return({str:"Strength",dex:"Dexterity",con:"Constitution",int:"Intelligence",wis:"Wisdom",cha:"Charisma"})[id]||String(id||"");}
