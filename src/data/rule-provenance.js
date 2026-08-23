@@ -32,7 +32,7 @@ const REFERENCE_PAGES=Object.freeze({
     "species:elf:Darkvision":"84","species:elf:Elven Lineage":"84–85","species:elf:Fey Ancestry":"85","species:elf:Keen Senses":"85","species:elf:Trance":"85",
     "species:gnome:Darkvision":"85","species:gnome:Gnomish Cunning":"85","species:gnome:Gnomish Lineage":"85",
     "species:goliath:Giant Ancestry":"85–86","species:goliath:Large Form":"86","species:goliath:Powerful Build":"86",
-    "species:halfling:Brave":"86","species:halfling:Halfling Nimbleness":"86","species:halfling:Luck":"86","species:halfling:NaturallyStealthy":"86","species:halfling:Naturally Stealthy":"86",
+    "species:halfling:Brave":"86","species:halfling:Halfling Nimbleness":"86","species:halfling:Luck":"86","species:halfling:Naturally Stealthy":"86",
     "species:human:Resourceful":"86","species:human:Skillful":"86","species:human:Versatile":"86",
     "species:orc:Adrenaline Rush":"86","species:orc:Darkvision":"86","species:orc:Relentless Endurance":"86",
     "species:tiefling:Darkvision":"86","species:tiefling:Fiendish Legacy":"86","species:tiefling:Otherworldly Presence":"86",
