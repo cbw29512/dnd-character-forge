@@ -37,7 +37,7 @@ test("default export uses class illustration and uploaded portrait overrides it"
   c.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD"};renderPremiumPrintSheet(c,target);assert.match(target.innerHTML,/has-image/);assert.match(target.innerHTML,/data:image\/jpeg;base64,QUJD/);assert.doesNotMatch(target.innerHTML,/class-placeholder class-fighter/);
 });
 test("page one preserves familiar 5e table-play landmarks",()=>{
-  const target={innerHTML:""};renderPremiumPrintSheet(characterAt("fighter",20,"champion"),target);for(const label of ["Ability Scores","Saving Throws","Skills","Attacks & Spellcasting","Equipment","Features & Traits","Passive Wisdom (Perception)"])assert.match(target.innerHTML,new RegExp(label.replace(/[&]/g,"&amp;"),"i"));
+  const target={innerHTML:""};renderPremiumPrintSheet(characterAt("fighter",20,"champion"),target);const html=target.innerHTML.replaceAll("&amp;","&");for(const label of ["Ability Scores","Saving Throws","Skills","Attacks & Spellcasting","Equipment","Features & Traits","Passive Wisdom (Perception)"])assert.ok(html.includes(label),`missing familiar 5e landmark: ${label}`);
 });
 test("caster spell page restores level-by-level 0 through 9 structure",()=>{
   const target={innerHTML:""};renderPremiumPrintSheet(characterAt("wizard",20,"evoker"),target);assert.match(target.innerHTML,/Spellcasting Ability/);assert.match(target.innerHTML,/Spell Save DC/);assert.match(target.innerHTML,/Spell Attack Bonus/);for(let level=0;level<=9;level++)assert.match(target.innerHTML,new RegExp(`ps-spell-level level-${level}`));
