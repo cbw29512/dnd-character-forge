@@ -28,7 +28,7 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
 - Human / Acolyte
-- Fighter / Champion, levels 1–5
+- Fighter / Champion, **levels 1–20**
 - Wizard / School of Evocation, levels 1–5
 - Cleric / Life Domain, levels 1–5
 
@@ -38,7 +38,14 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - Wizard / Evoker, levels 1–5
 - Cleric / Life Domain, levels 1–5
 
-The level picker is class-aware: selecting 2024 Fighter exposes levels 1–20, while classes whose verified implementation still ends at level 5 never offer unsupported higher levels.
+The level picker is class-aware in both editions: Fighter exposes levels 1–20; classes whose verified implementation still ends at level 5 never offer unsupported higher levels.
+
+## 2014 Fighter / Champion vertical slice
+- Complete level 1–20 Fighter progression: Second Wind, Action Surge, seven Ability Score Improvement opportunities, Extra Attack progression, Indomitable, and four attacks per Attack action at level 20.
+- Complete Champion progression in the SRD slice: Improved Critical, Remarkable Athlete, Additional Fighting Style, Superior Critical, and Survivor.
+- Edition-specific rules remain isolated: 2014 Fighter has no Weapon Mastery, no Epic Boon, no 2024 Champion Initiative Advantage, and no Fighter-level bonus added to Indomitable rerolls.
+- Champion's second Fighting Style arrives at level 10 in 2014, not level 7 as in 2024.
+- High-level 2014 Fighter references carry SRD 5.1 printed-page provenance and fail closed if a required locator is missing.
 
 ## 2024 Fighter / Champion vertical slice
 - Complete level 1–20 Fighter progression: Second Wind, Weapon Mastery, Action Surge, Tactical Mind, six Ability Score Improvement opportunities, Extra Attack progression, Tactical Shift, Indomitable, Tactical Master, Studied Attacks, Epic Boon, and four attacks per Attack action at level 20.
@@ -50,7 +57,7 @@ The level picker is class-aware: selecting 2024 Fighter exposes levels 1–20, w
 
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
-- 2024 Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
+- Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each 2024 cantrip reference records its SRD 5.2.1 source page for audit traceability.
 - Current-level cantrip scaling is calculated for damage, True Strike extra damage, and Spare the Dying range.
@@ -68,10 +75,10 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 - A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fighter fingerprints include all active Fighting Styles, ability maxima, and Epic Boon ability state so mechanically distinct high-level characters cannot collapse into the same saved entry.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fighter fingerprints include all active Fighting Styles, ability maxima, and edition-specific high-level state so mechanically distinct pregens cannot collapse into the same saved entry.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, Fighter level-1–20 breakpoint tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, Fighter level-1–20 breakpoint tests for both editions, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
