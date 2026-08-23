@@ -59,6 +59,6 @@ test("2014 Wizard level 20 has no 2024-only state",()=>{
   const c=wizardAt(20);assert.equal(c.epicBoonAbility,null);assert.equal(c.feats.some(feat=>feat.category==="Epic Boon"),false);assert.equal(c.features.includes("Ritual Adept"),false);assert.equal(c.features.includes("Scholar"),false);assert.equal(c.features.includes("Memorize Spell"),false);assert.equal(c.expertise.length,0);assert.equal(c.masteryIds.length,0);
 });
 
-test("2014 Cleric remains fail-closed above level 5 while Wizard no longer does",()=>{
-  const cleric=createInitialState();cleric.ruleset="2014";cleric.constraints.level="6";cleric.constraints.class="cleric";assert.throws(()=>generateCharacter(cleric),/currently supports levels/i);assert.doesNotThrow(()=>wizardAt(6));assert.doesNotThrow(()=>wizardAt(20));
+test("2014 Wizard remains fully supported after Cleric expansion",()=>{
+  assert.doesNotThrow(()=>wizardAt(6));assert.doesNotThrow(()=>wizardAt(20));
 });
