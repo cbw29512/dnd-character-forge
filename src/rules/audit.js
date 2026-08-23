@@ -15,7 +15,7 @@ export function buildRulesAudit(character,validation){
     const homebrewCount=character.homebrew?.length||0,rawIntegrity=character.sourceMode===SOURCE.RAW&&homebrewCount===0;
     const classSource=entityProvenance(character.ruleset,"class",character.class.id);
     const mechanics=[
-      mechanic("Species",character.ruleset==="2024"?speciesChoiceLabel(character):(character.species?.name||"Unknown"),entityProvenance(character.ruleset,"species",character.species.id)),
+      mechanic("Species",speciesChoiceLabel(character),entityProvenance(character.ruleset,"species",character.species.id)),
       mechanic("Background",character.background?.name||"Unknown",entityProvenance(character.ruleset,"background",character.background.id)),
       mechanic("Class",character.class?.name||"Unknown",classSource),
       mechanic("Level",String(character.level),classSource)
