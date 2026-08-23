@@ -46,7 +46,8 @@ export const REFERENCE_2024={
     "Magic Initiate (Wizard)":r("Origin Feat","Origin magic","Two selected Wizard cantrips and one selected level-1 Wizard spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Wizard list."),
     "Savage Attacker":r("Origin Feat","Once per turn","When you hit with a weapon, roll the weapon's damage dice twice and use either roll."),
     "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills."),
-    "Boon of Combat Prowess":r("Epic Boon","Missed attack","The feat's +1 ability increase and maximum of 30 are already applied. When an attack roll misses, you can turn that miss into a hit; this benefit refreshes at the start of your next turn.")
+    "Boon of Combat Prowess":r("Epic Boon","Missed attack","The feat's +1 ability increase and maximum of 30 are already applied. When an attack roll misses, you can turn that miss into a hit; this benefit refreshes at the start of your next turn."),
+    "Boon of the Night Spirit":r("Epic Boon","Dim Light or Darkness","The feat's +1 ability increase and maximum of 30 are already applied. As a Bonus Action in Dim Light or Darkness, become Invisible until immediately after you take an action, Bonus Action, or Reaction. In Dim Light or Darkness, you also resist all damage except Psychic and Radiant.")
   },
   style:{
     "Defense":r("Fighting Style","Passive","While wearing Light, Medium, or Heavy armor, gain +1 AC; already included above."),
@@ -70,7 +71,7 @@ export const REFERENCE_2024={
     "Studied Attacks":r("Fighter","After a miss","After you miss a creature with an attack roll, you have Advantage on your next attack roll against that creature before the end of your next turn."),
     "Superior Critical":r("Champion","Passive","Weapon and Unarmed Strike attack rolls score a Critical Hit on a d20 roll of 18, 19, or 20."),
     "Survivor":r("Champion","Passive / start of turn","You have Advantage on Death Saving Throws, and a death save roll of 18–20 gains the benefit of a 20. While Bloodied with at least 1 HP, Heroic Rally restores 5 + your Constitution modifier HP at the start of your turn."),
-    "Epic Boon":r("Fighter","Applied","Your level-19 Epic Boon is listed in the feat references and its legal ability adjustment is already applied."),
+    "Epic Boon":r("Class","Applied","Your level-19 Epic Boon is listed in the feat references and its legal ability adjustment is already applied."),
     "Ritual Adept":r("Wizard","Ritual","A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared, but you must read it from the spellbook."),
     "Evocation Savant":r("Evoker","Spellbook","The free Evocation spells from this feature are already included in your spellbook; later grants follow the Forge Rules Note for the published timing ambiguity."),
     "Potent Cantrip":r("Evoker","Damaging cantrip","If a damaging cantrip's attack misses or its target succeeds on the save, the target still takes half the cantrip's damage, with no additional effect."),
@@ -81,7 +82,26 @@ export const REFERENCE_2024={
     "Divine Spark":r("Cleric","Magic action","Choose another creature you can see within 30 ft. Roll 1d8 + Wisdom modifier to heal it, or force a Constitution save for that much Radiant or Necrotic damage; success takes half."),
     "Turn Undead":r("Cleric","Magic action","Each Undead you choose within 30 ft makes a Wisdom save. A failure makes it Frightened and Incapacitated for 1 minute and it tries to move as far from you as it can. The effect ends on that creature if it takes damage, or if you become Incapacitated or die."),
     "Life Domain":r("Life Domain","Passive","Life Domain spells shown above are always prepared and do not count against your normal prepared-spell total."),
-    "Disciple of Life":r("Life Domain","Healing spell","When a spell cast with a spell slot restores Hit Points, add 2 + the slot's level to that creature's healing on the turn you cast it.")
+    "Disciple of Life":r("Life Domain","Healing spell","When a spell cast with a spell slot restores Hit Points, add 2 + the slot's level to that creature's healing on the turn you cast it."),
+    "Expertise":r("Rogue","Applied","Your chosen Expertise skills are marked on the sheet and add your Proficiency Bonus a second time. Rogue level 6 grants two additional Expertise choices."),
+    "Sneak Attack":r("Rogue","Once per turn","On a qualifying hit with a Finesse or Ranged weapon, deal the current Sneak Attack dice shown in Rogue Resources. Qualify with Advantage, or when an ally is within 5 feet of the target, that ally isn't Incapacitated, and you don't have Disadvantage."),
+    "Thieves’ Cant":r("Rogue","Language","You know Thieves’ Cant plus one additional language; both are already included in Languages."),
+    "Cunning Action":r("Rogue","Bonus Action","On your turn, take Dash, Disengage, or Hide as a Bonus Action."),
+    "Steady Aim":r("Rogue","Bonus Action","If you haven't moved this turn, give yourself Advantage on your next attack roll this turn; after using it, your Speed becomes 0 until the end of the current turn."),
+    "Cunning Strike":r("Rogue","With Sneak Attack","Before rolling Sneak Attack damage, forgo Sneak Attack dice to add a Cunning Strike effect. The current save DC and available effects/costs are shown in Rogue Resources."),
+    "Uncanny Dodge":r("Rogue","Reaction","When an attacker you can see hits you with an attack roll, halve that attack's damage against you, rounded down."),
+    "Evasion":r("Rogue","Dexterity save","When an effect allows a Dexterity save for half damage, take no damage on a success and half damage on a failure. This feature doesn't work while Incapacitated."),
+    "Reliable Talent":r("Rogue","Proficient ability check","When an ability check uses one of your skill or tool proficiencies, treat a d20 roll of 9 or lower as a 10."),
+    "Improved Cunning Strike":r("Rogue","With Sneak Attack","Use up to two Cunning Strike effects on one Sneak Attack, paying the Sneak Attack die cost for each effect."),
+    "Devious Strikes":r("Rogue","With Sneak Attack","Adds Daze (2d6, Constitution save), Knock Out (6d6, Constitution save), and Obscure (3d6, Dexterity save) to your Cunning Strike options."),
+    "Slippery Mind":r("Rogue","Applied","You gain proficiency in Wisdom and Charisma saving throws; both saving throw bonuses are already recalculated on this sheet."),
+    "Elusive":r("Rogue","Passive","No attack roll can have Advantage against you unless you have the Incapacitated condition."),
+    "Stroke of Luck":r("Rogue","After failed D20 Test","Turn the failed D20 Test's roll into a 20. One use; regain it after a Short or Long Rest."),
+    "Fast Hands":r("Thief","Bonus Action","Make a Sleight of Hand check to pick a lock/disarm a trap with Thieves’ Tools or pick a pocket; take the Utilize action; or take the Magic action to use a magic item that requires that action."),
+    "Second-Story Work":r("Thief","Passive","Gain a Climb Speed equal to your Speed, and you can determine jump distance using Dexterity instead of Strength."),
+    "Supreme Sneak":r("Thief","Cunning Strike · 1d6","Stealth Attack: if you have the Hide action's Invisible condition, the triggering attack doesn't end it if you finish the turn behind Three-Quarters or Total Cover."),
+    "Use Magic Device":r("Thief","Magic items","Attune to up to four magic items. When a magic-item property expends charges, roll 1d6; on a 6, the charge isn't spent. You can use any Spell Scroll with Intelligence; higher-level scrolls require an Intelligence (Arcana) check, DC 10 + spell level."),
+    "Thief’s Reflexes":r("Thief","First combat round","Take two turns during the first round: one at your normal Initiative and a second at your Initiative minus 10.")
   }
 };
 export const MASTERY_REFERENCE={
