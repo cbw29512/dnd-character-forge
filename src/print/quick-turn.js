@@ -1,3 +1,5 @@
+import { rogueCunningStrikeDc } from "../rules/rogue.js";
+
 export function buildQuickTurn(character){
   try{
     const builders={fighter:fighterTurn,wizard:wizardTurn,cleric:clericTurn,rogue:rogueTurn};
@@ -25,10 +27,14 @@ function clericTurn(character){
   steps.push(character.subclass?.id==="life-domain"?"Keep a fast healing option available for an ally who suddenly drops.":"Keep a recovery option available for a sudden emergency.");return steps;
 }
 function rogueTurn(character){
-  return[
-    `Set up Sneak Attack${character.rogue?.sneakAttackDice?` (${character.rogue.sneakAttackDice}d6)`:""} before choosing your target.`,
-    "Use Cunning Action to improve position, escape pressure, or create the next attack angle.",
-    "End your turn where enemies have to spend movement or actions to reach you."
-  ];
+  try{
+    const steps=[`Set up Sneak Attack${character.rogue?.sneakAttackDice?` (${character.rogue.sneakAttackDice}d6)`:""} before choosing your target.`];
+    if(character.level>=5)steps.push(`Use Cunning Strike (DC ${rogueCunningStrikeDc(character)}) only when its effect is worth giving up Sneak Attack dice.`);
+    else if(character.level>=2)steps.push("Use Cunning Action to Dash, Disengage, or Hide when positioning creates more value than standing still.");
+    else steps.push("Use normal movement and cover to preserve the position needed for your next Sneak Attack.");
+    if(character.level>=3)steps.push("Use Cunning Action for positioning; if you have not moved, Steady Aim can create Advantage for the next attack this turn.");
+    else steps.push("End your turn where enemies must spend movement or actions to reach you.");
+    return steps;
+  }catch(error){console.error("[print-quick-turn] Rogue turn failed",error);throw error;}
 }
 function defaultTurn(){return["Use your strongest reliable action for the current objective.","Spend limited resources only when they materially improve the outcome.","End your turn in a position that helps the party and limits enemy options."];}
