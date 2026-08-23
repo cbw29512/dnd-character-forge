@@ -1,6 +1,6 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { abilityMod } from "../rules/math.js";
-import { buildQuickReference } from "../rules/reference.js";
+import { buildQuickReference } from "../rules/reference-router.js";
 import { CUNNING_STRIKE_OPTIONS_2024, rogueCunningStrikeDc } from "../rules/rogue.js";
 import { speciesChoiceLabel } from "../rules/species.js";
 import { wizardSpellsFor } from "../data/wizard-spells.js";
