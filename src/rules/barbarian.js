@@ -1,5 +1,6 @@
 import { abilityMod } from "./math.js";
 
+export const BARBARIAN_MASTERY_WEAPONS_2024=Object.freeze(["greataxe","handaxe","greatsword","longsword","flail","javelin","scimitar","shortsword","dagger","quarterstaff","mace"]);
 export const BRUTAL_STRIKE_OPTIONS_2024=Object.freeze([
   Object.freeze({id:"forceful-blow",name:"Forceful Blow",minimumLevel:9,effect:"Push the target 15 feet straight away, then move up to half your Speed straight toward it without provoking Opportunity Attacks."}),
   Object.freeze({id:"hamstring-blow",name:"Hamstring Blow",minimumLevel:9,effect:"Reduce the target's Speed by 15 feet until the start of your next turn; only the most recent Hamstring Blow applies."}),
@@ -61,6 +62,15 @@ export function barbarianProgressionFor(ruleset,level,subclassId=null){
       retaliation:berserker&&value>=10
     });
   }catch(error){console.error("[barbarian] progression lookup failed",error);throw error;}
+}
+
+export function applyPrimalChampion(scores,maximums,ruleset,level){
+  try{
+    const nextScores={...scores},nextMaximums={...maximums};if(Number(level)<20)return{scores:nextScores,maximums:nextMaximums};
+    const cap=ruleset==="2014"?24:ruleset==="2024"?25:null;if(!cap)throw new Error(`Unsupported Primal Champion ruleset ${ruleset}.`);
+    for(const ability of ["str","con"]){nextScores[ability]=Math.min(cap,nextScores[ability]+4);nextMaximums[ability]=Math.max(nextMaximums[ability]??20,cap);}
+    return{scores:nextScores,maximums:nextMaximums};
+  }catch(error){console.error("[barbarian] Primal Champion application failed",error);throw error;}
 }
 
 export function barbarianIntimidatingPresenceDc(character){
