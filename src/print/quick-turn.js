@@ -2,9 +2,18 @@ import { rogueCunningStrikeDc } from "../rules/rogue.js";
 
 export function buildQuickTurn(character){
   try{
-    const builders={fighter:fighterTurn,wizard:wizardTurn,cleric:clericTurn,rogue:rogueTurn};
+    const builders={barbarian:barbarianTurn,fighter:fighterTurn,wizard:wizardTurn,cleric:clericTurn,rogue:rogueTurn};
     return (builders[character?.class?.id]||defaultTurn)(character).slice(0,3);
   }catch(error){console.error("[print-quick-turn] build failed",error);return defaultTurn(character);}
+}
+function barbarianTurn(character){
+  try{
+    const b=character.barbarian;if(!b)throw new Error("Barbarian Quick Turn requires progression data.");const rage=b.unlimitedRage?"unlimited Rage":`${b.rageUses} Rage use${b.rageUses===1?"":"s"}`;
+    const steps=[`Enter Rage when the fight justifies it; you have ${rage} and deal +${b.rageDamage} qualifying Rage damage.`];
+    if(character.level>=9&&character.ruleset==="2024")steps.push(`Use Reckless Attack deliberately; on one eligible hit, Brutal Strike can trade its Advantage for +${b.brutalStrikeDice}d10 and ${b.brutalStrikeEffectCount} effect${b.brutalStrikeEffectCount===1?"":"s"}.`);else if(character.level>=2)steps.push("Use Reckless Attack when Advantage is worth giving enemies Advantage against you until your next turn.");else steps.push("Close distance, attack with Strength, and use Rage resistance to hold the dangerous space.");
+    if(b.frenzy)steps.push(character.ruleset==="2014"?"If you chose Frenzy, remember the bonus-action melee attack starts on later turns and Exhaustion arrives when Rage ends.":`Berserker Frenzy adds ${b.rageDamage}d6 to your first Strength-based hit each turn when Reckless Attack is active during Rage.`);else if(b.relentlessRage)steps.push(`Relentless Rage can keep you standing at ${b.relentlessRageHp} HP if its Constitution save succeeds.`);else steps.push("End your turn where your Rage resistance and threat protect the rest of the party.");
+    return steps;
+  }catch(error){console.error("[print-quick-turn] Barbarian turn failed",error);throw error;}
 }
 function fighterTurn(character){
   const attacks=character.fighter?.attacksPerAction||1,steps=[`Take the Attack action: ${attacks} attack${attacks===1?"":"s"} with your best weapon.`];

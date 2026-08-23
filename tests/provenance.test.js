@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildQuickReference } from "../src/rules/reference.js";
+import { MASTERY_REFERENCE } from "../src/data/quick-reference.js";
 import { entityProvenance, referenceProvenance } from "../src/data/rule-provenance.js";
 
 const EXPECTED_ENTITIES={
@@ -34,6 +35,18 @@ test("rules audit mechanics all carry verified source locators",()=>{
 test("2024 Weapon Mastery references point to SRD 5.2.1 printed page 90",()=>{
   try{const character=fixedCharacter("2024","fighter");for(const item of buildQuickReference(character).filter(entry=>entry.id.startsWith("mastery:"))){assert.equal(item.source.version,"SRD 5.2.1");assert.equal(item.source.page,"90");}}
   catch(error){console.error("[test] mastery provenance",error);throw error;}
+});
+
+test("every shared 2024 Weapon Mastery reference has fail-closed provenance",()=>{
+  try{
+    const character=fixedCharacter("2024","fighter");
+    for(const masteryName of Object.keys(MASTERY_REFERENCE)){
+      const source=referenceProvenance(character,"mastery",masteryName);
+      assert.equal(source.version,"SRD 5.2.1",`${masteryName} has the wrong source version`);
+      assert.equal(source.page,"90",`${masteryName} has the wrong printed-page provenance`);
+      assert.match(source.pdfUrl,/\.pdf$/);
+    }
+  }catch(error){console.error("[test] shared mastery provenance completeness",error);throw error;}
 });
 
 test("2014 class-specific Ability Score Improvement citations stay class-correct",()=>{

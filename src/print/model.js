@@ -1,8 +1,9 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { abilityMod } from "../rules/math.js";
-import { buildQuickReference } from "../rules/reference.js";
+import { buildQuickReference } from "../rules/reference-router.js";
 import { CUNNING_STRIKE_OPTIONS_2024, rogueCunningStrikeDc } from "../rules/rogue.js";
 import { speciesChoiceLabel } from "../rules/species.js";
+import { RAW_2024 } from "../data/raw-2024.js";
 import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { clericSpellsFor } from "../data/cleric-spells.js";
 import { selectPrintTheme } from "./theme.js";
@@ -24,7 +25,7 @@ export function buildPremiumPrintModel(character){
       skills:Object.entries(SKILLS).map(([id,ability])=>({id,name:skillName(id),ability:ability.toUpperCase(),bonus:fmt(character.skillBonuses[id]),proficient:character.skills.includes(id),expertise:character.expertise.includes(id)})),
       attacks:(character.attacks||[]).slice(0,4).map(attack=>({name:attack.name,toHit:fmt(attack.attackBonus),damage:`${attack.damage}${fmt(attack.damageBonus)} ${attack.type}`})),
       feat,features:compactFeatureCards(references,feat?.name,profile.caster?7:8),ruleIndex:compactRuleIndex(references,48),rogueResources:roguePrintModel(character),classUtility:buildClassUtility(character),
-      proficiencies:{saves:character.saves.map(abilityName),tools:[...(character.toolProficiencies||[])],languages:[...(character.languages||[])],masteries:[...(character.masteryIds||[])]},
+      proficiencies:{saves:character.saves.map(abilityName),tools:[...(character.toolProficiencies||[])],languages:[...(character.languages||[])],masteries:masteryLabels(character)},
       equipment:equipmentLines(character.inventory||[]),spellcasting:spellcastingModel(character),spellPage:profile.caster?spellPageModel(character):null,quickTurn:buildQuickTurn(character),
       audit:auditModel(character),packet:{totalPages:profile.maxPages},motto:theme.motto
     };
@@ -49,6 +50,10 @@ function rogueExpertiseLabel(character,rogue){const tool=character.expertise?.in
 function spellcastingModel(character){try{if(!character.spells)return null;const catalog=spellCatalog(character),names=ids=>(ids||[]).map(id=>catalog.get(id)||id),slots=Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · ");return{ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),slots,cantrips:names(character.spells.cantrips?.all),prepared:names(character.spells.prepared?.all),alwaysPrepared:names(character.spells.alwaysPrepared),spellbookCount:character.spells.spellbook?.all?.length||0};}catch(error){console.error("[print-model] spellcasting failed",error);throw error;}}
 function spellCatalog(character){return new Map(spellCatalogRecords(character).map(spell=>[spell.id,spell.name]));}
 function spellCatalogRecords(character){return character.class.id==="cleric"?clericSpellsFor(character.ruleset):character.class.id==="wizard"?wizardSpellsFor(character.ruleset):[];}
+function masteryLabels(character){
+  try{if(character.ruleset!=="2024")return[];return(character.masteryIds||[]).map(id=>{const weapon=RAW_2024.weapons[id];if(!weapon?.mastery)throw new Error(`Missing print Weapon Mastery data for ${id}.`);return`${weapon.name} — ${weapon.mastery}`;});}
+  catch(error){console.error("[print-model] Weapon Mastery labels failed",error);throw error;}
+}
 function safePortrait(value){const portrait=String(value||"");return /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(portrait)?portrait:null;}
 function equipmentLines(items){return items.slice(0,11).map(item=>`${item.quantity>1?`${item.quantity} × `:""}${item.name}`);}
 function shorten(value,max){const text=String(value||"").replace(/\s+/g," ").trim();return text.length<=max?text:`${text.slice(0,max-1).trimEnd()}…`;}
