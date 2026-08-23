@@ -7,21 +7,23 @@ import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { clericSpellsFor } from "../data/cleric-spells.js";
 import { selectPrintTheme } from "./theme.js";
 import { buildQuickTurn } from "./quick-turn.js";
+import { buildClassUtility } from "./class-utility.js";
+import { normalizeSheetCustomization, sheetCustomizationClasses, sheetCustomizationStyle } from "./customization.js";
 import { compactFeatureCards, compactRuleIndex, exportProfileFor } from "./profile.js";
 
 const fmt=value=>value>=0?`+${value}`:`${value}`;
 export function buildPremiumPrintModel(character){
   try{
     if(!character?.validation?.valid)throw new Error("Premium print requires a validated character.");
-    const references=buildQuickReference(character),profile=exportProfileFor(character),theme=selectPrintTheme(character),species=speciesChoiceLabel(character),feat=chooseFeat(character,references);
+    const references=buildQuickReference(character),profile=exportProfileFor(character),theme=selectPrintTheme(character),species=speciesChoiceLabel(character),feat=chooseFeat(character,references),customization=normalizeSheetCustomization(character.presentation?.sheetCustomization);
     return{
-      profile,theme,portraitDataUrl:safePortrait(character.presentation?.portraitDataUrl),
+      profile,theme,presentation:{customization,classes:sheetCustomizationClasses(customization),style:sheetCustomizationStyle(customization)},portraitDataUrl:customization.portraitVisible?safePortrait(character.presentation?.portraitDataUrl):null,
       identity:{name:character.name,level:character.level,classId:character.class.id,className:character.class.name,subclassName:character.subclass?.name||null,species,background:character.background.name,size:character.size},
       stats:{ac:character.ac,hp:character.hp,initiative:fmt(character.initiative),initiativeAdvantage:Boolean(character.initiativeAdvantage),speed:`${character.speed} ft`,proficiency:fmt(character.proficiency),passivePerception:character.passivePerception,hitDice:`${character.level}d${character.class.hitDie}`},
       abilities:ABILITIES.map(id=>({id,name:abilityName(id),score:character.abilities[id],modifier:fmt(abilityMod(character.abilities[id])),save:fmt(character.saveBonuses[id]),proficient:character.saves.includes(id)})),
       skills:Object.entries(SKILLS).map(([id,ability])=>({id,name:skillName(id),ability:ability.toUpperCase(),bonus:fmt(character.skillBonuses[id]),proficient:character.skills.includes(id),expertise:character.expertise.includes(id)})),
       attacks:(character.attacks||[]).slice(0,4).map(attack=>({name:attack.name,toHit:fmt(attack.attackBonus),damage:`${attack.damage}${fmt(attack.damageBonus)} ${attack.type}`})),
-      feat,features:compactFeatureCards(references,feat?.name,profile.caster?7:8),ruleIndex:compactRuleIndex(references,48),rogueResources:roguePrintModel(character),
+      feat,features:compactFeatureCards(references,feat?.name,profile.caster?7:8),ruleIndex:compactRuleIndex(references,48),rogueResources:roguePrintModel(character),classUtility:buildClassUtility(character),
       proficiencies:{saves:character.saves.map(abilityName),tools:[...(character.toolProficiencies||[])],languages:[...(character.languages||[])],masteries:[...(character.masteryIds||[])]},
       equipment:equipmentLines(character.inventory||[]),spellcasting:spellcastingModel(character),spellPage:profile.caster?spellPageModel(character):null,quickTurn:buildQuickTurn(character),
       audit:auditModel(character),packet:{totalPages:profile.maxPages},motto:theme.motto
