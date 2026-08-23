@@ -2,6 +2,7 @@ import { ABILITIES, SOURCE } from "../schema.js";
 import { wizardSpellsFor, WIZARD_SPELL_MASTERY_ACTION_IDS_2024 } from "../data/wizard-spells.js";
 import { abilityMod, averageHp } from "./math.js";
 import { fighterProgressionFor } from "./fighter.js";
+import { rogueProgressionFor, rogueSaveProficiencies } from "./rogue.js";
 import { wizardPickerLimits, wizardProgressionFor } from "./wizard.js";
 import { speciesHpBonus, validate2024Species } from "./species.js";
 import { validateBackgroundDetails } from "./background.js";
@@ -17,11 +18,25 @@ export function validateCharacter(character,mode){
     if(character.skills.length<character.class.skillCount)errors.push(`${character.class.name} is missing skill proficiencies.`);if(character.subclass&&character.level<character.class.subclassLevel)errors.push(`${character.class.name} subclass cannot be active before level ${character.class.subclassLevel}.`);if(character.expertise.some(skill=>!character.skills.includes(skill)))errors.push("Expertise requires an existing skill proficiency.");
     errors.push(...validate2024Species(character),...validateBackgroundDetails(character));
     const expectedSpeciesHp=speciesHpBonus(character),expectedHp=averageHp(character.class.hitDie,character.level,abilityMod(character.abilities.con))+expectedSpeciesHp;if(character.speciesHpBonus!==expectedSpeciesHp)errors.push(`Species Hit Point bonus should be ${expectedSpeciesHp}.`);if(character.hp!==expectedHp)errors.push(`Hit Points should be ${expectedHp}.`);
-    if(character.class.id==="fighter")validateFighter(errors,character);if(character.class.spellcasting==="wizard")validateWizard(errors,character);if(character.class.spellcasting==="cleric")validateCleric(errors,character);if(!Number.isInteger(character.ac)||character.ac<1)errors.push("Armor Class failed calculation.");if(!Number.isInteger(character.hp)||character.hp<1)errors.push("Hit Points failed calculation.");return{valid:errors.length===0,errors};
+    if(character.class.id==="fighter")validateFighter(errors,character);if(character.class.id==="rogue")validateRogue(errors,character);if(character.class.spellcasting==="wizard")validateWizard(errors,character);if(character.class.spellcasting==="cleric")validateCleric(errors,character);if(!Number.isInteger(character.ac)||character.ac<1)errors.push("Armor Class failed calculation.");if(!Number.isInteger(character.hp)||character.hp<1)errors.push("Hit Points failed calculation.");return{valid:errors.length===0,errors};
   }catch(error){console.error("[validation] character validation failed",error);throw error;}
 }
 function validateFighter(errors,character){
   try{const expected=fighterProgressionFor(character.ruleset,character.level,character.subclass?.id),actual=character.fighter;if(!actual){errors.push("Fighter progression data is missing.");return;}for(const key of ["secondWindUses","actionSurgeUses","indomitableUses","masteryCount","attacksPerAction","criticalMinimum"]){if(actual[key]!==expected[key])errors.push(`Fighter ${key} should be ${expected[key]}.`);}if(Boolean(character.initiativeAdvantage)!==Boolean(expected.initiativeAdvantage))errors.push("Champion initiative Advantage state is incorrect.");if(character.masteryIds.length!==expected.masteryCount)errors.push(`Fighter should have ${expected.masteryCount} Weapon Mastery choices.`);const styles=character.fightingStyles||[],expectedStyles=expected.additionalFightingStyle?2:1;if(styles.length!==expectedStyles)errors.push(`Fighter should have ${expectedStyles} Fighting Style choice${expectedStyles===1?"":"s"}.`);const boon=character.feats.some(feat=>feat.id==="boon-combat-prowess");if(character.ruleset==="2024"&&character.level>=19&&!boon)errors.push("Level 19+ Fighter is missing its Epic Boon feat.");if((character.ruleset!=="2024"||character.level<19)&&boon)errors.push("Epic Boon appeared before Fighter level 19.");if(boon&&(!character.epicBoonAbility||character.abilityMaximums[character.epicBoonAbility]!==30))errors.push("Boon of Combat Prowess ability increase/max is incomplete.");}catch(error){console.error("[validation] Fighter validation failed",error);throw error;}
+}
+function validateRogue(errors,character){
+  try{
+    if(character.ruleset!=="2024"){errors.push("Rogue is not verified for this ruleset.");return;}
+    const expected=rogueProgressionFor(character.level,character.subclass?.id),actual=character.rogue;if(!actual){errors.push("Rogue progression data is missing.");return;}
+    for(const key of ["sneakAttackDice","expertiseCount","masteryCount","maxCunningStrikeEffects","reliableTalent","slipperyMind","strokeOfLuck","thiefReflexes"]){if(actual[key]!==expected[key])errors.push(`Rogue ${key} should be ${expected[key]}.`);}
+    if(JSON.stringify(actual.cunningStrikeOptions)!==JSON.stringify(expected.cunningStrikeOptions))errors.push("Rogue Cunning Strike option progression is incorrect.");
+    if(character.expertise.length!==expected.expertiseCount)errors.push(`Rogue should have Expertise in ${expected.expertiseCount} skills.`);
+    if(character.masteryIds.length!==2)errors.push("Rogue should have two Weapon Mastery choices.");
+    if(!character.toolProficiencies.includes("Thieves' Tools"))errors.push("Rogue is missing Thieves' Tools proficiency.");
+    if(!character.languages.includes("Thieves’ Cant"))errors.push("Rogue is missing Thieves’ Cant.");
+    const expectedSaves=rogueSaveProficiencies(character.level);if(character.saves.length!==expectedSaves.length||expectedSaves.some(save=>!character.saves.includes(save)))errors.push("Rogue saving throw proficiency progression is incorrect.");
+    const boon=character.feats.some(feat=>feat.id==="boon-night-spirit");if(character.level>=19&&!boon)errors.push("Level 19+ Rogue is missing Boon of the Night Spirit.");if(character.level<19&&boon)errors.push("Boon of the Night Spirit appeared before Rogue level 19.");if(boon&&(!character.epicBoonAbility||character.abilityMaximums[character.epicBoonAbility]!==30))errors.push("Boon of the Night Spirit ability increase/max is incomplete.");
+  }catch(error){console.error("[validation] Rogue validation failed",error);throw error;}
 }
 function validateWizard(errors,character){
   try{
