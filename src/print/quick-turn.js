@@ -30,11 +30,13 @@ function clericTurn(character){
 function rogueTurn(character){
   try{
     const steps=[`Set up Sneak Attack${character.rogue?.sneakAttackDice?` (${character.rogue.sneakAttackDice}d6)`:""} before choosing your target.`];
-    if(character.level>=5)steps.push(`Use Cunning Strike (DC ${rogueCunningStrikeDc(character)}) only when its effect is worth giving up Sneak Attack dice.`);
-    else if(character.level>=2)steps.push("Use Cunning Action to Dash, Disengage, or Hide when positioning creates more value than standing still.");
-    else steps.push("Use normal movement and cover to preserve the position needed for your next Sneak Attack.");
-    if(character.level>=3)steps.push("Use Cunning Action for positioning; if you have not moved, Steady Aim can create Advantage for the next attack this turn.");
-    else steps.push("End your turn where enemies must spend movement or actions to reach you.");
+    if(character.ruleset==="2014"){
+      if(character.level>=2)steps.push("Use Cunning Action to Dash, Disengage, or Hide when positioning creates more value than standing still.");else steps.push("Use normal movement and cover to preserve the position needed for your next Sneak Attack.");
+      if(character.subclass?.id==="thief"&&character.level>=17)steps.push("In round one, plan around Thief’s Reflexes: your second turn happens at Initiative minus 10 unless you are surprised.");else if(character.subclass?.id==="thief"&&character.level>=3)steps.push("Use Fast Hands or Cunning Action to create position and tempo without giving up your action.");else steps.push("End your turn where enemies must spend movement or actions to reach you.");
+      return steps;
+    }
+    if(character.level>=5)steps.push(`Use Cunning Strike (DC ${rogueCunningStrikeDc(character)}) only when its effect is worth giving up Sneak Attack dice.`);else if(character.level>=2)steps.push("Use Cunning Action to Dash, Disengage, or Hide when positioning creates more value than standing still.");else steps.push("Use normal movement and cover to preserve the position needed for your next Sneak Attack.");
+    if(character.level>=3)steps.push("Use Cunning Action for positioning; if you have not moved, Steady Aim can create Advantage for the next attack this turn.");else steps.push("End your turn where enemies must spend movement or actions to reach you.");
     return steps;
   }catch(error){console.error("[print-quick-turn] Rogue turn failed",error);throw error;}
 }
