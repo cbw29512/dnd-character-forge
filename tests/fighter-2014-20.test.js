@@ -59,7 +59,7 @@ test("2014 Fighter ASI schedule applies seven legal opportunities by level 19",(
   try{
     const total=character=>Object.values(character.abilities).reduce((sum,value)=>sum+value,0);
     const levels=[3,4,6,8,12,14,16,19];
-    const characters=levels.map(fighterAt);
+    const characters=levels.map(level=>fighterAt(level));
     for(let i=1;i<characters.length;i++)assert.ok(total(characters[i])>=total(characters[i-1]),`ability total regressed at level ${levels[i]}`);
     assert.ok(total(characters[1])>total(characters[0]));
     for(const value of Object.values(characters.at(-1).abilities))assert.ok(value<=20);
