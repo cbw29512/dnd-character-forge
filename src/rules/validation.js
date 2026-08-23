@@ -21,7 +21,7 @@ function validateFighter(errors,character){
     for(const key of ["secondWindUses","actionSurgeUses","indomitableUses","masteryCount","attacksPerAction","criticalMinimum"]){if(actual[key]!==expected[key])errors.push(`Fighter ${key} should be ${expected[key]}.`);}
     if(Boolean(character.initiativeAdvantage)!==Boolean(expected.initiativeAdvantage))errors.push("Champion initiative Advantage state is incorrect.");
     if(character.masteryIds.length!==expected.masteryCount)errors.push(`Fighter should have ${expected.masteryCount} Weapon Mastery choices.`);
-    const styles=character.fightingStyles||[];const expectedStyles=character.ruleset==="2024"&&expected.additionalFightingStyle?2:1;if(styles.length!==expectedStyles)errors.push(`Fighter should have ${expectedStyles} Fighting Style choice${expectedStyles===1?"":"s"}.`);
+    const styles=character.fightingStyles||[],expectedStyles=expected.additionalFightingStyle?2:1;if(styles.length!==expectedStyles)errors.push(`Fighter should have ${expectedStyles} Fighting Style choice${expectedStyles===1?"":"s"}.`);
     const boon=character.feats.some(feat=>feat.id==="boon-combat-prowess");if(character.ruleset==="2024"&&character.level>=19&&!boon)errors.push("Level 19+ Fighter is missing its Epic Boon feat.");if((character.ruleset!=="2024"||character.level<19)&&boon)errors.push("Epic Boon appeared before Fighter level 19.");
     if(boon&&(!character.epicBoonAbility||character.abilityMaximums[character.epicBoonAbility]!==30))errors.push("Boon of Combat Prowess ability increase/max is incomplete.");
   }catch(error){console.error("[validation] Fighter validation failed",error);throw error;}
