@@ -3,6 +3,7 @@ import { buildRulesAudit as buildCoreRulesAudit } from "./audit.js";
 import { entityProvenance, rulesetSource } from "../data/rule-provenance.js";
 import { barbarianEntityProvenance } from "../data/barbarian-provenance.js";
 import { paladinEntityProvenance } from "../data/paladin-provenance.js";
+import { rangerEntityProvenance } from "../data/ranger-provenance.js";
 import { speciesChoiceLabel } from "./species.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"}),LICENSE="CC BY 4.0",SRD_LANDING_URL="https://www.dndbeyond.com/srd";
@@ -11,6 +12,7 @@ export function buildRulesAudit(character,validation){
   try{
     if(character?.class?.id==="barbarian")return buildBarbarianAudit(character,validation);
     if(character?.class?.id==="paladin")return buildPaladinAudit(character,validation);
+    if(character?.class?.id==="ranger")return buildRangerAudit(character,validation);
     return buildCoreRulesAudit(character,validation);
   }catch(error){console.error("[audit-router] build failed",error);throw error;}
 }
@@ -50,6 +52,24 @@ function buildPaladinAudit(character,validation){
     ]);
   }catch(error){console.error("[audit-router] Paladin audit failed",error);throw error;}
 }
+function buildRangerAudit(character,validation){
+  try{
+    if(!validation?.valid)throw new Error("Ranger rules audit requires a validated character.");
+    const source=rulesetSource(character.ruleset),classSource=rangerEntityProvenance(character.ruleset,"class"),homebrewCount=character.homebrew?.length||0,rawIntegrity=character.sourceMode===SOURCE.RAW&&homebrewCount===0;
+    const mechanics=[
+      mechanic("Species",speciesChoiceLabel(character),entityProvenance(character.ruleset,"species",character.species.id)),
+      mechanic("Background",character.background.name,entityProvenance(character.ruleset,"background",character.background.id)),
+      mechanic("Class",character.class.name,classSource)
+    ];
+    if(character.subclass)mechanics.push(mechanic("Subclass",character.subclass.name,rangerEntityProvenance(character.ruleset,"subclass")));
+    mechanics.push(mechanic("Level",String(character.level),classSource),mechanic("Ranger spell list",character.ruleset==="2014"?"p.109":"p.60",rangerEntityProvenance(character.ruleset,"spells")));
+    return auditEnvelope(character,source,rawIntegrity,homebrewCount,mechanics,[
+      "Character generation completed with zero validation errors.",
+      rangerEditionCheck(character.ruleset),
+      "Displayed Ranger rules, spell list, and identity carry verified SRD source locators."
+    ]);
+  }catch(error){console.error("[audit-router] Ranger audit failed",error);throw error;}
+}
 function barbarianEditionCheck(ruleset){
   try{
     if(ruleset==="2014")return "2014 Barbarian Rage, Unarmored Defense, Reckless Attack, Danger Sense, Brutal Critical, Berserker progression, and Primal Champion math were recalculated from encoded SRD mechanics.";
@@ -63,6 +83,13 @@ function paladinEditionCheck(ruleset){
     if(ruleset==="2024")return "2024 Paladin Lay On Hands, Weapon Mastery, Paladin's Smite, Channel Divinity, spell preparation, auras, Restoring Touch, Oath of Devotion progression, Epic Boon, and Holy Nimbus were recalculated from encoded SRD mechanics.";
     throw new Error(`Unsupported Paladin audit ruleset: ${ruleset}.`);
   }catch(error){console.error("[audit-router] Paladin edition check failed",error);throw error;}
+}
+function rangerEditionCheck(ruleset){
+  try{
+    if(ruleset==="2014")return "2014 Ranger Favored Enemy, Natural Explorer, spells known, Primeval Awareness, Hunter option progression, Feral Senses, and Foe Slayer were recalculated from encoded SRD mechanics.";
+    if(ruleset==="2024")return "2024 Ranger Favored Enemy with Hunter's Mark, Weapon Mastery, prepared spells, Deft Explorer, Roving, Tireless, Hunter progression, Nature's Veil, Epic Boon, and Foe Slayer were recalculated from encoded SRD mechanics.";
+    throw new Error(`Unsupported Ranger audit ruleset: ${ruleset}.`);
+  }catch(error){console.error("[audit-router] Ranger edition check failed",error);throw error;}
 }
 function auditEnvelope(character,source,rawIntegrity,homebrewCount,mechanics,checks){
   try{return{status:"PASS",sourceMode:character.sourceMode,rawIntegrity,ruleset:character.ruleset,rulesLabel:RULESET_LABELS[character.ruleset],sourceDocument:source.document,sourceVersion:source.version,sourceUrl:SRD_LANDING_URL,sourcePdfUrl:source.pdfUrl,license:LICENSE,scope:"Character Forge verified SRD coverage only; unsupported content is unavailable instead of guessed.",mechanics,checks:[...checks,character.sourceMode===SOURCE.RAW?"RAW integrity passed: no Homebrew mechanics are present in this character.":`Homebrew mode is explicit: ${homebrewCount} structured Homebrew entr${homebrewCount===1?"y":"ies"} applied on top of RAW.`]};}
