@@ -25,6 +25,10 @@ test("2024 Ranger print preserves Hunter's Mark and legal masteries",()=>{
   const character=ranger("2024"),model=buildPremiumPrintModel(character);assert.equal(model.profile.caster,true);assert.equal(model.packet.totalPages,2);assert.equal(model.theme.id,"ranger-warden");assert.equal(model.classUtility.title,"Warden's Mark");assert.equal(model.rangerSupport.ruleset,"2024");assert.equal(character.spells.prepared.all.length,15);assert.deepEqual(character.spells.alwaysPrepared,["hunters-mark"]);assert.equal(model.spellPage.entries.length,16);assert.ok(model.spellPage.entries.some(entry=>entry.id==="hunters-mark"&&entry.tags.includes("A")));assert.equal(character.masteryIds.length,2);assert.equal(model.proficiencies.masteries.length,2);for(const label of model.proficiencies.masteries)assert.match(label,/ — (Cleave|Graze|Nick|Push|Sap|Slow|Topple|Vex)$/);assert.equal(model.rangerSupport.hunterMarkFreeCasts,6);assert.equal(model.rangerSupport.hunterMarkDie,"d10");assert.equal(model.rangerSupport.expertiseCount,3);
 });
 
+test("2024 Hunter play references disclose Short/Long Rest option swaps",()=>{
+  const refs=buildQuickReference(ranger("2024")),prey=refs.find(item=>item.name==="Hunter's Prey")?.text||"",defense=refs.find(item=>item.name==="Defensive Tactics")?.text||"";assert.match(prey,/Short or Long Rest/i);assert.match(prey,/replace it with the other Hunter's Prey option/i);assert.match(defense,/Short or Long Rest/i);assert.match(defense,/replace it with the other Defensive Tactics option/i);
+});
+
 test("Ranger audit text remains edition-pure",()=>{
   const oldText=ranger("2014").audit.checks.join(" "),newText=ranger("2024").audit.checks.join(" ");assert.match(oldText,/Favored Enemy/i);assert.match(oldText,/Natural Explorer/i);assert.doesNotMatch(oldText,/Weapon Mastery|Deft Explorer|Nature's Veil|Epic Boon/i);assert.match(newText,/Weapon Mastery/i);assert.match(newText,/Hunter's Mark/i);assert.doesNotMatch(newText,/Natural Explorer|Primeval Awareness|Hide in Plain Sight|Vanish/i);
 });
