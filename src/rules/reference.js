@@ -2,6 +2,7 @@ import { REFERENCE_2014, REFERENCE_2024, MASTERY_REFERENCE } from "../data/quick
 import { RAW_2014 } from "../data/raw-2014.js";
 import { RAW_2024 } from "../data/raw-2024.js";
 import { GNOME_LINEAGES, GOLIATH_ANCESTRIES, TIEFLING_LEGACIES } from "../data/species-2024.js";
+import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { referenceProvenance } from "../data/rule-provenance.js";
 import { dragonbornBreath, speciesDarkvision, speciesMagic } from "./species.js";
 import { abilityMod } from "./math.js";
@@ -12,7 +13,7 @@ export function buildQuickReference(character){
     const rules=refsFor(character.ruleset),items=[];
     for(const trait of character.speciesTraits||character.species.traits||[])push(character,items,`species:${trait}`,trait,dynamicSpeciesTrait(character,trait)||required(rules.species?.[trait],trait));
     if(character.background.feature)push(character,items,`background:${character.background.feature}`,character.background.feature,required(rules.background?.[character.background.feature],character.background.feature));
-    for(const feat of character.feats||[])push(character,items,`feat:${feat.id}`,feat.name,required(rules.feat?.[feat.name],feat.name));
+    for(const feat of character.feats||[])push(character,items,`feat:${feat.id}`,feat.name,dynamicFeat(character,feat)||required(rules.feat?.[feat.name],feat.name));
     const styles=character.fightingStyles?.length?character.fightingStyles:(character.fightingStyle?[character.fightingStyle]:[]);
     for(const style of styles)push(character,items,`style:${style.name}`,style.name,required(rules.style?.[style.name],style.name));
     for(const name of character.features||[]){if(name==="Fighting Style"||name.startsWith("Fighting Style:"))continue;push(character,items,`feature:${name}`,name,dynamicFeature(character,name)||required(rules.feature?.[name],name));}
@@ -21,15 +22,11 @@ export function buildQuickReference(character){
   }catch(error){console.error("[reference] build failed",error);throw error;}
 }
 export function masteryEntries(character){
-  try{
-    if(character.ruleset!=="2024"||!character.masteryIds?.length)return[];const data=dataFor(character.ruleset);
-    return character.masteryIds.map(weaponId=>{const weapon=data.weapons[weaponId];if(!weapon)throw new Error(`Unknown mastery weapon ${weaponId}.`);if(!weapon.mastery)throw new Error(`${weapon.name} is missing its Weapon Mastery property.`);if(!MASTERY_REFERENCE[weapon.mastery])throw new Error(`Missing quick reference for ${weapon.mastery}.`);return{weaponId,weaponName:weapon.name,property:weapon.mastery};});
-  }catch(error){console.error("[reference] mastery lookup failed",error);throw error;}
+  try{if(character.ruleset!=="2024"||!character.masteryIds?.length)return[];const data=dataFor(character.ruleset);return character.masteryIds.map(weaponId=>{const weapon=data.weapons[weaponId];if(!weapon)throw new Error(`Unknown mastery weapon ${weaponId}.`);if(!weapon.mastery)throw new Error(`${weapon.name} is missing its Weapon Mastery property.`);if(!MASTERY_REFERENCE[weapon.mastery])throw new Error(`Missing quick reference for ${weapon.mastery}.`);return{weaponId,weaponName:weapon.name,property:weapon.mastery};});}catch(error){console.error("[reference] mastery lookup failed",error);throw error;}
 }
 function dynamicSpeciesTrait(character,name){
   try{
-    if(character.ruleset!=="2024")return null;
-    const species=character.species.id,choices=character.speciesChoices||{},category=character.species.name,pb=character.proficiency;
+    if(character.ruleset!=="2024")return null;const species=character.species.id,choices=character.speciesChoices||{},category=character.species.name,pb=character.proficiency;
     if(name==="Darkvision"){const range=speciesDarkvision(character);if(!range)throw new Error(`${category} Darkvision range is unavailable.`);return rr(category,"Passive",`You have Darkvision out to ${range} ft.`);}
     if(species==="dragonborn"){
       if(name==="Draconic Ancestry")return rr(category,"Chosen at creation",`${choices.ancestryName} ancestry determines your ${choices.damageType} Breath Weapon and Damage Resistance.`);
@@ -67,6 +64,12 @@ function dynamicSpeciesTrait(character,name){
     return null;
   }catch(error){console.error(`[reference] dynamic species trait ${name} failed`,error);throw error;}
 }
+function dynamicFeat(character,feat){
+  try{
+    if(character.ruleset==="2024"&&feat.id==="boon-spell-recall")return rr("Epic Boon","Casting level 1–4 spell",`The +1 ${pretty(character.epicBoonAbility)} increase and maximum of 30 are already applied. When you cast a spell using a level 1–4 spell slot, roll 1d4; if the roll equals the slot's level, the slot isn't expended.`);
+    return null;
+  }catch(error){console.error(`[reference] dynamic feat ${feat?.name} failed`,error);throw error;}
+}
 function dynamicFeature(character,name){
   try{
     if(name==="Spellcasting")return spellcasting(character);
@@ -82,6 +85,12 @@ function dynamicFeature(character,name){
     if(name==="Tactical Shift")return{category:"Fighter",timing:"With Second Wind",text:`After using Second Wind as a Bonus Action, move up to ${Math.floor(character.speed/2)} ft without provoking Opportunity Attacks.`};
     if(name==="Arcane Recovery")return arcaneRecovery(character);
     if(name==="Scholar")return{category:"Wizard",timing:"Passive",text:`Expertise is already applied to ${pretty(character.expertise[0])}.`};
+    if(name==="Sculpt Spells"&&character.ruleset==="2024")return rr("Evoker","Evocation spell",`When an Evocation spell affects creatures you can see, protect up to 1 + the spell's level of them. They automatically succeed on their saves against the spell and take no damage if a successful save would normally deal half.`);
+    if(name==="Empowered Evocation")return rr("Evoker","Evocation damage",`Add your Intelligence modifier (${abilityMod(character.abilities.int)>=0?"+":""}${abilityMod(character.abilities.int)}) to one damage roll of each Wizard Evocation spell you cast.`);
+    if(name==="Overchannel")return rr("Evoker","Wizard spell · slot 1–5",`When a damaging Wizard spell uses a level 1–5 slot, you can maximize its damage on the turn you cast it. First use per Long Rest is safe; the second deals 2d12 Necrotic damage per slot level to you, ignoring Resistance and Immunity, and each further use increases that damage by 1d12 per slot level.`);
+    if(name==="Spell Mastery")return spellMastery(character);
+    if(name==="Epic Boon")return rr(character.class.name,"Applied",`Your level-19 Epic Boon is ${character.feats.find(feat=>feat.category==="Epic Boon")?.name||"listed separately"}; its legal ability increase is already included.`);
+    if(name==="Signature Spells")return signatureSpells(character);
     if(name==="Channel Divinity: Preserve Life"||name==="Preserve Life")return preserveLife(character);
     if(name==="Sear Undead")return searUndead(character);
     if(name==="Survivor")return survivor(character);
@@ -89,14 +98,11 @@ function dynamicFeature(character,name){
   }catch(error){console.error(`[reference] dynamic ${name} failed`,error);throw error;}
 }
 function spellcasting(character){
-  try{
-    const base="Use the spell section above for save DC, attack bonus, slots, and prepared spells. Expended spell slots return after a Long Rest.";
-    if(character.ruleset==="2014"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic / Ritual",text:`${base} A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared.`};
-    if(character.ruleset==="2014"&&character.class.id==="cleric")return{category:"Cleric",timing:"Magic / Ritual",text:`${base} A prepared Cleric spell with the Ritual tag can be cast as a Ritual.`};
-    if(character.ruleset==="2024"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with legal spells from your spellbook; Ritual Adept is listed separately.`};
-    return{category:"Cleric",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with other Cleric spells for which you have slots.`};
-  }catch(error){console.error("[reference] spellcasting failed",error);throw error;}
+  try{const base="Use the spell section above for save DC, attack bonus, slots, and prepared spells. Expended spell slots return after a Long Rest.";if(character.ruleset==="2014"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic / Ritual",text:`${base} A Ritual-tag spell in your spellbook can be cast as a Ritual without being prepared.`};if(character.ruleset==="2014"&&character.class.id==="cleric")return{category:"Cleric",timing:"Magic / Ritual",text:`${base} A prepared Cleric spell with the Ritual tag can be cast as a Ritual.`};if(character.ruleset==="2024"&&character.class.id==="wizard")return{category:"Wizard",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with legal spells from your spellbook; Wizard features that are always prepared do not consume this prepared-spell count.`};return{category:"Cleric",timing:"Magic",text:`${base} After a Long Rest, you can replace prepared level 1+ spells with other Cleric spells for which you have slots.`};}catch(error){console.error("[reference] spellcasting failed",error);throw error;}
 }
+function spellMastery(character){try{const mastery=character.spells?.spellMastery;if(!mastery)throw new Error("Spell Mastery state is missing.");return rr("Wizard","At will / after Long Rest",`${wizardSpellName(character,mastery.level1)} (level 1) and ${wizardSpellName(character,mastery.level2)} (level 2) are always prepared and can be cast at their lowest level without a spell slot. Higher-level casts use slots. After a Long Rest, one mastered spell can be replaced by an eligible same-level spell in the spellbook.`);}catch(error){console.error("[reference] Spell Mastery failed",error);throw error;}}
+function signatureSpells(character){try{const ids=character.spells?.signatureSpells||[];if(ids.length!==2)throw new Error("Signature Spell state requires two spells.");return rr("Wizard","Free cast / Short or Long Rest",`${ids.map(id=>wizardSpellName(character,id)).join(" and ")} are always prepared. Each can be cast once at level 3 without a spell slot; each free cast refreshes after a Short or Long Rest. Higher-level casts use slots.`);}catch(error){console.error("[reference] Signature Spells failed",error);throw error;}}
+function wizardSpellName(character,id){try{return wizardSpellsFor(character.ruleset).find(spell=>spell.id===id)?.name||id;}catch(error){console.error("[reference] Wizard spell name failed",error);throw error;}}
 function secondWind(character){try{const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};const uses=character.fighter?.secondWindUses;if(!Number.isInteger(uses))throw new Error("2024 Second Wind reference requires Fighter progression data.");return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. ${uses} uses; regain one expended use after a Short Rest and all expended uses after a Long Rest.`};}catch(error){console.error("[reference] Second Wind failed",error);throw error;}}
 function actionSurge(character){try{const uses=character.fighter?.actionSurgeUses;if(!Number.isInteger(uses))throw new Error("Action Surge reference requires Fighter progression data.");const restriction=character.ruleset==="2024"?" The additional action cannot be the Magic action.":"";return{category:"Fighter",timing:"On your turn",text:`Take one additional action.${restriction} ${uses} use${uses===1?"":"s"} between rests; regain all uses after a Short or Long Rest${uses>1?", and use it no more than once on the same turn":""}.`};}catch(error){console.error("[reference] Action Surge failed",error);throw error;}}
 function abilityScoreImprovement(character){try{const levels=character.class.asiLevels||[4],count=levels.filter(level=>character.level>=level).length;if(count<1)throw new Error("ASI reference requires at least one earned ASI level.");return{category:"Class",timing:"Applied",text:`${count} Ability Score Improvement opportunit${count===1?"y has":"ies have"} been earned at this level and the generated legal increases are already included in the ability scores above.`};}catch(error){console.error("[reference] Ability Score Improvement failed",error);throw error;}}
