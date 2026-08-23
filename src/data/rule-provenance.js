@@ -12,7 +12,8 @@ const REFERENCE_PAGES=Object.freeze({
   "2014":Object.freeze({
     "species:Ability Score Increase":"5","species:Extra Language":"5","background:Shelter of the Faithful":"61",
     "style:Defense":"24","style:Archery":"24","style:Great Weapon Fighting":"24",
-    "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Ability Score Improvement":"25","feature:Extra Attack":"25",
+    "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25",
+    "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17",
     "feature:Spellcasting:wizard":"52–53","feature:Arcane Recovery":"53","feature:Evocation Savant":"54","feature:Sculpt Spells":"54",
     "feature:Spellcasting:cleric":"15–16","feature:Divine Domain: Life Domain":"17","feature:Bonus Proficiency: Heavy Armor":"17","feature:Disciple of Life":"17",
     "feature:Channel Divinity (1/rest)":"16","feature:Turn Undead":"16","feature:Channel Divinity: Preserve Life":"17","feature:Preserve Life":"17","feature:Destroy Undead (CR 1/2)":"17","feature:Life Domain":"17"
@@ -43,7 +44,8 @@ export function entityProvenance(ruleset,kind,id){
 export function referenceProvenance(character,kind,name){
   try{
     if(!character?.ruleset)throw new Error("Reference provenance requires a character ruleset.");
-    const classSuffix=kind==="feature"&&name==="Spellcasting"?`:${character.class?.id||"unknown"}`:"";
+    const classSpecific=kind==="feature"&&(name==="Spellcasting"||(name==="Ability Score Improvement"&&character.ruleset==="2014"));
+    const classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"";
     const masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name;
     const key=`${kind}:${masteryName}${classSuffix}`;
     const page=REFERENCE_PAGES[character.ruleset]?.[key];
