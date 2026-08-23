@@ -1,5 +1,5 @@
 import { pick, sample } from "./random.js";
-import { duplicateValues } from "./duplicates.js";
+import { duplicateValues, uniqueStrings } from "./duplicates.js";
 import { abilityMod } from "./math.js";
 
 const SLOTS_2014=Object.freeze({
@@ -13,6 +13,8 @@ const PREPARED_2024=Object.freeze({1:2,2:3,3:4,4:5,5:6,6:6,7:7,8:7,9:9,10:9,11:1
 const MARK_CASTS_2024=Object.freeze({1:2,2:2,3:2,4:2,5:3,6:3,7:3,8:3,9:4,10:4,11:4,12:4,13:5,14:5,15:5,16:5,17:6,18:6,19:6,20:6});
 
 export const FAVORED_ENEMY_TYPES_2014=Object.freeze(["aberrations","beasts","celestials","constructs","dragons","elementals","fey","fiends","giants","monstrosities","oozes","plants","undead"]);
+export const FAVORED_ENEMY_LANGUAGES_2014=Object.freeze({aberrations:"Deep Speech",celestials:"Celestial",dragons:"Draconic",elementals:"Primordial",fey:"Sylvan",fiends:"Infernal",giants:"Giant"});
+const RANDOM_FAVORED_ENEMIES_2014=Object.freeze(Object.keys(FAVORED_ENEMY_LANGUAGES_2014));
 export const NATURAL_EXPLORER_TERRAINS_2014=Object.freeze(["arctic","coast","desert","forest","grassland","mountain","swamp","underdark"]);
 export const HUNTER_PREY_2014=Object.freeze({"colossus-slayer":"Colossus Slayer","giant-killer":"Giant Killer","horde-breaker":"Horde Breaker"});
 export const HUNTER_DEFENSE_2014=Object.freeze({"escape-the-horde":"Escape the Horde","multiattack-defense":"Multiattack Defense","steel-will":"Steel Will"});
@@ -37,9 +39,10 @@ export function rangerProgressionFor(ruleset,level,subclassId=null,wisModifier=0
 
 export function resolveRangerClassSelections(ruleset,level,subclassId,selections={}){
   try{
-    const p=rangerProgressionFor(ruleset,level,subclassId),resolved={favoredEnemies:[],naturalExplorerTerrains:[],huntersPrey:null,defensiveTactics:null,multiattack:null,superiorDefense:null};
+    const p=rangerProgressionFor(ruleset,level,subclassId),resolved={favoredEnemies:[],favoredEnemyLanguages:[],naturalExplorerTerrains:[],huntersPrey:null,defensiveTactics:null,multiattack:null,superiorDefense:null};
     if(ruleset==="2014"){
-      resolved.favoredEnemies=resolveList(selections.favoredEnemies,FAVORED_ENEMY_TYPES_2014,p.favoredEnemyCount,"Favored Enemy");
+      resolved.favoredEnemies=resolveList(selections.favoredEnemies,FAVORED_ENEMY_TYPES_2014,p.favoredEnemyCount,"Favored Enemy",RANDOM_FAVORED_ENEMIES_2014);
+      resolved.favoredEnemyLanguages=uniqueStrings(resolved.favoredEnemies.map(id=>FAVORED_ENEMY_LANGUAGES_2014[id]).filter(Boolean));
       resolved.naturalExplorerTerrains=resolveList(selections.naturalExplorerTerrains,NATURAL_EXPLORER_TERRAINS_2014,p.naturalExplorerTerrainCount,"Natural Explorer terrain");
       if(p.hunter){resolved.huntersPrey=resolveOne(selections.huntersPrey,HUNTER_PREY_2014,"Hunter's Prey");if(Number(level)>=7)resolved.defensiveTactics=resolveOne(selections.defensiveTactics,HUNTER_DEFENSE_2014,"Defensive Tactics");if(Number(level)>=11)resolved.multiattack=resolveOne(selections.multiattack,HUNTER_MULTIATTACK_2014,"Multiattack");if(Number(level)>=15)resolved.superiorDefense=resolveOne(selections.superiorDefense,HUNTER_SUPERIOR_DEFENSE_2014,"Superior Hunter's Defense");}
       return Object.freeze(resolved);
@@ -54,6 +57,6 @@ export function rangerSpellSlots(ruleset,level){try{return Object.freeze({...ran
 export function rangerMaxSpellLevel(ruleset,level){try{const levels=Object.keys(rangerSpellSlots(ruleset,level)).map(Number);return levels.length?Math.max(...levels):0;}catch(error){console.error("[ranger] max spell level failed",error);throw error;}}
 export function rangerSpellChoiceCount(character){try{const p=rangerProgressionFor(character.ruleset,character.level,character.subclass?.id,abilityMod(character.abilities.wis));return character.ruleset==="2014"?p.known:p.prepared;}catch(error){console.error("[ranger] spell choice count failed",error);throw error;}}
 
-function resolveList(selected,available,required,label){
-  try{const fixed=Array.isArray(selected)?selected:[];const duplicates=duplicateValues(fixed);if(duplicates.length)throw new Error(`Duplicate ${label}: ${duplicates.join(", ")}`);const legal=new Set(available),bad=fixed.filter(id=>!legal.has(id));if(bad.length)throw new Error(`Unsupported ${label}: ${bad.join(", ")}`);if(fixed.length>required)throw new Error(`Choose at most ${required} ${label} option${required===1?"":"s"}.`);return[...fixed,...sample(available,required-fixed.length,fixed)];}catch(error){console.error(`[ranger] ${label} selection failed`,error);throw error;}}
+function resolveList(selected,available,required,label,randomAvailable=available){
+  try{const fixed=Array.isArray(selected)?selected:[];const duplicates=duplicateValues(fixed);if(duplicates.length)throw new Error(`Duplicate ${label}: ${duplicates.join(", ")}`);const legal=new Set(available),bad=fixed.filter(id=>!legal.has(id));if(bad.length)throw new Error(`Unsupported ${label}: ${bad.join(", ")}`);if(fixed.length>required)throw new Error(`Choose at most ${required} ${label} option${required===1?"":"s"}.`);const pool=uniqueStrings([...randomAvailable,...available]);return[...fixed,...sample(pool,required-fixed.length,fixed)];}catch(error){console.error(`[ranger] ${label} selection failed`,error);throw error;}}
 function resolveOne(selected,map,label){try{if(selected!=null&&selected!=="random"&&!map[selected])throw new Error(`Unsupported ${label}: ${selected}.`);return selected&&selected!=="random"?selected:pick(Object.keys(map));}catch(error){console.error(`[ranger] ${label} selection failed`,error);throw error;}}
