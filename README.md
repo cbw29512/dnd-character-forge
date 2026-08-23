@@ -33,12 +33,27 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - Cleric / Life Domain, levels 1–5
 
 ### RAW 2024 / SRD 5.2.1
-- Human / Criminal / Soldier
+- **All nine SRD species:** Dragonborn, Dwarf, Elf, Gnome, Goliath, Halfling, Human, Orc, Tiefling
+- Criminal / Soldier backgrounds
 - Fighter / Champion, **levels 1–20**
 - Wizard / Evoker, levels 1–5
 - Cleric / Life Domain, levels 1–5
 
 The level picker is class-aware in both editions: Fighter exposes levels 1–20; classes whose verified implementation still ends at level 5 never offer unsupported higher levels.
+
+## 2024 species vertical slice
+- Species-specific choices are structured state rather than display text: Dragonborn ancestry, Elf lineage/Keen Senses/spell ability, Gnome lineage/spell ability, Goliath Giant Ancestry, Human size/Skillful choice, and Tiefling size/legacy/spell ability.
+- The Forge UI exposes these as **Random-by-default** controls only when the selected species has an actual choice to make.
+- Saved pregens reopen with the same lineage, ancestry, legacy, size, skill, and spellcasting-ability constraints.
+- Character headers and Rules Audits show resolved identities such as `Elf — Wood Elf`, `Dragonborn — Red`, or `Tiefling — Infernal`.
+- Dragonborn Breath Weapon derives save DC, Proficiency Bonus uses, damage type, and level scaling; Draconic Flight is unavailable before level 5.
+- Dwarven Toughness adds exactly one maximum Hit Point per character level and is independently recalculated after final Constitution changes.
+- Drow Darkvision, Wood Elf Speed, Keen Senses, lineage magic, Gnome lineage magic, all six Goliath ancestry benefits, Large Form, Halfling traits, Human Skillful/Versatile, Orc traits, and Tiefling legacy magic are represented as playable references.
+- Species choices and variable Small/Medium size participate in mechanical fingerprints so mechanically different pregens do not collapse as duplicates.
+- Repeated trait names such as **Darkvision** resolve to the actual species rule page instead of a generic citation.
+- Every displayed species rule in this slice resolves to the official SRD 5.2.1 printed species pages 84–86 or fails closed.
+
+**Current scope note:** Human Versatile draws from Character Forge's currently verified Origin-feat pool. Completing the entire SRD Origin-feat catalog is a separate rules-content expansion; unsupported feats are not invented or silently substituted. Species-granted spell names and availability are audited here, while the broader full-spell-description reference layer continues to expand separately.
 
 ## 2014 Fighter / Champion vertical slice
 - Complete level 1–20 Fighter progression: Second Wind, Action Surge, seven Ability Score Improvement opportunities, Extra Attack progression, Indomitable, and four attacks per Attack action at level 20.
@@ -75,10 +90,10 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 - A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fighter fingerprints include all active Fighting Styles, ability maxima, and edition-specific high-level state so mechanically distinct pregens cannot collapse into the same saved entry.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size plus Fighter-specific high-level state where applicable.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, Fighter level-1–20 breakpoint tests for both editions, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, species UI contract tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
