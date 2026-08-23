@@ -34,7 +34,7 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 
 ### RAW 2024 / SRD 5.2.1
 - **All nine SRD species:** Dragonborn, Dwarf, Elf, Gnome, Goliath, Halfling, Human, Orc, Tiefling
-- Criminal / Soldier backgrounds
+- **All four SRD backgrounds:** Acolyte, Criminal, Sage, Soldier
 - Fighter / Champion, **levels 1–20**
 - Wizard / Evoker, levels 1–5
 - Cleric / Life Domain, levels 1–5
@@ -53,7 +53,19 @@ The level picker is class-aware in both editions: Fighter exposes levels 1–20;
 - Repeated trait names such as **Darkvision** resolve to the actual species rule page instead of a generic citation.
 - Every displayed species rule in this slice resolves to the official SRD 5.2.1 printed species pages 84–86 or fails closed.
 
-**Current scope note:** Human Versatile draws from Character Forge's currently verified Origin-feat pool. Completing the entire SRD Origin-feat catalog is a separate rules-content expansion; unsupported feats are not invented or silently substituted. Species-granted spell names and availability are audited here, while the broader full-spell-description reference layer continues to expand separately.
+**Current species scope note:** Human Versatile draws from Character Forge's currently verified generic Origin-feat pool. Magic Initiate (Cleric) and Magic Initiate (Wizard) are implemented for the SRD backgrounds that require them, but the complete Origin-feat universe—including the remaining dependencies—is a separate content expansion. Species-granted spell names and availability are audited here, while the broader full-spell-description reference layer continues to expand separately.
+
+## 2024 background vertical slice
+- All four SRD 5.2.1 backgrounds are encoded from printed page 83: Acolyte, Criminal, Sage, and Soldier.
+- Background ability-score choices, two fixed skill proficiencies, Origin feat, tool proficiency, and starting equipment are structured RAW data.
+- Acolyte grants **Magic Initiate (Cleric)** and Sage grants **Magic Initiate (Wizard)**. Each resolves two distinct cantrips, one level-1 spell, and an Intelligence/Wisdom/Charisma spellcasting ability.
+- Magic Initiate's level-1 spell is always prepared, has one free casting per Long Rest, and may also be cast using spell slots. Off-list spells and duplicate cantrip selections fail closed.
+- The finished character sheet has a dedicated **Origin Magic** block showing spell list, chosen ability, current save DC, spell attack bonus, the two cantrips, and the level-1 spell.
+- Background tool proficiencies are explicit finished-character state and are printed on the character sheet.
+- Soldier resolves “one kind of Gaming Set” to an actual SRD equipment choice—Dice Set, Dragonchess Set, Playing Card Set, or Three-Dragon Ante Set—instead of leaving a generic placeholder on the character.
+- Background-specific Random-by-default controls appear only when a background has unresolved choices. Saved pregens reopen with the same Magic Initiate or Gaming Set constraints.
+- Background choices, tool proficiencies, and Magic Initiate state participate in saved-pregen mechanical fingerprints.
+- Background identity cites SRD 5.2.1 p.83; Magic Initiate references cite p.87.
 
 ## 2014 Fighter / Champion vertical slice
 - Complete level 1–20 Fighter progression: Second Wind, Action Surge, seven Ability Score Improvement opportunities, Extra Attack progression, Indomitable, and four attacks per Attack action at level 20.
@@ -73,6 +85,7 @@ The level picker is class-aware in both editions: Fighter exposes levels 1–20;
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
 - Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
+- Background tool proficiencies and Magic Initiate Origin Magic are visible rather than hidden in source data.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each 2024 cantrip reference records its SRD 5.2.1 source page for audit traceability.
 - Current-level cantrip scaling is calculated for damage, True Strike extra damage, and Spare the Dying range.
@@ -90,10 +103,10 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 - A fourth fixed 2024 Cleric cantrip constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size plus Fighter-specific high-level state where applicable.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, and Fighter-specific high-level state where applicable.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, species UI contract tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, species/background UI contract tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
