@@ -15,14 +15,14 @@ export function lifeDomainAlwaysPrepared(ruleset,level){
   try{return uniqueStrings((ruleset==="2014"?LIFE_2014:LIFE_2024).filter(([minimum])=>level>=minimum).flatMap(([,ids])=>ids));}
   catch(error){console.error("[cleric] Life Domain spell lookup failed",error);throw error;}
 }
-export function resolveDivineOrder(ruleset,selections={},spellSelections={}){
+export function resolveDivineOrder(ruleset,selections={},spellSelections={},level=1){
   try{
     if(ruleset!=="2024")return null;
     const fixed=selections.divineOrder;if(fixed&&!['protector','thaumaturge'].includes(fixed))throw new Error(`Divine Order "${fixed}" is unavailable.`);
-    const cantrips=spellSelections.cantrips||selections.cantrips||[];
-    if(fixed==="protector"&&cantrips.length>baseCantrips(1))throw new Error("Protector cannot support the extra Thaumaturge cantrip selection.");
+    const cantrips=spellSelections.cantrips||selections.cantrips||[],ceiling=baseCantrips(level);
+    if(fixed==="protector"&&cantrips.length>ceiling)throw new Error("Protector cannot support the extra Thaumaturge cantrip selection.");
     if(fixed)return fixed;
-    if(cantrips.length>baseCantrips(1))return "thaumaturge";
+    if(cantrips.length>ceiling)return "thaumaturge";
     return pick(["protector","thaumaturge"]);
   }catch(error){console.error("[cleric] Divine Order resolution failed",error);throw error;}
 }
@@ -35,7 +35,7 @@ export function resolveBlessedStrikes(ruleset,level,selections={}){
   }catch(error){console.error("[cleric] Blessed Strikes resolution failed",error);throw error;}
 }
 export function validateClericClassSelections({ruleset,level,selections={},spellSelections={}}){
-  try{resolveDivineOrder(ruleset,selections,spellSelections);resolveBlessedStrikes(ruleset,level,selections);return{valid:true};}
+  try{resolveDivineOrder(ruleset,selections,spellSelections,level);resolveBlessedStrikes(ruleset,level,selections);return{valid:true};}
   catch(error){console.error("[cleric] class selection validation failed",error);throw error;}
 }
 export function clericProgressionFor(level){
