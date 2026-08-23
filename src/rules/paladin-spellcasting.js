@@ -28,7 +28,7 @@ export function validatePaladinSpellSelections(character,selections={}){
     const preparedLimit=paladinPreparedCount(character),maxLevel=paladinMaxSpellLevel(character.ruleset,character.level),catalog=paladinSpellsFor(character.ruleset),always=new Set(paladinAlwaysPrepared(character));
     if(prepared.length>preparedLimit)throw new Error(`Choose at most ${preparedLimit} prepared Paladin spells.`);
     if(character.ruleset==="2014"&&character.level<2&&prepared.length)throw new Error("2014 Paladin spellcasting is unavailable before level 2.");
-    const legalPrepared=new Set(catalog.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!always.has(spell.id)).map(spell=>spell.id)),badPrepared=prepared.filter(id=>!legalPrepared.has(id));if(badPrepared.length)throw new Error(`Illegal Paladin prepared-spell selection: ${badPrepared.join(", ")}`);
+    const legalPrepared=new Set(catalog.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!spell.oathOnly&&!always.has(spell.id)).map(spell=>spell.id)),badPrepared=prepared.filter(id=>!legalPrepared.has(id));if(badPrepared.length)throw new Error(`Illegal Paladin prepared-spell selection: ${badPrepared.join(", ")}`);
     const blessed=character.fightingStyle?.id==="blessed-warrior"||character.fightingStyles?.some(style=>style.id==="blessed-warrior");
     if(!blessed&&cantrips.length)throw new Error("Paladin cantrip selections require Blessed Warrior.");
     if(cantrips.length>2)throw new Error("Blessed Warrior grants exactly two Cleric cantrips.");
@@ -40,7 +40,7 @@ export function validatePaladinSpellSelections(character,selections={}){
 export function buildPaladinSpellcasting(character,selections={}){
   try{
     validatePaladinSpellSelections(character,selections);
-    const slots=paladinSpellSlots(character.ruleset,character.level),preparedCount=paladinPreparedCount(character),maxLevel=paladinMaxSpellLevel(character.ruleset,character.level),catalog=paladinSpellsFor(character.ruleset),alwaysPrepared=paladinAlwaysPrepared(character),always=new Set(alwaysPrepared),normalPool=catalog.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!always.has(spell.id)).map(spell=>spell.id);
+    const slots=paladinSpellSlots(character.ruleset,character.level),preparedCount=paladinPreparedCount(character),maxLevel=paladinMaxSpellLevel(character.ruleset,character.level),catalog=paladinSpellsFor(character.ruleset),alwaysPrepared=paladinAlwaysPrepared(character),always=new Set(alwaysPrepared),normalPool=catalog.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!spell.oathOnly&&!always.has(spell.id)).map(spell=>spell.id);
     const prepared=resolveSpellChoices({available:normalPool,selected:selections.prepared||[],required:preparedCount,label:"prepared Paladin spells"});
     const blessed=character.ruleset==="2024"&&(character.fightingStyle?.id==="blessed-warrior"||character.fightingStyles?.some(style=>style.id==="blessed-warrior")),cantripPool=clericSpellsFor("2024").filter(spell=>spell.level===0).map(spell=>spell.id),cantrips=resolveSpellChoices({available:blessed?cantripPool:[],selected:selections.cantrips||[],required:blessed?2:0,label:"Blessed Warrior cantrips"});
     const namesById=new Map([...catalog,...clericSpellsFor("2024").filter(spell=>spell.level===0)].map(spell=>[spell.id,spell.name])),all=uniqueStrings([...cantrips.all,...prepared.all,...alwaysPrepared].map(id=>namesById.get(id)||id));
