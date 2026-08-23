@@ -7,7 +7,7 @@ const ENTITY_PAGES=Object.freeze({
   "2014":Object.freeze({species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15"},subclass:{champion:"25","school-evocation":"54","life-domain":"17"}}),
   "2024":Object.freeze({
     species:{dragonborn:"84",dwarf:"84",elf:"84",gnome:"85",goliath:"85",halfling:"86",human:"86",orc:"86",tiefling:"86"},
-    background:{acolyte:"83",criminal:"83",sage:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36"},subclass:{champion:"49",evoker:"82","life-domain":"40"}
+    background:{acolyte:"83",criminal:"83",sage:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36",rogue:"61"},subclass:{champion:"49",evoker:"82","life-domain":"40",thief:"64"}
   })
 });
 
@@ -32,7 +32,7 @@ const REFERENCE_PAGES=Object.freeze({
     "species:human:Resourceful":"86","species:human:Skillful":"86","species:human:Versatile":"86",
     "species:orc:Adrenaline Rush":"86","species:orc:Darkvision":"86","species:orc:Relentless Endurance":"86",
     "species:tiefling:Darkvision":"86","species:tiefling:Fiendish Legacy":"86","species:tiefling:Otherworldly Presence":"86",
-    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Fate":"88","feat:Boon of Spell Recall":"88",
+    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Fate":"88","feat:Boon of Spell Recall":"88","feat:Boon of the Night Spirit":"88",
     "style:Archery":"87","style:Defense":"88","style:Great Weapon Fighting":"88","style:Two-Weapon Fighting":"88",
     "feature:Second Wind":"48","feature:Weapon Mastery":"48","feature:Action Surge":"48","feature:Tactical Mind":"48","feature:Ability Score Improvement":"87","feature:Extra Attack":"48","feature:Tactical Shift":"48",
     "feature:Indomitable":"48","feature:Tactical Master":"48","feature:Two Extra Attacks":"48","feature:Studied Attacks":"48","feature:Epic Boon:fighter":"48","feature:Three Extra Attacks":"48",
@@ -40,6 +40,9 @@ const REFERENCE_PAGES=Object.freeze({
     "feature:Spellcasting:wizard":"77–78","feature:Arcane Recovery":"78","feature:Ritual Adept":"78","feature:Scholar":"78","feature:Evocation Savant":"82","feature:Potent Cantrip":"82","feature:Memorize Spell":"79","feature:Sculpt Spells":"82","feature:Empowered Evocation":"82","feature:Overchannel":"82","feature:Spell Mastery":"79","feature:Epic Boon:wizard":"79","feature:Signature Spells":"79",
     "feature:Spellcasting:cleric":"36–37","feature:Divine Order: Protector":"37","feature:Divine Order: Thaumaturge":"37","feature:Channel Divinity":"37","feature:Channel Divinity (2 uses)":"37","feature:Divine Spark":"37","feature:Turn Undead":"37","feature:Sear Undead":"37","feature:Blessed Strikes":"38","feature:Divine Intervention":"38","feature:Improved Blessed Strikes":"38","feature:Epic Boon:cleric":"38","feature:Greater Divine Intervention":"38",
     "feature:Life Domain":"40","feature:Disciple of Life":"40","feature:Preserve Life":"40","feature:Blessed Healer":"40","feature:Supreme Healing":"40",
+    "feature:Expertise":"61","feature:Sneak Attack":"61","feature:Thieves’ Cant":"62","feature:Weapon Mastery:rogue":"62","feature:Cunning Action":"62","feature:Steady Aim":"62",
+    "feature:Ability Score Improvement:rogue":"63","feature:Cunning Strike":"63","feature:Uncanny Dodge":"63","feature:Evasion":"63","feature:Reliable Talent":"63","feature:Improved Cunning Strike":"63","feature:Devious Strikes":"63","feature:Slippery Mind":"63","feature:Elusive":"63","feature:Epic Boon:rogue":"63","feature:Stroke of Luck":"63",
+    "feature:Fast Hands":"64","feature:Second-Story Work":"64","feature:Supreme Sneak":"64","feature:Use Magic Device":"64","feature:Thief’s Reflexes":"64",
     "mastery:Graze":"90","mastery:Nick":"90","mastery:Push":"90","mastery:Sap":"90","mastery:Slow":"90","mastery:Topple":"90","mastery:Vex":"90"
   })
 });
@@ -49,7 +52,7 @@ export function entityProvenance(ruleset,kind,id){try{const page=ENTITY_PAGES[ru
 export function referenceProvenance(character,kind,name){
   try{
     if(!character?.ruleset)throw new Error("Reference provenance requires a character ruleset.");
-    const classSpecific=kind==="feature"&&(name==="Spellcasting"||name==="Epic Boon"||(name==="Ability Score Improvement"&&character.ruleset==="2014")),classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"",speciesPrefix=kind==="species"&&character.ruleset==="2024"?`${character.species?.id||"unknown"}:`:"",masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name,key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`,page=REFERENCE_PAGES[character.ruleset]?.[key];
+    const classSpecific=kind==="feature"&&(name==="Spellcasting"||name==="Epic Boon"||name==="Weapon Mastery"||(name==="Ability Score Improvement"&&(character.ruleset==="2014"||character.class?.id==="rogue"))),classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"",speciesPrefix=kind==="species"&&character.ruleset==="2024"?`${character.species?.id||"unknown"}:`:"",masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name,key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`,page=REFERENCE_PAGES[character.ruleset]?.[key];
     if(!page)throw new Error(`Missing reference provenance: ${character.ruleset} ${key}.`);return sourceAt(character.ruleset,page);
   }catch(error){console.error("[provenance] reference lookup failed",error);throw error;}
 }
