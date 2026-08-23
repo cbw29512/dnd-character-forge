@@ -1,7 +1,7 @@
 import { druidProgressionFor, legalFormsForProgression, LAND_2014, LAND_2024, PRIMAL_ORDERS_2024, ELEMENTAL_FURY_2024, druidPickerLimits } from "./druid.js";
 import { druidAlwaysPrepared } from "./druid-spellcasting.js";
 
-const KEYS=["cantrips","prepared","wildShapeUses","unlimitedWildShape","knownFormCount","maxCr","allowSwim","allowFly","durationHours","naturalRecovery","beastSpells","archdruid"];
+const KEYS=["cantrips","prepared","wildShapeUses","unlimitedWildShape","wildShapeTempHp","knownFormCount","maxCr","allowSwim","allowFly","durationHours","naturalRecovery","beastSpells","archdruid"];
 
 export function validateDruidCharacter(character){
   try{
@@ -31,7 +31,7 @@ function validate2014(errors,c,expected){
     const s=c.druidSelections||{};if(s.knownForms?.length)errors.push("2014 Druid cannot contain 2024 known-form state.");if(s.primalOrder||s.elementalFury)errors.push("2014 Druid cannot contain Primal Order or Elemental Fury.");
     if(c.subclass?.id==="circle-land"&&c.level>=2&&!LAND_2014.includes(s.circleLand))errors.push("2014 Circle of the Land selection is missing or illegal.");if(c.subclass?.id!=="circle-land"&&s.circleLand)errors.push("2014 Druid has Circle land state without Circle of the Land.");
     if(c.feats.some(feat=>feat.category==="Epic Boon"))errors.push("2014 Druid cannot contain a 2024 Epic Boon.");for(const name of ["Primal Order","Wild Companion","Wild Resurgence","Elemental Fury","Improved Elemental Fury","Epic Boon"])if(c.features.includes(name))errors.push(`2014 Druid cannot contain 2024 feature ${name}.`);
-    if(expected.unlimitedWildShape&&c.druid.wildShapeUses!==2)errors.push("2014 Archdruid should preserve the base two-use progression while marking Wild Shape unlimited separately.");
+    if(expected.unlimitedWildShape&&c.druid.wildShapeUses!==2)errors.push("2014 Archdruid should preserve the base two-use progression while marking Wild Shape unlimited separately.");if(c.druid.wildShapeTempHp!==null)errors.push("2014 Wild Shape cannot contain 2024 temporary-hit-point state.");
   }catch(error){console.error("[druid-validation] 2014 validation failed",error);throw error;}
 }
 function validate2024(errors,c,expected){
@@ -40,6 +40,6 @@ function validate2024(errors,c,expected){
     if(c.subclass?.id==="circle-land"&&c.level>=3&&!LAND_2024.includes(s.circleLand))errors.push("2024 Circle of the Land selection is missing or illegal.");if(c.subclass?.id!=="circle-land"&&s.circleLand)errors.push("2024 Druid has Circle land state without Circle of the Land.");if(c.level>=7&&!ELEMENTAL_FURY_2024.includes(s.elementalFury))errors.push("2024 Druid Elemental Fury choice is missing or illegal.");if(c.level<7&&s.elementalFury)errors.push("Elemental Fury appeared before Druid level 7.");
     if((s.knownForms||[]).includes("giant-eagle"))errors.push("2024 Giant Eagle is not in the verified Beast Wild Shape catalog.");const boon=c.feats.some(feat=>feat.id==="boon-dimensional-travel");if(c.level>=19&&!boon)errors.push("Level 19+ Druid is missing Boon of Dimensional Travel.");if(c.level<19&&boon)errors.push("Boon of Dimensional Travel appeared before Druid level 19.");
     for(const name of ["Timeless Body","Bonus Cantrip","Land's Stride"])if(c.features.includes(name))errors.push(`2024 Druid cannot contain legacy 2014 feature ${name}.`);
-    if(expected.archdruid&&c.druid.unlimitedWildShape)errors.push("2024 Archdruid does not grant unlimited Wild Shape uses.");
+    if(expected.archdruid&&c.druid.unlimitedWildShape)errors.push("2024 Archdruid does not grant unlimited Wild Shape uses.");if(c.level>=2&&c.druid.wildShapeTempHp!==c.level)errors.push("2024 Wild Shape temporary hit points must equal Druid level.");
   }catch(error){console.error("[druid-validation] 2024 validation failed",error);throw error;}
 }
