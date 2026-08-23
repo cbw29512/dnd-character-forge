@@ -4,9 +4,13 @@ export function fighterFeatures(ruleset,level,subclass){
     if(ruleset==="2014"){
       features.push("Fighting Style","Second Wind");
       if(level>=2)features.push("Action Surge");
-      if(level>=3&&subclass==="champion")features.push("Improved Critical");
+      if(level>=3&&subclass==="champion")features.push(level>=15?"Superior Critical":"Improved Critical");
       if(level>=4)features.push("Ability Score Improvement");
       if(level>=5)features.push("Extra Attack");
+      if(level>=7&&subclass==="champion")features.push("Remarkable Athlete");
+      if(level>=9)features.push("Indomitable");
+      if(level>=10&&subclass==="champion")features.push("Additional Fighting Style");
+      if(level>=18&&subclass==="champion")features.push("Survivor");
       return features;
     }
     features.push("Fighting Style","Second Wind","Weapon Mastery");
@@ -43,14 +47,20 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
 }
 export function applyClassAsi(scores,level,priority,asiLevels=[4]){
   try{
-    const next={...scores},count=asiLevels.filter(requiredLevel=>level>=requiredLevel).length;
-    for(let i=0;i<count;i++){
-      const target=priority.find(ability=>next[ability]<20);
-      if(!target)break;
-      next[target]=Math.min(20,next[target]+2);
-    }
+    const next={...scores},order=[...new Set(priority)].filter(ability=>Object.hasOwn(next,ability)),count=asiLevels.filter(requiredLevel=>level>=requiredLevel).length;
+    for(let i=0;i<count;i++)applyLegalAsi(next,order);
     return next;
   }catch(error){console.error("[features] class ASI progression failed",error);throw error;}
+}
+function applyLegalAsi(scores,priority){
+  try{
+    const eligible=priority.filter(ability=>scores[ability]<20),first=eligible[0];
+    if(!first)return;
+    if(scores[first]<=18){scores[first]+=2;return;}
+    scores[first]+=1;
+    const second=eligible.find(ability=>ability!==first&&scores[ability]<20);
+    if(second)scores[second]+=1;
+  }catch(error){console.error("[features] legal ASI allocation failed",error);throw error;}
 }
 export function applyEpicBoonAbility(scores,maximums,priority,feat){
   try{

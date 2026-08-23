@@ -12,7 +12,8 @@ const REFERENCE_PAGES=Object.freeze({
   "2014":Object.freeze({
     "species:Ability Score Increase":"5","species:Extra Language":"5","background:Shelter of the Faithful":"61",
     "style:Defense":"24","style:Archery":"24","style:Great Weapon Fighting":"24",
-    "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25",
+    "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25","feature:Indomitable":"25",
+    "feature:Remarkable Athlete":"25","feature:Additional Fighting Style":"25","feature:Superior Critical":"25","feature:Survivor":"25",
     "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17",
     "feature:Spellcasting:wizard":"52–53","feature:Arcane Recovery":"53","feature:Evocation Savant":"54","feature:Sculpt Spells":"54",
     "feature:Spellcasting:cleric":"15–16","feature:Divine Domain: Life Domain":"17","feature:Bonus Proficiency: Heavy Armor":"17","feature:Disciple of Life":"17",
