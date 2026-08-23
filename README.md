@@ -29,8 +29,8 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 ### RAW 2014 / SRD 5.1
 - Human / Acolyte
 - Fighter / Champion, **levels 1–20**
-- Wizard / School of Evocation, levels 1–5
-- Cleric / Life Domain, levels 1–5
+- Wizard / School of Evocation, **levels 1–20**
+- Cleric / Life Domain, **levels 1–20**
 
 ### RAW 2024 / SRD 5.2.1
 - **All nine SRD species:** Dragonborn, Dwarf, Elf, Gnome, Goliath, Halfling, Human, Orc, Tiefling
@@ -40,7 +40,7 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - Cleric / Life Domain, **levels 1–20**
 - Rogue / Thief, **levels 1–20**
 
-The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose levels 1–20; 2014 Fighter exposes levels 1–20; 2014 Wizard and Cleric remain limited to their verified level-5 slices. 2014 Rogue is not exposed because it has not yet been verified and encoded.
+The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose levels 1–20; 2014 Fighter, Wizard, and Cleric expose levels 1–20. 2014 Rogue is not exposed because it has not yet been verified and encoded.
 
 ## 2024 species vertical slice
 - Species-specific choices are structured state rather than display text: Dragonborn ancestry, Elf lineage/Keen Senses/spell ability, Gnome lineage/spell ability, Goliath Giant Ancestry, Human size/Skillful choice, and Tiefling size/legacy/spell ability.
@@ -74,6 +74,28 @@ The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose 
 - Edition-specific rules remain isolated: 2014 Fighter has no Weapon Mastery, no Epic Boon, no 2024 Champion Initiative Advantage, and no Fighter-level bonus added to Indomitable rerolls.
 - Champion's second Fighting Style arrives at level 10 in 2014, not level 7 as in 2024.
 - High-level 2014 Fighter references carry SRD 5.1 printed-page provenance and fail closed if a required locator is missing.
+
+## 2014 Wizard / School of Evocation vertical slice
+- Complete Wizard progression through level 20, including the SRD cantrip table, spell slots through level 9, five Ability Score Improvement opportunities at levels 4, 8, 12, 16, and 19, and Intelligence-based preparation.
+- The 2014 Wizard spellbook remains acquisition-based: six starting level-1 spells and two Wizard spells gained at every later Wizard level. Fixed spellbook choices must be historically acquirable at the level when they enter the book.
+- The complete SRD 5.1 Wizard spell-name catalog through spell level 9 is available for legal spellbook, preparation, Spell Mastery, and Signature Spell generation.
+- School of Evocation remains edition-specific: Evocation Savant and Sculpt Spells at 2, Potent Cantrip at 6, Empowered Evocation at 10, and Overchannel at 14.
+- **Spell Mastery** at 18 selects one level-1 and one level-2 Wizard spell from the actual spellbook. In 2014 the mastered spells still count against the normal prepared-spell total; while prepared, each can be cast at its lowest level without a slot, and the choices can be replaced after 8 hours of study.
+- **Signature Spells** at 20 selects two distinct level-3 spells from the actual spellbook. They are always prepared without consuming the normal prepared count and each receives its own free level-3 casting per Short or Long Rest.
+- 2024-only Wizard state such as Scholar, Memorize Spell, and Epic Boon is absent from 2014 characters and the Quick Turn panel is regression-locked against cross-edition wording.
+- High-level Wizard and School of Evocation references are sourced to the SRD 5.1 Wizard/Evocation pages; missing provenance blocks audited output.
+- The real-browser PDF gate physically prints the level-20 2014 School of Evocation packet and verifies every generated spell and active rules reference survives the final Letter PDF.
+
+## 2014 Cleric / Life Domain vertical slice
+- Complete Cleric progression through level 20: exact SRD cantrip counts, spell slots through level 9, five Ability Score Improvement opportunities at levels 4, 8, 12, 16, and 19, and normal prepared spells equal to Cleric level + final Wisdom modifier (minimum 1).
+- Channel Divinity is edition-specific: one use at levels 2–5, two at 6–17, three at 18–20, with all expended uses restored after a Short or Long Rest.
+- Destroy Undead progresses at the exact SRD thresholds: CR 1/2 at 5, CR 1 at 8, CR 2 at 11, CR 3 at 14, and CR 4 at 17.
+- **Divine Intervention** starts at 10 with percentile success at or below Cleric level, locks for 7 days after success, returns after a Long Rest on failure, and becomes automatic at level 20.
+- Life Domain always-prepared spells progress through Bless/Cure Wounds, Lesser Restoration/Spiritual Weapon, Beacon of Hope/Revivify, Death Ward/Guardian of Faith, and Mass Cure Wounds/Raise Dead without consuming normal prepared slots.
+- Life Domain progression includes Heavy Armor proficiency, Disciple of Life, Preserve Life, Blessed Healer at 6, Divine Strike at 8 with its 2d8 upgrade at 14, and Supreme Healing at 17.
+- The 2014 Cleric catalog is locked name-for-name to the **105-spell SRD 5.1 Cleric list** across spell levels 0–9. The PDF spell appendix cites the official Cleric spell-list pages **106–107**.
+- 2024-only Cleric systems—Divine Order, Divine Spark, Blessed Strikes, Epic Boon, and Greater Divine Intervention—are explicitly rejected by 2014 validation.
+- The real-browser PDF gate physically prints the level-20 2014 Life Domain packet and requires all 40 generated spell records, every active rule reference, and the SRD 5.1 spell-list source range to survive the final Letter PDF.
 
 ## 2024 Fighter / Champion vertical slice
 - Complete level 1–20 Fighter progression: Second Wind, Weapon Mastery, Action Surge, Tactical Mind, six Ability Score Improvement opportunities, Extra Attack progression, Tactical Shift, Indomitable, Tactical Master, Studied Attacks, Epic Boon, and four attacks per Attack action at level 20.
@@ -132,7 +154,7 @@ The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose 
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
 - Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - Wizard sheets include compact resources for spellbook size, normal/always-prepared counts, Arcane Recovery, Spell Mastery, and Signature Spells; high-level spellbooks are grouped by spell level instead of rendered as one giant paragraph.
-- Cleric sheets include Divine Order, Channel Divinity uses, scaled Divine Spark, normal/always-prepared counts, and the current Blessed Strikes choice; large prepared lists are grouped by spell level.
+- Cleric sheets include current Channel Divinity, normal prepared spells, and Life Domain always-prepared spells; 2024 sheets additionally expose Divine Order, Divine Spark, and Blessed Strikes, while 2014 sheets expose Destroy Undead and Divine Intervention without cross-edition mechanics.
 - Rogue sheets include current Sneak Attack dice, Expertise/mastery counts, Cunning Strike DC and effect capacity, Reliable Talent state, and all currently legal Cunning Strike effects with costs and requirements.
 - Background tool proficiencies and Magic Initiate Origin Magic are visible rather than hidden in source data.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
@@ -142,6 +164,8 @@ The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose 
 
 ## SRD spell boundary
 The 2024 Wizard and Cleric spell-name pools are regression-tested as SRD 5.2.1 content. **Elementalism is included; Thunderclap is excluded** from the Wizard cantrip pool because Thunderclap is not a Wizard spell entry in SRD 5.2.1. The broader 2024 Player's Handbook/Basic Rules list is not used as the site's redistributable RAW spell pool.
+
+The 2014 Wizard and Cleric spell-name pools are independently scoped to SRD 5.1. The 2014 Cleric list is regression-locked name-for-name at 105 entries and its PDF appendix identifies the official class-list source as SRD 5.1 printed pages 106–107; 2024-only Cleric-list additions are not admitted into the legacy pool.
 
 ## Spell picker
 - Wizard and Cleric support fixed cantrip/prepared choices with Random filling every remaining legal choice.
@@ -156,7 +180,7 @@ The 2024 Wizard and Cleric spell-name pools are regression-tested as SRD 5.2.1 c
 The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, Cleric Divine Order/Blessed Strikes choices, and class-specific high-level mechanical state. Wizard capstone spell choices and Cleric class choices are restored when a saved pregen is reopened.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, exhaustive 2024 Rogue/Thief level-1–20 tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2014 Wizard/School of Evocation level-1–20 tests, exhaustive 2014 Cleric/Life Domain level-1–20 tests with all 105 spell names locked to SRD 5.1, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, exhaustive 2024 Rogue/Thief level-1–20 tests, cross-edition Quick Turn leakage tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, website integrity checks, and a real headless-Chrome gate that physically prints the supported level-20 premium packets and verifies their contents.
 
 ## Run locally
 `python -m http.server 8080`
