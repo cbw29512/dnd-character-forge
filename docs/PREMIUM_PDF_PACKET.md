@@ -1,59 +1,63 @@
-# Premium PDF Packet Contract
+# Premium PDF Export Contract
 
-Character Forge PDF export has two different jobs: be fast to play from and be complete enough to audit. Those goals must not compete for the same page.
+Character Forge PDF export is a fixed-format product, not an unbounded rules dump. The output must be fast to use at the table, visually class-specific, and still preserve enough source proof to defend the generated character.
 
-## Page 1 — premium quick-play sheet
+## Hard page profiles
 
-Page 1 remains the ornate, class-themed US Letter character sheet. It prioritizes the information a player needs constantly at the table: identity, abilities, defenses, attacks, skills, primary class resources, spellcasting summary, proficiencies, equipment, and Quick Turn guidance.
+- **Martial / non-caster:** exactly **1 US Letter page**.
+- **Caster:** exactly **2 US Letter pages**.
+- No sparse spill pages are allowed.
+- A layout that cannot satisfy its profile is a quality-gate failure, not permission to append another nearly empty page.
 
-The quick-play page is intentionally bounded to the existing 10.2-inch printable layout. It may summarize or select the most immediately useful feature cards, but it must never be treated as the complete rule record by itself.
+## Page 1 — premium table sheet
 
-## Rules & Provenance appendix
+Page 1 is the primary character sheet. It contains identity, class-specific portrait area, abilities, defenses, attacks, skills, key features, primary resources, feat state, proficiencies, equipment, and Quick Turn guidance.
 
-Every active entry returned by `buildQuickReference()` must appear in the packet appendix exactly once, including species traits, background features, feats, class/subclass features, Fighting Styles, and Weapon Mastery references.
+For martials, Page 1 also carries a compact sourced Rules Index containing every active `buildQuickReference()` rule name and its verified SRD page locator.
 
-Appendix references preserve the complete Character Forge play-reference text and verified SRD version + printed-page provenance. Appendix pages use explicit deterministic page breaks and must not use line clamping or hidden overflow to make content fit.
+For casters, Page 1 contains the table-use spellcasting summary while the complete generated spell loadout is reserved for Page 2.
 
-## Spell Loadout appendix
+## Page 2 — caster spell and proof sheet
 
-Caster packets include every generated spell exactly once in a loadout appendix.
+Caster Page 2 is deliberately designed rather than appended automatically. It contains:
 
-For Wizards, the appendix includes all generated cantrips and the entire generated spellbook, with preparation/Spell Mastery/Signature Spell state marked where applicable. For Clerics, it includes all generated cantrips, normal prepared spells, and always-prepared domain spells.
+- every generated spell exactly once;
+- spell level and generated preparation-state markers;
+- spellcasting ability, save DC, attack bonus, and slot table;
+- every active sourced rule name + SRD locator;
+- complete Rules Audit identity mechanics and validation checks.
 
-The loadout appendix proves the exact generated spell state and the SRD source/version used for legality validation. Character Forge must not invent per-spell page citations for high-level spells until the structured spell-reference layer contains verified provenance for those individual spells.
+Character Forge does not invent individual spell-text page citations where the verified structured spell-reference layer does not yet contain them.
 
-## Rules Audit page
+## Class visual identity
 
-The final packet page preserves the complete Rules Audit, not only the compact Page 1 footer. It includes:
+Each class receives its own print skin instead of a generic recolor. Current theme families include Fighter steel/crimson, Rogue shadow/teal, Cleric ivory/gold, Wizard arcane blue, and a Barbarian-ready blood/bone/iron primal skin. Additional classes receive their own theme IDs as their verified rules slices are added.
 
-- audit status and source mode
-- RAW integrity state
-- rules label
-- official source document/version
-- CC BY 4.0 license
-- verified scope statement
-- complete audited identity mechanics and their source pages
-- every validation check attached by the rules engine
-- official SRD source links
+If the player provides no portrait, the sheet renders original built-in class placeholder artwork. If a local portrait is uploaded, that image replaces the placeholder while remaining presentation-only and outside the mechanical fingerprint.
 
-## Pagination contract
+## Content compression rules
 
-- Page 1: fixed premium quick-play sheet
-- Rules appendix: maximum 5 full rule references per page
-- Spell appendix: maximum 22 spell records per page
-- Final page: complete Rules Audit
-- every page displays its packet page number
-- appendix pages must not silently truncate content
+Fixed page count may change presentation density, but it must not change character mechanics.
 
-The exact packet page count varies by character level, class, species, subclass, feats, masteries, and spell loadout. Completeness takes priority over minimizing the number of appendix pages.
+- Important feature text on Page 1 may be shortened for quick play.
+- Every active sourced rule name remains present in the packet Rules Index.
+- Every generated caster spell remains present on Page 2.
+- Table-critical class requirements such as Rogue Cunning Strike costs/requirements remain visible in the class-resource block.
+- Complete mechanical validation still occurs before the export renderer runs.
 
 ## Quality gate
 
-A packet change is not production-ready unless the regression suite proves that:
+A print change is production-ready only when the normal regression suite and real Chrome print gate both pass on the exact PR head.
 
-1. level-20 Fighter/Champion, Wizard/Evoker, Cleric/Life Domain, and Rogue/Thief packets contain every `buildQuickReference()` ID;
-2. every generated Wizard/Cleric spell appears exactly once in the spell appendix;
-3. the complete Rules Audit survives into the packet;
-4. late-level features that do not fit on Page 1 still render in the appendix;
-5. appendix CSS uses explicit print pagination and no line-clamp/hidden-overflow truncation;
-6. the full Character Forge rules/site regression suite remains green.
+The browser gate physically verifies:
+
+1. Fighter/Rogue-style martial packets print as exactly 1 Letter page;
+2. Wizard/Cleric-style caster packets print as exactly 2 Letter pages;
+3. every physical page has meaningful content rather than a sparse spill;
+4. every active sourced rule name survives PDF printing;
+5. every generated caster spell survives PDF printing;
+6. RAW integrity and page-number markers survive PDF printing;
+7. representative 2014/2024 edition-specific mechanics remain present or absent as required;
+8. generated PDFs and PNG previews are retained as CI artifacts for visual inspection before merge.
+
+The final decision is therefore both mechanical and visual: green text/content checks are necessary, but the generated page previews must also look like a finished Character Forge product.
