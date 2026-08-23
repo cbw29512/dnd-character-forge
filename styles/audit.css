@@ -11,9 +11,10 @@
 .audit-mode b { margin-top:3px; font-size:.78rem; }
 .audit-mechanics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; }
 .audit-mechanics div { padding:9px; border:1px solid #e4daca; border-radius:9px; background:#fffdf8; }
-.audit-mechanics span,.audit-mechanics strong { display:block; }
+.audit-mechanics span,.audit-mechanics strong,.audit-mechanics small { display:block; }
 .audit-mechanics span { color:#8a8175; font-size:.58rem; font-weight:900; letter-spacing:.07em; text-transform:uppercase; }
 .audit-mechanics strong { margin-top:3px; color:#3b3832; font-size:.72rem; line-height:1.35; }
+.audit-cite { margin-top:5px; color:#756b5d; font-size:.56rem; font-weight:850; }
 .audit-checks { margin:0; padding-left:18px; color:#514d45; font-size:.72rem; line-height:1.55; }
 .audit-checks li+li { margin-top:4px; }
 .audit-scope,.audit-source { color:#6d665c !important; font-size:.67rem !important; }
