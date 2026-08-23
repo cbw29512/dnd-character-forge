@@ -91,9 +91,9 @@ test("Fighter level 20 has proficiency +6 and six distinct mastery weapon choice
   catch(error){console.error("[test] level-20 proficiency/masteries",error);throw error;}
 });
 
-test("unsupported level 6 Wizard and Cleric still fail closed",()=>{
-  try{for(const classId of ["wizard","cleric"]){const state=createInitialState();state.ruleset="2024";state.constraints.level="6";state.constraints.class=classId;assert.throws(()=>generateCharacter(state),/currently supports levels/);}}
-  catch(error){console.error("[test] caster level ceiling",error);throw error;}
+test("unsupported level 6 Cleric still fails closed",()=>{
+  try{const state=createInitialState();state.ruleset="2024";state.constraints.level="6";state.constraints.class="cleric";assert.throws(()=>generateCharacter(state),/currently supports levels/);}
+  catch(error){console.error("[test] Cleric level ceiling",error);throw error;}
 });
 
 test("Random 2024 Fighter level can legally span 1 through 20",()=>{
