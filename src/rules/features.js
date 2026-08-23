@@ -30,7 +30,16 @@ export function fighterFeatures(ruleset,level,subclass){
 export function wizardFeatures(ruleset,level,subclass){
   try{
     const features=["Spellcasting","Arcane Recovery"];
-    if(ruleset==="2014"){if(level>=2&&subclass==="school-evocation")features.push("Evocation Savant","Sculpt Spells");if(level>=4)features.push("Ability Score Improvement");return features;}
+    if(ruleset==="2014"){
+      if(level>=2&&subclass==="school-evocation")features.push("Evocation Savant","Sculpt Spells");
+      if(level>=4)features.push("Ability Score Improvement");
+      if(level>=6&&subclass==="school-evocation")features.push("Potent Cantrip");
+      if(level>=10&&subclass==="school-evocation")features.push("Empowered Evocation");
+      if(level>=14&&subclass==="school-evocation")features.push("Overchannel");
+      if(level>=18)features.push("Spell Mastery");
+      if(level>=20)features.push("Signature Spells");
+      return features;
+    }
     features.push("Ritual Adept");
     if(level>=2)features.push("Scholar");
     if(level>=3&&subclass==="evoker")features.push("Evocation Savant","Potent Cantrip");
