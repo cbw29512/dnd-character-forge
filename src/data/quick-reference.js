@@ -86,6 +86,7 @@ export const REFERENCE_2024={
     "Expertise":r("Rogue","Applied","Your chosen Expertise skills are marked on the sheet and add your Proficiency Bonus a second time. Rogue level 6 grants two additional Expertise choices."),
     "Sneak Attack":r("Rogue","Once per turn","On a qualifying hit with a Finesse or Ranged weapon, deal the current Sneak Attack dice shown in Rogue Resources. Qualify with Advantage, or when an ally is within 5 feet of the target, that ally isn't Incapacitated, and you don't have Disadvantage."),
     "Thieves’ Cant":r("Rogue","Language","You know Thieves’ Cant plus one additional language; both are already included in Languages."),
+    "Weapon Mastery — Rogue":r("Rogue","After Long Rest","Use the mastery properties of two chosen proficient weapons listed below. Whenever you finish a Long Rest, you can change those two weapon choices."),
     "Cunning Action":r("Rogue","Bonus Action","On your turn, take Dash, Disengage, or Hide as a Bonus Action."),
     "Steady Aim":r("Rogue","Bonus Action","If you haven't moved this turn, give yourself Advantage on your next attack roll this turn; after using it, your Speed becomes 0 until the end of the current turn."),
     "Cunning Strike":r("Rogue","With Sneak Attack","Before rolling Sneak Attack damage, forgo Sneak Attack dice to add a Cunning Strike effect. The current save DC and available effects/costs are shown in Rogue Resources."),
