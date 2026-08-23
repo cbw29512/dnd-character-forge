@@ -29,6 +29,7 @@ export function renderSheetCustomizer(state){
     for(const id of ["portraitX","portraitY","portraitZoom"]){panel.querySelector(`#${id}`).value=String(value[id]);}
     panel.querySelector("#portraitXValue").textContent=`${value.portraitX}%`;panel.querySelector("#portraitYValue").textContent=`${value.portraitY}%`;panel.querySelector("#portraitZoomValue").textContent=`${value.portraitZoom}%`;
     panel.querySelector("#sheetThemeName").textContent=`${theme.label} · ${theme.visualIdentity}`;
+    syncPortraitPreview(value);
   }catch(error){console.error("[sheet-customizer] render failed",error);throw error;}
 }
 
@@ -52,6 +53,18 @@ function updateStateFromPanel(state,panel){
     })};
     applySheetCustomizationToCurrent(state);renderSheetCustomizer(state);
   }catch(error){console.error("[sheet-customizer] update failed",error);throw error;}
+}
+
+function syncPortraitPreview(value){
+  try{
+    const preview=document.getElementById("portraitPreview"),wrap=preview?.closest(".portrait-preview-wrap");if(!preview||!wrap)return;
+    preview.style.objectPosition=`${value.portraitX}% ${value.portraitY}%`;
+    preview.style.transform=`scale(${value.portraitZoom/100})`;
+    preview.style.transformOrigin=`${value.portraitX}% ${value.portraitY}%`;
+    preview.classList.toggle("preview-painted",value.portraitFilter==="painted");
+    preview.classList.toggle("preview-grayscale",value.portraitFilter==="grayscale");
+    wrap.classList.toggle("preview-hidden",!value.portraitVisible);
+  }catch(error){console.error("[sheet-customizer] portrait preview sync failed",error);throw error;}
 }
 
 function ensurePanel(){
