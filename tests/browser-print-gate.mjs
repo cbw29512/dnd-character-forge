@@ -12,12 +12,14 @@ const CASES=[
   {ruleset:"2024",classId:"fighter",subclass:"champion",species:"human",background:"criminal",pages:1,customization:{style:"ornate",paper:"parchment",ornament:"rich",frame:"filigree",printMode:"premium"}},
   {ruleset:"2024",classId:"barbarian",subclass:"berserker",species:"human",background:"soldier",pages:1},
   {ruleset:"2024",classId:"paladin",subclass:"oath-devotion",species:"human",background:"soldier",classSelections:{fightingStyle:"defense"},pages:2},
+  {ruleset:"2024",classId:"ranger",subclass:"hunter",species:"human",background:"criminal",classSelections:{fightingStyle:"archery",huntersPrey:"colossus-slayer",defensiveTactics:"multiattack-defense"},pages:2},
   {ruleset:"2024",classId:"rogue",subclass:"thief",species:"human",background:"criminal",pages:1,customization:{style:"minimal",paper:"white",ornament:"minimal",frame:"clean",printMode:"ink-saver"}},
   {ruleset:"2024",classId:"wizard",subclass:"evoker",species:"human",background:"criminal",pages:2,customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",portraitX:4,portraitY:91,portraitZoom:165,portraitFilter:"painted"}},
   {ruleset:"2024",classId:"cleric",subclass:"life-domain",species:"human",background:"criminal",pages:2,customization:{style:"classic",paper:"ivory",ornament:"balanced",frame:"filigree"}},
   {ruleset:"2014",classId:"wizard",subclass:"school-evocation",species:"human",background:"acolyte",pages:2},
   {ruleset:"2014",classId:"cleric",subclass:"life-domain",species:"dwarf",background:"acolyte",speciesSelections:{tool:"masons-tools"},pages:2},
   {ruleset:"2014",classId:"paladin",subclass:"oath-devotion",species:"human",background:"acolyte",classSelections:{fightingStyle:"defense"},pages:2},
+  {ruleset:"2014",classId:"ranger",subclass:"hunter",species:"human",background:"acolyte",classSelections:{fightingStyle:"archery",favoredEnemies:["dragons","giants","fiends"],favoredEnemyLanguages:["Draconic","Giant","Infernal"],naturalExplorerTerrains:["forest","mountain","underdark"],huntersPrey:"colossus-slayer",defensiveTactics:"multiattack-defense",multiattack:"volley",superiorDefense:"evasion"},pages:2},
   {ruleset:"2014",classId:"rogue",subclass:"thief",species:"human",background:"acolyte",pages:1},
   {ruleset:"2014",classId:"barbarian",subclass:"berserker",species:"human",background:"acolyte",pages:1}
 ];
@@ -38,21 +40,19 @@ function legacyChecks(testCase,character,whole,model){
   if(testCase.ruleset==="2014"&&testCase.species==="dwarf"){assert.equal(character.speciesChoices.subraceName,"Hill Dwarf");assert.equal(character.speciesHpBonus,20);assert.ok(whole.includes("Hill Dwarf"));assert.ok(whole.includes("Dwarven Toughness"));}
   if(testCase.ruleset==="2014"&&testCase.classId==="rogue"){assert.ok(whole.includes("Blindsense"));assert.ok(whole.includes("Use Magic Device"));assert.ok(whole.includes("Thief's Reflexes"));assert.equal(whole.includes("Cunning Strike DC"),false);assert.equal(whole.includes("Steady Aim"),false);}
   if(testCase.classId==="barbarian"){
-    const fold=whole.toLowerCase(),has=text=>fold.includes(text.toLowerCase());
-    assert.equal(model.packet.totalPages,1);assert.equal(model.classUtility?.title,"Primal Fury");assert.ok(has("Primal Fury"));assert.ok(has("Rage"));assert.ok(has("Berserker"));assert.ok(has("Primal Champion"));
-    if(testCase.ruleset==="2014"){
-      assert.ok(has("Brutal Critical"));assert.equal(has("Brutal Strike"),false);assert.equal(has("Weapon Mastery"),false);assert.equal(has("Epic Boon"),false);
-    }else{
-      assert.ok(has("Brutal Strike"));assert.ok(has("Weapon Mastery"));assert.ok(has("Cleave"));assert.ok(has("Epic Boon"));assert.equal(has("Brutal Critical"),false);
-    }
+    const fold=whole.toLowerCase(),has=text=>fold.includes(text.toLowerCase());assert.equal(model.packet.totalPages,1);assert.equal(model.classUtility?.title,"Primal Fury");assert.ok(has("Primal Fury"));assert.ok(has("Rage"));assert.ok(has("Berserker"));assert.ok(has("Primal Champion"));
+    if(testCase.ruleset==="2014"){assert.ok(has("Brutal Critical"));assert.equal(has("Brutal Strike"),false);assert.equal(has("Weapon Mastery"),false);assert.equal(has("Epic Boon"),false);}else{assert.ok(has("Brutal Strike"));assert.ok(has("Weapon Mastery"));assert.ok(has("Cleave"));assert.ok(has("Epic Boon"));assert.equal(has("Brutal Critical"),false);}
   }
   if(testCase.classId==="paladin"){
-    const fold=whole.toLowerCase(),has=text=>fold.includes(normalize(text).toLowerCase());
-    assert.equal(model.packet.totalPages,2);assert.equal(model.classUtility?.title,"Sacred Charge");assert.ok(has("Sacred Charge"));assert.ok(has("Lay On Hands"));assert.ok(has("Oath of Devotion"));assert.ok(has("Holy Nimbus"));assert.ok(has("Paladin spell list"));
+    const fold=whole.toLowerCase(),has=text=>fold.includes(normalize(text).toLowerCase());assert.equal(model.packet.totalPages,2);assert.equal(model.classUtility?.title,"Sacred Charge");assert.ok(has("Sacred Charge"));assert.ok(has("Lay On Hands"));assert.ok(has("Oath of Devotion"));assert.ok(has("Holy Nimbus"));assert.ok(has("Paladin spell list"));
+    if(testCase.ruleset==="2014"){assert.ok(has("Divine Smite"));assert.ok(has("Turn the Unholy"));assert.ok(has("Purity of Spirit"));assert.ok(has("Improved Divine Smite"));assert.ok(has("Cleansing Touch"));assert.equal(has("Weapon Mastery"),false);assert.equal(has("Paladin's Smite"),false);assert.equal(has("Faithful Steed"),false);assert.equal(has("Abjure Foes"),false);assert.equal(has("Radiant Strikes"),false);assert.equal(has("Restoring Touch"),false);assert.equal(has("Boon of Truesight"),false);}else{assert.equal(character.spells.prepared.all.length,15);assert.equal(character.spells.alwaysPrepared.length,12);assert.equal(model.spellPage.entries.length,27);assert.ok(has("Weapon Mastery"));assert.ok(has("Paladin's Smite"));assert.ok(has("Divine Smite"));assert.ok(has("Find Steed"));assert.ok(has("Abjure Foes"));assert.ok(has("Radiant Strikes"));assert.ok(has("Restoring Touch"));assert.ok(has("Smite of Protection"));assert.ok(has("Boon of Truesight"));assert.equal(has("Improved Divine Smite"),false);assert.equal(has("Turn the Unholy"),false);assert.equal(has("Purity of Spirit"),false);}
+  }
+  if(testCase.classId==="ranger"){
+    const fold=whole.toLowerCase(),has=text=>fold.includes(normalize(text).toLowerCase());assert.equal(model.packet.totalPages,2);assert.equal(model.classUtility?.title,"Warden's Mark");assert.ok(has("Warden's Mark"));assert.ok(has("Hunter & Exploration Guide"));assert.ok(has("Hunter"));assert.ok(has("Ranger spell list"));
     if(testCase.ruleset==="2014"){
-      assert.ok(has("Divine Smite"));assert.ok(has("Turn the Unholy"));assert.ok(has("Purity of Spirit"));assert.ok(has("Improved Divine Smite"));assert.ok(has("Cleansing Touch"));assert.equal(has("Weapon Mastery"),false);assert.equal(has("Paladin's Smite"),false);assert.equal(has("Faithful Steed"),false);assert.equal(has("Abjure Foes"),false);assert.equal(has("Radiant Strikes"),false);assert.equal(has("Restoring Touch"),false);assert.equal(has("Boon of Truesight"),false);
+      assert.equal(character.spells.known.all.length,11);assert.equal(model.spellPage.entries.length,11);assert.ok(model.spellPage.entries.every(entry=>entry.tags.includes("K")));assert.deepEqual(character.rangerSelections.favoredEnemyLanguages,["Draconic","Giant","Infernal"]);assert.ok(has("Favored Enemy"));assert.ok(has("Natural Explorer"));assert.ok(has("Primeval Awareness"));assert.ok(has("Hide in Plain Sight"));assert.ok(has("Vanish"));assert.ok(has("Foe Slayer"));assert.ok(has("Draconic"));assert.ok(has("Giant"));assert.ok(has("Infernal"));assert.equal(has("Weapon Mastery"),false);assert.equal(has("Deft Explorer"),false);assert.equal(has("Roving"),false);assert.equal(has("Nature's Veil"),false);assert.equal(has("Boon of Dimensional Travel"),false);
     }else{
-      assert.equal(character.spells.prepared.all.length,15);assert.equal(character.spells.alwaysPrepared.length,12);assert.equal(model.spellPage.entries.length,27);assert.ok(has("Weapon Mastery"));assert.ok(has("Paladin's Smite"));assert.ok(has("Divine Smite"));assert.ok(has("Find Steed"));assert.ok(has("Abjure Foes"));assert.ok(has("Radiant Strikes"));assert.ok(has("Restoring Touch"));assert.ok(has("Smite of Protection"));assert.ok(has("Boon of Truesight"));assert.equal(has("Improved Divine Smite"),false);assert.equal(has("Turn the Unholy"),false);assert.equal(has("Purity of Spirit"),false);
+      assert.equal(character.spells.prepared.all.length,15);assert.deepEqual(character.spells.alwaysPrepared,["hunters-mark"]);assert.equal(model.spellPage.entries.length,16);assert.ok(has("Hunter's Mark"));assert.ok(has("Weapon Mastery"));assert.ok(has("Deft Explorer"));assert.ok(has("Roving"));assert.ok(has("Nature's Veil"));assert.ok(has("Precise Hunter"));assert.ok(has("Boon of Dimensional Travel"));assert.equal(has("Natural Explorer"),false);assert.equal(has("Primeval Awareness"),false);assert.equal(has("Hide in Plain Sight"),false);assert.equal(has("Vanish"),false);
     }
   }
 }
