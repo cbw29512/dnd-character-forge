@@ -6,8 +6,8 @@ import { abilityMod, averageHp } from "../src/rules/math.js";
 import { buildQuickReference } from "../src/rules/reference-router.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
 
-function berserker(){
-  try{const state=createInitialState();state.ruleset="2014";state.constraints.level="20";state.constraints.class="barbarian";state.constraints.subclass="berserker";state.constraints.species="human";state.constraints.background="acolyte";return generateCharacter(state);}
+function berserker(level="20"){
+  try{const state=createInitialState();state.ruleset="2014";state.constraints.level=level;state.constraints.class="barbarian";state.constraints.subclass="berserker";state.constraints.species="human";state.constraints.background="acolyte";return generateCharacter(state);}
   catch(error){console.error("[test] 2014 Berserker generation failed",error);throw error;}
 }
 
@@ -19,4 +19,11 @@ test("2014 level-20 Berserker preserves legacy Barbarian progression",()=>{
 
 test("2014 Berserker references and premium sheet are fully sourced",()=>{
   const c=berserker(),refs=buildQuickReference(c),model=buildPremiumPrintModel(c);for(const item of refs){assert.ok(item.source?.version,`${item.name} missing source`);assert.ok(item.source?.page,`${item.name} missing page`);}assert.equal(model.classUtility.title,"Primal Fury");assert.match(model.classUtility.stats.find(item=>item.label==="Rage").value.toString(),/∞/);assert.ok(model.ruleIndex.some(item=>item.name==="Brutal Critical"));assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,true);
+});
+
+test("2014 Berserker play references preserve legacy Rage and subclass restrictions",()=>{
+  const lowRefs=buildQuickReference(berserker("10")),highRefs=buildQuickReference(berserker()),low=name=>lowRefs.find(item=>item.name===name)?.text||"",high=name=>highRefs.find(item=>item.name===name)?.text||"";
+  const rage=low("Rage"),presence=low("Intimidating Presence"),persistent=high("Persistent Rage"),retaliation=high("Retaliation"),frenzy=high("Frenzy");
+  assert.match(rage,/cannot cast or concentrate on spells/i);assert.match(rage,/attacked a hostile creature/i);assert.match(rage,/taken damage/i);assert.match(rage,/Bonus Action/i);assert.match(presence,/Wisdom save DC/i);assert.match(presence,/more than 60 ft away/i);assert.match(presence,/24 hours/i);
+  assert.match(persistent,/Unconscious/i);assert.match(persistent,/Bonus Action to end it/i);assert.match(retaliation,/melee weapon attack/i);assert.match(frenzy,/each turn after this one/i);assert.match(frenzy,/one level of Exhaustion/i);
 });
