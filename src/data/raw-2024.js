@@ -1,7 +1,9 @@
+import { SPECIES_2024 } from "./species-2024.js";
+
 // Verified launch slices use only SRD 5.2.1 content encoded and tested by Character Forge.
 export const RAW_2024={
   ruleset:"2024",source:"RAW",
-  species:[{id:"human",name:"Human",speed:30,size:"Small or Medium",traits:["Resourceful","Skillful","Versatile"],extraSkills:1,originFeat:true}],
+  species:SPECIES_2024,
   backgrounds:[{id:"criminal",name:"Criminal",abilities:["dex","con","int"],feat:"alert",skills:["sleightOfHand","stealth"],tool:"Thieves' Tools",equipment:["2 Daggers","Thieves' Tools","Crowbar","2 Pouches","Traveler's Clothes","16 GP"]},{id:"soldier",name:"Soldier",abilities:["str","dex","con"],feat:"savage-attacker",skills:["athletics","intimidation"],tool:"Gaming Set",equipment:["Spear","Shortbow","20 Arrows","Gaming Set","Healer's Kit","Quiver","Traveler's Clothes","14 GP"]}],
   feats:[{id:"alert",name:"Alert",category:"Origin"},{id:"savage-attacker",name:"Savage Attacker",category:"Origin"},{id:"skilled",name:"Skilled",category:"Origin",extraSkills:3},{id:"boon-combat-prowess",name:"Boon of Combat Prowess",category:"Epic Boon",abilityAdd:1,abilityMaximum:30}],
   classes:[
