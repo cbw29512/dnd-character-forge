@@ -54,9 +54,18 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
       if(level>=4)features.push("Ability Score Improvement");if(level>=5)features.push("Destroy Undead (CR 1/2)");return features;
     }
     features.push(`Divine Order: ${divineOrder==="thaumaturge"?"Thaumaturge":"Protector"}`);
-    if(level>=2)features.push("Channel Divinity (2 uses)","Divine Spark","Turn Undead");
+    if(level>=2)features.push("Channel Divinity","Divine Spark","Turn Undead");
     if(level>=3&&subclass==="life-domain")features.push("Life Domain","Disciple of Life","Preserve Life");
-    if(level>=4)features.push("Ability Score Improvement");if(level>=5)features.push("Sear Undead");return features;
+    if(level>=4)features.push("Ability Score Improvement");
+    if(level>=5)features.push("Sear Undead");
+    if(level>=6&&subclass==="life-domain")features.push("Blessed Healer");
+    if(level>=7)features.push("Blessed Strikes");
+    if(level>=10)features.push("Divine Intervention");
+    if(level>=14)features.push("Improved Blessed Strikes");
+    if(level>=17&&subclass==="life-domain")features.push("Supreme Healing");
+    if(level>=19)features.push("Epic Boon");
+    if(level>=20)features.push("Greater Divine Intervention");
+    return features;
   }catch(error){console.error("[features] cleric feature resolution failed",error);throw error;}
 }
 export function applyClassAsi(scores,level,priority,asiLevels=[4]){
