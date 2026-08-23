@@ -47,14 +47,19 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
 }
 export function applyClassAsi(scores,level,priority,asiLevels=[4]){
   try{
-    const next={...scores},count=asiLevels.filter(requiredLevel=>level>=requiredLevel).length;
-    for(let i=0;i<count;i++){
-      const target=priority.find(ability=>next[ability]<20);
-      if(!target)break;
-      next[target]=Math.min(20,next[target]+2);
-    }
+    const next={...scores},order=[...new Set(priority)].filter(ability=>Object.hasOwn(next,ability)),count=asiLevels.filter(requiredLevel=>level>=requiredLevel).length;
+    for(let i=0;i<count;i++)applyLegalAsi(next,order);
     return next;
   }catch(error){console.error("[features] class ASI progression failed",error);throw error;}
+}
+function applyLegalAsi(scores,priority){
+  try{
+    const plusTwo=priority.find(ability=>scores[ability]<=18);
+    if(plusTwo){scores[plusTwo]+=2;return;}
+    const plusOne=priority.filter(ability=>scores[ability]===19).slice(0,2);
+    if(!plusOne.length)return;
+    for(const ability of plusOne)scores[ability]+=1;
+  }catch(error){console.error("[features] legal ASI allocation failed",error);throw error;}
 }
 export function applyEpicBoonAbility(scores,maximums,priority,feat){
   try{
