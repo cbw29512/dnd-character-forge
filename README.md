@@ -38,8 +38,9 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - Fighter / Champion, **levels 1–20**
 - Wizard / Evoker, **levels 1–20**
 - Cleric / Life Domain, **levels 1–20**
+- Rogue / Thief, **levels 1–20**
 
-The level picker is class-aware: 2024 Fighter, Wizard, and Cleric expose levels 1–20; 2014 Fighter exposes levels 1–20; 2014 Wizard and Cleric remain limited to their verified level-5 slices.
+The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose levels 1–20; 2014 Fighter exposes levels 1–20; 2014 Wizard and Cleric remain limited to their verified level-5 slices. 2014 Rogue is not exposed because it has not yet been verified and encoded.
 
 ## 2024 species vertical slice
 - Species-specific choices are structured state rather than display text: Dragonborn ancestry, Elf lineage/Keen Senses/spell ability, Gnome lineage/spell ability, Goliath Giant Ancestry, Human size/Skillful choice, and Tiefling size/legacy/spell ability.
@@ -112,11 +113,27 @@ The level picker is class-aware: 2024 Fighter, Wizard, and Cleric expose levels 
 
 **Cleric reference scope note:** this milestone completes Cleric/Life Domain mechanics, legal spell access, preparation, slots, class/subclass features, and source-backed feature references through level 20. The separate structured spell-description-card layer remains partial; high-level spells still appear as legal, level-grouped spell names even when a dedicated detailed reference card has not yet been authored.
 
+## 2024 Rogue / Thief vertical slice
+- Complete Rogue level 1–20 progression, including Sneak Attack scaling from 1d6 through 10d6, five Ability Score Improvement opportunities, and the level-19 Epic Boon.
+- Expertise starts with two proficient skills at level 1 and expands to four total at level 6; the generated sheet marks the actual Expertise choices and recalculates their bonuses.
+- Rogue Weapon Mastery tracks two chosen weapons and renders both friendly mastery-property references and the Rogue-specific Long Rest replacement rule.
+- **Cunning Action** arrives at 2 and **Steady Aim** at 3 with playable action/timing references.
+- **Cunning Strike** at 5 derives its save DC from 8 + Dexterity modifier + Proficiency Bonus and exposes the currently legal effects, Sneak Attack die costs, save types, and the Poison option's Poisoner's Kit-on-person requirement.
+- **Evasion** and **Reliable Talent** arrive at 7; Reliable Talent is surfaced in the Rogue Resources block when active.
+- Thief progression is encoded at the exact SRD levels: Fast Hands and Second-Story Work at 3, Supreme Sneak / Stealth Attack at 9, Use Magic Device at 13, and Thief's Reflexes at 17.
+- **Improved Cunning Strike** at 11 permits up to two effects; **Devious Strikes** at 14 adds Daze, Knock Out, and Obscure with exact costs and save types.
+- **Slippery Mind** at 15 adds Wisdom and Charisma saving throw proficiency and the finished save bonuses are recalculated from final ability scores and Proficiency Bonus.
+- **Elusive** arrives at 18, level 19 uses **Boon of the Night Spirit** with its legal +1 ability increase/maximum 30, and **Stroke of Luck** arrives at 20.
+- The character sheet has a dedicated **Rogue Resources** block showing current Sneak Attack dice, Expertise count, mastery count, Cunning Strike DC, effects allowed per Sneak Attack, Reliable Talent state, and playable details for every currently legal Cunning Strike option.
+- Rogue class/features cite SRD 5.2.1 pp.61–63, Thief features cite p.64, Boon of the Night Spirit cites p.88, and mastery properties cite p.90.
+- Unsupported 2014 Rogue remains unavailable and fails closed rather than borrowing 2024 mechanics.
+
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
 - Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - Wizard sheets include compact resources for spellbook size, normal/always-prepared counts, Arcane Recovery, Spell Mastery, and Signature Spells; high-level spellbooks are grouped by spell level instead of rendered as one giant paragraph.
 - Cleric sheets include Divine Order, Channel Divinity uses, scaled Divine Spark, normal/always-prepared counts, and the current Blessed Strikes choice; large prepared lists are grouped by spell level.
+- Rogue sheets include current Sneak Attack dice, Expertise/mastery counts, Cunning Strike DC and effect capacity, Reliable Talent state, and all currently legal Cunning Strike effects with costs and requirements.
 - Background tool proficiencies and Magic Initiate Origin Magic are visible rather than hidden in source data.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each structured 2024 spell reference records its SRD 5.2.1 source page for audit traceability.
@@ -139,7 +156,7 @@ The 2024 Wizard and Cleric spell-name pools are regression-tested as SRD 5.2.1 c
 The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, Cleric Divine Order/Blessed Strikes choices, and class-specific high-level mechanical state. Wizard capstone spell choices and Cleric class choices are restored when a saved pregen is reopened.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, exhaustive 2024 Rogue/Thief level-1–20 tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
