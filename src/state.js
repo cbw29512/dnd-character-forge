@@ -6,6 +6,7 @@ export function createInitialState() {
       sourceMode: SOURCE.RAW,
       ruleset: "2024",
       constraints: { level:RANDOM, species:RANDOM, class:RANDOM, subclass:RANDOM, background:RANDOM, name:"" },
+      speciesSelections: {},
       spellSelections: { cantrips:[], spellbook:[], prepared:[] },
       homebrew: [],
       currentCharacter: null,

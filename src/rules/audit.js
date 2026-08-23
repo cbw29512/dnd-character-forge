@@ -1,5 +1,6 @@
 import { SOURCE } from "../schema.js";
 import { entityProvenance, referenceProvenance, rulesetSource } from "../data/rule-provenance.js";
+import { speciesChoiceLabel } from "./species.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"});
 const LICENSE="CC BY 4.0";
@@ -14,7 +15,7 @@ export function buildRulesAudit(character,validation){
     const homebrewCount=character.homebrew?.length||0,rawIntegrity=character.sourceMode===SOURCE.RAW&&homebrewCount===0;
     const classSource=entityProvenance(character.ruleset,"class",character.class.id);
     const mechanics=[
-      mechanic("Species",character.species?.name||"Unknown",entityProvenance(character.ruleset,"species",character.species.id)),
+      mechanic("Species",character.ruleset==="2024"?speciesChoiceLabel(character):(character.species?.name||"Unknown"),entityProvenance(character.ruleset,"species",character.species.id)),
       mechanic("Background",character.background?.name||"Unknown",entityProvenance(character.ruleset,"background",character.background.id)),
       mechanic("Class",character.class?.name||"Unknown",classSource),
       mechanic("Level",String(character.level),classSource)
@@ -23,7 +24,7 @@ export function buildRulesAudit(character,validation){
     if(character.spells)mechanics.push(mechanic("Spellcasting",`${character.class.name} rules; legal selections validated and remaining choices filled by Forge`,referenceProvenance(character,"feature","Spellcasting")));
     const checks=[
       "Character generation completed with zero validation errors.",
-      "Derived Armor Class, Hit Points, initiative, saves, skills, attacks, and spell math were recalculated from encoded mechanics.",
+      "Derived Armor Class, Hit Points, initiative, saves, skills, attacks, species effects, and spell math were recalculated from encoded mechanics.",
       "Duplicate proficiencies, features, attacks, languages, feats, masteries, and spell selections were rejected by validation.",
       "Displayed rule-facing identity and play-reference mechanics carry verified SRD source locators.",
       character.sourceMode===SOURCE.RAW

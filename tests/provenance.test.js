@@ -7,7 +7,7 @@ import { entityProvenance, referenceProvenance } from "../src/data/rule-provenan
 
 const EXPECTED_ENTITIES={
   "2014":{species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15"},subclass:{champion:"25","school-evocation":"54","life-domain":"17"}},
-  "2024":{species:{human:"86"},background:{criminal:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36"},subclass:{champion:"49",evoker:"82","life-domain":"40"}}
+  "2024":{species:{dragonborn:"84",dwarf:"84",elf:"84",gnome:"85",goliath:"85",halfling:"86",human:"86",orc:"86",tiefling:"86"},background:{criminal:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36"},subclass:{champion:"49",evoker:"82","life-domain":"40"}}
 };
 const CLASSES={"2014":["fighter","wizard","cleric"],"2024":["fighter","wizard","cleric"]};
 
@@ -22,7 +22,7 @@ test("verified launch entities have exact SRD printed-page provenance",()=>{
 });
 
 test("every rendered play reference in the verified class matrix has provenance",()=>{
-  try{for(const ruleset of Object.keys(CLASSES))for(const classId of CLASSES[ruleset])for(let i=0;i<30;i++){const character=fixedCharacter(ruleset,classId);const items=buildQuickReference(character);assert.ok(items.length>0);for(const item of items){assert.ok(item.source?.version,`${ruleset} ${classId} ${item.name} missing source version`);assert.ok(item.source?.page,`${ruleset} ${classId} ${item.name} missing source page`);assert.match(item.source.pdfUrl,/\.pdf$/);}}}
+  try{for(const ruleset of Object.keys(CLASSES))for(const classId of CLASSES[ruleset])for(let i=0;i<60;i++){const character=fixedCharacter(ruleset,classId);const items=buildQuickReference(character);assert.ok(items.length>0);for(const item of items){assert.ok(item.source?.version,`${ruleset} ${classId} ${item.name} missing source version`);assert.ok(item.source?.page,`${ruleset} ${classId} ${item.name} missing source page`);assert.match(item.source.pdfUrl,/\.pdf$/);}}}
   catch(error){console.error("[test] play-reference provenance matrix",error);throw error;}
 });
 
