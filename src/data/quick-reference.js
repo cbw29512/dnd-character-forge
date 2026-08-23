@@ -28,9 +28,17 @@ export const REFERENCE_2014={
 };
 export const REFERENCE_2024={
   species:{
+    "Dwarven Resilience":r("Dwarf","Passive","You resist Poison damage and have Advantage on saving throws to avoid or end the Poisoned condition."),
+    "Fey Ancestry":r("Elf","Passive","You have Advantage on saving throws to avoid or end the Charmed condition."),
+    "Trance":r("Elf","Long Rest","You don't need to sleep, magic can't put you to sleep, and you can finish a Long Rest in 4 hours of conscious trance."),
+    "Gnomish Cunning":r("Gnome","Passive","You have Advantage on Intelligence, Wisdom, and Charisma saving throws."),
+    "Powerful Build":r("Goliath","Passive","You have Advantage on checks to end the Grappled condition and count as one size larger for carrying capacity."),
+    "Brave":r("Halfling","Passive","You have Advantage on saving throws to avoid or end the Frightened condition."),
+    "Halfling Nimbleness":r("Halfling","Movement","You can move through the space of a creature at least one size larger than you, but can't stop there."),
+    "Luck":r("Halfling","D20 Test","When you roll a 1 on the d20 of a D20 Test, reroll it and use the new roll."),
+    "Naturally Stealthy":r("Halfling","Hide action","You can take the Hide action while obscured only by a creature at least one size larger than you."),
     "Resourceful":r("Human","Long Rest","After you finish a Long Rest, gain Heroic Inspiration."),
-    "Skillful":r("Human","Passive","Your extra Human skill proficiency is already included in Skills."),
-    "Versatile":r("Human","Passive","Your extra Origin feat is listed in your feat/reference entries.")
+    "Relentless Endurance":r("Orc","At 0 HP","If damage reduces you to 0 HP without killing you outright, drop to 1 HP instead. One use; regain it after a Long Rest.")
   },
   feat:{
     "Alert":r("Origin Feat","Initiative","Add your Proficiency Bonus to Initiative; already included above. Immediately after Initiative, you may swap with a willing ally in the same combat if neither of you is Incapacitated."),
