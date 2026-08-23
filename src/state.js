@@ -10,6 +10,7 @@ export function createInitialState() {
       backgroundSelections: {},
       classSelections: {},
       spellSelections: { cantrips:[], spellbook:[], prepared:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
+      portraitDataUrl: null,
       homebrew: [],
       currentCharacter: null,
       activeTab: "forge"
