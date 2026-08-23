@@ -122,6 +122,7 @@ export const REFERENCE_2024={
   }
 };
 export const MASTERY_REFERENCE={
+  Cleave:r("Weapon Mastery","On melee hit","Once per turn, after this weapon hits a creature with a melee attack, make another attack with it against a different creature within 5 ft of the first and within your reach. On a hit, deal the weapon's damage without adding a positive ability modifier."),
   Graze:r("Weapon Mastery","On a miss","Deal damage equal to the ability modifier used for the attack, of the weapon's damage type. Only that ability modifier can increase this Graze damage."),
   Nick:r("Weapon Mastery","Light extra attack","Make the Light property's extra attack as part of the Attack action instead of as a Bonus Action. This can happen only once per turn."),
   Push:r("Weapon Mastery","On hit","Push a Large or smaller target up to 10 feet straight away from you."),
