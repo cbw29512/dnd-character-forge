@@ -11,9 +11,9 @@ for(const ruleset of ["2014","2024"])test(`${ruleset} Druid progression is inter
   for(let level=1;level<=20;level++){
     const p=druidProgressionFor(ruleset,level,"circle-land");assert.ok(p.slots[1]>=2);assert.equal(Object.keys(p.slots).map(Number).at(-1),Math.min(9,Math.ceil(level/2)));assert.equal(p.durationHours,level<2?0:Math.floor(level/2));
     if(ruleset==="2014"){
-      assert.equal(p.wildShapeUses,level<2?0:2);assert.equal(p.unlimitedWildShape,level===20);assert.equal(p.knownFormCount,null);assert.equal(p.cantrips,CANTRIPS[level-1]+(level>=2?1:0));assert.equal(p.maxCr,level<2?0:level<4?.25:level<8?.5:1);assert.equal(p.allowSwim,level>=4);assert.equal(p.allowFly,level>=8);assert.equal(p.naturalRecovery,level>=2?Math.ceil(level/2):0);
+      assert.equal(p.wildShapeUses,level<2?0:2);assert.equal(p.unlimitedWildShape,level===20);assert.equal(p.wildShapeTempHp,null);assert.equal(p.knownFormCount,null);assert.equal(p.cantrips,CANTRIPS[level-1]+(level>=2?1:0));assert.equal(p.maxCr,level<2?0:level<4?.25:level<8?.5:1);assert.equal(p.allowSwim,level>=4);assert.equal(p.allowFly,level>=8);assert.equal(p.naturalRecovery,level>=2?Math.ceil(level/2):0);
     }else{
-      assert.equal(p.wildShapeUses,WS_2024[level-1]);assert.equal(p.knownFormCount,FORMS_2024[level-1]);assert.equal(p.prepared,PREPARED_2024[level-1]);assert.equal(p.cantrips,CANTRIPS[level-1]);assert.equal(p.maxCr,level<2?0:level<4?.25:level<8?.5:1);assert.equal(p.allowSwim,level>=2);assert.equal(p.allowFly,level>=8);assert.equal(p.wildCompanion,level>=2);assert.equal(p.wildResurgence,level>=5);assert.equal(p.elementalFury,level>=7);assert.equal(p.improvedElementalFury,level>=15);assert.equal(p.epicBoon,level>=19);assert.equal(p.archdruid,level>=20);
+      assert.equal(p.wildShapeUses,WS_2024[level-1]);assert.equal(p.wildShapeTempHp,level<2?0:level);assert.equal(p.knownFormCount,FORMS_2024[level-1]);assert.equal(p.prepared,PREPARED_2024[level-1]);assert.equal(p.cantrips,CANTRIPS[level-1]);assert.equal(p.maxCr,level<2?0:level<4?.25:level<8?.5:1);assert.equal(p.allowSwim,level>=2);assert.equal(p.allowFly,level>=8);assert.equal(p.wildCompanion,level>=2);assert.equal(p.wildResurgence,level>=5);assert.equal(p.elementalFury,level>=7);assert.equal(p.improvedElementalFury,level>=15);assert.equal(p.epicBoon,level>=19);assert.equal(p.archdruid,level>=20);
     }
   }
 });
