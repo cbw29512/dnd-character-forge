@@ -9,6 +9,18 @@ import { buildQuickReference } from "../src/rules/reference.js";
 const CANTRIPS={1:3,2:3,3:3,4:4,5:4,6:4,7:4,8:4,9:4,10:5,11:5,12:5,13:5,14:5,15:5,16:5,17:5,18:5,19:5,20:5};
 const SLOTS={1:{1:2},2:{1:3},3:{1:4,2:2},4:{1:4,2:3},5:{1:4,2:3,3:2},6:{1:4,2:3,3:3},7:{1:4,2:3,3:3,4:1},8:{1:4,2:3,3:3,4:2},9:{1:4,2:3,3:3,4:3,5:1},10:{1:4,2:3,3:3,4:3,5:2},11:{1:4,2:3,3:3,4:3,5:2,6:1},12:{1:4,2:3,3:3,4:3,5:2,6:1},13:{1:4,2:3,3:3,4:3,5:2,6:1,7:1},14:{1:4,2:3,3:3,4:3,5:2,6:1,7:1},15:{1:4,2:3,3:3,4:3,5:2,6:1,7:1,8:1},16:{1:4,2:3,3:3,4:3,5:2,6:1,7:1,8:1},17:{1:4,2:3,3:3,4:3,5:2,6:1,7:1,8:1,9:1},18:{1:4,2:3,3:3,4:3,5:3,6:1,7:1,8:1,9:1},19:{1:4,2:3,3:3,4:3,5:3,6:2,7:1,8:1,9:1},20:{1:4,2:3,3:3,4:3,5:3,6:2,7:2,8:1,9:1}};
 const LEVEL_COUNTS={0:7,1:15,2:17,3:19,4:8,5:13,6:10,7:8,8:4,9:4};
+const EXPECTED_SPELL_NAMES={
+  0:["Guidance","Light","Mending","Resistance","Sacred Flame","Spare the Dying","Thaumaturgy"],
+  1:["Bane","Bless","Command","Create or Destroy Water","Cure Wounds","Detect Evil and Good","Detect Magic","Detect Poison and Disease","Guiding Bolt","Healing Word","Inflict Wounds","Protection from Evil and Good","Purify Food and Drink","Sanctuary","Shield of Faith"],
+  2:["Aid","Augury","Blindness/Deafness","Calm Emotions","Continual Flame","Enhance Ability","Find Traps","Gentle Repose","Hold Person","Lesser Restoration","Locate Object","Prayer of Healing","Protection from Poison","Silence","Spiritual Weapon","Warding Bond","Zone of Truth"],
+  3:["Animate Dead","Beacon of Hope","Bestow Curse","Clairvoyance","Create Food and Water","Daylight","Dispel Magic","Glyph of Warding","Magic Circle","Mass Healing Word","Meld into Stone","Protection from Energy","Remove Curse","Revivify","Sending","Speak with Dead","Spirit Guardians","Tongues","Water Walk"],
+  4:["Banishment","Control Water","Death Ward","Divination","Freedom of Movement","Guardian of Faith","Locate Creature","Stone Shape"],
+  5:["Commune","Contagion","Dispel Evil and Good","Flame Strike","Geas","Greater Restoration","Hallow","Insect Plague","Legend Lore","Mass Cure Wounds","Planar Binding","Raise Dead","Scrying"],
+  6:["Blade Barrier","Create Undead","Find the Path","Forbiddance","Harm","Heal","Heroes’ Feast","Planar Ally","True Seeing","Word of Recall"],
+  7:["Conjure Celestial","Divine Word","Etherealness","Fire Storm","Plane Shift","Regenerate","Resurrection","Symbol"],
+  8:["Antimagic Field","Control Weather","Earthquake","Holy Aura"],
+  9:["Astral Projection","Gate","Mass Heal","True Resurrection"]
+};
 function clericAt(level,spellSelections={}){
   try{const state=createInitialState();state.ruleset="2014";state.constraints.level=String(level);state.constraints.class="cleric";state.constraints.subclass="life-domain";state.constraints.species="human";state.constraints.background="acolyte";state.spellSelections={...state.spellSelections,...spellSelections};return generateCharacter(state);}catch(error){console.error(`[test] 2014 Cleric level ${level}`,error);throw error;}
 }
@@ -30,6 +42,10 @@ test("2014 Cleric normal prepared count remains Wisdom modifier plus Cleric leve
   for(const level of [1,5,10,15,20]){const c=clericAt(level),expected=Math.max(1,level+Math.floor((c.abilities.wis-10)/2));assert.equal(c.spells.prepared.all.length,expected,`level ${level} prepared count`);for(const id of c.spells.alwaysPrepared)assert.ok(!c.spells.prepared.all.includes(id),`${id} consumed a normal prepared slot`);}
 });
 
+test("2014 Cleric ASI schedule spends all five legal two-point opportunities by level 19",()=>{
+  const level1=clericAt(1),level19=clericAt(19),sum=character=>Object.values(character.abilities).reduce((total,value)=>total+value,0);assert.deepEqual(level19.class.asiLevels,[4,8,12,16,19]);assert.equal(sum(level19)-sum(level1),10);const ref=buildQuickReference(level19).find(item=>item.name==="Ability Score Improvement");assert.ok(ref);assert.match(ref.text,/5 Ability Score Improvement opportunities/);assert.equal(ref.source.page,"17");
+});
+
 test("2014 Life Domain always-prepared spells are exact through level 20",()=>{
   const expected={1:["bless","cure-wounds"],3:["bless","cure-wounds","lesser-restoration","spiritual-weapon"],5:["bless","cure-wounds","lesser-restoration","spiritual-weapon","beacon-of-hope","revivify"],7:["bless","cure-wounds","lesser-restoration","spiritual-weapon","beacon-of-hope","revivify","death-ward","guardian-of-faith"],9:["bless","cure-wounds","lesser-restoration","spiritual-weapon","beacon-of-hope","revivify","death-ward","guardian-of-faith","mass-cure-wounds","raise-dead"]};
   for(const [level,ids] of Object.entries(expected)){assert.deepEqual(lifeDomainAlwaysPrepared("2014",Number(level)),ids);assert.deepEqual(clericAt(Number(level)).spells.alwaysPrepared,ids);}
@@ -38,9 +54,8 @@ test("2014 Life Domain always-prepared spells are exact through level 20",()=>{
 
 test("2014 Cleric spell catalog is the exact 105-spell SRD 5.1 class list through level 9",()=>{
   assert.equal(CLERIC_SPELLS_2014.length,105);assert.equal(new Set(CLERIC_SPELLS_2014.map(spell=>spell.id)).size,105);
-  for(const [level,count] of Object.entries(LEVEL_COUNTS))assert.equal(CLERIC_SPELLS_2014.filter(spell=>spell.level===Number(level)).length,count,`spell level ${level}`);
+  for(const [level,count] of Object.entries(LEVEL_COUNTS)){const actual=CLERIC_SPELLS_2014.filter(spell=>spell.level===Number(level)).map(spell=>spell.name);assert.equal(actual.length,count,`spell level ${level}`);assert.deepEqual(actual,EXPECTED_SPELL_NAMES[level],`exact Cleric spell names at level ${level}`);}
   for(const name of ["Aura of Life","Sunbeam","Sunburst","Power Word Heal"])assert.equal(CLERIC_SPELLS_2014.some(spell=>spell.name===name),false,`${name} leaked from 2024`);
-  for(const name of ["Guardian of Faith","Mass Cure Wounds","Heroes’ Feast","Conjure Celestial","Holy Aura","True Resurrection"])assert.equal(CLERIC_SPELLS_2014.some(spell=>spell.name===name),true,`${name} missing`);
 });
 
 test("2014 Life Domain high-level feature breakpoints remain edition-correct",()=>{
