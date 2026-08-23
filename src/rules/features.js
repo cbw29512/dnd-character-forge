@@ -68,6 +68,27 @@ export function clericFeatures(ruleset,level,subclass,divineOrder){
     return features;
   }catch(error){console.error("[features] cleric feature resolution failed",error);throw error;}
 }
+export function rogueFeatures(ruleset,level,subclass){
+  try{
+    if(ruleset!=="2024")throw new Error("Rogue is not yet verified for this ruleset.");
+    const features=["Expertise","Sneak Attack","Thieves’ Cant","Weapon Mastery"];
+    if(level>=2)features.push("Cunning Action");
+    if(level>=3){features.push("Steady Aim");if(subclass==="thief")features.push("Fast Hands","Second-Story Work");}
+    if(level>=4)features.push("Ability Score Improvement");
+    if(level>=5)features.push("Cunning Strike","Uncanny Dodge");
+    if(level>=7)features.push("Evasion","Reliable Talent");
+    if(level>=9&&subclass==="thief")features.push("Supreme Sneak");
+    if(level>=11)features.push("Improved Cunning Strike");
+    if(level>=13&&subclass==="thief")features.push("Use Magic Device");
+    if(level>=14)features.push("Devious Strikes");
+    if(level>=15)features.push("Slippery Mind");
+    if(level>=17&&subclass==="thief")features.push("Thief’s Reflexes");
+    if(level>=18)features.push("Elusive");
+    if(level>=19)features.push("Epic Boon");
+    if(level>=20)features.push("Stroke of Luck");
+    return features;
+  }catch(error){console.error("[features] rogue feature resolution failed",error);throw error;}
+}
 export function applyClassAsi(scores,level,priority,asiLevels=[4]){
   try{
     const next={...scores},order=[...new Set(priority)].filter(ability=>Object.hasOwn(next,ability)),count=asiLevels.filter(requiredLevel=>level>=requiredLevel).length;
