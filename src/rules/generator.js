@@ -10,6 +10,7 @@ import { buildWizardSpellcasting } from "./wizard.js";
 import { buildClericSpellcasting, resolveDivineOrder } from "./cleric.js";
 import { validateCharacter } from "./validation.js";
 import { uniqueStrings, uniqueBy, consolidateInventory } from "./duplicates.js";
+import { buildRulesAudit } from "./audit.js";
 
 const NAMES=["Aric Vale","Mira Stone","Tavian Reed","Selene Hart","Bren Ashford","Kael Rowan"],ALL_SKILLS=Object.keys(SKILLS);
 const LANGUAGES_2014=["Dwarvish","Elvish","Giant","Gnomish","Goblin","Halfling","Orc","Draconic","Celestial","Infernal","Sylvan"],LANGUAGES_2024=["Common Sign Language","Draconic","Dwarvish","Elvish","Giant","Gnomish","Goblin","Halfling","Orc"],SCHOLAR_SKILLS=["arcana","history","investigation","medicine","nature","religion"];
@@ -25,7 +26,7 @@ export function generateCharacter(state){
     let character={id:crypto.randomUUID(),sourceMode:state.sourceMode,ruleset:state.ruleset,level,name:state.constraints.name.trim()||pick(NAMES),species,size:resolveSize(state.ruleset,species),class:cls,subclass,background,abilities,abilityMaximums:Object.fromEntries(ABILITIES.map(a=>[a,20])),skills,expertise:[],saves:cls.saves,proficiency:proficiencyBonus(level),equipment,fightingStyle,divineOrder,languages:resolveLanguages(state.ruleset,background),feats:[],homebrew:[],homebrewAcBonus:0,features:resolveFeatures(state.ruleset,cls.id,level,subclass?.id,divineOrder),spells:null};
     if(fightingStyle)character.features.push(`Fighting Style: ${fightingStyle.name}`);if(state.ruleset==="2024")character=apply2024Feats(character,data,background,species);if(state.ruleset==="2024"&&cls.id==="wizard"&&level>=2)character.expertise=[pick(character.skills.filter(skill=>SCHOLAR_SKILLS.includes(skill)))];
     if(state.sourceMode===SOURCE.HOMEBREW)character=applyHomebrew(character,state.homebrew);if(cls.spellcasting==="wizard")character.spells=buildWizardSpellcasting(character,state.spellSelections||{});if(cls.spellcasting==="cleric")character.spells=buildClericSpellcasting(character,state.spellSelections||{});
-    character=derive(character,data);const validation=validateCharacter(character,state.sourceMode);if(!validation.valid)throw new Error(validation.errors.join(" "));return{...character,validation};
+    character=derive(character,data);const validation=validateCharacter(character,state.sourceMode);if(!validation.valid)throw new Error(validation.errors.join(" "));const audit=buildRulesAudit(character,validation);return{...character,validation,audit};
   }catch(error){console.error("[generator] Character generation blocked",error);throw error;}
 }
 function resolveLevel(value,subclassValue,cls){try{if(value!==RANDOM)return Number(value);const minimum=subclassValue&&subclassValue!==RANDOM?cls.subclassLevel:1;return minimum+Math.floor(Math.random()*(6-minimum));}catch(error){console.error("[generator] level resolution failed",error);throw error;}}

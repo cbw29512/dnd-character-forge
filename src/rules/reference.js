@@ -1,18 +1,19 @@
 import { REFERENCE_2014, REFERENCE_2024, MASTERY_REFERENCE } from "../data/quick-reference.js";
 import { RAW_2014 } from "../data/raw-2014.js";
 import { RAW_2024 } from "../data/raw-2024.js";
+import { referenceProvenance } from "../data/rule-provenance.js";
 import { abilityMod } from "./math.js";
 
 const dataFor=ruleset=>ruleset==="2014"?RAW_2014:RAW_2024,refsFor=ruleset=>ruleset==="2014"?REFERENCE_2014:REFERENCE_2024;
 export function buildQuickReference(character){
   try{
     const rules=refsFor(character.ruleset),items=[];
-    for(const trait of character.species.traits||[])push(items,`species:${trait}`,trait,required(rules.species?.[trait],trait));
-    if(character.background.feature)push(items,`background:${character.background.feature}`,character.background.feature,required(rules.background?.[character.background.feature],character.background.feature));
-    for(const feat of character.feats||[])push(items,`feat:${feat.id}`,feat.name,required(rules.feat?.[feat.name],feat.name));
-    if(character.fightingStyle)push(items,`style:${character.fightingStyle.name}`,character.fightingStyle.name,required(rules.style?.[character.fightingStyle.name],character.fightingStyle.name));
-    for(const name of character.features||[]){if(name==="Fighting Style"||name.startsWith("Fighting Style:"))continue;push(items,`feature:${name}`,name,dynamicFeature(character,name)||required(rules.feature?.[name],name));}
-    for(const mastery of masteryEntries(character))push(items,`mastery:${mastery.weaponId}`,`${mastery.weaponName} — ${mastery.property}`,required(MASTERY_REFERENCE[mastery.property],mastery.property));
+    for(const trait of character.species.traits||[])push(character,items,`species:${trait}`,trait,required(rules.species?.[trait],trait));
+    if(character.background.feature)push(character,items,`background:${character.background.feature}`,character.background.feature,required(rules.background?.[character.background.feature],character.background.feature));
+    for(const feat of character.feats||[])push(character,items,`feat:${feat.id}`,feat.name,required(rules.feat?.[feat.name],feat.name));
+    if(character.fightingStyle)push(character,items,`style:${character.fightingStyle.name}`,character.fightingStyle.name,required(rules.style?.[character.fightingStyle.name],character.fightingStyle.name));
+    for(const name of character.features||[]){if(name==="Fighting Style"||name.startsWith("Fighting Style:"))continue;push(character,items,`feature:${name}`,name,dynamicFeature(character,name)||required(rules.feature?.[name],name));}
+    for(const mastery of masteryEntries(character))push(character,items,`mastery:${mastery.weaponId}`,`${mastery.weaponName} — ${mastery.property}`,required(MASTERY_REFERENCE[mastery.property],mastery.property));
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate quick-reference entries detected.");return items;
   }catch(error){console.error("[reference] build failed",error);throw error;}
 }
@@ -45,18 +46,18 @@ function spellcasting(character){
   }catch(error){console.error("[reference] spellcasting failed",error);throw error;}
 }
 function secondWind(character){
-  const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};
-  const uses=character.level>=4?3:2;return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. ${uses} uses; regain one after a Short Rest and all after a Long Rest.`};
+  try{const healing=`1d10 + ${character.level} HP`;if(character.ruleset==="2014")return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. One use; regain it after a Short or Long Rest.`};const uses=character.level>=4?3:2;return{category:"Fighter",timing:"Bonus Action",text:`Regain ${healing}. ${uses} uses; regain one after a Short Rest and all after a Long Rest.`};}
+  catch(error){console.error("[reference] Second Wind failed",error);throw error;}
 }
 function arcaneRecovery(character){
-  const levels=Math.ceil(character.level/2),limit=`up to ${levels} total spell-slot level${levels===1?"":"s"}`;
-  return character.ruleset==="2014"?{category:"Wizard",timing:"After Short Rest",text:`Once per day, recover expended slots totaling ${limit}; none can be level 6+.`}:{category:"Wizard",timing:"After Short Rest",text:`Recover expended slots totaling ${limit}; none can be level 6+. Once used, it returns after a Long Rest.`};
+  try{const levels=Math.ceil(character.level/2),limit=`up to ${levels} total spell-slot level${levels===1?"":"s"}`;return character.ruleset==="2014"?{category:"Wizard",timing:"After Short Rest",text:`Once per day, recover expended slots totaling ${limit}; none can be level 6+.`}:{category:"Wizard",timing:"After Short Rest",text:`Recover expended slots totaling ${limit}; none can be level 6+. Once used, it returns after a Long Rest.`};}
+  catch(error){console.error("[reference] Arcane Recovery failed",error);throw error;}
 }
 function preserveLife(character){
-  const pool=5*character.level;if(character.ruleset==="2014")return{category:"Life Domain",timing:"Action · Channel Divinity",text:`Distribute up to ${pool} HP among creatures within 30 ft, but no creature can be healed above half its maximum. It has no effect on Undead or Constructs.`};
-  return{category:"Life Domain",timing:"Magic action · Channel Divinity",text:`Distribute up to ${pool} HP among Bloodied creatures within 30 ft, including yourself, but no creature can be healed above half its maximum.`};
+  try{const pool=5*character.level;if(character.ruleset==="2014")return{category:"Life Domain",timing:"Action · Channel Divinity",text:`Distribute up to ${pool} HP among creatures within 30 ft, but no creature can be healed above half its maximum. It has no effect on Undead or Constructs.`};return{category:"Life Domain",timing:"Magic action · Channel Divinity",text:`Distribute up to ${pool} HP among Bloodied creatures within 30 ft, including yourself, but no creature can be healed above half its maximum.`};}
+  catch(error){console.error("[reference] Preserve Life failed",error);throw error;}
 }
-function searUndead(character){const dice=Math.max(1,abilityMod(character.abilities.wis));return{category:"Cleric",timing:"With Turn Undead",text:`Roll ${dice}d8. Each Undead that fails its Turn Undead save takes that much Radiant damage; this damage does not end the turning effect.`};}
-function push(items,id,name,entry){items.push({id,name,...entry});}
-function required(entry,name){if(!entry)throw new Error(`Missing quick reference for ${name}.`);return entry;}
-function pretty(value){return String(value||"the chosen skill").replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());}
+function searUndead(character){try{const dice=Math.max(1,abilityMod(character.abilities.wis));return{category:"Cleric",timing:"With Turn Undead",text:`Roll ${dice}d8. Each Undead that fails its Turn Undead save takes that much Radiant damage; this damage does not end the turning effect.`};}catch(error){console.error("[reference] Sear Undead failed",error);throw error;}}
+function push(character,items,id,name,entry){try{const kind=id.split(":",1)[0],source=referenceProvenance(character,kind,name);items.push({id,name,...entry,source});}catch(error){console.error(`[reference] provenance attach failed for ${name}`,error);throw error;}}
+function required(entry,name){try{if(!entry)throw new Error(`Missing quick reference for ${name}.`);return entry;}catch(error){console.error(`[reference] required entry failed for ${name}`,error);throw error;}}
+function pretty(value){try{return String(value||"the chosen skill").replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());}catch(error){console.error("[reference] pretty label failed",error);throw error;}}
