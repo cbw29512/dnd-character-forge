@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { clericProgressionFor, lifeDomainAlwaysPrepared, validateClericClassSelections } from "../src/rules/cleric.js";
-import { CLERIC_SPELLS_2014, CLERIC_SPELLS_2024 } from "../src/data/cleric-spells.js";
+import { CLERIC_SPELLS_2024 } from "../src/data/cleric-spells.js";
 import { buildQuickReference } from "../src/rules/reference.js";
 import { pregenFingerprintPayload } from "../src/library/fingerprint.js";
 import { renderCharacter } from "../src/ui/render.js";
@@ -58,9 +58,9 @@ test("level 20 Cleric quick references expose current scaled resources and capst
   assert.match(byName.get("Channel Divinity").text,/4 uses/);assert.match(byName.get("Divine Spark").text,/4d8/);assert.match(byName.get("Blessed Strikes").text,/Potent Spellcasting/);assert.match(byName.get("Improved Blessed Strikes").text,/Temporary Hit Points/);assert.match(byName.get("Divine Intervention").text,/level 5 or lower/);assert.match(byName.get("Greater Divine Intervention").text,/Wish/);assert.match(byName.get("Greater Divine Intervention").text,/2d4 Long Rests/);assert.match(byName.get("Supreme Healing").text,/highest possible result/);for(const name of ["Channel Divinity","Divine Spark","Blessed Healer","Blessed Strikes","Divine Intervention","Improved Blessed Strikes","Supreme Healing","Greater Divine Intervention"]){assert.equal(byName.get(name).source.version,"SRD 5.2.1");assert.ok(byName.get(name).source.page);}
 });
 
-test("2024 Cleric spell catalog has exact verified level 4 through 9 lists while 2014 stays unexpanded",()=>{
+test("2024 Cleric spell catalog keeps its exact verified level 4 through 9 lists",()=>{
   for(const [level,names] of Object.entries(HIGH_SPELLS)){const actual=CLERIC_SPELLS_2024.filter(spell=>spell.level===Number(level)).map(spell=>spell.name);assert.deepEqual(actual,names,`Cleric level ${level}`);}
-  assert.equal(new Set(CLERIC_SPELLS_2024.map(spell=>spell.id)).size,CLERIC_SPELLS_2024.length);for(let level=0;level<=9;level++)assert.ok(CLERIC_SPELLS_2024.some(spell=>spell.level===level),`missing Cleric spell level ${level}`);assert.equal(Math.max(...CLERIC_SPELLS_2014.map(spell=>spell.level)),3);
+  assert.equal(new Set(CLERIC_SPELLS_2024.map(spell=>spell.id)).size,CLERIC_SPELLS_2024.length);for(let level=0;level<=9;level++)assert.ok(CLERIC_SPELLS_2024.some(spell=>spell.level===level),`missing Cleric spell level ${level}`);
 });
 
 test("level 20 Cleric sheet renders class resources and 9th-level slot progression",()=>{
@@ -72,6 +72,6 @@ test("Cleric class choices survive fingerprints and the saved-pregen UI contract
   const app=fs.readFileSync(new URL("../src/app.js",import.meta.url),"utf8"),ui=fs.readFileSync(new URL("../src/ui/class-options.js",import.meta.url),"utf8"),index=fs.readFileSync(new URL("../index.html",import.meta.url),"utf8");assert.match(app,/classSelections/);assert.match(app,/blessedStrikes:character\.blessedStrikes/);assert.match(ui,/Divine Order/);assert.match(ui,/Blessed Strikes/);assert.match(index,/classChoicePanel/);
 });
 
-test("2014 Cleric remains fail-closed at level 6",()=>{
-  const state=createInitialState();state.ruleset="2014";state.constraints.level="6";state.constraints.class="cleric";assert.throws(()=>generateCharacter(state),/currently supports levels/i);
+test("2024 Cleric remains fully supported after 2014 Cleric expansion",()=>{
+  assert.doesNotThrow(()=>clericAt(6));assert.doesNotThrow(()=>clericAt(20));
 });
