@@ -1,10 +1,11 @@
 import { classPlaceholderArt } from "../print/class-art.js";
 
-const esc=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+const esc=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&gt;".replace("&gt;","&lt;"),">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
 
 export function renderPrintPageOne(m){
   try{
-    return `<article class="premium-sheet ps-page-one profile-${m.profile.id} theme-${esc(m.theme.id)}"><div class="ps-frame">${header(m)}<main class="ps-body"><div class="ps-main-columns"><div class="ps-column ps-left">${panel("Ability Scores",abilities(m))}${panel("Saving Throws",savingThrows(m),"ps-saving-throws")}${passive(m)}${panel("Proficiencies & Languages",proficiencies(m),"ps-proficiencies")}</div><div class="ps-column ps-center">${panel("Skills",skills(m),"ps-skills")}${panel("Attacks & Spellcasting",attacks(m),"ps-attacks")}${panel("Equipment",list(m.equipment),"ps-equipment")}${panel("Quick Turn",quickTurn(m),"ps-quick")}</div><div class="ps-column ps-right">${m.feat?panel("Feat",feat(m),"ps-feat"):""}${m.rogueResources?panel("Rogue Resources",rogue(m),"ps-rogue"):""}${m.spellcasting?panel("Spellcasting",spells(m),"ps-spells"):""}${panel("Features & Traits",features(m),"ps-features")}</div></div>${m.profile.caster?"":ruleIndex(m)}</main>${footer(m,1)}</div></article>`;
+    const roguePanel=m.rogueResources?panel("Rogue Resources",rogue(m),"ps-rogue"):"";
+    return `<article class="premium-sheet ps-page-one profile-${m.profile.id} theme-${esc(m.theme.id)}"><div class="ps-frame">${header(m)}<main class="ps-body"><div class="ps-main-columns"><div class="ps-column ps-left">${panel("Ability Scores",abilities(m))}${panel("Saving Throws",savingThrows(m),"ps-saving-throws")}${passive(m)}${panel("Proficiencies & Languages",proficiencies(m),"ps-proficiencies")}</div><div class="ps-column ps-center">${panel("Skills",skills(m),"ps-skills")}${panel("Attacks & Spellcasting",attacks(m),"ps-attacks")}${roguePanel}${panel("Equipment",list(m.equipment),"ps-equipment")}${panel("Quick Turn",quickTurn(m),"ps-quick")}</div><div class="ps-column ps-right">${m.feat?panel("Feat",feat(m),"ps-feat"):""}${m.spellcasting?panel("Spellcasting",spells(m),"ps-spells"):""}${panel("Features & Traits",features(m),"ps-features")}</div></div>${m.profile.caster?"":ruleIndex(m)}</main>${footer(m,1)}</div></article>`;
   }catch(error){
     console.error("[print-page-one] render failed",error);
     throw error;
