@@ -24,7 +24,13 @@ export async function savePregen(character) {
     const contentFingerprint = await fingerprint(pregenFingerprintPayload(character));
     for(const item of items){if(!item.character)continue;item.fingerprint=await fingerprint(pregenFingerprintPayload(item.character));}
     const duplicate = items.find(item=>item.fingerprint===contentFingerprint);
-    if (duplicate) throw new Error(`This pregen is mechanically identical to ${duplicate.name}. Open the existing library entry instead.`);
+    if(duplicate){
+      if(duplicate.name===character.name&&presentationChanged(duplicate.character,character)){
+        if(character.presentation)duplicate.character.presentation=structuredClone(character.presentation);else delete duplicate.character.presentation;
+        duplicate.updatedAt=new Date().toISOString();store(PREGEN_KEY,items,"pregens");return{...duplicate,presentationUpdated:true};
+      }
+      throw new Error(`This pregen is mechanically identical to ${duplicate.name}. Open the existing library entry instead.`);
+    }
     const entry = { id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
     items.unshift(entry);
     store(PREGEN_KEY,items,"pregens");
@@ -39,7 +45,7 @@ export async function saveHomebrew(item, ruleset) {
     const sameName = items.find(entry=>entry.name.trim().toLowerCase()===item.name.trim().toLowerCase());
     if (sameName) throw new Error(`You already have Homebrew named ${sameName.name}. Edit or version the existing entry.`);
     const duplicate = items.find(entry=>entry.fingerprint===contentFingerprint);
-    if (duplicate) throw new Error(`These mechanics already exist as ${duplicate.name}. Rename-only duplicates are blocked.`);
+    if (duplicate) throw new Error(`These mechanics already exist as ${duplicate.name}. Rename-only duplicates are blocked locally.`);
     const entry = { id:crypto.randomUUID(), fingerprint:contentFingerprint, name:item.name, type:item.type, ruleset, version:1, createdAt:new Date().toISOString(), item };
     items.unshift(entry);
     store(HOMEBREW_KEY,items,"homebrew");
@@ -55,3 +61,4 @@ export function removeHomebrew(id) {
   try { return store(HOMEBREW_KEY,loadHomebrew().filter(item=>item.id!==id),"homebrew"); }
   catch (error) { console.error("[library] removeHomebrew failed", error); throw error; }
 }
+function presentationChanged(saved,current){try{return JSON.stringify(saved?.presentation||null)!==JSON.stringify(current?.presentation||null);}catch(error){console.error("[library] presentation comparison failed",error);throw error;}}
