@@ -1,4 +1,3 @@
-import { abilityMod } from "../rules/math.js";
 import { paladinAuraBonus } from "../rules/paladin.js";
 
 export function buildClassUtility(character){
@@ -23,7 +22,7 @@ function paladinUtility(character){
     const p=character.paladin;if(!p)return null;const aura=p.auraProtection?`+${paladinAuraBonus(character)}`:"—",channel=p.channelDivinityUses||0;
     return{
       title:"Sacred Charge",kind:"paladin",
-      stats:[stat("Lay On Hands",p.layOnHandsPool,"HP pool"),stat("Channel",channel,"uses"),stat("Aura",aura,p.auraRange?`${p.auraRange} ft":"inactive"),stat("Attacks",p.attacksPerAction,"per action")],
+      stats:[stat("Lay On Hands",p.layOnHandsPool,"HP pool"),stat("Channel",channel,"uses"),stat("Aura",aura,p.auraRange?`${p.auraRange} ft`:"inactive"),stat("Attacks",p.attacksPerAction,"per action")],
       note:character.ruleset==="2024"?`${p.masteryCount} Weapon Masteries${p.paladinsSmite?" · Divine Smite free cast":""}${p.faithfulSteed?" · Find Steed free cast":""}`:`${p.divineSenseUses} Divine Sense use${p.divineSenseUses===1?"":"s"}${p.divineSmite?" · Divine Smite ready":""}${p.improvedDivineSmite?" · +1d8 Improved Smite":""}`
     };
   }catch(error){console.error("[class-utility] Paladin utility failed",error);throw error;}
