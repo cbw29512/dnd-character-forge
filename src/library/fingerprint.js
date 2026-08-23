@@ -8,6 +8,7 @@ function stable(value) {
 
 export function pregenFingerprintPayload(character) {
   try {
+    const styles=character.fightingStyles?.length?character.fightingStyles:(character.fightingStyle?[character.fightingStyle]:[]);
     return {
       ruleset:character.ruleset,
       sourceMode:character.sourceMode,
@@ -17,13 +18,13 @@ export function pregenFingerprintPayload(character) {
       subclass:character.subclass?.id ?? null,
       background:character.background?.id,
       abilities:character.abilities,
-      abilityMaximums:character.abilityMaximums,
+      abilityMaximums:character.abilityMaximums||null,
       epicBoonAbility:character.epicBoonAbility||null,
       skills:[...(character.skills||[])].sort(),
       saves:[...(character.saves||[])].sort(),
       languages:[...(character.languages||[])].sort(),
       feats:(character.feats||[]).map(item=>item.id||item.name).sort(),
-      fightingStyles:(character.fightingStyles||[]).map(item=>item.id||item.name).sort(),
+      fightingStyles:styles.map(item=>item.id||item.name).sort(),
       masteryIds:[...(character.masteryIds||[])].sort(),
       inventory:(character.inventory||[]).map(item=>({name:item.name,quantity:item.quantity})),
       homebrew:(character.homebrew||[]).map(item=>({id:item.id||item.name,version:item.version||1,effects:item.effects||[]})),
