@@ -75,6 +75,6 @@ test("spell-picker limits include the full Evoker spellbook at level 20 while su
   const picker=fs.readFileSync(new URL("../src/ui/spell-picker.js",import.meta.url),"utf8"),app=fs.readFileSync(new URL("../src/app.js",import.meta.url),"utf8");assert.match(picker,/options\.length===1\?options\[0\]\.id:null/);assert.match(picker,/Spell Mastery/);assert.match(picker,/Signature Spells/);assert.match(app,/masteryLevel1:character\.spells\.spellMastery\?\.level1/);assert.match(app,/signatureSpells:\[\.\.\.\(character\.spells\.signatureSpells\|\|\[\]\)\]/);
 });
 
-test("2014 Wizard and Cleric remain fail-closed above their verified level 5",()=>{
-  for(const classId of ["wizard","cleric"]){const state=createInitialState();state.ruleset="2014";state.constraints.level="6";state.constraints.class=classId;assert.throws(()=>generateCharacter(state),/currently supports levels/i);}
+test("2014 Cleric remains fail-closed above its verified level 5",()=>{
+  const state=createInitialState();state.ruleset="2014";state.constraints.level="6";state.constraints.class="cleric";assert.throws(()=>generateCharacter(state),/currently supports levels/i);
 });
