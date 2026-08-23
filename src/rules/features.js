@@ -54,11 +54,12 @@ export function applyClassAsi(scores,level,priority,asiLevels=[4]){
 }
 function applyLegalAsi(scores,priority){
   try{
-    const plusTwo=priority.find(ability=>scores[ability]<=18);
-    if(plusTwo){scores[plusTwo]+=2;return;}
-    const plusOne=priority.filter(ability=>scores[ability]===19).slice(0,2);
-    if(!plusOne.length)return;
-    for(const ability of plusOne)scores[ability]+=1;
+    const eligible=priority.filter(ability=>scores[ability]<20),first=eligible[0];
+    if(!first)return;
+    if(scores[first]<=18){scores[first]+=2;return;}
+    scores[first]+=1;
+    const second=eligible.find(ability=>ability!==first&&scores[ability]<20);
+    if(second)scores[second]+=1;
   }catch(error){console.error("[features] legal ASI allocation failed",error);throw error;}
 }
 export function applyEpicBoonAbility(scores,maximums,priority,feat){
