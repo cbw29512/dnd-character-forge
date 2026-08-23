@@ -7,10 +7,10 @@ export function buildClassUtility(character){
 
 function barbarianUtility(character){
   try{
-    const b=character.barbarian;if(!b)return null;const rage=b.unlimitedRage?"∞":b.rageUses,brutal=character.ruleset==="2014"?(b.brutalCriticalDice?`+${b.brutalCriticalDice} dice`:"—"):(b.brutalStrikeDice?`${b.brutalStrikeDice}d10`:"—");
+    const b=character.barbarian;if(!b)return null;const rage=b.unlimitedRage?"∞":b.rageUses,is2014=character.ruleset==="2014",brutal=is2014?(b.brutalCriticalDice?`+${b.brutalCriticalDice}`:"—"):(b.brutalStrikeDice?`${b.brutalStrikeDice}d10`:"—");
     return{
       title:"Primal Fury",kind:"barbarian",
-      stats:[stat("Rage",rage,b.unlimitedRage?"unlimited":"uses"),stat("Rage Damage",`+${b.rageDamage}`,"damage"),stat("Attacks",b.attacksPerAction,"per action"),stat(character.ruleset==="2014"?"Brutal Critical":"Brutal Strike",brutal,character.ruleset==="2014"?"extra":"extra damage")],
+      stats:[stat("Rage",rage,b.unlimitedRage?"unlimited":"uses"),stat("Rage Damage",`+${b.rageDamage}`,"damage"),stat("Attacks",b.attacksPerAction,"per action"),stat(is2014?"Crit Dice":"Brutal Strike",brutal,is2014?"weapon dice":"extra damage")],
       note:character.ruleset==="2024"?`${b.masteryCount} Weapon Masteries${b.brutalStrikeEffectCount?` · ${b.brutalStrikeEffectCount} Brutal Strike effect${b.brutalStrikeEffectCount===1?"":"s"}`:""}${b.frenzy?" · Frenzy active":""}`:`${b.initiativeAdvantage?"Feral Instinct · ":""}${b.frenzy?"Berserker Frenzy · ":""}${b.relentlessRage?"Relentless Rage ready":"Rage ready"}`
     };
   }catch(error){console.error("[class-utility] Barbarian utility failed",error);throw error;}
