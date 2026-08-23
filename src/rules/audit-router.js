@@ -27,8 +27,7 @@ function buildBarbarianAudit(character,validation){
     mechanics.push(mechanic("Level",String(character.level),classSource));
     return auditEnvelope(character,source,rawIntegrity,homebrewCount,mechanics,[
       "Character generation completed with zero validation errors.",
-      "Barbarian Rage, Unarmored Defense, Speed, Weapon Mastery, Berserker progression, and capstone math were recalculated from encoded mechanics.",
-      "2014 and 2024 Barbarian progressions are validated as separate rules contracts.",
+      barbarianEditionCheck(character.ruleset),
       "Displayed Barbarian rules and identity carry verified SRD source locators."
     ]);
   }catch(error){console.error("[audit-router] Barbarian audit failed",error);throw error;}
@@ -46,11 +45,24 @@ function buildPaladinAudit(character,validation){
     mechanics.push(mechanic("Level",String(character.level),classSource),mechanic("Paladin spell list",character.ruleset==="2014"?"pp.108–109":"pp.55–56",paladinEntityProvenance(character.ruleset,"spells")));
     return auditEnvelope(character,source,rawIntegrity,homebrewCount,mechanics,[
       "Character generation completed with zero validation errors.",
-      "Paladin Lay On Hands, spell slots and preparation, auras, Fighting Style, Oath of Devotion progression, and class resources were recalculated from encoded mechanics.",
-      "2014 Divine Smite/Divine Sense and 2024 Paladin’s Smite/Weapon Mastery/Channel Divinity are validated as separate edition contracts.",
+      paladinEditionCheck(character.ruleset),
       "Displayed Paladin rules, spell list, and identity carry verified SRD source locators."
     ]);
   }catch(error){console.error("[audit-router] Paladin audit failed",error);throw error;}
+}
+function barbarianEditionCheck(ruleset){
+  try{
+    if(ruleset==="2014")return "2014 Barbarian Rage, Unarmored Defense, Reckless Attack, Danger Sense, Brutal Critical, Berserker progression, and Primal Champion math were recalculated from encoded SRD mechanics.";
+    if(ruleset==="2024")return "2024 Barbarian Rage, Unarmored Defense, Reckless Attack, Weapon Mastery, Brutal Strike, Berserker progression, Epic Boon, and Primal Champion math were recalculated from encoded SRD mechanics.";
+    throw new Error(`Unsupported Barbarian audit ruleset: ${ruleset}.`);
+  }catch(error){console.error("[audit-router] Barbarian edition check failed",error);throw error;}
+}
+function paladinEditionCheck(ruleset){
+  try{
+    if(ruleset==="2014")return "2014 Paladin Lay On Hands, Divine Sense, Divine Smite, spell preparation, auras, Cleansing Touch, Oath of Devotion progression, and Holy Nimbus were recalculated from encoded SRD mechanics.";
+    if(ruleset==="2024")return "2024 Paladin Lay On Hands, Weapon Mastery, Paladin's Smite, Channel Divinity, spell preparation, auras, Restoring Touch, Oath of Devotion progression, Epic Boon, and Holy Nimbus were recalculated from encoded SRD mechanics.";
+    throw new Error(`Unsupported Paladin audit ruleset: ${ruleset}.`);
+  }catch(error){console.error("[audit-router] Paladin edition check failed",error);throw error;}
 }
 function auditEnvelope(character,source,rawIntegrity,homebrewCount,mechanics,checks){
   try{return{status:"PASS",sourceMode:character.sourceMode,rawIntegrity,ruleset:character.ruleset,rulesLabel:RULESET_LABELS[character.ruleset],sourceDocument:source.document,sourceVersion:source.version,sourceUrl:SRD_LANDING_URL,sourcePdfUrl:source.pdfUrl,license:LICENSE,scope:"Character Forge verified SRD coverage only; unsupported content is unavailable instead of guessed.",mechanics,checks:[...checks,character.sourceMode===SOURCE.RAW?"RAW integrity passed: no Homebrew mechanics are present in this character.":`Homebrew mode is explicit: ${homebrewCount} structured Homebrew entr${homebrewCount===1?"y":"ies"} applied on top of RAW.`]};}
