@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
+import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
 function characterAt(classId,level,subclass="random"){
   const state=createInitialState();state.ruleset="2024";state.constraints.class=classId;state.constraints.level=String(level);state.constraints.subclass=subclass;state.constraints.species="human";state.constraints.background="criminal";return generateCharacter(state);
@@ -18,6 +19,15 @@ test("Cleric premium sheet carries spellcasting and holy theme",()=>{
 test("level-20 Evoker premium model handles the full high-level caster state",()=>{
   const c=characterAt("wizard",20,"evoker"),m=buildPremiumPrintModel(c);assert.equal(m.theme.id,"arcane-blue");assert.equal(m.spellcasting.prepared.length,25);assert.equal(m.spellcasting.spellbookCount,53);assert.equal(m.spellcasting.cantrips.length,5);assert.ok(m.features.length<=9);assert.ok(m.equipment.length<=12);
 });
+test("level-20 Thief premium model carries complete compact Rogue resources",()=>{
+  const c=characterAt("rogue",20,"thief"),m=buildPremiumPrintModel(c),r=m.rogueResources;assert.equal(m.theme.id,"shadow-teal");assert.equal(m.spellcasting,null);assert.ok(r);assert.equal(r.sneakAttack,"10d6");assert.equal(r.expertise,4);assert.equal(r.masteries,2);assert.equal(r.effectsPerSneak,2);assert.equal(r.reliableTalent,true);assert.equal(r.options.length,7);assert.equal(r.options.find(option=>option.name==="Poison").requires,"Poisoner's Kit");assert.match(r.scrollWarning,/disintegrates the scroll/);assert.match(m.quickTurn.join(" "),/Cunning Strike/);
+});
+test("Rogue premium renderer exposes strike effects, requirements, and Thief scroll warning",()=>{
+  const c=characterAt("rogue",20,"thief"),target={innerHTML:""};renderPremiumPrintSheet(c,target);assert.match(target.innerHTML,/Rogue Resources/);assert.match(target.innerHTML,/ps-rogue-stats/);assert.match(target.innerHTML,/Poisoner&#39;s Kit/);assert.match(target.innerHTML,/Knock Out/);assert.match(target.innerHTML,/disintegrates the scroll/);
+});
+test("Rogue Quick Turn never recommends features before their unlock level",()=>{
+  const level1=buildPremiumPrintModel(characterAt("rogue",1)),level2=buildPremiumPrintModel(characterAt("rogue",2));assert.doesNotMatch(level1.quickTurn.join(" "),/Cunning Action/);assert.match(level2.quickTurn.join(" "),/Cunning Action/);assert.equal(level1.rogueResources.cunningStrikeDc,null);assert.equal(level1.rogueResources.options.length,0);
+});
 test("premium export is isolated from the normal screen renderer",()=>{
-  const print=readFileSync(new URL("../src/ui/print.js",import.meta.url),"utf8"),renderer=readFileSync(new URL("../src/ui/premium-print.js",import.meta.url),"utf8"),css=readFileSync(new URL("../styles/print/premium-sheet.css",import.meta.url),"utf8"),responsive=readFileSync(new URL("../styles/responsive.css",import.meta.url),"utf8");assert.match(print,/renderPremiumPrintSheet/);assert.match(print,/premium-print-active/);assert.match(renderer,/premium-sheet/);assert.match(renderer,/Quick Turn/);assert.match(css,/body\.premium-print-active/);assert.match(css,/height:10\.2in/);assert.match(responsive,/print\/premium-sheet\.css/);
+  const print=readFileSync(new URL("../src/ui/print.js",import.meta.url),"utf8"),renderer=readFileSync(new URL("../src/ui/premium-print.js",import.meta.url),"utf8"),css=readFileSync(new URL("../styles/print/premium-sheet.css",import.meta.url),"utf8"),rogueCss=readFileSync(new URL("../styles/print/premium-rogue.css",import.meta.url),"utf8"),responsive=readFileSync(new URL("../styles/responsive.css",import.meta.url),"utf8");assert.match(print,/renderPremiumPrintSheet/);assert.match(print,/premium-print-active/);assert.match(renderer,/premium-sheet/);assert.match(renderer,/Rogue Resources/);assert.match(renderer,/Quick Turn/);assert.match(css,/body\.premium-print-active/);assert.match(css,/height:10\.2in/);assert.match(rogueCss,/ps-rogue-options/);assert.match(responsive,/print\/premium-sheet\.css/);assert.match(responsive,/print\/premium-rogue\.css/);
 });
