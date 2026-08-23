@@ -20,7 +20,9 @@ const REFERENCE_PAGES=Object.freeze({
     "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17",
     "feature:Spellcasting:wizard":"52–53","feature:Arcane Recovery":"53","feature:Evocation Savant":"54","feature:Sculpt Spells":"54","feature:Potent Cantrip":"54","feature:Empowered Evocation":"54","feature:Overchannel":"54","feature:Spell Mastery":"53","feature:Signature Spells":"54",
     "feature:Spellcasting:cleric":"15–16","feature:Divine Domain: Life Domain":"17","feature:Bonus Proficiency: Heavy Armor":"17","feature:Disciple of Life":"17",
-    "feature:Channel Divinity (1/rest)":"16","feature:Turn Undead":"16","feature:Channel Divinity: Preserve Life":"17","feature:Preserve Life":"17","feature:Destroy Undead (CR 1/2)":"17","feature:Life Domain":"17"
+    "feature:Channel Divinity (1/rest)":"16","feature:Channel Divinity (2/rest)":"16","feature:Channel Divinity (3/rest)":"16","feature:Turn Undead":"16","feature:Channel Divinity: Preserve Life":"17","feature:Preserve Life":"17",
+    "feature:Destroy Undead (CR 1/2)":"17","feature:Destroy Undead (CR 1)":"17","feature:Destroy Undead (CR 2)":"17","feature:Destroy Undead (CR 3)":"17","feature:Destroy Undead (CR 4)":"17",
+    "feature:Blessed Healer":"17","feature:Divine Strike":"17","feature:Divine Intervention":"17","feature:Supreme Healing":"17","feature:Life Domain":"17"
   }),
   "2024":Object.freeze({
     "species:dragonborn:Draconic Ancestry":"84","species:dragonborn:Breath Weapon":"84","species:dragonborn:Damage Resistance":"84","species:dragonborn:Darkvision":"84","species:dragonborn:Draconic Flight":"84",
