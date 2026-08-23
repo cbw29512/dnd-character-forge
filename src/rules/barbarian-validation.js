@@ -29,6 +29,7 @@ function validate2014(errors,character,progression){
 function validate2024(errors,character,progression){
   try{
     if(character.level>=3&&character.skills.length<5)errors.push("2024 Barbarian Primal Knowledge is missing its extra skill proficiency.");
+    const legalMasteries=new Set(character.class.masteryChoices||[]);if(!legalMasteries.size)errors.push("2024 Barbarian legal Weapon Mastery pool is missing.");else for(const weaponId of character.masteryIds)if(!legalMasteries.has(weaponId))errors.push(`2024 Barbarian cannot choose Weapon Mastery for ${weaponId}.`);
     const boon=character.feats.some(feat=>feat.id==="boon-irresistible-offense");
     if(character.level>=19&&!boon)errors.push("Level 19+ Barbarian is missing Boon of Irresistible Offense.");
     if(character.level<19&&boon)errors.push("Boon of Irresistible Offense appeared before Barbarian level 19.");
