@@ -5,10 +5,10 @@ import { fighterProgressionFor } from "./fighter.js";
 import { wizardPickerLimits, wizardProgressionFor } from "./wizard.js";
 import { speciesHpBonus, validate2024Species } from "./species.js";
 import { validateBackgroundDetails } from "./background.js";
-import { lifeDomainAlwaysPrepared } from "./cleric.js";
+import { lifeDomainAlwaysPrepared, clericProgressionFor } from "./cleric.js";
 import { duplicateValues } from "./duplicates.js";
 
-const CLERIC_CANTRIPS={1:3,2:3,3:3,4:4,5:4},CLERIC_PREPARED_2024={1:4,2:5,3:6,4:7,5:9};
+const CLERIC_CANTRIPS_2014={1:3,2:3,3:3,4:4,5:4};
 export function validateCharacter(character,mode){
   try{
     const errors=[],maxLevel=character.class.maxLevel||5;if(mode===SOURCE.RAW&&character.homebrew.length)errors.push("RAW characters cannot contain Homebrew content.");if(character.level<1||character.level>maxLevel)errors.push(`${character.class.name} currently validates levels 1-${maxLevel} only.`);
@@ -40,6 +40,21 @@ function validateWizard(errors,character){
   }catch(error){console.error("[validation] Wizard validation failed",error);throw error;}
 }
 function validateCleric(errors,character){
-  try{if(!character.spells){errors.push("Cleric spellcasting data is missing.");return;}const spells=character.spells,always=spells.alwaysPrepared||[];checkDuplicates(errors,"Cleric cantrips",spells.cantrips.all);checkDuplicates(errors,"prepared Cleric spells",spells.prepared.all);checkDuplicates(errors,"always-prepared Cleric spells",always);const overlap=spells.prepared.all.filter(id=>always.includes(id));if(overlap.length)errors.push(`Life Domain spells must not consume normal prepared slots: ${overlap.join(", ")}.`);const expectedCantrips=CLERIC_CANTRIPS[character.level]+(character.ruleset==="2024"&&character.divineOrder==="thaumaturge"?1:0),expectedPrepared=character.ruleset==="2024"?CLERIC_PREPARED_2024[character.level]:Math.max(1,character.level+abilityMod(character.abilities.wis)),expectedAlways=lifeDomainAlwaysPrepared(character.ruleset,character.level);if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==expectedPrepared)errors.push(`Cleric prepared-spell count should be ${expectedPrepared}.`);if(always.length!==expectedAlways.length||expectedAlways.some(id=>!always.includes(id)))errors.push("Life Domain always-prepared spells are incomplete.");if(character.ruleset==="2024"&&!['protector','thaumaturge'].includes(character.divineOrder))errors.push("2024 Cleric Divine Order is invalid.");if(!Number.isInteger(spells.saveDc)||!Number.isInteger(spells.attackBonus))errors.push("Cleric spellcasting math failed.");}catch(error){console.error("[validation] Cleric validation failed",error);throw error;}
+  try{
+    if(!character.spells){errors.push("Cleric spellcasting data is missing.");return;}
+    const spells=character.spells,always=spells.alwaysPrepared||[];checkDuplicates(errors,"Cleric cantrips",spells.cantrips.all);checkDuplicates(errors,"prepared Cleric spells",spells.prepared.all);checkDuplicates(errors,"always-prepared Cleric spells",always);const overlap=spells.prepared.all.filter(id=>always.includes(id));if(overlap.length)errors.push(`Life Domain spells must not consume normal prepared slots: ${overlap.join(", ")}.`);
+    const expectedAlways=lifeDomainAlwaysPrepared(character.ruleset,character.level);if(always.length!==expectedAlways.length||expectedAlways.some(id=>!always.includes(id)))errors.push("Life Domain always-prepared spells are incomplete.");
+    if(character.ruleset==="2024"){
+      const progression=clericProgressionFor(character.level),expectedCantrips=progression.cantrips+(character.divineOrder==="thaumaturge"?1:0),actual=character.cleric;
+      if(!actual)errors.push("2024 Cleric progression data is missing.");else{if(actual.channelDivinityUses!==progression.channelDivinityUses)errors.push(`Cleric Channel Divinity uses should be ${progression.channelDivinityUses}.`);if(actual.divineSparkDice!==progression.divineSparkDice)errors.push(`Divine Spark dice should be ${progression.divineSparkDice}d8.`);}
+      if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==progression.prepared)errors.push(`Cleric prepared-spell count should be ${progression.prepared}.`);if(JSON.stringify(spells.slots)!==JSON.stringify(progression.slots))errors.push("Cleric spell-slot progression is incorrect.");
+      if(!['protector','thaumaturge'].includes(character.divineOrder))errors.push("2024 Cleric Divine Order is invalid.");
+      if(character.level>=7&&!['divine-strike','potent-spellcasting'].includes(character.blessedStrikes))errors.push("Level 7+ Cleric Blessed Strikes choice is invalid or missing.");if(character.level<7&&character.blessedStrikes)errors.push("Blessed Strikes appeared before Cleric level 7.");
+      const boon=character.feats.some(feat=>feat.id==="boon-fate");if(character.level>=19&&!boon)errors.push("Level 19+ Cleric is missing Boon of Fate.");if(character.level<19&&boon)errors.push("Boon of Fate appeared before Cleric level 19.");if(boon&&(!character.epicBoonAbility||character.abilityMaximums[character.epicBoonAbility]!==30))errors.push("Boon of Fate ability increase/max is incomplete.");
+    }else{
+      const expectedCantrips=CLERIC_CANTRIPS_2014[character.level],expectedPrepared=Math.max(1,character.level+abilityMod(character.abilities.wis));if(spells.cantrips.all.length!==expectedCantrips)errors.push(`Cleric cantrip count should be ${expectedCantrips}.`);if(spells.prepared.all.length!==expectedPrepared)errors.push(`Cleric prepared-spell count should be ${expectedPrepared}.`);
+    }
+    if(!Number.isInteger(spells.saveDc)||!Number.isInteger(spells.attackBonus))errors.push("Cleric spellcasting math failed.");
+  }catch(error){console.error("[validation] Cleric validation failed",error);throw error;}
 }
 function checkDuplicates(errors,label,values,keyFn=value=>value){try{const duplicates=duplicateValues(values||[],keyFn);if(duplicates.length)errors.push(`Duplicate ${label} detected: ${duplicates.join(", ")}.`);}catch(error){console.error(`[validation] duplicate check failed for ${label}`,error);throw error;}}
