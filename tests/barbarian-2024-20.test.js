@@ -7,8 +7,8 @@ import { barbarianIntimidatingPresenceDc } from "../src/rules/barbarian.js";
 import { buildQuickReference } from "../src/rules/reference-router.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
 
-function berserker(){
-  try{const state=createInitialState();state.ruleset="2024";state.constraints.level="20";state.constraints.class="barbarian";state.constraints.subclass="berserker";state.constraints.species="human";state.constraints.background="soldier";return generateCharacter(state);}
+function berserker(level="20"){
+  try{const state=createInitialState();state.ruleset="2024";state.constraints.level=level;state.constraints.class="barbarian";state.constraints.subclass="berserker";state.constraints.species="human";state.constraints.background="soldier";return generateCharacter(state);}
   catch(error){console.error("[test] 2024 Berserker generation failed",error);throw error;}
 }
 
@@ -20,4 +20,16 @@ test("2024 level-20 Berserker uses the revised Barbarian progression",()=>{
 
 test("2024 Greataxe Cleave and Barbarian references remain sourced",()=>{
   const c=berserker(),refs=buildQuickReference(c),cleave=refs.find(item=>item.name==="Greataxe — Cleave"),model=buildPremiumPrintModel(c);assert.ok(cleave,"Greataxe Cleave reference missing");assert.equal(cleave.source.version,"SRD 5.2.1");assert.equal(cleave.source.page,"90");for(const item of refs){assert.ok(item.source?.version,`${item.name} missing source`);assert.ok(item.source?.page,`${item.name} missing page`);}assert.equal(model.classUtility.title,"Primal Fury");assert.equal(model.classUtility.stats.find(item=>item.label==="Rage").value,6);assert.ok(model.ruleIndex.some(item=>item.name==="Brutal Strike"));assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,true);
+});
+
+test("2024 level-20 references preserve Persistent Rage, Berserker recharge, and Epic Boon wording",()=>{
+  const refs=buildQuickReference(berserker()),byName=name=>refs.find(item=>item.name===name)?.text||"",rage=byName("Rage"),persistent=byName("Persistent Rage"),retaliation=byName("Retaliation"),presence=byName("Intimidating Presence"),boon=byName("Boon of Irresistible Offense"),brutal=byName("Brutal Strike");
+  assert.match(rage,/cannot cast spells or maintain Concentration/i);assert.match(rage,/Persistent Rage makes it last 10 minutes/i);assert.match(persistent,/once per Long Rest/i);assert.match(persistent,/Unconscious/i);assert.match(persistent,/Heavy armor/i);assert.doesNotMatch(persistent,/choose to end|voluntar/i);
+  assert.match(retaliation,/weapon or Unarmed Strike/i);assert.match(presence,/30-ft Emanation/i);assert.match(presence,/one use per Long Rest/i);assert.match(presence,/expend a Rage use/i);
+  assert.match(boon,/roll a 20 on the d20 for an attack roll/i);assert.match(boon,/Bludgeoning, Piercing, and Slashing damage you deal ignores Resistance/i);assert.doesNotMatch(boon,/Critical Hit/i);
+  assert.match(brutal,/forgo Advantage/i);assert.match(brutal,/Forceful: push 15 ft/i);assert.match(brutal,/Hamstring: reduce target Speed by 15 ft/i);assert.match(brutal,/Staggering:/i);assert.match(brutal,/Sundering:/i);
+});
+
+test("2024 Rage before Persistent Rage keeps the round-to-round maintenance contract",()=>{
+  const refs=buildQuickReference(berserker("5")),rage=refs.find(item=>item.name==="Rage")?.text||"";assert.match(rage,/end of your next turn/i);assert.match(rage,/attack roll against an enemy/i);assert.match(rage,/forcing an enemy to make a save/i);assert.match(rage,/Bonus Action/i);assert.match(rage,/up to 10 minutes/i);assert.match(rage,/Incapacitated/i);assert.match(rage,/Heavy armor/i);
 });
