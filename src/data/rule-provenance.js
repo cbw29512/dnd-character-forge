@@ -7,7 +7,7 @@ const ENTITY_PAGES=Object.freeze({
   "2014":Object.freeze({species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15"},subclass:{champion:"25","school-evocation":"54","life-domain":"17"}}),
   "2024":Object.freeze({
     species:{dragonborn:"84",dwarf:"84",elf:"84",gnome:"85",goliath:"85",halfling:"86",human:"86",orc:"86",tiefling:"86"},
-    background:{criminal:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36"},subclass:{champion:"49",evoker:"82","life-domain":"40"}
+    background:{acolyte:"83",criminal:"83",sage:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36"},subclass:{champion:"49",evoker:"82","life-domain":"40"}
   })
 });
 
@@ -32,7 +32,7 @@ const REFERENCE_PAGES=Object.freeze({
     "species:human:Resourceful":"86","species:human:Skillful":"86","species:human:Versatile":"86",
     "species:orc:Adrenaline Rush":"86","species:orc:Darkvision":"86","species:orc:Relentless Endurance":"86",
     "species:tiefling:Darkvision":"86","species:tiefling:Fiendish Legacy":"86","species:tiefling:Otherworldly Presence":"86",
-    "feat:Alert":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88",
+    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88",
     "style:Archery":"87","style:Defense":"88","style:Great Weapon Fighting":"88","style:Two-Weapon Fighting":"88",
     "feature:Second Wind":"48","feature:Weapon Mastery":"48","feature:Action Surge":"48","feature:Tactical Mind":"48","feature:Ability Score Improvement":"87","feature:Extra Attack":"48","feature:Tactical Shift":"48",
     "feature:Indomitable":"48","feature:Tactical Master":"48","feature:Two Extra Attacks":"48","feature:Studied Attacks":"48","feature:Epic Boon":"48","feature:Three Extra Attacks":"48",
@@ -48,27 +48,8 @@ function sourceAt(ruleset,page){
   try{const source=SOURCES[ruleset];if(!source||!page)throw new Error(`Missing verified SRD provenance for ${ruleset} page ${page||"unknown"}.`);return Object.freeze({...source,page:String(page)});}
   catch(error){console.error("[provenance] source lookup failed",error);throw error;}
 }
-
-export function entityProvenance(ruleset,kind,id){
-  try{const page=ENTITY_PAGES[ruleset]?.[kind]?.[id];if(!page)throw new Error(`Missing entity provenance: ${ruleset} ${kind} ${id}.`);return sourceAt(ruleset,page);}
-  catch(error){console.error("[provenance] entity lookup failed",error);throw error;}
-}
-
+export function entityProvenance(ruleset,kind,id){try{const page=ENTITY_PAGES[ruleset]?.[kind]?.[id];if(!page)throw new Error(`Missing entity provenance: ${ruleset} ${kind} ${id}.`);return sourceAt(ruleset,page);}catch(error){console.error("[provenance] entity lookup failed",error);throw error;}}
 export function referenceProvenance(character,kind,name){
-  try{
-    if(!character?.ruleset)throw new Error("Reference provenance requires a character ruleset.");
-    const classSpecific=kind==="feature"&&(name==="Spellcasting"||(name==="Ability Score Improvement"&&character.ruleset==="2014"));
-    const classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"";
-    const speciesPrefix=kind==="species"&&character.ruleset==="2024"?`${character.species?.id||"unknown"}:`:"";
-    const masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name;
-    const key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`;
-    const page=REFERENCE_PAGES[character.ruleset]?.[key];
-    if(!page)throw new Error(`Missing reference provenance: ${character.ruleset} ${key}.`);
-    return sourceAt(character.ruleset,page);
-  }catch(error){console.error("[provenance] reference lookup failed",error);throw error;}
+  try{if(!character?.ruleset)throw new Error("Reference provenance requires a character ruleset.");const classSpecific=kind==="feature"&&(name==="Spellcasting"||(name==="Ability Score Improvement"&&character.ruleset==="2014"));const classSuffix=classSpecific?`:${character.class?.id||"unknown"}`:"";const speciesPrefix=kind==="species"&&character.ruleset==="2024"?`${character.species?.id||"unknown"}:`:"";const masteryName=kind==="mastery"&&name.includes("—")?name.split("—").pop().trim():name;const key=`${kind}:${speciesPrefix}${masteryName}${classSuffix}`;const page=REFERENCE_PAGES[character.ruleset]?.[key];if(!page)throw new Error(`Missing reference provenance: ${character.ruleset} ${key}.`);return sourceAt(character.ruleset,page);}catch(error){console.error("[provenance] reference lookup failed",error);throw error;}
 }
-
-export function rulesetSource(ruleset){
-  try{const source=SOURCES[ruleset];if(!source)throw new Error(`Unsupported provenance ruleset: ${ruleset}.`);return Object.freeze({...source});}
-  catch(error){console.error("[provenance] ruleset lookup failed",error);throw error;}
-}
+export function rulesetSource(ruleset){try{const source=SOURCES[ruleset];if(!source)throw new Error(`Unsupported provenance ruleset: ${ruleset}.`);return Object.freeze({...source});}catch(error){console.error("[provenance] ruleset lookup failed",error);throw error;}}
