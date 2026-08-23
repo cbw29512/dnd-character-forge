@@ -10,7 +10,7 @@ export function createInitialState() {
       speciesSelections: {},
       backgroundSelections: {},
       classSelections: {},
-      spellSelections: { cantrips:[], spellbook:[], prepared:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
+      spellSelections: { cantrips:[], known:[], spellbook:[], prepared:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
       portraitDataUrl: null,
       sheetCustomization: createDefaultSheetCustomization(),
       homebrew: [],
