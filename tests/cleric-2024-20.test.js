@@ -63,8 +63,8 @@ test("2024 Cleric spell catalog has exact verified level 4 through 9 lists while
   assert.equal(new Set(CLERIC_SPELLS_2024.map(spell=>spell.id)).size,CLERIC_SPELLS_2024.length);for(let level=0;level<=9;level++)assert.ok(CLERIC_SPELLS_2024.some(spell=>spell.level===level),`missing Cleric spell level ${level}`);assert.equal(Math.max(...CLERIC_SPELLS_2014.map(spell=>spell.level)),3);
 });
 
-test("level 20 Cleric sheet renders class resources and grouped spell levels",()=>{
-  const c=clericAt(20),target={innerHTML:""};renderCharacter(c,target);assert.match(target.innerHTML,/Cleric Resources/);assert.match(target.innerHTML,/Channel Divinity/);assert.match(target.innerHTML,/4 uses/);assert.match(target.innerHTML,/Always Prepared/);assert.match(target.innerHTML,/Level 9/);assert.match(target.innerHTML,/Greater Divine Intervention/);assert.match(target.innerHTML,/Rules Audit/);
+test("level 20 Cleric sheet renders class resources and 9th-level slot progression",()=>{
+  const c=clericAt(20),target={innerHTML:""};renderCharacter(c,target);assert.match(target.innerHTML,/Cleric Resources/);assert.match(target.innerHTML,/Channel Divinity/);assert.match(target.innerHTML,/4 uses/);assert.match(target.innerHTML,/Always Prepared/);assert.match(target.innerHTML,/9th: 1/);assert.match(target.innerHTML,/Greater Divine Intervention/);assert.match(target.innerHTML,/Rules Audit/);
 });
 
 test("Cleric class choices survive fingerprints and the saved-pregen UI contract",()=>{
