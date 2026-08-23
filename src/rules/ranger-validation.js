@@ -1,6 +1,6 @@
 import { abilityMod } from "./math.js";
 import { rangerAlwaysPrepared } from "./ranger-spellcasting.js";
-import { HUNTER_DEFENSE_2014, HUNTER_DEFENSE_2024, HUNTER_MULTIATTACK_2014, HUNTER_PREY_2014, HUNTER_PREY_2024, HUNTER_SUPERIOR_DEFENSE_2014, rangerProgressionFor } from "./ranger.js";
+import { FAVORED_ENEMY_LANGUAGE_OPTIONS_2014, HUNTER_DEFENSE_2014, HUNTER_DEFENSE_2024, HUNTER_MULTIATTACK_2014, HUNTER_PREY_2014, HUNTER_PREY_2024, HUNTER_SUPERIOR_DEFENSE_2014, rangerProgressionFor } from "./ranger.js";
 
 const KEYS=["known","prepared","hunterMarkFreeCasts","hunterMarkDie","masteryCount","fightingStyle","favoredEnemyCount","naturalExplorerTerrainCount","primevalAwareness","attacksPerAction","landsStride","hideInPlainSight","roving","speedBonus","expertiseCount","extraLanguages","tireless","tirelessUses","vanish","relentlessHunter","natureVeil","natureVeilUses","preciseHunter","feralSenses","blindsightRange","epicBoon","foeSlayer","huntersLore","superiorHuntersPrey","superiorHuntersDefense","hunter"];
 
@@ -24,7 +24,9 @@ function validate2014(errors,c,expected){
     if(c.level<2&&c.spells)errors.push("2014 Ranger cannot have Spellcasting before level 2.");if(c.level>=2&&!c.spells)errors.push("2014 Ranger is missing Spellcasting at level 2+.");
     if(c.spells){if((c.spells.known?.all||[]).length!==expected.known)errors.push(`2014 Ranger should know ${expected.known} spells.`);if((c.spells.prepared?.all||[]).length)errors.push("2014 Ranger cannot contain prepared class spells.");if((c.spells.cantrips?.all||[]).length)errors.push("2014 Ranger cannot contain class cantrips.");if(c.spells.alwaysPrepared?.length)errors.push("2014 Ranger cannot contain always-prepared class spells.");}
     if((c.masteryIds||[]).length)errors.push("2014 Ranger cannot contain Weapon Mastery.");if(c.feats.some(feat=>feat.category==="Epic Boon"))errors.push("2014 Ranger cannot contain a 2024 Epic Boon.");
-    if((c.rangerSelections?.favoredEnemies||[]).length!==expected.favoredEnemyCount)errors.push("2014 Favored Enemy count is incorrect.");if((c.rangerSelections?.naturalExplorerTerrains||[]).length!==expected.naturalExplorerTerrainCount)errors.push("2014 Natural Explorer terrain count is incorrect.");
+    const enemies=c.rangerSelections?.favoredEnemies||[],enemyLanguages=c.rangerSelections?.favoredEnemyLanguages||[];if(enemies.length!==expected.favoredEnemyCount)errors.push("2014 Favored Enemy count is incorrect.");if(enemyLanguages.length!==enemies.length)errors.push("2014 Favored Enemy language state must align with Favored Enemy choices.");
+    enemies.forEach((enemy,index)=>{const language=enemyLanguages[index]||null,legal=FAVORED_ENEMY_LANGUAGE_OPTIONS_2014[enemy]||[];if(!legal.length&&language)errors.push(`${enemy} cannot carry an invented Favored Enemy language.`);if(language&&!legal.includes(language))errors.push(`${language} is not legal for Favored Enemy ${enemy}.`);if(language&&!c.languages.includes(language))errors.push(`Favored Enemy language ${language} is missing from Languages.`);if(legal.length&&!language)errors.push(`Favored Enemy ${enemy} should grant one verified associated language.`);});
+    if((c.rangerSelections?.naturalExplorerTerrains||[]).length!==expected.naturalExplorerTerrainCount)errors.push("2014 Natural Explorer terrain count is incorrect.");
     for(const name of ["Weapon Mastery — Ranger","Deft Explorer","Roving","Expertise","Tireless","Relentless Hunter","Nature's Veil","Precise Hunter","Hunter's Lore","Superior Hunter's Prey","Epic Boon"])if(c.features.includes(name))errors.push(`2014 Ranger cannot contain 2024 feature ${name}.`);
   }catch(error){console.error("[ranger-validation] 2014 validation failed",error);throw error;}
 }
