@@ -54,12 +54,33 @@ const CIRCLE_2024={
   temperate:[[0,"Shocking Grasp"],[1,"Sleep"],[2,"Misty Step"],[3,"Lightning Bolt"],[4,"Freedom of Movement"],[5,"Tree Stride"]],
   tropical:[[0,"Acid Splash"],[1,"Ray of Sickness"],[2,"Web"],[3,"Stinking Cloud"],[4,"Polymorph"],[5,"Insect Plague"]]
 };
-
 const EXTRA_SCHOOLS=Object.freeze({"Fire Bolt":"Evocation","Burning Hands":"Evocation",Blur:"Illusion",Fireball:"Evocation","Ray of Frost":"Evocation",Sleep:"Enchantment","Misty Step":"Conjuration","Lightning Bolt":"Evocation","Shocking Grasp":"Evocation","Acid Splash":"Evocation","Ray of Sickness":"Necromancy",Web:"Conjuration","Stinking Cloud":"Conjuration",Slow:"Transmutation","Mirror Image":"Illusion",Silence:"Illusion","Create Food and Water":"Conjuration","Spider Climb":"Transmutation",Invisibility:"Illusion",Haste:"Transmutation",Dream:"Illusion",Passwall:"Transmutation","Acid Arrow":"Evocation",Darkness:"Evocation"});
-function circleRecords(table,ruleset){const base=ruleset==="2014"?DRUID_2014:DRUID_2024,seen=new Map(base.map(s=>[s.id,s]));return Object.entries(table).flatMap(([land,entries])=>entries.map(([level,name])=>{const id=slug(name),existing=seen.get(id);return Object.freeze(existing?{...existing,circleOnly:false,land}: {id,name,level,school:ruleset==="2024"?(EXTRA_SCHOOLS[name]||null):null,circleOnly:true,land});}));}
+
+function circleUnlockLevel(ruleset,spellLevel){
+  try{
+    const level=Number(spellLevel);if(ruleset==="2014"){const map={2:3,3:5,4:7,5:9};if(!map[level])throw new Error(`Unsupported 2014 Circle spell level ${spellLevel}.`);return map[level];}
+    if(ruleset==="2024"){if(level<=2)return 3;if(level===3)return 5;if(level===4)return 7;if(level===5)return 9;throw new Error(`Unsupported 2024 Circle spell level ${spellLevel}.`);}
+    throw new Error(`Unsupported Circle ruleset ${ruleset}.`);
+  }catch(error){console.error("[druid-spells] Circle unlock lookup failed",error);throw error;}
+}
+function circleRecords(table,ruleset){
+  try{
+    const base=ruleset==="2014"?DRUID_2014:DRUID_2024,seen=new Map(base.map(s=>[s.id,s]));
+    return Object.entries(table).flatMap(([land,entries])=>entries.map(([spellLevel,name])=>{const id=slug(name),existing=seen.get(id),unlockLevel=circleUnlockLevel(ruleset,spellLevel);return Object.freeze(existing?{...existing,circleOnly:false,land,unlockLevel}:{id,name,level:spellLevel,school:ruleset==="2024"?(EXTRA_SCHOOLS[name]||null):null,circleOnly:true,land,unlockLevel});}));
+  }catch(error){console.error("[druid-spells] Circle record build failed",error);throw error;}
+}
 export const DRUID_SPELLS_2014=Object.freeze(DRUID_2014);
 export const DRUID_SPELLS_2024=Object.freeze(DRUID_2024);
 export const DRUID_CIRCLE_SPELLS_2014=Object.freeze(circleRecords(CIRCLE_EXTRAS_2014,"2014"));
 export const DRUID_CIRCLE_SPELLS_2024=Object.freeze(circleRecords(CIRCLE_2024,"2024"));
-export function druidSpellsFor(ruleset,{includeCircle=false}={}){try{const base=ruleset==="2014"?DRUID_SPELLS_2014:ruleset==="2024"?DRUID_SPELLS_2024:null;if(!base)throw new Error(`Unsupported Druid spell ruleset: ${ruleset}.`);return includeCircle?[...base,...(ruleset==="2014"?DRUID_CIRCLE_SPELLS_2014:DRUID_CIRCLE_SPELLS_2024)]:base;}catch(error){console.error("[druid-spells] lookup failed",error);throw error;}}
-export function druidCircleSpellIds(ruleset,land,level){try{const table=ruleset==="2014"?CIRCLE_EXTRAS_2014:ruleset==="2024"?CIRCLE_2024:null;if(!table?.[land])throw new Error(`Unsupported ${ruleset} Circle land: ${land}.`);return table[land].filter(([minimum])=>Number(level)>=minimum).map(([,name])=>slug(name));}catch(error){console.error("[druid-spells] Circle spell lookup failed",error);throw error;}}
+export function druidSpellsFor(ruleset,{includeCircle=false}={}){
+  try{
+    const base=ruleset==="2014"?DRUID_SPELLS_2014:ruleset==="2024"?DRUID_SPELLS_2024:null;if(!base)throw new Error(`Unsupported Druid spell ruleset: ${ruleset}.`);if(!includeCircle)return base;
+    const extras=ruleset==="2014"?DRUID_CIRCLE_SPELLS_2014:DRUID_CIRCLE_SPELLS_2024,byId=new Map(base.map(spell=>[spell.id,spell]));for(const spell of extras)if(!byId.has(spell.id))byId.set(spell.id,spell);return[...byId.values()];
+  }catch(error){console.error("[druid-spells] lookup failed",error);throw error;}
+}
+export function druidCircleSpellIds(ruleset,land,druidLevel){
+  try{
+    const records=ruleset==="2014"?DRUID_CIRCLE_SPELLS_2014:ruleset==="2024"?DRUID_CIRCLE_SPELLS_2024:null;if(!records)throw new Error(`Unsupported Circle ruleset ${ruleset}.`);const landRecords=records.filter(record=>record.land===land);if(!landRecords.length)throw new Error(`Unsupported ${ruleset} Circle land: ${land}.`);return landRecords.filter(record=>Number(druidLevel)>=record.unlockLevel).map(record=>record.id);
+  }catch(error){console.error("[druid-spells] Circle spell lookup failed",error);throw error;}
+}
