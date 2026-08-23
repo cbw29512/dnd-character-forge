@@ -173,7 +173,7 @@ The 2014 Wizard and Cleric spell-name pools are independently scoped to SRD 5.1.
 - Level-18+ Wizard exposes legal Spell Mastery constraints; level 20 exposes Signature Spell constraints. Unspecified capstone choices remain Random.
 - If Subclass remains Random but only one verified legal subclass exists, spell-picker limits resolve the same subclass the generator will use, preventing spellbook-count drift.
 - Cleric has no spellbook; Life Domain spells are always prepared and never consume normal prepared slots.
-- 2014 Cleric prepared-spell count follows final Wisdom; 2024 follows the Cleric class table through level 20.
+- 2014 Cleric prepared-spell count follows final Wisdom; the picker labels this as a dynamic WIS-based limit and the generator fails closed if fixed selections exceed the finished character's legal count. 2024 follows the Cleric class table through level 20.
 - A fixed 2024 Cleric cantrip beyond the class-table base count constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
