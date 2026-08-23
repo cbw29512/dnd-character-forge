@@ -50,6 +50,13 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .detail-card.span-2 { grid-column:1/-1; }
 .detail-card h3 { margin:0 0 11px; font:700 .95rem/1.2 Georgia,serif; }
 .detail-card p { margin:0; color:#635e55; font-size:.78rem; line-height:1.6; }
+.fighter-resources-card { background:#f7f2e8; border-color:#d3c3a8; }
+.fighter-resource-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; }
+.fighter-resource { padding:9px 7px; border:1px solid #ded1bb; border-radius:9px; background:#fffdf9; text-align:center; }
+.fighter-resource span,.fighter-resource strong { display:block; }
+.fighter-resource span { color:#827867; font-size:.56rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+.fighter-resource strong { margin-top:4px; color:#312e28; font:700 .88rem/1.15 Georgia,serif; }
+.fighter-style-line { margin-top:9px !important; text-align:center; font-size:.7rem !important; }
 .attack-row { display:grid; grid-template-columns:1fr 58px 1fr; gap:9px; padding:9px 0; border-top:1px solid #eee6d9; font-size:.76rem; }
 .attack-row:first-of-type { border-top:0; padding-top:0; }
 .attack-row strong { color:#8c3038; }
@@ -57,3 +64,4 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .skill { display:flex; justify-content:space-between; gap:8px; color:#615c54; font-size:.73rem; padding:3px 0; }
 .skill.is-proficient { color:#24231f; font-weight:800; }
 .sheet-footer { display:flex; justify-content:space-between; gap:16px; padding:13px 20px 17px; border-top:1px solid #ddd3c4; color:#7d776e; font-size:.66rem; }
+@media (max-width:680px){.fighter-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
