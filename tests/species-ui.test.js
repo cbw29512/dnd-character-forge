@@ -22,8 +22,8 @@ test("High Elf exposes its Wizard cantrip only when High Elf is fixed",()=>{
   catch(error){console.error("[test] High Elf conditional cantrip",error);throw error;}
 });
 
-test("app binds, resets, syncs, and restores species option state",()=>{
-  try{assert.match(app,/bindSpeciesOptions\(state\)/);assert.match(app,/resetSpeciesOptions\(state\)/);assert.match(app,/renderSpeciesOptions\(state\)/);assert.match(app,/character\.speciesChoices/);assert.match(app,/size:character\.size/);assert.match(app,/state\.speciesSelections=\{\}/);}
+test("app binds, resets, syncs, and restores species option state for both editions",()=>{
+  try{assert.match(app,/bindSpeciesOptions\(state\)/);assert.match(app,/resetSpeciesOptions\(state\)/);assert.match(app,/renderSpeciesOptions\(state\)/);assert.match(app,/state\.speciesSelections=\{\.\.\.\(character\.speciesChoices\|\|\{\}\)\}/);assert.match(app,/character\.ruleset==="2024"\)state\.speciesSelections\.size=character\.size/);assert.match(app,/state\.speciesSelections=\{\}/);}
   catch(error){console.error("[test] species state wiring",error);throw error;}
 });
 
