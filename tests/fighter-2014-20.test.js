@@ -118,9 +118,9 @@ test("2014 level 20 ASI reference reports all seven earned opportunities",()=>{
   catch(error){console.error("[test] 2014 ASI reference count",error);throw error;}
 });
 
-test("2014 Cleric level 6 remains fail-closed after Wizard expansion",()=>{
-  try{const state=createInitialState();state.ruleset="2014";state.constraints.level="6";state.constraints.class="cleric";assert.throws(()=>generateCharacter(state),/currently supports levels/);}
-  catch(error){console.error("[test] 2014 Cleric level ceiling",error);throw error;}
+test("2014 Fighter remains fully supported after caster expansion",()=>{
+  try{assert.doesNotThrow(()=>fighterAt(6));assert.doesNotThrow(()=>fighterAt(20));}
+  catch(error){console.error("[test] 2014 Fighter support regression",error);throw error;}
 });
 
 test("Random 2014 Fighter level can legally span 1 through 20",()=>{
