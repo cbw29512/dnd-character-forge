@@ -11,18 +11,15 @@ export function fighterFeatures(ruleset,level,subclass){
     }
     features.push("Fighting Style","Second Wind","Weapon Mastery");
     if(level>=2)features.push("Action Surge","Tactical Mind");
-    if(level>=3&&subclass==="champion")features.push("Improved Critical","Remarkable Athlete");
+    if(level>=3&&subclass==="champion")features.push(level>=15?"Superior Critical":"Improved Critical","Remarkable Athlete");
     if(level>=4)features.push("Ability Score Improvement");
-    if(level>=5)features.push("Extra Attack","Tactical Shift");
+    if(level>=5)features.push(level>=20?"Three Extra Attacks":level>=11?"Two Extra Attacks":"Extra Attack","Tactical Shift");
     if(level>=7&&subclass==="champion")features.push("Additional Fighting Style");
     if(level>=9)features.push("Indomitable","Tactical Master");
     if(level>=10&&subclass==="champion")features.push("Heroic Warrior");
-    if(level>=11)features.push("Two Extra Attacks");
     if(level>=13)features.push("Studied Attacks");
-    if(level>=15&&subclass==="champion")features.push("Superior Critical");
     if(level>=18&&subclass==="champion")features.push("Survivor");
     if(level>=19)features.push("Epic Boon");
-    if(level>=20)features.push("Three Extra Attacks");
     return features;
   }catch(error){console.error("[features] fighter feature resolution failed",error);throw error;}
 }
