@@ -17,7 +17,7 @@ function barbarianTurn(character){
 }
 function paladinTurn(character){
   try{
-    const p=character.paladin;if(!p)throw new Error("Paladin Quick Turn requires progression data."),steps=[];
+    const p=character.paladin;if(!p)throw new Error("Paladin Quick Turn requires progression data.");const steps=[];
     steps.push(p.auraProtection?`Fight where allies can stay inside your ${p.auraRange}-ft aura and benefit from its saving-throw bonus.`:"Protect the front line and preserve position for the allies who need you most.");
     if(character.ruleset==="2014"){
       if(p.divineSmite)steps.push("After a melee weapon hit, decide whether the target is important enough to spend a spell slot on Divine Smite.");else steps.push("Use Lay on Hands as an action when its healing or poison/disease cure changes the fight.");
