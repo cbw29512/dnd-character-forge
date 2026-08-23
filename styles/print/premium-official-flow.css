@@ -52,6 +52,11 @@
   .ps-spell-entry em{font-style:normal;font-size:4.35pt;color:var(--ps-muted);text-align:right}
   .ps-spell-empty{display:block;padding:.035in;font:5pt Arial,sans-serif;color:var(--ps-muted)}
 
+  /* Wizard spellbooks can produce unusually dense legal level groupings; preserve type size but reclaim vertical safety margin. */
+  .theme-wizard-arcane .ps-spell-level-column{gap:.028in}
+  .theme-wizard-arcane .ps-spell-entry{min-height:.132in}
+  .theme-wizard-arcane .ps-spell-level>header{min-height:.235in}
+
   /* Half-caster polish: keep the familiar 0-9 tracker, then turn Paladin's unused spell-page space into table-facing class utility. */
   .theme-paladin-oath .ps-spell-level-grid{height:4.02in}
   .ps-paladin-spell-support{margin-top:.055in;padding:.055in .065in;border:1px solid color-mix(in srgb,var(--ps-primary) 68%,#d5bf97);background:linear-gradient(110deg,rgba(119,84,24,.1),rgba(255,250,236,.72) 42%,rgba(119,84,24,.08));box-shadow:inset 0 0 .12in rgba(107,77,25,.09);min-height:1.42in;overflow:hidden}
