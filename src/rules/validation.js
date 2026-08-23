@@ -1,6 +1,7 @@
 import { ABILITIES, SOURCE } from "../schema.js";
-import { abilityMod } from "./math.js";
+import { abilityMod, averageHp } from "./math.js";
 import { fighterProgressionFor } from "./fighter.js";
+import { speciesHpBonus, validate2024Species } from "./species.js";
 import { lifeDomainAlwaysPrepared } from "./cleric.js";
 import { duplicateValues } from "./duplicates.js";
 
@@ -11,6 +12,9 @@ export function validateCharacter(character,mode){
     for(const ability of ABILITIES){const max=character.abilityMaximums[ability]??20;if(character.abilities[ability]>max)errors.push(`${ability.toUpperCase()} exceeds its maximum.`);if(character.abilities[ability]<1)errors.push(`${ability.toUpperCase()} is below 1.`);}
     checkDuplicates(errors,"skill proficiencies",character.skills);checkDuplicates(errors,"expertise entries",character.expertise);checkDuplicates(errors,"saving throw proficiencies",character.saves);checkDuplicates(errors,"languages",character.languages);checkDuplicates(errors,"feats",character.feats,item=>item.id);checkDuplicates(errors,"feat names",character.feats,item=>item.name);checkDuplicates(errors,"Homebrew entries",character.homebrew,item=>item.id);checkDuplicates(errors,"Homebrew names",character.homebrew,item=>item.name);checkDuplicates(errors,"fighting styles",character.fightingStyles||[],item=>item.id||item.name);checkDuplicates(errors,"weapon masteries",character.masteryIds);checkDuplicates(errors,"attack entries",character.attacks,item=>item.name);checkDuplicates(errors,"features",character.features);
     if(character.skills.length<character.class.skillCount)errors.push(`${character.class.name} is missing skill proficiencies.`);if(character.subclass&&character.level<character.class.subclassLevel)errors.push(`${character.class.name} subclass cannot be active before level ${character.class.subclassLevel}.`);if(character.expertise.some(skill=>!character.skills.includes(skill)))errors.push("Expertise requires an existing skill proficiency.");
+    errors.push(...validate2024Species(character));
+    const expectedSpeciesHp=speciesHpBonus(character),expectedHp=averageHp(character.class.hitDie,character.level,abilityMod(character.abilities.con))+expectedSpeciesHp;
+    if(character.speciesHpBonus!==expectedSpeciesHp)errors.push(`Species Hit Point bonus should be ${expectedSpeciesHp}.`);if(character.hp!==expectedHp)errors.push(`Hit Points should be ${expectedHp}.`);
     if(character.class.id==="fighter")validateFighter(errors,character);if(character.class.spellcasting==="wizard")validateWizard(errors,character);if(character.class.spellcasting==="cleric")validateCleric(errors,character);if(!Number.isInteger(character.ac)||character.ac<1)errors.push("Armor Class failed calculation.");if(!Number.isInteger(character.hp)||character.hp<1)errors.push("Hit Points failed calculation.");return{valid:errors.length===0,errors};
   }catch(error){console.error("[validation] character validation failed",error);throw error;}
 }
