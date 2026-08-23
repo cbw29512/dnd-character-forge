@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { fighterProgressionFor } from "../src/rules/fighter.js";
+import { applyClassAsi } from "../src/rules/features.js";
 import { buildQuickReference } from "../src/rules/reference.js";
 
 function fighterAt(level,subclass="champion"){
@@ -55,15 +56,23 @@ test("2014 Champion gains a second distinct Fighting Style at level 10",()=>{
   catch(error){console.error("[test] 2014 Champion Fighting Styles",error);throw error;}
 });
 
-test("2014 Fighter ASI schedule applies seven legal opportunities by level 19",()=>{
+test("2014 Fighter ASI schedule spends all seven legal two-point opportunities by level 19",()=>{
   try{
     const total=character=>Object.values(character.abilities).reduce((sum,value)=>sum+value,0);
-    const levels=[3,4,6,8,12,14,16,19];
-    const characters=levels.map(level=>fighterAt(level));
-    for(let i=1;i<characters.length;i++)assert.ok(total(characters[i])>=total(characters[i-1]),`ability total regressed at level ${levels[i]}`);
-    assert.ok(total(characters[1])>total(characters[0]));
-    for(const value of Object.values(characters.at(-1).abilities))assert.ok(value<=20);
+    const level3=fighterAt(3),level19=fighterAt(19);
+    assert.equal(total(level19),total(level3)+14);
+    for(const value of Object.values(level19.abilities))assert.ok(value<=20);
   }catch(error){console.error("[test] 2014 Fighter ASI schedule",error);throw error;}
+});
+
+test("ASI allocator uses +1/+1 instead of discarding a point when the priority score is 19",()=>{
+  try{
+    const scores={str:19,dex:19,con:18,int:10,wis:10,cha:10};
+    const result=applyClassAsi(scores,4,["str","dex","con","wis","cha","int"],[4]);
+    assert.equal(result.str,20);
+    assert.equal(result.dex,20);
+    assert.equal(Object.values(result).reduce((sum,value)=>sum+value,0),Object.values(scores).reduce((sum,value)=>sum+value,0)+2);
+  }catch(error){console.error("[test] legal ASI split allocation",error);throw error;}
 });
 
 test("2014 level 20 Champion has four attacks, two Action Surges, three Indomitables, and no 2024-only systems",()=>{
