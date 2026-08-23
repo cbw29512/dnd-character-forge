@@ -4,7 +4,7 @@ const SOURCES=Object.freeze({
 });
 
 const ENTITY_PAGES=Object.freeze({
-  "2014":Object.freeze({species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15"},subclass:{champion:"25","school-evocation":"54","life-domain":"17"}}),
+  "2014":Object.freeze({species:{human:"5"},background:{acolyte:"61"},class:{fighter:"24",wizard:"52",cleric:"15",rogue:"39"},subclass:{champion:"25","school-evocation":"54","life-domain":"17",thief:"40"}}),
   "2024":Object.freeze({
     species:{dragonborn:"84",dwarf:"84",elf:"84",gnome:"85",goliath:"85",halfling:"86",human:"86",orc:"86",tiefling:"86"},
     background:{acolyte:"83",criminal:"83",sage:"83",soldier:"83"},class:{fighter:"47",wizard:"77",cleric:"36",rogue:"61"},subclass:{champion:"49",evoker:"82","life-domain":"40",thief:"64"}
@@ -17,12 +17,14 @@ const REFERENCE_PAGES=Object.freeze({
     "style:Defense":"24","style:Archery":"24","style:Great Weapon Fighting":"24",
     "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25","feature:Indomitable":"25",
     "feature:Remarkable Athlete":"25","feature:Additional Fighting Style":"25","feature:Superior Critical":"25","feature:Survivor":"25",
-    "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17",
+    "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17","feature:Ability Score Improvement:rogue":"40",
     "feature:Spellcasting:wizard":"52–53","feature:Arcane Recovery":"53","feature:Evocation Savant":"54","feature:Sculpt Spells":"54","feature:Potent Cantrip":"54","feature:Empowered Evocation":"54","feature:Overchannel":"54","feature:Spell Mastery":"53","feature:Signature Spells":"54",
     "feature:Spellcasting:cleric":"15–16","feature:Divine Domain: Life Domain":"17","feature:Bonus Proficiency: Heavy Armor":"17","feature:Disciple of Life":"17",
     "feature:Channel Divinity (1/rest)":"16","feature:Channel Divinity (2/rest)":"16","feature:Channel Divinity (3/rest)":"16","feature:Turn Undead":"16","feature:Channel Divinity: Preserve Life":"17","feature:Preserve Life":"17",
     "feature:Destroy Undead (CR 1/2)":"17","feature:Destroy Undead (CR 1)":"17","feature:Destroy Undead (CR 2)":"17","feature:Destroy Undead (CR 3)":"17","feature:Destroy Undead (CR 4)":"17",
-    "feature:Blessed Healer":"17","feature:Divine Strike":"17","feature:Divine Intervention":"17","feature:Supreme Healing":"17","feature:Life Domain":"17"
+    "feature:Blessed Healer":"17","feature:Divine Strike":"17","feature:Divine Intervention":"17","feature:Supreme Healing":"17","feature:Life Domain":"17",
+    "feature:Expertise":"39","feature:Sneak Attack":"39","feature:Thieves’ Cant":"39","feature:Cunning Action":"40","feature:Uncanny Dodge":"40","feature:Evasion":"40","feature:Reliable Talent":"40","feature:Blindsense":"40","feature:Slippery Mind":"40","feature:Elusive":"40","feature:Stroke of Luck":"40",
+    "feature:Fast Hands":"40–41","feature:Second-Story Work":"41","feature:Supreme Sneak":"41","feature:Use Magic Device":"41","feature:Thief’s Reflexes":"41"
   }),
   "2024":Object.freeze({
     "species:dragonborn:Draconic Ancestry":"84","species:dragonborn:Breath Weapon":"84","species:dragonborn:Damage Resistance":"84","species:dragonborn:Darkvision":"84","species:dragonborn:Draconic Flight":"84",

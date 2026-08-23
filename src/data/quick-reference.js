@@ -23,7 +23,23 @@ export const REFERENCE_2014={
     "Channel Divinity (1/rest)":r("Cleric","Resource","One Channel Divinity use fuels Turn Undead or Preserve Life; regain it after a Short or Long Rest."),
     "Turn Undead":r("Cleric","Action","Undead within 30 ft that can see or hear you make a Wisdom save. A failure turns the creature for 1 minute or until damaged: it must move away, cannot willingly come within 30 ft or take Reactions, and normally can only Dash or escape movement restraints; with nowhere to move, it can Dodge."),
     "Destroy Undead (CR 1/2)":r("Cleric","Turn Undead","An Undead of CR 1/2 or lower that fails its save against Turn Undead is destroyed instead."),
-    "Life Domain":r("Life Domain","Passive","Life Domain features and always-prepared spells are reflected elsewhere on this sheet.")
+    "Life Domain":r("Life Domain","Passive","Life Domain features and always-prepared spells are reflected elsewhere on this sheet."),
+    "Expertise":r("Rogue","Applied","At Rogue 1, double your Proficiency Bonus for two chosen skill proficiencies, or one chosen skill proficiency and Thieves’ Tools. At Rogue 6, choose two more of your skill or Thieves’ Tools proficiencies for this benefit. This Forge loadout marks its chosen Expertise skills on the sheet."),
+    "Sneak Attack":r("Rogue","Once per turn","Once per turn, add your current Sneak Attack dice to one hit with a Finesse or ranged weapon when you have Advantage. You also qualify without Advantage if another enemy of the target is within 5 ft of it, that enemy is not Incapacitated, and you do not have Disadvantage."),
+    "Thieves’ Cant":r("Rogue","Language / communication","You know Thieves’ Cant: a secret mix of dialect, jargon, code, signs, and symbols used to hide messages and convey simple secret information."),
+    "Cunning Action":r("Rogue","Bonus Action","On each of your turns in combat, take Dash, Disengage, or Hide as a Bonus Action."),
+    "Uncanny Dodge":r("Rogue","Reaction","When an attacker you can see hits you with an attack, use your Reaction to halve that attack’s damage against you."),
+    "Evasion":r("Rogue","Dexterity saving throw","When an effect allows a Dexterity save for half damage, take no damage on a successful save and only half damage on a failed save."),
+    "Reliable Talent":r("Rogue","Ability check with proficiency","Whenever you make an ability check that lets you add your Proficiency Bonus, treat a d20 roll of 9 or lower as a 10."),
+    "Blindsense":r("Rogue","Passive · while able to hear","If you are able to hear, you are aware of the location of any hidden or invisible creature within 10 ft of you."),
+    "Slippery Mind":r("Rogue","Applied","You gain proficiency in Wisdom saving throws; the finished Wisdom save bonus already includes it."),
+    "Elusive":r("Rogue","Passive","No attack roll has Advantage against you while you are not Incapacitated."),
+    "Stroke of Luck":r("Rogue","Missed attack / failed ability check","If your attack misses a target within range, turn the miss into a hit. Alternatively, after failing an ability check, treat the d20 roll as a 20. One use; regain it after a Short or Long Rest."),
+    "Fast Hands":r("Thief","Cunning Action Bonus Action","Use the Bonus Action granted by Cunning Action to make a Dexterity (Sleight of Hand) check, use Thieves’ Tools to disarm a trap or open a lock, or take the Use an Object action."),
+    "Second-Story Work":r("Thief","Movement / running jump","Climbing no longer costs extra movement. When you make a running jump, increase the distance covered by a number of feet equal to your Dexterity modifier."),
+    "Supreme Sneak":r("Thief","Dexterity (Stealth)","You have Advantage on Dexterity (Stealth) checks if you move no more than half your Speed on the same turn."),
+    "Use Magic Device":r("Thief","Magic item use","Ignore all class, race, and level requirements on the use of magic items."),
+    "Thief’s Reflexes":r("Thief","First combat round","Take two turns during the first round of combat: the first at your normal Initiative and the second at your Initiative minus 10. You cannot use this feature when surprised.")
   }
 };
 export const REFERENCE_2024={

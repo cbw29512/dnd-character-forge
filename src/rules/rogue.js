@@ -10,9 +10,22 @@ export const CUNNING_STRIKE_OPTIONS_2024=Object.freeze([
   Object.freeze({id:"obscure",name:"Obscure",minimumLevel:14,cost:3,save:"dex",effect:"Failed save: Blinded until the end of the target's next turn."})
 ]);
 
-export function rogueProgressionFor(level,subclassId=null){
+export function rogueProgressionFor(level,subclassId=null,ruleset="2024"){
   try{
-    const value=Number(level);if(!Number.isInteger(value)||value<1||value>20)throw new Error(`Unsupported 2024 Rogue level ${level}.`);
+    const value=Number(level);if(!Number.isInteger(value)||value<1||value>20)throw new Error(`Unsupported ${ruleset} Rogue level ${level}.`);if(!["2014","2024"].includes(ruleset))throw new Error(`Unsupported Rogue ruleset ${ruleset}.`);
+    if(ruleset==="2014")return Object.freeze({
+      sneakAttackDice:Math.ceil(value/2),
+      expertiseCount:value>=6?4:2,
+      masteryCount:0,
+      maxCunningStrikeEffects:0,
+      cunningStrikeOptions:Object.freeze([]),
+      reliableTalent:value>=11,
+      blindsenseRange:value>=14?10:0,
+      slipperyMind:value>=15,
+      slipperyMindSaves:Object.freeze(value>=15?["wis"]:[]),
+      strokeOfLuck:value>=20,
+      thiefReflexes:value>=17&&subclassId==="thief"
+    });
     const options=CUNNING_STRIKE_OPTIONS_2024.filter(option=>value>=option.minimumLevel&&(!option.subclass||option.subclass===subclassId));
     return Object.freeze({
       sneakAttackDice:Math.ceil(value/2),
@@ -21,7 +34,9 @@ export function rogueProgressionFor(level,subclassId=null){
       maxCunningStrikeEffects:value<5?0:value<11?1:2,
       cunningStrikeOptions:Object.freeze(options.map(option=>option.id)),
       reliableTalent:value>=7,
+      blindsenseRange:0,
       slipperyMind:value>=15,
+      slipperyMindSaves:Object.freeze(value>=15?["wis","cha"]:[]),
       strokeOfLuck:value>=20,
       thiefReflexes:value>=17&&subclassId==="thief"
     });
@@ -29,11 +44,11 @@ export function rogueProgressionFor(level,subclassId=null){
 }
 
 export function rogueCunningStrikeDc(character){
-  try{if(character?.class?.id!=="rogue")throw new Error("Cunning Strike DC requires a Rogue character.");return 8+abilityMod(character.abilities.dex)+character.proficiency;}
+  try{if(character?.ruleset!=="2024"||character?.class?.id!=="rogue")throw new Error("Cunning Strike DC requires a 2024 Rogue character.");return 8+abilityMod(character.abilities.dex)+character.proficiency;}
   catch(error){console.error("[rogue] Cunning Strike DC failed",error);throw error;}
 }
 
-export function rogueSaveProficiencies(level){
-  try{return Number(level)>=15?["dex","int","wis","cha"]:["dex","int"];}
+export function rogueSaveProficiencies(level,ruleset="2024"){
+  try{const value=Number(level);if(ruleset==="2014")return value>=15?["dex","int","wis"]:["dex","int"];if(ruleset==="2024")return value>=15?["dex","int","wis","cha"]:["dex","int"];throw new Error(`Unsupported Rogue ruleset ${ruleset}.`);}
   catch(error){console.error("[rogue] save proficiency lookup failed",error);throw error;}
 }
