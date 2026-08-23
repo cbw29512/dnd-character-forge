@@ -100,7 +100,7 @@ The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose 
 
 ## 2014 Rogue / Thief vertical slice
 - Complete Rogue progression through level 20, including Sneak Attack scaling from 1d6 through 10d6 and six Ability Score Improvement opportunities at levels 4, 8, 10, 12, 16, and 19.
-- Expertise begins with two generated legal skill proficiencies at level 1 and expands to four at level 6. The underlying 2014 rule also permits Thieves’ Tools as an Expertise choice; Character Forge does not yet expose tool Expertise as a separate generated choice, so current loadouts use a legal skill-only subset.
+- Expertise begins with two legal choices at level 1 and expands to four at level 6. SRD 5.1 permits proficient skills and Thieves’ Tools; Character Forge now generates that full legal pool, validates the combined choice count, discloses tool Expertise in browser/PDF Rogue Resources, and fingerprints the exact Expertise allocation.
 - **Cunning Action** arrives at 2, **Uncanny Dodge** at 5, **Evasion** at 7, and the legacy **Reliable Talent** at 11.
 - **Blindsense** arrives at 14 with its 10-foot, able-to-hear requirement. **Slippery Mind** at 15 grants Wisdom saving-throw proficiency only; it does not borrow 2024's Charisma-save proficiency.
 - **Elusive** arrives at 18 and **Stroke of Luck** at 20 with both legacy modes: convert a missed in-range attack to a hit, or treat a failed ability-check d20 as 20. It refreshes after a Short or Long Rest.
@@ -160,14 +160,13 @@ The level picker is class-aware: 2024 Fighter, Wizard, Cleric, and Rogue expose 
 - **Elusive** arrives at 18, level 19 uses **Boon of the Night Spirit** with its legal +1 ability increase/maximum 30, and **Stroke of Luck** arrives at 20.
 - The character sheet has a dedicated **Rogue Resources** block showing current Sneak Attack dice, Expertise count, mastery count, Cunning Strike DC, effects allowed per Sneak Attack, Reliable Talent state, and playable details for every currently legal Cunning Strike option.
 - Rogue class/features cite SRD 5.2.1 pp.61–63, Thief features cite p.64, Boon of the Night Spirit cites p.88, and mastery properties cite p.90.
-- 2014 Rogue/Thief is encoded as a separate SRD 5.1 rules path and is regression-locked against borrowing these 2024-only mechanics.
 
 ## Playable character sheet
 - Core traits/features render concise action/resource/effect cards with SRD source locators.
 - Fighter sheets include a compact Fighter Resources block so current combat resources do not have to be reconstructed from feature prose.
 - Wizard sheets include compact resources for spellbook size, normal/always-prepared counts, Arcane Recovery, Spell Mastery, and Signature Spells; high-level spellbooks are grouped by spell level instead of rendered as one giant paragraph.
 - Cleric sheets include current Channel Divinity, normal prepared spells, and Life Domain always-prepared spells; 2024 sheets additionally expose Divine Order, Divine Spark, and Blessed Strikes, while 2014 sheets expose Destroy Undead and Divine Intervention without cross-edition mechanics.
-- Rogue sheets are edition-aware: 2014 surfaces Sneak Attack, Expertise, Reliable Talent, Blindsense, Wisdom-save proficiency, and Thief’s Reflexes as applicable; 2024 additionally exposes Weapon Mastery, Cunning Strike DC/effect capacity, and currently legal Cunning Strike options.
+- Rogue sheets include current Sneak Attack dice and Expertise allocation; 2024 additionally shows mastery count, Cunning Strike DC/effect capacity, and current Cunning Strike effects, while 2014 can show Thieves’ Tools as an Expertise choice without importing 2024 mechanics.
 - Background tool proficiencies and Magic Initiate Origin Magic are visible rather than hidden in source data.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each structured 2024 spell reference records its SRD 5.2.1 source page for audit traceability.
@@ -189,10 +188,10 @@ The 2014 Wizard and Cleric spell-name pools are independently scoped to SRD 5.1.
 - A fixed 2024 Cleric cantrip beyond the class-table base count constrains Divine Order to **Thaumaturge**, because that order grants the extra cantrip.
 
 ## Libraries
-The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, Cleric Divine Order/Blessed Strikes choices, and class-specific high-level mechanical state. Wizard capstone spell choices and Cleric class choices are restored when a saved pregen is reopened.
+The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge. Fingerprints include resolved species choices and size, background choices/tool proficiencies/Origin Magic, Expertise allocation, Cleric Divine Order/Blessed Strikes choices, and class-specific high-level mechanical state. Wizard capstone spell choices and Cleric class choices are restored when a saved pregen is reopened.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2014 Wizard/School of Evocation level-1–20 tests, exhaustive 2014 Cleric/Life Domain level-1–20 tests with all 105 spell names locked to SRD 5.1, exhaustive 2014 Rogue/Thief level-1–20 tests with cross-edition leakage/tamper checks, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, exhaustive 2024 Rogue/Thief level-1–20 tests, both-edition Rogue isolation, cross-edition Quick Turn leakage tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, website integrity checks, and a real headless-Chrome gate that physically prints the supported level-20 premium packets and verifies their contents.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, both-edition Fighter level-1–20 breakpoint tests, complete 2024 species/lineage/ancestry tests, complete 2024 background/Magic Initiate tests, exhaustive 2014 Wizard/School of Evocation level-1–20 tests, exhaustive 2014 Cleric/Life Domain level-1–20 tests with all 105 spell names locked to SRD 5.1, exhaustive 2014 Rogue/Thief level-1–20 and tool-Expertise tests, exhaustive 2024 Wizard/Evoker level-1–20 tests, exhaustive 2024 Cleric/Life Domain level-1–20 tests, exhaustive 2024 Rogue/Thief level-1–20 tests, cross-edition Quick Turn leakage tests, species/background/class-choice/Wizard UI contract tests, PDF/audit contract tests, website integrity checks, and a real headless-Chrome gate that physically prints the supported level-20 premium packets and verifies their contents.
 
 ## Run locally
 `python -m http.server 8080`
