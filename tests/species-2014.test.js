@@ -13,6 +13,8 @@ function make(speciesId,level=5,selections={},classId="fighter"){
   const state=createInitialState();state.ruleset="2014";state.constraints.level=String(level);state.constraints.class=classId;state.constraints.subclass=classId==="fighter"&&level>=3?"champion":classId==="wizard"&&level>=2?"school-evocation":classId==="cleric"?"life-domain":classId==="rogue"&&level>=3?"thief":"random";state.constraints.species=speciesId;state.constraints.background="acolyte";state.speciesSelections=selections;return generateCharacter(state);
 }
 
+function racialLanguageCount(race){return race.fixedLanguages.length+(["elf","human","half-elf"].includes(race.id)?1:0);}
+
 test("SRD 5.1 race catalog contains exactly the nine verified races",()=>{
   assert.deepEqual(RAW_2014.species.map(item=>item.id),["dwarf","elf","halfling","human","dragonborn","gnome","half-elf","half-orc","tiefling"]);
 });
@@ -61,6 +63,16 @@ test("Half-Orc grants Menacing and keeps legacy endurance/critical traits source
 
 test("Tiefling Infernal Legacy gates Hellish Rebuke and Darkness at levels 3 and 5",()=>{
   const one=make("tiefling",1),three=make("tiefling",3),five=make("tiefling",5);assert.deepEqual(one.speciesMagic.spells,[]);assert.deepEqual(three.speciesMagic.spells,["Hellish Rebuke (2nd-level)"]);assert.deepEqual(five.speciesMagic.spells,["Hellish Rebuke (2nd-level)","Darkness"]);assert.equal(five.speciesMagic.ability,"cha");assert.equal(speciesDarkvision(five),60);
+});
+
+test("Acolyte language grants never collide with racial languages across all nine races",()=>{
+  for(const race of RAW_2014.species)for(let iteration=0;iteration<25;iteration++){
+    const character=make(race.id);const expected=racialLanguageCount(race)+2;assert.equal(character.languages.length,expected,`${race.name} language entitlement`);assert.equal(new Set(character.languages).size,expected,`${race.name} duplicate language`);for(const fixed of race.fixedLanguages)assert.ok(character.languages.includes(fixed));if(character.speciesChoices.extraLanguage)assert.ok(character.languages.includes(character.speciesChoices.extraLanguage));
+  }
+});
+
+test("Rogue combinations preserve every racial and Acolyte language plus Thieves' Cant",()=>{
+  for(const race of RAW_2014.species){const character=make(race.id,5,{},"rogue"),expected=racialLanguageCount(race)+3;assert.equal(character.languages.length,expected,race.name);assert.equal(new Set(character.languages).size,expected,race.name);assert.ok(character.languages.includes("Thieves’ Cant"),race.name);}
 });
 
 test("all nine race identities have official SRD 5.1 provenance",()=>{
