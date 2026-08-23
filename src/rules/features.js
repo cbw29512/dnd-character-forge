@@ -28,8 +28,22 @@ export function fighterFeatures(ruleset,level,subclass){
   }catch(error){console.error("[features] fighter feature resolution failed",error);throw error;}
 }
 export function wizardFeatures(ruleset,level,subclass){
-  try{const features=["Spellcasting","Arcane Recovery"];if(ruleset==="2014"){if(level>=2&&subclass==="school-evocation")features.push("Evocation Savant","Sculpt Spells");if(level>=4)features.push("Ability Score Improvement");return features;}features.push("Ritual Adept");if(level>=2)features.push("Scholar");if(level>=3&&subclass==="evoker")features.push("Evocation Savant","Potent Cantrip");if(level>=4)features.push("Ability Score Improvement");if(level>=5)features.push("Memorize Spell");return features;}
-  catch(error){console.error("[features] wizard feature resolution failed",error);throw error;}
+  try{
+    const features=["Spellcasting","Arcane Recovery"];
+    if(ruleset==="2014"){if(level>=2&&subclass==="school-evocation")features.push("Evocation Savant","Sculpt Spells");if(level>=4)features.push("Ability Score Improvement");return features;}
+    features.push("Ritual Adept");
+    if(level>=2)features.push("Scholar");
+    if(level>=3&&subclass==="evoker")features.push("Evocation Savant","Potent Cantrip");
+    if(level>=4)features.push("Ability Score Improvement");
+    if(level>=5)features.push("Memorize Spell");
+    if(level>=6&&subclass==="evoker")features.push("Sculpt Spells");
+    if(level>=10&&subclass==="evoker")features.push("Empowered Evocation");
+    if(level>=14&&subclass==="evoker")features.push("Overchannel");
+    if(level>=18)features.push("Spell Mastery");
+    if(level>=19)features.push("Epic Boon");
+    if(level>=20)features.push("Signature Spells");
+    return features;
+  }catch(error){console.error("[features] wizard feature resolution failed",error);throw error;}
 }
 export function clericFeatures(ruleset,level,subclass,divineOrder){
   try{
@@ -66,7 +80,9 @@ export function applyEpicBoonAbility(scores,maximums,priority,feat){
   try{
     const nextScores={...scores},nextMaximums={...maximums};
     if(!feat?.abilityAdd||!feat?.abilityMaximum)return{scores:nextScores,maximums:nextMaximums,ability:null};
-    const target=priority.find(ability=>nextScores[ability]<feat.abilityMaximum)||priority[0];
+    const legalPriority=feat.abilityChoices?.length?priority.filter(ability=>feat.abilityChoices.includes(ability)):priority;
+    const target=legalPriority.find(ability=>nextScores[ability]<feat.abilityMaximum)||legalPriority[0];
+    if(!target)throw new Error(`${feat.name||"Epic Boon"} has no legal ability target.`);
     nextMaximums[target]=feat.abilityMaximum;
     nextScores[target]=Math.min(feat.abilityMaximum,nextScores[target]+feat.abilityAdd);
     return{scores:nextScores,maximums:nextMaximums,ability:target};
