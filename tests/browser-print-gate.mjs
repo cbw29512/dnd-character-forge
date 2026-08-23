@@ -10,12 +10,14 @@ import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 const ROOT=fileURLToPath(new URL("../",import.meta.url)),OUT=path.join(ROOT,"tests/.browser-print"),CHROME=process.env.CHROME_BIN||"google-chrome";
 const CASES=[
   {ruleset:"2024",classId:"fighter",subclass:"champion",species:"human",background:"criminal",pages:1,customization:{style:"ornate",paper:"parchment",ornament:"rich",frame:"filigree",printMode:"premium"}},
+  {ruleset:"2024",classId:"barbarian",subclass:"berserker",species:"human",background:"soldier",pages:1},
   {ruleset:"2024",classId:"rogue",subclass:"thief",species:"human",background:"criminal",pages:1,customization:{style:"minimal",paper:"white",ornament:"minimal",frame:"clean",printMode:"ink-saver"}},
   {ruleset:"2024",classId:"wizard",subclass:"evoker",species:"human",background:"criminal",pages:2,customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",portraitX:4,portraitY:91,portraitZoom:165,portraitFilter:"painted"}},
   {ruleset:"2024",classId:"cleric",subclass:"life-domain",species:"human",background:"criminal",pages:2,customization:{style:"classic",paper:"ivory",ornament:"balanced",frame:"filigree"}},
   {ruleset:"2014",classId:"wizard",subclass:"school-evocation",species:"human",background:"acolyte",pages:2},
   {ruleset:"2014",classId:"cleric",subclass:"life-domain",species:"dwarf",background:"acolyte",speciesSelections:{tool:"masons-tools"},pages:2},
-  {ruleset:"2014",classId:"rogue",subclass:"thief",species:"human",background:"acolyte",pages:1}
+  {ruleset:"2014",classId:"rogue",subclass:"thief",species:"human",background:"acolyte",pages:1},
+  {ruleset:"2014",classId:"barbarian",subclass:"berserker",species:"human",background:"acolyte",pages:1}
 ];
 rmSync(OUT,{recursive:true,force:true});mkdirSync(OUT,{recursive:true});for(const item of CASES)verifyPacket(item);console.log(`[browser-print] verified ${CASES.length} fixed premium PDFs in Chrome`);
 
@@ -33,6 +35,14 @@ function legacyChecks(testCase,character,whole,model){
   if(testCase.ruleset==="2014"&&testCase.classId==="cleric"){assert.equal(character.spells.cantrips.all.length,5);assert.equal(character.spells.prepared.all.length,25);assert.equal(character.spells.alwaysPrepared.length,10);assert.equal(model.spellPage.entries.length,40);assert.ok(whole.includes("Cleric spell list pp.106-107"));assert.ok(whole.includes("Destroy Undead (CR 4)"));assert.ok(whole.includes("Supreme Healing"));}
   if(testCase.ruleset==="2014"&&testCase.species==="dwarf"){assert.equal(character.speciesChoices.subraceName,"Hill Dwarf");assert.equal(character.speciesHpBonus,20);assert.ok(whole.includes("Hill Dwarf"));assert.ok(whole.includes("Dwarven Toughness"));}
   if(testCase.ruleset==="2014"&&testCase.classId==="rogue"){assert.ok(whole.includes("Blindsense"));assert.ok(whole.includes("Use Magic Device"));assert.ok(whole.includes("Thief's Reflexes"));assert.equal(whole.includes("Cunning Strike DC"),false);assert.equal(whole.includes("Steady Aim"),false);}
+  if(testCase.classId==="barbarian"){
+    assert.equal(model.packet.totalPages,1);assert.equal(model.classUtility?.title,"Primal Fury");assert.ok(whole.includes("Primal Fury"));assert.ok(whole.includes("Rage"));assert.ok(whole.includes("Berserker"));assert.ok(whole.includes("Primal Champion"));
+    if(testCase.ruleset==="2014"){
+      assert.ok(whole.includes("Brutal Critical"));assert.equal(whole.includes("Brutal Strike"),false);assert.equal(whole.includes("Weapon Mastery"),false);assert.equal(whole.includes("Epic Boon"),false);
+    }else{
+      assert.ok(whole.includes("Brutal Strike"));assert.ok(whole.includes("Weapon Mastery"));assert.ok(whole.includes("Cleave"));assert.ok(whole.includes("Epic Boon"));assert.equal(whole.includes("Brutal Critical"),false);
+    }
+  }
 }
 function characterAt({ruleset,classId,subclass,species,background,speciesSelections={},customization=null}){const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class=classId;state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.speciesSelections=speciesSelections;const character=generateCharacter(state);if(customization)character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;}
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
