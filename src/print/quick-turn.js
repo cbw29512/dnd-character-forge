@@ -10,19 +10,20 @@ function fighterTurn(character){
   const attacks=character.fighter?.attacksPerAction||1,steps=[`Take the Attack action: ${attacks} attack${attacks===1?"":"s"} with your best weapon.`];
   if(character.fighter?.actionSurgeUses)steps.push("Use Action Surge when another action can swing the fight.");
   else steps.push("Keep pressure on the highest-priority target and protect your positioning.");
-  steps.push(character.fighter?.secondWindUses?"Use Second Wind when the healing and repositioning value matter most.":"Use your class resources before the fight is already decided.");
+  if(character.fighter?.secondWindUses)steps.push(character.ruleset==="2014"?"Use Second Wind when its self-healing matters most.":"Use Second Wind when the healing and repositioning value matter most.");
+  else steps.push("Use your class resources before the fight is already decided.");
   return steps;
 }
 function wizardTurn(character){
-  const dc=character.spells?.saveDc;return[
+  const dc=character.spells?.saveDc,third=character.ruleset==="2014"?"Protect concentration and keep distance; after a Short Rest, use Arcane Recovery when recovered spell slots will matter.":character.level>=5?"Protect concentration and keep distance; use Memorize Spell after a Short Rest when preparation needs change.":"Protect concentration and keep distance from melee threats.";return[
     `Choose the spell that changes the battlefield most${dc?` (save DC ${dc})`:""}.`,
     "Use a cantrip when the encounter does not justify spending a spell slot.",
-    character.level>=5?"Protect concentration and keep distance; use Memorize Spell after a Short Rest when preparation needs change.":"Protect concentration and keep distance from melee threats."
+    third
   ];
 }
 function clericTurn(character){
   const steps=["Decide early whether the fight needs concentration, damage, support, or recovery."];
-  if(character.cleric?.channelDivinityUses)steps.push(`You have ${character.cleric.channelDivinityUses} Channel Divinity uses; spend them when Divine Spark, Turn Undead, or your domain option creates real value.`);
+  if(character.cleric?.channelDivinityUses){const options=character.ruleset==="2014"?"Turn Undead or Preserve Life":"Divine Spark, Turn Undead, or your domain option";steps.push(`You have ${character.cleric.channelDivinityUses} Channel Divinity uses; spend them when ${options} creates real value.`);}
   else steps.push("Use your best prepared spell or cantrip while preserving positioning.");
   steps.push(character.subclass?.id==="life-domain"?"Keep a fast healing option available for an ally who suddenly drops.":"Keep a recovery option available for a sudden emergency.");return steps;
 }
