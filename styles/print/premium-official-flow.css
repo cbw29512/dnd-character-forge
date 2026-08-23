@@ -57,17 +57,19 @@
   .theme-wizard-arcane .ps-spell-entry{min-height:.132in}
   .theme-wizard-arcane .ps-spell-level>header{min-height:.235in}
 
-  /* Half-caster polish: keep the familiar 0-9 tracker, then turn Paladin's unused spell-page space into table-facing class utility. */
-  .theme-paladin-oath .ps-spell-level-grid{height:4.02in}
-  .ps-paladin-spell-support{margin-top:.055in;padding:.055in .065in;border:1px solid color-mix(in srgb,var(--ps-primary) 68%,#d5bf97);background:linear-gradient(110deg,rgba(119,84,24,.1),rgba(255,250,236,.72) 42%,rgba(119,84,24,.08));box-shadow:inset 0 0 .12in rgba(107,77,25,.09);min-height:1.42in;overflow:hidden}
-  .ps-paladin-spell-support>header{display:flex;align-items:end;justify-content:space-between;gap:.1in;padding-bottom:.03in;border-bottom:1px solid color-mix(in srgb,var(--ps-primary) 70%,#d5bf97)}
-  .ps-paladin-spell-support>header small{display:block;font:700 4.4pt Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--ps-primary)}
-  .ps-paladin-spell-support>header h3{margin:.008in 0 0;font:700 9pt Georgia,serif;letter-spacing:.035em;color:var(--ps-dark)}
-  .ps-paladin-spell-support>header>span{font:5pt Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
-  .ps-paladin-support-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.045in;margin-top:.045in}
-  .ps-paladin-support-grid article{min-width:0;padding:.04in .045in;border-left:2px solid var(--ps-primary);background:rgba(255,250,236,.62)}
-  .ps-paladin-support-grid strong{display:block;font:700 6pt Georgia,serif;color:var(--ps-dark)}
-  .ps-paladin-support-grid b{display:block;margin:.012in 0;font:700 4.75pt Arial,sans-serif;color:var(--ps-primary)}
-  .ps-paladin-support-grid span{display:block;font:4.45pt/1.18 Arial,sans-serif;color:var(--ps-ink)}
-  .ps-paladin-spell-support>p{margin:.035in 0 0;padding-top:.025in;border-top:1px dotted rgba(65,49,31,.28);font:italic 4.35pt/1.15 Georgia,serif;color:var(--ps-muted)}
+  /* Half-caster polish: keep the familiar 0-9 tracker, then reclaim unused spell-page space for class decisions. */
+  .theme-paladin-oath .ps-spell-level-grid,.theme-ranger-warden .ps-spell-level-grid{height:4.02in}
+  .ps-paladin-spell-support,.ps-ranger-spell-support{margin-top:.055in;padding:.055in .065in;border:1px solid color-mix(in srgb,var(--ps-primary) 68%,#d5bf97);box-shadow:inset 0 0 .12in rgba(65,49,31,.09);min-height:1.42in;overflow:hidden}
+  .ps-paladin-spell-support{background:linear-gradient(110deg,rgba(119,84,24,.1),rgba(255,250,236,.72) 42%,rgba(119,84,24,.08))}
+  .ps-ranger-spell-support{background:linear-gradient(110deg,rgba(55,83,49,.12),rgba(255,250,236,.72) 42%,rgba(87,72,39,.08))}
+  .ps-paladin-spell-support>header,.ps-ranger-spell-support>header{display:flex;align-items:end;justify-content:space-between;gap:.1in;padding-bottom:.03in;border-bottom:1px solid color-mix(in srgb,var(--ps-primary) 70%,#d5bf97)}
+  .ps-paladin-spell-support>header small,.ps-ranger-spell-support>header small{display:block;font:700 4.4pt Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase;color:var(--ps-primary)}
+  .ps-paladin-spell-support>header h3,.ps-ranger-spell-support>header h3{margin:.008in 0 0;font:700 9pt Georgia,serif;letter-spacing:.035em;color:var(--ps-dark)}
+  .ps-paladin-spell-support>header>span,.ps-ranger-spell-support>header>span{font:5pt Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
+  .ps-paladin-support-grid,.ps-ranger-support-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.045in;margin-top:.045in}
+  .ps-paladin-support-grid article,.ps-ranger-support-grid article{min-width:0;padding:.04in .045in;border-left:2px solid var(--ps-primary);background:rgba(255,250,236,.62)}
+  .ps-paladin-support-grid strong,.ps-ranger-support-grid strong{display:block;font:700 6pt Georgia,serif;color:var(--ps-dark)}
+  .ps-paladin-support-grid b,.ps-ranger-support-grid b{display:block;margin:.012in 0;font:700 4.75pt Arial,sans-serif;color:var(--ps-primary)}
+  .ps-paladin-support-grid span,.ps-ranger-support-grid span{display:block;font:4.45pt/1.18 Arial,sans-serif;color:var(--ps-ink)}
+  .ps-paladin-spell-support>p,.ps-ranger-spell-support>p{margin:.035in 0 0;padding-top:.025in;border-top:1px dotted rgba(65,49,31,.28);font:italic 4.35pt/1.15 Georgia,serif;color:var(--ps-muted)}
 }
