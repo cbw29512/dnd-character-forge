@@ -69,7 +69,7 @@ function roguePrintModel(character){
     return{
       ruleset:character.ruleset,
       sneakAttack:`${rogue.sneakAttackDice}d6`,
-      expertise:rogue.expertiseCount,
+      expertise:is2024?rogue.expertiseCount:rogueExpertiseLabel(character,rogue),
       masteries:rogue.masteryCount,
       cunningStrikeDc:is2024&&character.level>=5?rogueCunningStrikeDc(character):null,
       effectsPerSneak:is2024?(rogue.maxCunningStrikeEffects||0):0,
@@ -81,6 +81,7 @@ function roguePrintModel(character){
     };
   }catch(error){console.error("[print-model] Rogue resources failed",error);throw error;}
 }
+function rogueExpertiseLabel(character,rogue){try{const tool=character.expertise?.includes("Thieves' Tools"),skills=rogue.expertiseCount-(tool?1:0);return tool?`${skills} skill${skills===1?"":"s"} + Thieves’ Tools`:`${skills} skill${skills===1?"":"s"}`;}catch(error){console.error("[print-model] Rogue Expertise label failed",error);throw error;}}
 function spellcastingModel(character){
   try{
     if(!character.spells)return null;const catalog=spellCatalog(character),names=ids=>(ids||[]).map(id=>catalog.get(id)||id),slots=Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · ");
