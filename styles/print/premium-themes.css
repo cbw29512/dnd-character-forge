@@ -1,5 +1,12 @@
-.premium-sheet{--ps-primary:#6f5432;--ps-dark:#2c241a;--ps-accent:#b8955e;--ps-ink:#241f18;--ps-muted:#6d6254;--ps-panel:#f6ecd8;--ps-panel-2:#ead9b9;--ps-frame:#4b3925;--ps-glow:rgba(86,58,30,.22)}
-.premium-sheet.theme-martial-red{--ps-primary:#7b211d;--ps-dark:#2d1713;--ps-accent:#b18a53;--ps-panel:#f1dfc2;--ps-panel-2:#dec49a;--ps-frame:#3b2117;--ps-glow:rgba(92,28,22,.28)}
-.premium-sheet.theme-holy-gold{--ps-primary:#9b7319;--ps-dark:#463510;--ps-accent:#c3a14c;--ps-panel:#f7efd8;--ps-panel-2:#eadba9;--ps-frame:#6a5118;--ps-glow:rgba(154,113,24,.22)}
-.premium-sheet.theme-shadow-teal{--ps-primary:#23545b;--ps-dark:#17282b;--ps-accent:#7f9b93;--ps-panel:#edf0e5;--ps-panel-2:#d1d9cb;--ps-frame:#22393d;--ps-glow:rgba(28,71,78,.24)}
-.premium-sheet.theme-arcane-blue{--ps-primary:#31547b;--ps-dark:#1d2f44;--ps-accent:#a48d61;--ps-panel:#eef0e9;--ps-panel-2:#d5d9cf;--ps-frame:#263b52;--ps-glow:rgba(44,76,112,.24)}
+.premium-sheet{--ps-primary:#6f5432;--ps-dark:#2c241a;--ps-accent:#b8955e;--ps-ink:#241f18;--ps-muted:#6d6254;--ps-panel:#f6ecd8;--ps-panel-2:#ead9b9;--ps-frame:#4b3925;--ps-glow:rgba(86,58,30,.22);--ps-paper:#f4ead4}
+.premium-sheet.theme-fighter-steel{--ps-primary:#781e1d;--ps-dark:#252326;--ps-accent:#b49a70;--ps-panel:#eee2cd;--ps-panel-2:#d6c3a6;--ps-frame:#3b3030;--ps-glow:rgba(80,25,25,.28);--ps-paper:#f1e5cf}
+.premium-sheet.theme-barbarian-rage{--ps-primary:#8c281d;--ps-dark:#291813;--ps-accent:#c1a06a;--ps-panel:#ead7b7;--ps-panel-2:#cdb18a;--ps-frame:#4b261c;--ps-glow:rgba(116,35,22,.34);--ps-paper:#eadabb}
+.premium-sheet.theme-cleric-sanctum{--ps-primary:#9d761a;--ps-dark:#493810;--ps-accent:#c9ad62;--ps-panel:#f8f1dc;--ps-panel-2:#ead9a8;--ps-frame:#70591c;--ps-glow:rgba(159,120,25,.24);--ps-paper:#fbf3df}
+.premium-sheet.theme-rogue-shadow{--ps-primary:#245d61;--ps-dark:#142a2c;--ps-accent:#819d94;--ps-panel:#e7ebe2;--ps-panel-2:#ccd6cd;--ps-frame:#203f42;--ps-glow:rgba(28,76,80,.27);--ps-paper:#e9e9da}
+.premium-sheet.theme-wizard-arcane{--ps-primary:#3c5688;--ps-dark:#1c2942;--ps-accent:#ae9565;--ps-panel:#edf0eb;--ps-panel-2:#d2d8d2;--ps-frame:#283c5a;--ps-glow:rgba(46,73,125,.29);--ps-paper:#ecebdd}
+.premium-sheet.theme-paladin-oath{--ps-primary:#815d1f;--ps-dark:#342b1a;--ps-accent:#d0b875;--ps-frame:#5d4820;--ps-paper:#f7edd3}
+.premium-sheet.theme-ranger-warden{--ps-primary:#3f613f;--ps-dark:#233427;--ps-accent:#9c9668;--ps-frame:#314b34;--ps-paper:#ece8cf}
+.premium-sheet.theme-sorcerer-aether{--ps-primary:#70478a;--ps-dark:#342341;--ps-accent:#bc9a71;--ps-frame:#4d335e;--ps-paper:#eee7dc}
+.premium-sheet.theme-warlock-eldritch{--ps-primary:#594374;--ps-dark:#211b2e;--ps-accent:#9a8a70;--ps-frame:#3c304c;--ps-paper:#e6e1d6}
+.premium-sheet.theme-bard-legend{--ps-primary:#8b3e58;--ps-dark:#3f1f2c;--ps-accent:#c39c69;--ps-frame:#633044;--ps-paper:#f0e3d1}
+.premium-sheet.theme-druid-wild{--ps-primary:#576a35;--ps-dark:#28331e;--ps-accent:#a58c5f;--ps-frame:#46572d;--ps-paper:#ebe3ca}
