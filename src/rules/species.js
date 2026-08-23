@@ -1,7 +1,7 @@
 import { SKILLS } from "../schema.js";
 import { WIZARD_SPELLS_2024 } from "../data/wizard-spells.js";
 import { DRAGONBORN_ANCESTRIES, ELF_LINEAGES, GNOME_LINEAGES, GOLIATH_ANCESTRIES, TIEFLING_LEGACIES } from "../data/species-2024.js";
-import { dragonbornBreath2014, speciesMagic2014 } from "./species-2014.js";
+import { dragonbornBreath2014, speciesMagic2014, validate2014Species } from "./species-2014.js";
 import { pick } from "./random.js";
 
 const SPELL_ABILITIES=Object.freeze(["int","wis","cha"]);
@@ -62,7 +62,7 @@ export function speciesMagic(character){
     if(character?.ruleset!=="2024")return null;const choices=character.speciesChoices||{},level=character.level;
     if(character.species.id==="elf"){const lineage=ELF_LINEAGES[choices.lineage];if(!lineage)return null;const cantrip=lineage.replaceableWizardCantrip?choices.cantripName:lineage.cantrip;return magic(choices.spellcastingAbility,[cantrip],[level>=3?lineage.level3:null,level>=5?lineage.level5:null]);}
     if(character.species.id==="gnome"){const lineage=GNOME_LINEAGES[choices.lineage];if(!lineage)return null;return magic(choices.spellcastingAbility,lineage.cantrips||[],lineage.alwaysPrepared||[]);}
-    if(character.species.id==="tiefling"){const legacy=TIEFLING_LEGACIES[choices.legacy];if(!legacy||!magic)throw new Error("Tiefling legacy data is unavailable.");return magic(choices.spellcastingAbility,[legacy.cantrip,"Thaumaturgy"],[level>=3?legacy.level3:null,level>=5?legacy.level5:null]);}
+    if(character.species.id==="tiefling"){const legacy=TIEFLING_LEGACIES[choices.legacy];if(!legacy)throw new Error("Tiefling legacy data is unavailable.");return magic(choices.spellcastingAbility,[legacy.cantrip,"Thaumaturgy"],[level>=3?legacy.level3:null,level>=5?legacy.level5:null]);}
     return null;
   }catch(error){console.error("[species] species magic resolution failed",error);throw error;}
 }
@@ -72,6 +72,7 @@ export function speciesChoiceLabel(character){
 }
 export function validate2024Species(character){
   try{
+    if(character?.ruleset==="2014")return validate2014Species(character);
     if(character?.ruleset!=="2024")return[];const errors=[],choices=character.speciesChoices||{},id=character.species.id;
     if(id==="dragonborn"&&!DRAGONBORN_ANCESTRIES.some(item=>item.id===choices.ancestry&&item.damageType===choices.damageType))errors.push("Dragonborn ancestry is invalid.");
     if(id==="elf"){
