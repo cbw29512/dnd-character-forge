@@ -72,6 +72,6 @@ test("Random 2024 Rogue can legally reach level 20",()=>{
   const original=Math.random;try{Math.random=()=>0.999999;const state=createInitialState();state.ruleset="2024";state.constraints.class="rogue";state.constraints.level="random";state.constraints.subclass="random";const c=generateCharacter(state);assert.equal(c.class.id,"rogue");assert.equal(c.level,20);assert.equal(c.validation.valid,true);}finally{Math.random=original;}
 });
 
-test("2014 remains fail-closed for unsupported Rogue selection",()=>{
-  const state=createInitialState();state.ruleset="2014";state.constraints.class="rogue";state.constraints.level="1";assert.throws(()=>generateCharacter(state),/unavailable for this ruleset/i);
+test("2014 and 2024 Rogue progression stay edition-isolated",()=>{
+  const legacy=rogueProgressionFor(20,"thief","2014"),modern=rogueProgressionFor(20,"thief","2024");assert.equal(legacy.sneakAttackDice,10);assert.equal(modern.sneakAttackDice,10);assert.equal(legacy.masteryCount,0);assert.equal(modern.masteryCount,2);assert.equal(legacy.maxCunningStrikeEffects,0);assert.equal(modern.maxCunningStrikeEffects,2);assert.equal(legacy.blindsenseRange,10);assert.equal(modern.blindsenseRange,0);assert.deepEqual(legacy.slipperyMindSaves,["wis"]);assert.deepEqual(modern.slipperyMindSaves,["wis","cha"]);
 });
