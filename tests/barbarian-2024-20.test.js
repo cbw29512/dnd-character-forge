@@ -18,6 +18,11 @@ test("2024 level-20 Berserker uses the revised Barbarian progression",()=>{
   assert.ok(c.features.includes("Brutal Strike"));assert.ok(c.features.includes("Improved Brutal Strike"));assert.ok(c.features.includes("Weapon Mastery — Barbarian"));assert.equal(c.features.includes("Brutal Critical"),false);assert.ok(c.feats.some(feat=>feat.id==="boon-irresistible-offense"));
 });
 
+test("2024 Barbarian mastery fill never leaves its legal melee weapon pool",()=>{
+  const expected=["greataxe","handaxe","greatsword","longsword","flail","javelin","scimitar","shortsword","dagger","quarterstaff","mace"];
+  for(let i=0;i<200;i++){const c=berserker(),legal=new Set(c.class.masteryChoices);assert.deepEqual(c.class.masteryChoices,expected);assert.equal(c.masteryIds.length,4);assert.equal(new Set(c.masteryIds).size,4);for(const weaponId of c.masteryIds)assert.ok(legal.has(weaponId),`illegal Barbarian mastery ${weaponId}`);assert.equal(c.masteryIds.includes("shortbow"),false);assert.equal(c.masteryIds.includes("longbow"),false);}
+});
+
 test("2024 Greataxe Cleave and Barbarian references remain sourced",()=>{
   const c=berserker(),refs=buildQuickReference(c),cleave=refs.find(item=>item.name==="Greataxe — Cleave"),model=buildPremiumPrintModel(c);assert.ok(cleave,"Greataxe Cleave reference missing");assert.equal(cleave.source.version,"SRD 5.2.1");assert.equal(cleave.source.page,"90");for(const item of refs){assert.ok(item.source?.version,`${item.name} missing source`);assert.ok(item.source?.page,`${item.name} missing page`);}assert.equal(model.classUtility.title,"Primal Fury");assert.equal(model.classUtility.stats.find(item=>item.label==="Rage").value,6);assert.ok(model.ruleIndex.some(item=>item.name==="Brutal Strike"));assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,true);
 });
