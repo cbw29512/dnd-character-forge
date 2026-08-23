@@ -4,8 +4,17 @@ import { RAW_2024 } from "../data/raw-2024.js";
 const dataFor=state=>state.ruleset==="2014"?RAW_2014:RAW_2024;
 
 export function populateOptions(state){
-  try{const data=dataFor(state);fill("species",data.species);fill("class",data.classes);fill("background",data.backgrounds);populateSubclasses(state);}
+  try{const data=dataFor(state);fill("species",data.species);fill("class",data.classes);fill("background",data.backgrounds);populateLevels(state);populateSubclasses(state);}
   catch(error){console.error("[ui] populateOptions failed",error);throw error;}
+}
+export function populateLevels(state){
+  try{
+    const data=dataFor(state),classId=state.constraints.class,cls=data.classes.find(item=>item.id===classId);
+    const maxLevel=cls?.maxLevel||Math.min(...data.classes.map(item=>item.maxLevel||5));
+    const element=document.getElementById("level"),current=state.constraints.level;
+    element.innerHTML=`<option value="random">Random</option>${Array.from({length:maxLevel},(_,index)=>`<option value="${index+1}">${index+1}</option>`).join("")}`;
+    if([...element.options].some(option=>option.value===current))element.value=current;else{state.constraints.level="random";element.value="random";}
+  }catch(error){console.error("[ui] populateLevels failed",error);throw error;}
 }
 export function populateSubclasses(state){
   try{
