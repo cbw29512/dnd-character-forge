@@ -1,12 +1,16 @@
 const slug=name=>name.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
-const rows=(level,names,schools={})=>names.map(name=>Object.freeze({id:slug(name),name,level,school:schools[name]||null}));
+const rows=(level,names,schools={},extra={})=>names.map(name=>Object.freeze({id:slug(name),name,level,school:schools[name]||null,...extra}));
 
 const PALADIN_2014=[
-  ...rows(1,["Bless","Command","Cure Wounds","Detect Evil and Good","Detect Magic","Detect Poison and Disease","Divine Favor","Heroism","Protection from Evil and Good","Purify Food and Drink","Shield of Faith","Sanctuary"]),
+  ...rows(1,["Bless","Command","Cure Wounds","Detect Evil and Good","Detect Magic","Detect Poison and Disease","Divine Favor","Heroism","Protection from Evil and Good","Purify Food and Drink","Shield of Faith"]),
+  ...rows(1,["Sanctuary"],{}, {oathOnly:true}),
   ...rows(2,["Aid","Branding Smite","Find Steed","Lesser Restoration","Locate Object","Magic Weapon","Protection from Poison","Zone of Truth"]),
-  ...rows(3,["Beacon of Hope","Create Food and Water","Daylight","Dispel Magic","Magic Circle","Remove Curse","Revivify"]),
-  ...rows(4,["Banishment","Death Ward","Freedom of Movement","Guardian of Faith","Locate Creature"]),
-  ...rows(5,["Commune","Dispel Evil and Good","Flame Strike","Geas","Raise Dead"])
+  ...rows(3,["Create Food and Water","Daylight","Dispel Magic","Magic Circle","Remove Curse","Revivify"]),
+  ...rows(3,["Beacon of Hope"],{}, {oathOnly:true}),
+  ...rows(4,["Banishment","Death Ward","Locate Creature"]),
+  ...rows(4,["Freedom of Movement","Guardian of Faith"],{}, {oathOnly:true}),
+  ...rows(5,["Dispel Evil and Good","Geas","Raise Dead"]),
+  ...rows(5,["Commune","Flame Strike"],{}, {oathOnly:true})
 ];
 
 const SCHOOLS_2024=Object.freeze({
@@ -19,9 +23,12 @@ const SCHOOLS_2024=Object.freeze({
 const PALADIN_2024=[
   ...rows(1,["Bless","Command","Cure Wounds","Detect Evil and Good","Detect Magic","Detect Poison and Disease","Divine Favor","Divine Smite","Heroism","Protection from Evil and Good","Purify Food and Drink","Searing Smite","Shield of Faith"],SCHOOLS_2024),
   ...rows(2,["Aid","Find Steed","Gentle Repose","Lesser Restoration","Locate Object","Magic Weapon","Prayer of Healing","Protection from Poison","Shining Smite","Warding Bond","Zone of Truth"],SCHOOLS_2024),
-  ...rows(3,["Beacon of Hope","Create Food and Water","Daylight","Dispel Magic","Magic Circle","Remove Curse","Revivify"],SCHOOLS_2024),
-  ...rows(4,["Aura of Life","Banishment","Death Ward","Freedom of Movement","Guardian of Faith","Locate Creature"],SCHOOLS_2024),
-  ...rows(5,["Commune","Dispel Evil and Good","Flame Strike","Geas","Greater Restoration","Raise Dead"],SCHOOLS_2024)
+  ...rows(3,["Create Food and Water","Daylight","Dispel Magic","Magic Circle","Remove Curse","Revivify"],SCHOOLS_2024),
+  ...rows(3,["Beacon of Hope"],SCHOOLS_2024,{oathOnly:true}),
+  ...rows(4,["Aura of Life","Banishment","Death Ward","Locate Creature"],SCHOOLS_2024),
+  ...rows(4,["Freedom of Movement","Guardian of Faith"],SCHOOLS_2024,{oathOnly:true}),
+  ...rows(5,["Dispel Evil and Good","Geas","Greater Restoration","Raise Dead"],SCHOOLS_2024),
+  ...rows(5,["Commune","Flame Strike"],SCHOOLS_2024,{oathOnly:true})
 ];
 
 export const PALADIN_SPELLS_2014=Object.freeze(PALADIN_2014);
