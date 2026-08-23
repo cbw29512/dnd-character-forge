@@ -8,11 +8,12 @@ import { clericSpellsFor } from "../data/cleric-spells.js";
 import { selectPrintTheme } from "./theme.js";
 import { buildQuickTurn } from "./quick-turn.js";
 
+const REFERENCE_PAGE_SIZE=5,SPELL_PAGE_SIZE=22;
 const fmt=value=>value>=0?`+${value}`:`${value}`;
 export function buildPremiumPrintModel(character){
   try{
     if(!character?.validation?.valid)throw new Error("Premium print requires a validated character.");
-    const references=buildQuickReference(character),theme=selectPrintTheme(character),species=speciesChoiceLabel(character),feat=chooseFeat(character,references);
+    const references=buildQuickReference(character),theme=selectPrintTheme(character),species=speciesChoiceLabel(character),feat=chooseFeat(character,references),appendix=appendixModel(character,references);
     return{
       theme,
       portraitDataUrl:safePortrait(character.presentation?.portraitDataUrl),
@@ -29,6 +30,8 @@ export function buildPremiumPrintModel(character){
       spellcasting:spellcastingModel(character),
       quickTurn:buildQuickTurn(character),
       audit:{status:character.audit?.status||"PASS",sourceMode:character.sourceMode,version:character.audit?.sourceVersion||character.ruleset,rulesLabel:character.audit?.rulesLabel||`${character.ruleset} rules`,rawIntegrity:Boolean(character.audit?.rawIntegrity),checks:(character.audit?.checks||[]).slice(0,2)},
+      appendix,
+      packet:{totalPages:1+appendix.referencePages.length+appendix.spellPages.length+1},
       motto:theme.motto
     };
   }catch(error){console.error("[print-model] build failed",error);throw error;}
@@ -42,6 +45,23 @@ function chooseFeatures(references,featName){
   catch(error){console.error("[print-model] feature selection failed",error);throw error;}
 }
 function featurePriority(item){if(item.id?.startsWith("feature:"))return 0;if(item.id?.startsWith("species:"))return 1;if(item.id?.startsWith("style:"))return 2;return 3;}
+function appendixModel(character,references){
+  try{
+    const fullReferences=references.map(item=>({id:item.id,name:item.name,category:item.category,timing:item.timing,text:item.text,source:`${item.source.version} · p.${item.source.page}`}));
+    return{referencePages:chunk(fullReferences,REFERENCE_PAGE_SIZE),spellPages:spellAppendixPages(character),audit:auditAppendix(character)};
+  }catch(error){console.error("[print-model] appendix build failed",error);throw error;}
+}
+function spellAppendixPages(character){
+  try{
+    if(!character.spells)return[];const catalog=spellCatalogRecords(character),byId=new Map(catalog.map(spell=>[spell.id,spell])),cantrips=new Set(character.spells.cantrips?.all||[]),prepared=new Set(character.spells.prepared?.all||[]),always=new Set(character.spells.alwaysPrepared||[]),mastery=new Set(Object.values(character.spells.spellMastery||{}).filter(Boolean)),signature=new Set(character.spells.signatureSpells||[]),spellbook=new Set(character.spells.spellbook?.all||[]),ids=character.class.id==="wizard"?[...cantrips,...spellbook]:[...cantrips,...always,...prepared],unique=[...new Set(ids)];
+    const entries=unique.map(id=>{const spell=byId.get(id);if(!spell)throw new Error(`Premium spell appendix is missing catalog record ${id}.`);const tags=[];if(cantrips.has(id))tags.push("Cantrip");else{if(always.has(id))tags.push("Always Prepared");if(prepared.has(id))tags.push("Prepared");if(mastery.has(id))tags.push("Spell Mastery");if(signature.has(id))tags.push("Signature Spell");if(character.class.id==="wizard"&&!tags.length)tags.push("Spellbook");}return{id,name:spell.name,level:spell.level,levelLabel:spell.level===0?"Cantrip":`Level ${spell.level}`,tags};}).sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name));
+    const sourceVersion=character.audit?.sourceVersion||character.ruleset;return chunk(entries,SPELL_PAGE_SIZE).map((page,index)=>({index:index+1,total:Math.ceil(entries.length/SPELL_PAGE_SIZE),source:`${sourceVersion} · validated ${character.class.name} spell catalog`,entries:page,slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus)}));
+  }catch(error){console.error("[print-model] spell appendix failed",error);throw error;}
+}
+function auditAppendix(character){
+  try{const audit=character.audit;if(!audit)throw new Error("Premium rules packet requires Rules Audit data.");return{status:audit.status,sourceMode:audit.sourceMode,rawIntegrity:Boolean(audit.rawIntegrity),rulesLabel:audit.rulesLabel,sourceDocument:audit.sourceDocument,sourceVersion:audit.sourceVersion,sourceUrl:audit.sourceUrl,sourcePdfUrl:audit.sourcePdfUrl,license:audit.license,scope:audit.scope,mechanics:(audit.mechanics||[]).map(item=>({label:item.label,value:item.value,source:`${item.source.version} · p.${item.source.page}`})),checks:[...(audit.checks||[])]};}
+  catch(error){console.error("[print-model] audit appendix failed",error);throw error;}
+}
 function roguePrintModel(character){
   try{
     if(character.class?.id!=="rogue")return null;const rogue=character.rogue;if(!rogue)throw new Error("Premium Rogue print requires Rogue progression state.");
@@ -64,12 +84,14 @@ function spellcastingModel(character){
     return{ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),slots,cantrips:names(character.spells.cantrips?.all),prepared:names(character.spells.prepared?.all),alwaysPrepared:names(character.spells.alwaysPrepared),spellbookCount:character.spells.spellbook?.all?.length||0};
   }catch(error){console.error("[print-model] spellcasting failed",error);throw error;}
 }
-function spellCatalog(character){
-  try{const source=character.class.id==="cleric"?clericSpellsFor(character.ruleset):character.class.id==="wizard"?wizardSpellsFor(character.ruleset):[];return new Map(source.map(spell=>[spell.id,spell.name]));}
-  catch(error){console.error("[print-model] spell catalog failed",error);throw error;}
+function spellCatalog(character){try{return new Map(spellCatalogRecords(character).map(spell=>[spell.id,spell.name]));}catch(error){console.error("[print-model] spell catalog failed",error);throw error;}}
+function spellCatalogRecords(character){
+  try{return character.class.id==="cleric"?clericSpellsFor(character.ruleset):character.class.id==="wizard"?wizardSpellsFor(character.ruleset):[];}
+  catch(error){console.error("[print-model] spell catalog records failed",error);throw error;}
 }
 function safePortrait(value){const portrait=String(value||"");return /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(portrait)?portrait:null;}
 function equipmentLines(items){return items.slice(0,12).map(item=>`${item.quantity>1?`${item.quantity} × `:""}${item.name}`);}
+function chunk(values,size){const pages=[];for(let i=0;i<values.length;i+=size)pages.push(values.slice(i,i+size));return pages;}
 function shorten(value,max){const text=String(value||"").replace(/\s+/g," ").trim();return text.length<=max?text:`${text.slice(0,max-1).trimEnd()}…`;}
 function abilityName(id){return({str:"Strength",dex:"Dexterity",con:"Constitution",int:"Intelligence",wis:"Wisdom",cha:"Charisma"})[id]||String(id||"");}
 function skillName(id){return String(id).replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());}
