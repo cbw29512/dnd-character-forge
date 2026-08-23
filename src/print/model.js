@@ -1,6 +1,7 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { abilityMod } from "../rules/math.js";
 import { buildQuickReference } from "../rules/reference.js";
+import { CUNNING_STRIKE_OPTIONS_2024, rogueCunningStrikeDc } from "../rules/rogue.js";
 import { speciesChoiceLabel } from "../rules/species.js";
 import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { clericSpellsFor } from "../data/cleric-spells.js";
@@ -22,6 +23,7 @@ export function buildPremiumPrintModel(character){
       attacks:(character.attacks||[]).slice(0,4).map(attack=>({name:attack.name,toHit:fmt(attack.attackBonus),damage:`${attack.damage}${fmt(attack.damageBonus)} ${attack.type}`})),
       feat,
       features:chooseFeatures(references,feat?.name),
+      rogueResources:roguePrintModel(character),
       proficiencies:{saves:character.saves.map(abilityName),tools:[...(character.toolProficiencies||[])],languages:[...(character.languages||[])],masteries:[...(character.masteryIds||[])]},
       equipment:equipmentLines(character.inventory||[]),
       spellcasting:spellcastingModel(character),
@@ -40,6 +42,22 @@ function chooseFeatures(references,featName){
   catch(error){console.error("[print-model] feature selection failed",error);throw error;}
 }
 function featurePriority(item){if(item.id?.startsWith("feature:"))return 0;if(item.id?.startsWith("species:"))return 1;if(item.id?.startsWith("style:"))return 2;return 3;}
+function roguePrintModel(character){
+  try{
+    if(character.class?.id!=="rogue")return null;const rogue=character.rogue;if(!rogue)throw new Error("Premium Rogue print requires Rogue progression state.");
+    const options=rogue.cunningStrikeOptions.map(id=>CUNNING_STRIKE_OPTIONS_2024.find(option=>option.id===id)).filter(Boolean).map(option=>({name:option.name,cost:`${option.cost}d6`,save:option.save?option.save.toUpperCase():null,effect:shorten(option.effect,105),requires:option.requires||null}));
+    return{
+      sneakAttack:`${rogue.sneakAttackDice}d6`,
+      expertise:rogue.expertiseCount,
+      masteries:rogue.masteryCount,
+      cunningStrikeDc:character.level>=5?rogueCunningStrikeDc(character):null,
+      effectsPerSneak:rogue.maxCunningStrikeEffects||0,
+      reliableTalent:Boolean(rogue.reliableTalent),
+      options,
+      scrollWarning:character.subclass?.id==="thief"&&character.level>=13?"Spell Scrolls use Intelligence. Above level 1: Intelligence (Arcana) DC 10 + spell level; a failed check disintegrates the scroll.":null
+    };
+  }catch(error){console.error("[print-model] Rogue resources failed",error);throw error;}
+}
 function spellcastingModel(character){
   try{
     if(!character.spells)return null;const catalog=spellCatalog(character),names=ids=>(ids||[]).map(id=>catalog.get(id)||id),slots=Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · ");
