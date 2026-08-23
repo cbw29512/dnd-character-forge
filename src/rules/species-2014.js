@@ -1,7 +1,11 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { WIZARD_SPELLS_2014 } from "../data/wizard-spells.js";
 import { SPECIES_2014, LANGUAGES_2014, DWARF_TOOLS_2014, DRAGONBORN_ANCESTRIES_2014 } from "../data/species-2014.js";
+import { SPECIES_REFERENCE_2014 } from "../data/species-reference-2014.js";
+import { REFERENCE_2014 } from "../data/quick-reference.js";
 import { pick } from "./random.js";
+
+Object.assign(REFERENCE_2014.species,SPECIES_REFERENCE_2014);
 
 const ALL_SKILLS=Object.freeze(Object.keys(SKILLS));
 const HIGH_ELF_CANTRIPS=Object.freeze(WIZARD_SPELLS_2014.filter(spell=>spell.level===0));
@@ -45,6 +49,7 @@ export function resolve2014Species(species,{level=1,skills=[],selections={}}={})
 export function validate2014Species(character){
   try{
     if(character?.ruleset!=="2014")return[];const errors=[],species=SPECIES_2014.find(item=>item.id===character.species?.id),choices=character.speciesChoices||{};if(!species)return["2014 race is outside the verified SRD 5.1 catalog."];
+    if(character.size!==species.size)errors.push(`${species.name} size should be ${species.size}.`);if(character.speed!==species.speed)errors.push(`${species.name} speed should be ${species.speed} ft.`);
     if(species.subrace&&(choices.subrace!==species.subrace||choices.subraceName!==species.subraceName))errors.push(`${species.name} subrace identity is invalid.`);
     if(species.id==="dwarf"&&!DWARF_TOOLS_2014.some(tool=>tool.id===choices.tool&&tool.name===choices.toolName&&(character.toolProficiencies||[]).includes(tool.name)))errors.push("Hill Dwarf tool proficiency choice is invalid.");
     if(species.id==="elf"){
@@ -58,7 +63,10 @@ export function validate2014Species(character){
       if(!ALL_SKILLS.includes(choices.skill1)||!ALL_SKILLS.includes(choices.skill2)||choices.skill1===choices.skill2||!character.skills.includes(choices.skill1)||!character.skills.includes(choices.skill2))errors.push("Half-Elf Skill Versatility choices are invalid.");if(!validExtraLanguage(choices.extraLanguage,species.fixedLanguages,character.languages))errors.push("Half-Elf extra language is invalid.");
     }
     if(species.id==="half-orc"&&!character.skills.includes("intimidation"))errors.push("Half-Orc is missing Menacing Intimidation proficiency.");
+    const expectedAdds={...(species.abilityAdds||{})};if(species.id==="half-elf"&&choices.ability1&&choices.ability2&&choices.ability1!==choices.ability2){expectedAdds[choices.ability1]=(expectedAdds[choices.ability1]||0)+1;expectedAdds[choices.ability2]=(expectedAdds[choices.ability2]||0)+1;}if(!sameRecord(expectedAdds,character.speciesAbilityAdds||{}))errors.push(`${species.name} racial ability increases are incorrect.`);
     for(const language of species.fixedLanguages||[])if(!character.languages.includes(language))errors.push(`${species.name} is missing racial language ${language}.`);
+    if(species.id==="elf"&&(character.speciesMagic?.ability!=="int"||character.speciesMagic?.cantrips?.[0]!==choices.cantripName))errors.push("High Elf race magic is incorrect.");
+    if(species.id==="tiefling"){const expected=speciesMagic2014(character);if(JSON.stringify(character.speciesMagic)!==JSON.stringify(expected))errors.push("Tiefling Infernal Legacy magic is incorrect.");}
     return errors;
   }catch(error){console.error("[species-2014] race validation failed",error);throw error;}
 }
@@ -79,3 +87,4 @@ function selectValue(values,requested,label){try{if(!requested)return pick(value
 function selectAvailable(values,requested,excluded,label){try{const available=values.filter(value=>!excluded.includes(value));if(requested){if(!available.includes(requested))throw new Error(`${label} "${requested}" is unavailable for this character.`);return requested;}return pick(available);}catch(error){console.error(`[species-2014] ${label} failed`,error);throw error;}}
 function selectLanguage(requested,excluded,label){try{return selectAvailable(LANGUAGES_2014,requested,excluded,label);}catch(error){console.error(`[species-2014] ${label} failed`,error);throw error;}}
 function validExtraLanguage(language,fixed,all){return Boolean(language&&LANGUAGES_2014.includes(language)&&!fixed.includes(language)&&all.includes(language));}
+function sameRecord(left,right){try{const a=Object.keys(left).sort(),b=Object.keys(right).sort();return a.length===b.length&&a.every((key,index)=>key===b[index]&&left[key]===right[key]);}catch(error){console.error("[species-2014] ability record comparison failed",error);throw error;}}
