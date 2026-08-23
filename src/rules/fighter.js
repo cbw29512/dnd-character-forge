@@ -4,12 +4,15 @@ export function fighterProgressionFor(ruleset,level,subclassId=null){
     if(!Number.isInteger(numeric)||numeric<1)throw new Error(`Invalid Fighter level: ${level}.`);
     if(ruleset==="2014")return Object.freeze({
       secondWindUses:1,
-      actionSurgeUses:numeric>=2?1:0,
-      indomitableUses:0,
+      actionSurgeUses:numeric>=17?2:numeric>=2?1:0,
+      indomitableUses:numeric>=17?3:numeric>=13?2:numeric>=9?1:0,
       masteryCount:0,
-      attacksPerAction:numeric>=5?2:1,
-      criticalMinimum:subclassId==="champion"&&numeric>=3?19:20,
-      initiativeAdvantage:false
+      attacksPerAction:numeric>=20?4:numeric>=11?3:numeric>=5?2:1,
+      criticalMinimum:subclassId==="champion"&&numeric>=15?18:subclassId==="champion"&&numeric>=3?19:20,
+      initiativeAdvantage:false,
+      additionalFightingStyle:subclassId==="champion"&&numeric>=10,
+      remarkableAthlete:subclassId==="champion"&&numeric>=7,
+      survivor:subclassId==="champion"&&numeric>=18
     });
     if(ruleset!=="2024")throw new Error(`Unsupported Fighter ruleset: ${ruleset}.`);
     return Object.freeze({
