@@ -42,6 +42,8 @@ export const REFERENCE_2024={
   },
   feat:{
     "Alert":r("Origin Feat","Initiative","Add your Proficiency Bonus to Initiative; already included above. Immediately after Initiative, you may swap with a willing ally in the same combat if neither of you is Incapacitated."),
+    "Magic Initiate (Cleric)":r("Origin Feat","Origin magic","Two selected Cleric cantrips and one selected level-1 Cleric spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Cleric list."),
+    "Magic Initiate (Wizard)":r("Origin Feat","Origin magic","Two selected Wizard cantrips and one selected level-1 Wizard spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Wizard list."),
     "Savage Attacker":r("Origin Feat","Once per turn","When you hit with a weapon, roll the weapon's damage dice twice and use either roll."),
     "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills."),
     "Boon of Combat Prowess":r("Epic Boon","Missed attack","The feat's +1 ability increase and maximum of 30 are already applied. When an attack roll misses, you can turn that miss into a hit; this benefit refreshes at the start of your next turn.")
