@@ -10,6 +10,19 @@ Accuracy-first pre-generated character website. Every configurable field default
 - The 2024 RAW pools are scoped to **SRD 5.2.1**, not the broader Player's Handbook spell list.
 - Duplicate rules choices, RAW records, spell choices, HTML IDs, Homebrew mechanics, and saved pregen mechanics are protected by validation/fingerprinting.
 
+## Rule-proof PDF standard
+A finished Character Forge character is intended to be something a player can print, save as PDF, share, and defend at a rules-heavy table.
+
+- PDF/print export is allowed only after character validation passes.
+- RAW sheets carry a structured **Rules Audit** showing the SRD boundary, source mode, selected character mechanics, and validation checks.
+- RAW audit integrity explicitly requires zero Homebrew mechanics.
+- Homebrew sheets disclose Homebrew mode instead of presenting themselves as RAW.
+- The print stylesheet targets US Letter, preserves intentional sheet colors, and protects important reference/audit cards from awkward page splitting where the browser supports it.
+- The export document title is generated from the character name, level, class, and subclass to produce a useful default PDF filename.
+- Unsupported rules remain unavailable rather than being filled with unverified assumptions.
+
+The Rules Audit is a provenance and validation report for Character Forge's **verified SRD slice**. As coverage expands, individual mechanics should gain source-location metadata so a future audit can point from every choice directly to its exact SRD rule location.
+
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
 - Human / Acolyte
@@ -45,7 +58,7 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
