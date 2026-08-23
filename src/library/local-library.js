@@ -22,6 +22,7 @@ export async function savePregen(character) {
   try {
     const items = loadPregens();
     const contentFingerprint = await fingerprint(pregenFingerprintPayload(character));
+    for(const item of items){if(!item.character)continue;item.fingerprint=await fingerprint(pregenFingerprintPayload(item.character));}
     const duplicate = items.find(item=>item.fingerprint===contentFingerprint);
     if (duplicate) throw new Error(`This pregen is mechanically identical to ${duplicate.name}. Open the existing library entry instead.`);
     const entry = { id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
