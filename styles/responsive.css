@@ -27,10 +27,24 @@
   .sheet-footer,.site-footer { display:block; }
   .sheet-footer span,.site-footer span { display:block; margin-top:5px; }
 }
+@page { size:Letter portrait; margin:.32in; }
 @media print {
-  body { background:#fff; }
-  .ambient,.site-header,.hero-copy,.forge-panel,.result-label,.site-footer,.character-actions { display:none !important; }
-  .site-shell { max-width:none; padding:0; }
+  html,body { background:#fff !important; }
+  body { margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .ambient,.site-header,.hero-copy,.forge-panel,.result-label,.site-footer,.character-actions,.toast { display:none !important; }
+  .site-shell { max-width:none; padding:0; margin:0; }
+  [data-view="pregens"],[data-view="homebrew"] { display:none !important; }
   .forge-workspace { display:block; }
-  .character-sheet { box-shadow:none; border:0; border-radius:0; }
+  .result-stage,#result { width:100%; margin:0; padding:0; }
+  .character-sheet { width:100%; margin:0; box-shadow:none; border:0; border-radius:0; overflow:visible; }
+  .character-hero { padding:.22in .24in; border-radius:0; }
+  .ability-grid { margin-top:.16in; gap:.05in; }
+  .ability-card { padding:.07in .04in; }
+  .metric { padding:.11in .05in; }
+  .detail-grid { gap:.09in; padding:.13in; }
+  .detail-card { padding:.11in; border-radius:8px; break-inside:avoid; page-break-inside:avoid; }
+  .spell-reference-card,.reference-item,.rules-audit,.attack-row { break-inside:avoid; page-break-inside:avoid; }
+  .rules-audit-card { break-before:auto; page-break-before:auto; }
+  .sheet-footer { padding:.09in .13in .11in; }
+  a { color:inherit; text-decoration:none; }
 }
