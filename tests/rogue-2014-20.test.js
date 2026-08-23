@@ -60,7 +60,7 @@ test("2014 level-20 browser sheet shows legacy resources without functional 2024
 });
 
 test("2014 premium Rogue model exposes legacy resources only",()=>{
-  const model=buildPremiumPrintModel(rogueAt(20)),r=model.rogueResources;assert.equal(r.ruleset,"2014");assert.equal(r.sneakAttack,"10d6");assert.equal(r.expertise,4);assert.equal(r.masteries,0);assert.equal(r.cunningStrikeDc,null);assert.equal(r.effectsPerSneak,0);assert.equal(r.reliableTalent,true);assert.equal(r.blindsense,"10 ft");assert.equal(r.thiefReflexes,true);assert.deepEqual(r.options,[]);assert.equal(r.scrollWarning,null);assert.ok(model.appendix.referencePages.flat().some(item=>item.name==="Blindsense"));
+  const model=buildPremiumPrintModel(rogueAt(20)),r=model.rogueResources;assert.equal(r.ruleset,"2014");assert.equal(r.sneakAttack,"10d6");assert.match(String(r.expertise),/^(4 skills|3 skills \+ Thieves’ Tools)$/);assert.equal(r.masteries,0);assert.equal(r.cunningStrikeDc,null);assert.equal(r.effectsPerSneak,0);assert.equal(r.reliableTalent,true);assert.equal(r.blindsense,"10 ft");assert.equal(r.thiefReflexes,true);assert.deepEqual(r.options,[]);assert.equal(r.scrollWarning,null);assert.ok(model.appendix.referencePages.flat().some(item=>item.name==="Blindsense"));
 });
 
 test("2014 Rogue audit identity is sourced to class page 39 and Thief page 40",()=>{

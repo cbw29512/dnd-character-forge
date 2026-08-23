@@ -27,6 +27,7 @@ export function pregenFingerprintPayload(character) {
       abilityMaximums:character.abilityMaximums||null,
       epicBoonAbility:character.epicBoonAbility||null,
       skills:[...(character.skills||[])].sort(),
+      expertise:[...(character.expertise||[])].sort(),
       saves:[...(character.saves||[])].sort(),
       languages:[...(character.languages||[])].sort(),
       feats:(character.feats||[]).map(item=>item.id||item.name).sort(),
