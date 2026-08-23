@@ -63,6 +63,12 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .detail-card h3 { margin:0 0 11px; font:700 .95rem/1.2 Georgia,serif; }
 .detail-card p { margin:0; color:#635e55; font-size:.78rem; line-height:1.6; }
 .fighter-resources-card { background:#f7f2e8; border-color:#d3c3a8; }
+.origin-magic-card { background:#f3f8f5; border-color:#c9d9d1; }
+.origin-magic-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; margin-bottom:10px; }
+.origin-magic-grid div { min-width:0; padding:9px; border:1px solid #d5e2dc; border-radius:9px; background:#fbfefc; }
+.origin-magic-grid span,.origin-magic-grid strong { display:block; }
+.origin-magic-grid span { color:#718078; font-size:.55rem; font-weight:900; letter-spacing:.06em; text-transform:uppercase; }
+.origin-magic-grid strong { margin-top:4px; color:#2f3b35; font:700 .78rem/1.25 Georgia,serif; overflow-wrap:anywhere; }
 .fighter-resource-grid { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px; }
 .fighter-resource { padding:9px 7px; border:1px solid #ded1bb; border-radius:9px; background:#fffdf9; text-align:center; }
 .fighter-resource span,.fighter-resource strong { display:block; }
@@ -76,4 +82,4 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .skill { display:flex; justify-content:space-between; gap:8px; color:#615c54; font-size:.73rem; padding:3px 0; }
 .skill.is-proficient { color:#24231f; font-weight:800; }
 .sheet-footer { display:flex; justify-content:space-between; gap:16px; padding:13px 20px 17px; border-top:1px solid #ddd3c4; color:#7d776e; font-size:.66rem; }
-@media (max-width:680px){.species-choice-fields,.background-choice-fields{grid-template-columns:1fr}.fighter-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media (max-width:680px){.species-choice-fields,.background-choice-fields,.origin-magic-grid{grid-template-columns:1fr}.fighter-resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
