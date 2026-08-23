@@ -4,9 +4,13 @@ export function fighterFeatures(ruleset,level,subclass){
     if(ruleset==="2014"){
       features.push("Fighting Style","Second Wind");
       if(level>=2)features.push("Action Surge");
-      if(level>=3&&subclass==="champion")features.push("Improved Critical");
+      if(level>=3&&subclass==="champion")features.push(level>=15?"Superior Critical":"Improved Critical");
       if(level>=4)features.push("Ability Score Improvement");
       if(level>=5)features.push("Extra Attack");
+      if(level>=7&&subclass==="champion")features.push("Remarkable Athlete");
+      if(level>=9)features.push("Indomitable");
+      if(level>=10&&subclass==="champion")features.push("Additional Fighting Style");
+      if(level>=18&&subclass==="champion")features.push("Survivor");
       return features;
     }
     features.push("Fighting Style","Second Wind","Weapon Mastery");
