@@ -17,11 +17,13 @@ A finished Character Forge character is intended to be something a player can pr
 - RAW sheets carry a structured **Rules Audit** showing the SRD boundary, source mode, selected character mechanics, and validation checks.
 - RAW audit integrity explicitly requires zero Homebrew mechanics.
 - Homebrew sheets disclose Homebrew mode instead of presenting themselves as RAW.
+- Every supported core identity choice and every rendered play-reference mechanic must resolve to verified SRD version + printed-page provenance. Missing provenance fails closed instead of producing an uncited audited sheet.
+- Source metadata is stored separately from mechanical rules data so citation maintenance cannot silently alter character math.
 - The print stylesheet targets US Letter, preserves intentional sheet colors, and protects important reference/audit cards from awkward page splitting where the browser supports it.
 - The export document title is generated from the character name, level, class, and subclass to produce a useful default PDF filename.
 - Unsupported rules remain unavailable rather than being filled with unverified assumptions.
 
-The Rules Audit is a provenance and validation report for Character Forge's **verified SRD slice**. As coverage expands, individual mechanics should gain source-location metadata so a future audit can point from every choice directly to its exact SRD rule location.
+The Rules Audit is a provenance and validation report for Character Forge's **verified SRD slice**. Core species, background, class, subclass, spellcasting, feature, fighting-style, feat, and Weapon Mastery references in the current slice now carry source locators to the official SRD PDFs. New supported mechanics must add provenance before the quality gate can pass.
 
 ## Current verified slice
 ### RAW 2014 / SRD 5.1
@@ -37,11 +39,11 @@ The Rules Audit is a provenance and validation report for Character Forge's **ve
 - Cleric / Life Domain, levels 1–5
 
 ## Playable character sheet
-- Core traits/features render concise action/resource/effect cards.
+- Core traits/features render concise action/resource/effect cards with SRD source locators.
 - 2024 Wizard and Cleric cantrips render structured SRD reference cards with casting time, range, components, duration, resolution, concise effect, and current-level scaling.
 - Each 2024 cantrip reference records its SRD 5.2.1 source page for audit traceability.
 - Current-level cantrip scaling is calculated for damage, True Strike extra damage, and Spare the Dying range.
-- Weapon Mastery choices display friendly weapon/property mechanics instead of raw IDs.
+- Weapon Mastery choices display friendly weapon/property mechanics and cite the SRD mastery-property page instead of exposing raw IDs.
 - Level 1+ spell descriptions are the next reference layer; spell DC, attack, slots, preparation, always-prepared spells, and Wizard spellbook structure are already displayed.
 
 ## SRD spell boundary
@@ -58,7 +60,7 @@ The 2024 Wizard cantrip pool is regression-tested against the SRD 5.2.1 Wizard s
 The browser-local foundation includes My Pregens and My Homebrew. SHA-256 mechanical fingerprints block renamed duplicates, and saved entries can be opened/used back in Forge.
 
 ## Quality gate
-Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, PDF/audit contract tests, and website integrity checks.
+Pull requests and pushes to `main` run JavaScript syntax checks, rules regression tests, the 1,000-character torture test, spell progression/picker tests, exact SRD cantrip-list tests, RAW data/spell duplicate checks, quick-reference completeness tests, exact provenance/page tests, PDF/audit contract tests, and website integrity checks.
 
 ## Run locally
 `python -m http.server 8080`
