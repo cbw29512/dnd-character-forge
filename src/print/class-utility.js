@@ -1,8 +1,9 @@
 import { paladinAuraBonus } from "../rules/paladin.js";
+import { abilityMod } from "../rules/math.js";
 
 export function buildClassUtility(character){
   try{
-    const builders={barbarian:barbarianUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
+    const builders={barbarian:barbarianUtility,bard:bardUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
     return (builders[character?.class?.id]||defaultUtility)(character);
   }catch(error){console.error("[class-utility] build failed",error);throw error;}
 }
@@ -12,6 +13,12 @@ function barbarianUtility(character){
     const b=character.barbarian;if(!b)return null;const rage=b.unlimitedRage?"∞":b.rageUses,is2014=character.ruleset==="2014",brutal=is2014?(b.brutalCriticalDice?`+${b.brutalCriticalDice}`:"—"):(b.brutalStrikeDice?`${b.brutalStrikeDice}d10`:"—");
     return{title:"Primal Fury",kind:"barbarian",stats:[stat("Rage",rage,b.unlimitedRage?"unlimited":"uses"),stat("Rage Damage",`+${b.rageDamage}`,"damage"),stat("Attacks",b.attacksPerAction,"per action"),stat(is2014?"Crit Dice":"Brutal Strike",brutal,is2014?"weapon dice":"extra damage")],note:character.ruleset==="2024"?`${b.masteryCount} Weapon Masteries${b.brutalStrikeEffectCount?` · ${b.brutalStrikeEffectCount} Brutal Strike effect${b.brutalStrikeEffectCount===1?"":"s"}`:""}${b.frenzy?" · Frenzy active":""}`:`${b.initiativeAdvantage?"Feral Instinct · ":""}${b.frenzy?"Berserker Frenzy · ":""}${b.relentlessRage?"Relentless Rage ready":"Rage ready"}`};
   }catch(error){console.error("[class-utility] Barbarian utility failed",error);throw error;}
+}
+function bardUtility(character){
+  try{
+    const b=character.bard;if(!b)return null;const uses=Math.max(1,abilityMod(character.abilities.cha)),spellCount=character.ruleset==="2014"?(character.spells?.known?.all?.length||0):(character.spells?.prepared?.all?.length||0),spellUnit=character.ruleset==="2014"?"known":"prepared";
+    return{title:"Living Legend",kind:"bard",stats:[stat("Inspiration",b.bardicInspirationDie,"die"),stat("Inspiration",uses,"uses"),stat("Expertise",b.expertiseCount,"skills"),stat("Spells",spellCount,spellUnit)],note:character.ruleset==="2014"?`${b.songOfRestDie?`Song of Rest ${b.songOfRestDie} · `:""}${b.magicalSecretsCount?`${b.magicalSecretsCount} Magical Secrets`:"Magical Secrets later"}${b.peerlessSkill?" · Peerless Skill":""}`:`${b.magicalDiscoveriesCount?`${b.magicalDiscoveriesCount} Lore Discoveries · `:""}${b.magicalSecrets?"Magical Secrets · ":""}${b.superiorInspiration?`Initiative floor ${b.superiorInspirationFloor}`:"Bardic Inspiration ready"}${b.wordsOfCreation?" · Words of Creation":""}`};
+  }catch(error){console.error("[class-utility] Bard utility failed",error);throw error;}
 }
 function druidUtility(character){
   try{
