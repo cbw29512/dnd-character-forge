@@ -1,0 +1,61 @@
+import { abilityMod } from "./math.js";
+import { resolveSpellChoices } from "./spells.js";
+import { duplicateValues, uniqueStrings } from "./duplicates.js";
+import { sample } from "./random.js";
+import { bardSpellsFor } from "../data/bard-spells.js";
+import { bardMagicalSecretsPool } from "../data/bard-magical-secrets.js";
+import { bardProgressionFor, maxBardSpellLevel } from "./bard.js";
+
+const WORDS_OF_CREATION=Object.freeze(["power-word-heal","power-word-kill"]);
+
+export function bardAlwaysPrepared(character){
+  try{
+    const ids=[];if(character.ruleset==="2024"&&character.bard?.wordsOfCreation)ids.push(...WORDS_OF_CREATION);return ids;
+  }catch(error){console.error("[bard-spellcasting] always-prepared lookup failed",error);throw error;}
+}
+export function bard2024NonBardCapacity(level){
+  try{const value=Number(level);if(!Number.isInteger(value)||value<1||value>20)throw new Error(`Unsupported Bard level ${level}.`);if(value<10)return 0;const prepared9=bardProgressionFor("2024",9).prepared,preparedNow=bardProgressionFor("2024",value).prepared;return Math.min(preparedNow,(value-9)+(preparedNow-prepared9));}catch(error){console.error("[bard-spellcasting] Magical Secrets capacity failed",error);throw error;}
+}
+export function validateBardSpellSelections(character,selections={}){
+  try{
+    const ruleset=character.ruleset,progression=bardProgressionFor(ruleset,character.level,character.subclass?.id),maxLevel=maxBardSpellLevel(character.level),base=bardSpellsFor(ruleset),allSecrets=bardMagicalSecretsPool(ruleset),lorePool=ruleset==="2024"?bardMagicalSecretsPool("2024",{loreDiscovery:true}):allSecrets;
+    const cantrips=selections.cantrips||[],known=selections.known||[],prepared=selections.prepared||[],magicalSecrets=selections.magicalSecrets||[],loreDiscoveries=selections.loreDiscoveries||[];
+    for(const [label,values] of [["Bard cantrips",cantrips],["Bard known spells",known],["Bard prepared spells",prepared],["Magical Secrets",magicalSecrets],["Lore discoveries",loreDiscoveries]]){const duplicates=duplicateValues(values);if(duplicates.length)throw new Error(`Duplicate ${label}: ${duplicates.join(", ")}.`);}
+    const allSelected=[...cantrips,...known,...prepared,...magicalSecrets,...loreDiscoveries],crossDuplicates=duplicateValues(allSelected);if(crossDuplicates.length)throw new Error(`Bard spell selections overlap across buckets: ${crossDuplicates.join(", ")}.`);
+    const baseCantrips=new Set(base.filter(spell=>spell.level===0).map(spell=>spell.id)),baseLeveled=new Set(base.filter(spell=>spell.level>0&&spell.level<=maxLevel).map(spell=>spell.id)),secretLegal=new Set(allSecrets.filter(spell=>spell.level===0||spell.level<=maxLevel).map(spell=>spell.id)),loreLegal=new Set(lorePool.filter(spell=>spell.level===0||spell.level<=maxLevel).map(spell=>spell.id));
+    if(cantrips.length>progression.cantrips)throw new Error(`Choose at most ${progression.cantrips} Bard cantrips.`);const badCantrips=cantrips.filter(id=>!baseCantrips.has(id));if(badCantrips.length)throw new Error(`Illegal Bard cantrip selection: ${badCantrips.join(", ")}.`);
+    const expectedLore=ruleset==="2014"?(progression.loreMagicalSecretsCount||0):(progression.magicalDiscoveriesCount||0);if(loreDiscoveries.length>expectedLore)throw new Error(`Choose at most ${expectedLore} College of Lore discovery spells.`);const badLore=loreDiscoveries.filter(id=>!loreLegal.has(id));if(badLore.length)throw new Error(`Illegal College of Lore spell selection: ${badLore.join(", ")}.`);
+    if(ruleset==="2014"){
+      if(prepared.length)throw new Error("2014 Bard uses spells known, not prepared-spell selections.");
+      const standardSecrets=progression.magicalSecretsCount||0,normalKnown=progression.known-standardSecrets;if(known.length>normalKnown)throw new Error(`Choose at most ${normalKnown} normal Bard spells known.`);if(magicalSecrets.length>standardSecrets)throw new Error(`Choose at most ${standardSecrets} standard Magical Secrets.`);
+      const badKnown=known.filter(id=>!baseLeveled.has(id)),badSecrets=magicalSecrets.filter(id=>!secretLegal.has(id));if(badKnown.length)throw new Error(`Illegal Bard known-spell selection: ${badKnown.join(", ")}.`);if(badSecrets.length)throw new Error(`Illegal Magical Secrets selection: ${badSecrets.join(", ")}.`);return{valid:true,maxLevel,normalKnown,standardSecrets,loreCount:expectedLore,nonBardCapacity:null};
+    }
+    if(ruleset!=="2024")throw new Error(`Unsupported Bard spell ruleset: ${ruleset}.`);if(known.length)throw new Error("2024 Bard uses prepared spells, not spells-known selections.");
+    const always=new Set(bardAlwaysPrepared(character));for(const id of always)if(prepared.includes(id)||magicalSecrets.includes(id)||loreDiscoveries.includes(id))throw new Error(`${id} is already always prepared and cannot consume another Bard spell choice.`);
+    const combinedPrepared=[...prepared,...magicalSecrets];if(combinedPrepared.length>progression.prepared)throw new Error(`Choose at most ${progression.prepared} prepared Bard spells.`);const allowed=character.level>=10?secretLegal:baseLeveled,badPrepared=combinedPrepared.filter(id=>!allowed.has(id)||baseCantrips.has(id));if(badPrepared.length)throw new Error(`Illegal Bard prepared-spell selection: ${badPrepared.join(", ")}.`);
+    const baseIds=new Set(base.map(spell=>spell.id)),outside=combinedPrepared.filter(id=>!baseIds.has(id)),capacity=bard2024NonBardCapacity(character.level);if(outside.length>capacity)throw new Error(`This level-${character.level} Bard can legally have at most ${capacity} prepared spells from outside the Bard list through Magical Secrets.`);
+    return{valid:true,maxLevel,normalKnown:null,standardSecrets:null,loreCount:expectedLore,nonBardCapacity:capacity};
+  }catch(error){console.error("[bard-spellcasting] selection validation failed",error);throw error;}
+}
+export function buildBardSpellcasting(character,selections={}){
+  try{
+    const validation=validateBardSpellSelections(character,selections),p=bardProgressionFor(character.ruleset,character.level,character.subclass?.id),maxLevel=validation.maxLevel,base=bardSpellsFor(character.ruleset),allSecrets=bardMagicalSecretsPool(character.ruleset),lorePool=character.ruleset==="2024"?bardMagicalSecretsPool("2024",{loreDiscovery:true}):allSecrets,namesById=new Map([...allSecrets,...lorePool,...base].map(spell=>[spell.id,spell.name]));
+    const baseCantrips=base.filter(spell=>spell.level===0).map(spell=>spell.id),cantrips=resolveSpellChoices({available:baseCantrips,selected:selections.cantrips||[],required:p.cantrips,label:"Bard cantrips"});
+    const loreAvailable=lorePool.filter(spell=>spell.level===0||spell.level<=maxLevel).map(spell=>spell.id),loreDiscoveries=resolveSpellChoices({available:loreAvailable,selected:selections.loreDiscoveries||[],required:validation.loreCount,label:character.ruleset==="2014"?"Additional Magical Secrets":"Magical Discoveries",excluded:cantrips.all});
+    if(character.ruleset==="2014"){
+      const knownPool=base.filter(spell=>spell.level>0&&spell.level<=maxLevel).map(spell=>spell.id),normalKnown=resolveSpellChoices({available:knownPool,selected:selections.known||[],required:validation.normalKnown,label:"known Bard spells",excluded:[...cantrips.all,...loreDiscoveries.all]}),secretPool=allSecrets.filter(spell=>spell.level===0||spell.level<=maxLevel).map(spell=>spell.id),magicalSecrets=resolveSpellChoices({available:secretPool,selected:selections.magicalSecrets||[],required:validation.standardSecrets,label:"Magical Secrets",excluded:[...cantrips.all,...normalKnown.all,...loreDiscoveries.all]});
+      const knownAll=uniqueStrings([...normalKnown.all,...magicalSecrets.all,...loreDiscoveries.all]),known={selected:uniqueStrings([...normalKnown.selected,...magicalSecrets.selected,...loreDiscoveries.selected]),randomized:uniqueStrings([...normalKnown.randomized,...magicalSecrets.randomized,...loreDiscoveries.randomized]),all:knownAll},all=uniqueStrings([...cantrips.all,...knownAll].map(id=>namesById.get(id)||id));
+      return{ability:"cha",saveDc:8+character.proficiency+abilityMod(character.abilities.cha),attackBonus:character.proficiency+abilityMod(character.abilities.cha),slots:p.slots,cantrips,known,prepared:{selected:[],randomized:[],all:[]},alwaysPrepared:[],magicalSecrets:magicalSecrets.all,loreDiscoveries:loreDiscoveries.all,all};
+    }
+    const alwaysPrepared=bardAlwaysPrepared(character),selectedPrepared=uniqueStrings([...(selections.prepared||[]),...(selections.magicalSecrets||[])]),prepared=resolve2024Prepared({base,allSecrets,maxLevel,required:p.prepared,selected:selectedPrepared,excluded:[...cantrips.all,...loreDiscoveries.all,...alwaysPrepared],outsideCapacity:validation.nonBardCapacity}),baseIds=new Set(base.map(spell=>spell.id)),magicalSecrets=prepared.all.filter(id=>!baseIds.has(id)),alwaysAll=uniqueStrings([...alwaysPrepared,...loreDiscoveries.all]),all=uniqueStrings([...cantrips.all,...prepared.all,...alwaysAll].map(id=>namesById.get(id)||id));
+    return{ability:"cha",saveDc:8+character.proficiency+abilityMod(character.abilities.cha),attackBonus:character.proficiency+abilityMod(character.abilities.cha),slots:p.slots,cantrips,known:{selected:[],randomized:[],all:[]},prepared,alwaysPrepared:alwaysAll,magicalSecrets,loreDiscoveries:loreDiscoveries.all,all};
+  }catch(error){console.error("[bard-spellcasting] build failed",error);throw error;}
+}
+function resolve2024Prepared({base,allSecrets,maxLevel,required,selected,excluded,outsideCapacity}){
+  try{
+    const baseLegal=base.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!excluded.includes(spell.id)).map(spell=>spell.id),allLegal=allSecrets.filter(spell=>spell.level>0&&spell.level<=maxLevel&&!excluded.includes(spell.id)).map(spell=>spell.id),baseSet=new Set(base.map(spell=>spell.id)),chosen=uniqueStrings(selected),outsideSelected=chosen.filter(id=>!baseSet.has(id)).length;if(chosen.length>required)throw new Error(`Choose at most ${required} prepared Bard spells.`);if(outsideSelected>outsideCapacity)throw new Error(`Selected Magical Secrets exceed the legal outside-list capacity of ${outsideCapacity}.`);
+    const randomized=[],ordered=sample(allLegal,allLegal.length,chosen);let outside=outsideSelected;for(const id of ordered){if(chosen.length+randomized.length>=required)break;if(!baseSet.has(id)&&outside>=outsideCapacity)continue;randomized.push(id);if(!baseSet.has(id))outside++;}
+    if(chosen.length+randomized.length<required){const fallback=sample(baseLegal,baseLegal.length,[...chosen,...randomized]);for(const id of fallback){if(chosen.length+randomized.length>=required)break;randomized.push(id);}}
+    if(chosen.length+randomized.length!==required)throw new Error(`Unable to construct ${required} legal prepared Bard spells.`);return{selected:[...chosen],randomized,all:[...chosen,...randomized]};
+  }catch(error){console.error("[bard-spellcasting] 2024 prepared resolution failed",error);throw error;}
+}
