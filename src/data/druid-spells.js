@@ -46,7 +46,8 @@ const CIRCLE_EXTRAS_2014={
   forest:[[2,"Barkskin"],[2,"Spider Climb"],[3,"Call Lightning"],[3,"Plant Growth"],[4,"Divination"],[4,"Freedom of Movement"],[5,"Commune with Nature"],[5,"Tree Stride"]],
   grassland:[[2,"Invisibility"],[2,"Pass without Trace"],[3,"Daylight"],[3,"Haste"],[4,"Divination"],[4,"Freedom of Movement"],[5,"Dream"],[5,"Insect Plague"]],
   mountain:[[2,"Spider Climb"],[2,"Spike Growth"],[3,"Lightning Bolt"],[3,"Meld into Stone"],[4,"Stone Shape"],[4,"Stoneskin"],[5,"Passwall"],[5,"Wall of Stone"]],
-  swamp:[[2,"Acid Arrow"],[2,"Darkness"],[3,"Water Walk"],[3,"Stinking Cloud"],[4,"Freedom of Movement"],[4,"Locate Creature"],[5,"Insect Plague"],[5,"Scrying"]]
+  swamp:[[2,"Acid Arrow"],[2,"Darkness"],[3,"Water Walk"],[3,"Stinking Cloud"],[4,"Freedom of Movement"],[4,"Locate Creature"],[5,"Insect Plague"],[5,"Scrying"]],
+  underdark:[[2,"Spider Climb"],[2,"Web"],[3,"Gaseous Form"],[3,"Stinking Cloud"],[4,"Greater Invisibility"],[4,"Stone Shape"],[5,"Cloudkill"],[5,"Insect Plague"]]
 };
 const CIRCLE_2024={
   arid:[[0,"Fire Bolt"],[1,"Burning Hands"],[2,"Blur"],[3,"Fireball"],[4,"Blight"],[5,"Wall of Stone"]],
@@ -54,7 +55,7 @@ const CIRCLE_2024={
   temperate:[[0,"Shocking Grasp"],[1,"Sleep"],[2,"Misty Step"],[3,"Lightning Bolt"],[4,"Freedom of Movement"],[5,"Tree Stride"]],
   tropical:[[0,"Acid Splash"],[1,"Ray of Sickness"],[2,"Web"],[3,"Stinking Cloud"],[4,"Polymorph"],[5,"Insect Plague"]]
 };
-const EXTRA_SCHOOLS=Object.freeze({"Fire Bolt":"Evocation","Burning Hands":"Evocation",Blur:"Illusion",Fireball:"Evocation","Ray of Frost":"Evocation",Sleep:"Enchantment","Misty Step":"Conjuration","Lightning Bolt":"Evocation","Shocking Grasp":"Evocation","Acid Splash":"Evocation","Ray of Sickness":"Necromancy",Web:"Conjuration","Stinking Cloud":"Conjuration",Slow:"Transmutation","Mirror Image":"Illusion",Silence:"Illusion","Create Food and Water":"Conjuration","Spider Climb":"Transmutation",Invisibility:"Illusion",Haste:"Transmutation",Dream:"Illusion",Passwall:"Transmutation","Acid Arrow":"Evocation",Darkness:"Evocation"});
+const EXTRA_SCHOOLS=Object.freeze({"Fire Bolt":"Evocation","Burning Hands":"Evocation",Blur:"Illusion",Fireball:"Evocation","Ray of Frost":"Evocation",Sleep:"Enchantment","Misty Step":"Conjuration","Lightning Bolt":"Evocation","Shocking Grasp":"Evocation","Acid Splash":"Evocation","Ray of Sickness":"Necromancy",Web:"Conjuration","Stinking Cloud":"Conjuration",Slow:"Transmutation","Mirror Image":"Illusion",Silence:"Illusion","Create Food and Water":"Conjuration","Spider Climb":"Transmutation",Invisibility:"Illusion",Haste:"Transmutation",Dream:"Illusion",Passwall:"Transmutation","Acid Arrow":"Evocation",Darkness:"Evocation","Gaseous Form":"Transmutation","Greater Invisibility":"Illusion",Cloudkill:"Conjuration"});
 
 function circleUnlockLevel(ruleset,spellLevel){
   try{
