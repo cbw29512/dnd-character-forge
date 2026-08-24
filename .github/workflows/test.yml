@@ -63,6 +63,8 @@ jobs:
         run: node tests/bard-browser-print-gate.mjs
       - name: Verify Monk premium PDFs in Chrome
         run: node tests/monk-browser-print-gate.mjs
+      - name: Verify Sorcerer premium PDFs in Chrome
+        run: node tests/sorcerer-browser-print-gate.mjs
       - name: Upload premium print visual review
         if: always()
         uses: actions/upload-artifact@v4
