@@ -28,6 +28,8 @@
   .site-shell { padding-top:34px; }
   .hero-copy h1 { font-size:clamp(3.1rem,17vw,5.4rem); }
   .hero-lede { font-size:.98rem; }
+  .seo-about { margin-top:42px; padding:26px 22px; }
+  .seo-about h2 { font-size:1.65rem; }
   .field-grid { grid-template-columns:1fr; }
   .field-emphasis { grid-column:auto; }
   .field small { min-height:auto; }
@@ -46,7 +48,7 @@
 @media print {
   html,body { background:#fff !important; }
   body { margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .ambient,.site-header,.hero-copy,.forge-panel,.result-label,.site-footer,.character-actions,.toast { display:none !important; }
+  .ambient,.site-header,.hero-copy,.forge-panel,.result-label,.site-footer,.character-actions,.toast,.seo-about { display:none !important; }
   .site-shell { max-width:none; padding:0; margin:0; }
   [data-view="pregens"],[data-view="homebrew"] { display:none !important; }
   .forge-workspace { display:block; }
