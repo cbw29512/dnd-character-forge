@@ -7,7 +7,8 @@ export function monkProgressionFor(ruleset,level,subclassId=null){
       martialArtsDie:martialArtsDie2014(value),resourceName:"Ki",resourcePoints:value>=2?value:0,resourceRecovery:"Short or Long Rest",unarmoredMovementBonus:movementBonus(value),attacksPerAction:value>=5?2:1,
       unarmoredDefense:true,martialArts:true,flurryOfBlows:value>=2,flurryStrikeCount:value>=2?2:0,patientDefense:value>=2,stepOfTheWind:value>=2,uncannyMetabolism:false,
       deflectMissiles:value>=3,deflectAttacks:false,slowFall:value>=4,stunningStrike:value>=5,stunningStrikeOncePerTurn:false,empoweredStrikes:value>=6,evasion:value>=7,stillnessOfMind:value>=7,acrobaticMovement:value>=9,
-      heightenedFocus:false,selfRestoration:false,purityOfBody:value>=10,tongueOfSunAndMoon:value>=13,deflectEnergy:false,allSaveProficiency:value>=14,saveReroll:value>=14,timelessBody:value>=15,perfectFocus:false,initiativeResourceFloor:value>=20?4:0,
+      heightenedFocus:false,selfRestoration:false,purityOfBody:value>=10,tongueOfSunAndMoon:value>=13,deflectEnergy:false,allSaveProficiency:value>=14,saveReroll:value>=14,timelessBody:value>=15,perfectFocus:false,
+      initiativeResourceFloor:value>=20?4:0,initiativeResourceTrigger:value>=20?"zero":null,initiativeResourceRestore:value>=20?4:0,initiativeResourceRequiresSkipUncanny:false,
       emptyBody:value>=18,superiorDefense:false,epicBoon:false,bodyAndMind:false,bodyAndMindMaximum:20,
       openHandTechnique:openHand&&value>=3,wholenessOfBody:openHand&&value>=6,wholenessAction:openHand&&value>=6?"Action":null,wholenessUses:openHand&&value>=6?1:0,tranquility:openHand&&value>=11,fleetStep:false,quiveringPalm:openHand&&value>=17,quiveringPalmCost:openHand&&value>=17?3:0,quiveringPalmDamage:openHand&&value>=17?"Fail: 0 HP; Success: 10d10 Necrotic":null
     });
@@ -16,7 +17,8 @@ export function monkProgressionFor(ruleset,level,subclassId=null){
       martialArtsDie:martialArtsDie2024(value),resourceName:"Focus",resourcePoints:value>=2?value:0,resourceRecovery:"Short or Long Rest",unarmoredMovementBonus:movementBonus(value),attacksPerAction:value>=5?2:1,
       unarmoredDefense:true,martialArts:true,flurryOfBlows:value>=2,flurryStrikeCount:value>=10?3:value>=2?2:0,patientDefense:value>=2,stepOfTheWind:value>=2,uncannyMetabolism:value>=2,
       deflectMissiles:false,deflectAttacks:value>=3,slowFall:value>=4,stunningStrike:value>=5,stunningStrikeOncePerTurn:value>=5,empoweredStrikes:value>=6,evasion:value>=7,stillnessOfMind:false,acrobaticMovement:value>=9,
-      heightenedFocus:value>=10,selfRestoration:value>=10,purityOfBody:false,tongueOfSunAndMoon:false,deflectEnergy:value>=13,allSaveProficiency:value>=14,saveReroll:value>=14,timelessBody:false,perfectFocus:value>=15,initiativeResourceFloor:value>=15?4:0,
+      heightenedFocus:value>=10,selfRestoration:value>=10,purityOfBody:false,tongueOfSunAndMoon:false,deflectEnergy:value>=13,allSaveProficiency:value>=14,saveReroll:value>=14,timelessBody:false,perfectFocus:value>=15,
+      initiativeResourceFloor:value>=15?4:0,initiativeResourceTrigger:value>=15?"three-or-fewer":null,initiativeResourceRestore:value>=15?4:0,initiativeResourceRequiresSkipUncanny:value>=15,
       emptyBody:false,superiorDefense:value>=18,epicBoon:value>=19,bodyAndMind:value>=20,bodyAndMindMaximum:value>=20?25:20,
       openHandTechnique:openHand&&value>=3,wholenessOfBody:openHand&&value>=6,wholenessAction:openHand&&value>=6?"Bonus Action":null,wholenessUses:null,tranquility:false,fleetStep:openHand&&value>=11,quiveringPalm:openHand&&value>=17,quiveringPalmCost:openHand&&value>=17?4:0,quiveringPalmDamage:openHand&&value>=17?"Fail: 10d12 Force; Success: half":null
     });
