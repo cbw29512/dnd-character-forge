@@ -1,9 +1,10 @@
 import { paladinAuraBonus } from "../rules/paladin.js";
+import { monkSaveDc } from "../rules/monk.js";
 import { abilityMod } from "../rules/math.js";
 
 export function buildClassUtility(character){
   try{
-    const builders={barbarian:barbarianUtility,bard:bardUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
+    const builders={barbarian:barbarianUtility,bard:bardUtility,monk:monkUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
     return (builders[character?.class?.id]||defaultUtility)(character);
   }catch(error){console.error("[class-utility] build failed",error);throw error;}
 }
@@ -19,6 +20,12 @@ function bardUtility(character){
     const b=character.bard;if(!b)return null;const uses=Math.max(1,abilityMod(character.abilities.cha)),spellCount=character.ruleset==="2014"?(character.spells?.known?.all?.length||0):(character.spells?.prepared?.all?.length||0),spellUnit=character.ruleset==="2014"?"known":"prepared";
     return{title:"Living Legend",kind:"bard",stats:[stat("Inspiration",b.bardicInspirationDie,"die"),stat("Inspiration",uses,"uses"),stat("Expertise",b.expertiseCount,"skills"),stat("Spells",spellCount,spellUnit)],note:character.ruleset==="2014"?`${b.songOfRestDie?`Song of Rest ${b.songOfRestDie} · `:""}${b.magicalSecretsCount?`${b.magicalSecretsCount} Magical Secrets`:"Magical Secrets later"}${b.peerlessSkill?" · Peerless Skill":""}`:`${b.magicalDiscoveriesCount?`${b.magicalDiscoveriesCount} Lore Discoveries · `:""}${b.magicalSecrets?"Magical Secrets · ":""}${b.superiorInspiration?`Initiative floor ${b.superiorInspirationFloor}`:"Bardic Inspiration ready"}${b.wordsOfCreation?" · Words of Creation":""}`};
   }catch(error){console.error("[class-utility] Bard utility failed",error);throw error;}
+}
+function monkUtility(character){
+  try{
+    const m=character.monk;if(!m)return null;const resource=character.level>=2?m.resourcePoints:"—",resourceUnit=character.level>=2?`${m.resourceName} Points`:"unavailable";
+    return{title:"Centered Discipline",kind:"monk",stats:[stat(m.resourceName,resource,resourceUnit),stat("Martial Arts",m.martialArtsDie,"damage die"),stat("Movement",m.unarmoredMovementBonus?`+${m.unarmoredMovementBonus}`:"—","ft unarmored"),stat("Save DC",monkSaveDc(character),"Monk features")],note:character.ruleset==="2014"?`${m.flurryOfBlows?"Flurry / Patient Defense / Step of the Wind":"Martial Arts ready"}${m.allSaveProficiency?" · Diamond Soul":""}${m.quiveringPalm?" · Quivering Palm":""}${character.level>=20?" · Perfect Self":""}`:`${m.flurryOfBlows?"Focus techniques ready":"Martial Arts ready"}${m.heightenedFocus?" · Heightened Focus":""}${m.allSaveProficiency?" · Disciplined Survivor":""}${m.quiveringPalm?" · Quivering Palm":""}${m.bodyAndMind?" · Body and Mind":""}`};
+  }catch(error){console.error("[class-utility] Monk utility failed",error);throw error;}
 }
 function druidUtility(character){
   try{
