@@ -9,7 +9,7 @@ export function monkFeatures(ruleset,level,subclassId=null){
     if(level>=5)features.push("Extra Attack","Stunning Strike");
     if(level>=6){features.push(ruleset==="2014"?"Ki-Empowered Strikes":"Empowered Strikes");if(p.wholenessOfBody)features.push("Wholeness of Body");}
     if(level>=7){features.push("Evasion");if(p.stillnessOfMind)features.push("Stillness of Mind");}
-    if(level>=9)features.push("Unarmored Movement Improvement");
+    if(level>=9)features.push(ruleset==="2014"?"Unarmored Movement Improvement":"Acrobatic Movement");
     if(p.heightenedFocus)features.push("Heightened Focus");
     if(p.selfRestoration)features.push("Self-Restoration");
     if(p.purityOfBody)features.push("Purity of Body");
