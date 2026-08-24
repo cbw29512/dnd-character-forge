@@ -2,7 +2,7 @@ import { paladinAuraBonus } from "../rules/paladin.js";
 
 export function buildClassUtility(character){
   try{
-    const builders={barbarian:barbarianUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
+    const builders={barbarian:barbarianUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
     return (builders[character?.class?.id]||defaultUtility)(character);
   }catch(error){console.error("[class-utility] build failed",error);throw error;}
 }
@@ -12,6 +12,12 @@ function barbarianUtility(character){
     const b=character.barbarian;if(!b)return null;const rage=b.unlimitedRage?"∞":b.rageUses,is2014=character.ruleset==="2014",brutal=is2014?(b.brutalCriticalDice?`+${b.brutalCriticalDice}`:"—"):(b.brutalStrikeDice?`${b.brutalStrikeDice}d10`:"—");
     return{title:"Primal Fury",kind:"barbarian",stats:[stat("Rage",rage,b.unlimitedRage?"unlimited":"uses"),stat("Rage Damage",`+${b.rageDamage}`,"damage"),stat("Attacks",b.attacksPerAction,"per action"),stat(is2014?"Crit Dice":"Brutal Strike",brutal,is2014?"weapon dice":"extra damage")],note:character.ruleset==="2024"?`${b.masteryCount} Weapon Masteries${b.brutalStrikeEffectCount?` · ${b.brutalStrikeEffectCount} Brutal Strike effect${b.brutalStrikeEffectCount===1?"":"s"}`:""}${b.frenzy?" · Frenzy active":""}`:`${b.initiativeAdvantage?"Feral Instinct · ":""}${b.frenzy?"Berserker Frenzy · ":""}${b.relentlessRage?"Relentless Rage ready":"Rage ready"}`};
   }catch(error){console.error("[class-utility] Barbarian utility failed",error);throw error;}
+}
+function druidUtility(character){
+  try{
+    const d=character.druid;if(!d)return null;const s=character.druidSelections||{},forms=character.ruleset==="2014"?(s.fieldForms?.length||0):(s.knownForms?.length||0),uses=d.unlimitedWildShape?"∞":d.wildShapeUses;
+    return{title:"The Old Wild",kind:"druid",stats:[stat("Wild Shape",uses,d.unlimitedWildShape?"unlimited":"uses"),stat("Max CR",d.maxCr===.25?"1/4":d.maxCr===.5?"1/2":d.maxCr,"Beast"),stat(character.ruleset==="2024"?"Temp HP":"Field Forms",character.ruleset==="2024"?d.wildShapeTempHp:forms,character.ruleset==="2024"?"on transform":"examples"),stat("Duration",d.durationHours,`hour${d.durationHours===1?"":"s"}`)],note:character.ruleset==="2014"?`${prettyChoice(s.circleLand)||"Land Circle"}${d.naturalRecovery?` · Recover ${d.naturalRecovery} slot levels`:""}${d.beastSpells?" · Beast Spells":""}`:`${prettyChoice(s.primalOrder)}${s.circleLand?` · ${prettyChoice(s.circleLand)} Land`:""}${s.elementalFury?` · ${prettyChoice(s.elementalFury)}`:""}${d.archdruid?" · Evergreen Wild Shape":""}`};
+  }catch(error){console.error("[class-utility] Druid utility failed",error);throw error;}
 }
 function paladinUtility(character){
   try{
