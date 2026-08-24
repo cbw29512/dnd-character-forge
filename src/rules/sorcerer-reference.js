@@ -61,7 +61,7 @@ function dragonAncestor(c){
   catch(error){console.error("[sorcerer-reference] Dragon Ancestor reference failed",error);throw error;}
 }
 function elementalAffinity(c){
-  try{const type=c.sorcererSelections?.draconic?.elementalAffinity;if(!type)throw new Error("Elemental Affinity damage type is missing.");return c.ruleset==="2014"?rr("Draconic Bloodline","On spell damage",`When a spell deals ${type} damage, add your Charisma modifier to one damage roll. At the same time, you can spend 1 Sorcery Point to gain ${type} resistance for 1 hour.`):rr("Draconic Sorcery","Passive / spell damage",`You have ${type} resistance. When a spell deals ${type} damage, add your Charisma modifier to one damage roll of that spell.`);}
+  try{const type=c.sorcererSelections?.draconic?.elementalAffinity;if(!type)return null;return c.ruleset==="2014"?rr("Draconic Bloodline","On spell damage",`When a spell deals ${type} damage, add your Charisma modifier to one damage roll. At the same time, you can spend 1 Sorcery Point to gain ${type} resistance for 1 hour.`):rr("Draconic Sorcery","Passive / spell damage",`You have ${type} resistance. When a spell deals ${type} damage, add your Charisma modifier to one damage roll of that spell.`);}
   catch(error){console.error("[sorcerer-reference] Elemental Affinity reference failed",error);throw error;}
 }
 function dragonWings(c){
