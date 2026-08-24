@@ -49,7 +49,8 @@ export function resolve2014Species(species,{level=1,skills=[],selections={}}={})
 export function validate2014Species(character){
   try{
     if(character?.ruleset!=="2014")return[];const errors=[],species=SPECIES_2014.find(item=>item.id===character.species?.id),choices=character.speciesChoices||{};if(!species)return["2014 race is outside the verified SRD 5.1 catalog."];
-    if(character.size!==species.size)errors.push(`${species.name} size should be ${species.size}.`);if(character.speed!==species.speed)errors.push(`${species.name} speed should be ${species.speed} ft.`);
+    const monkSpeed=character.class?.id==="monk"&&!character.equipment?.armor&&!character.equipment?.shield?(character.monk?.unarmoredMovementBonus||0):0,expectedSpeed=species.speed+(character.barbarian?.speedBonus||0)+monkSpeed;
+    if(character.size!==species.size)errors.push(`${species.name} size should be ${species.size}.`);if(character.speed!==expectedSpeed)errors.push(`${species.name} final speed should be ${expectedSpeed} ft after legal class modifiers.`);
     if(species.subrace&&(choices.subrace!==species.subrace||choices.subraceName!==species.subraceName))errors.push(`${species.name} subrace identity is invalid.`);
     if(species.id==="dwarf"&&!DWARF_TOOLS_2014.some(tool=>tool.id===choices.tool&&tool.name===choices.toolName&&(character.toolProficiencies||[]).includes(tool.name)))errors.push("Hill Dwarf tool proficiency choice is invalid.");
     if(species.id==="elf"){

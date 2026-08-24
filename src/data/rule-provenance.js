@@ -56,7 +56,7 @@ const REFERENCE_PAGES=Object.freeze({
     "feature:Expertise":"61","feature:Sneak Attack":"61","feature:Thieves’ Cant":"62","feature:Weapon Mastery — Rogue":"62","feature:Cunning Action":"62","feature:Steady Aim":"62",
     "feature:Ability Score Improvement:rogue":"63","feature:Cunning Strike":"63","feature:Uncanny Dodge":"63","feature:Evasion":"63","feature:Reliable Talent":"63","feature:Improved Cunning Strike":"63","feature:Devious Strikes":"63","feature:Slippery Mind":"63","feature:Elusive":"63","feature:Epic Boon:rogue":"63","feature:Stroke of Luck":"63",
     "feature:Fast Hands":"64","feature:Second-Story Work":"64","feature:Supreme Sneak":"64","feature:Use Magic Device":"64","feature:Thief’s Reflexes":"64",
-    "mastery:Graze":"90","mastery:Nick":"90","mastery:Push":"90","mastery:Sap":"90","mastery:Slow":"90","mastery:Topple":"90","mastery:Vex":"90"
+    "mastery:Cleave":"90","mastery:Graze":"90","mastery:Nick":"90","mastery:Push":"90","mastery:Sap":"90","mastery:Slow":"90","mastery:Topple":"90","mastery:Vex":"90"
   })
 });
 

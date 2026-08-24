@@ -11,7 +11,7 @@ test("2014 Fighter Quick Turn never claims Second Wind repositioning",()=>{
 });
 
 test("2014 Wizard Quick Turn uses Arcane Recovery and never advertises Memorize Spell",()=>{
-  const text=buildQuickTurn(character("2014","wizard","school-evocation")).join(" ");assert.match(text,/Arcane Recovery/);assert.doesNotMatch(text,/Memorize Spell/);
+  const text=buildQuickTurn(character("2014","wizard","school-evocation",5)).join(" ");assert.match(text,/Arcane Recovery/);assert.doesNotMatch(text,/Memorize Spell/);
 });
 
 test("2014 Cleric Quick Turn uses Turn Undead and Preserve Life without Divine Spark",()=>{
@@ -19,5 +19,5 @@ test("2014 Cleric Quick Turn uses Turn Undead and Preserve Life without Divine S
 });
 
 test("2024 Quick Turn keeps its edition-specific resource guidance",()=>{
-  const fighter=buildQuickTurn(character("2024","fighter","champion")).join(" "),wizard=buildQuickTurn(character("2024","wizard","evoker")).join(" "),cleric=buildQuickTurn(character("2024","cleric","life-domain")).join(" ");assert.match(fighter,/repositioning/);assert.match(wizard,/Memorize Spell/);assert.match(cleric,/Divine Spark/);
+  const fighter=buildQuickTurn(character("2024","fighter","champion")).join(" "),wizard=buildQuickTurn(character("2024","wizard","evoker",5)).join(" "),cleric=buildQuickTurn(character("2024","cleric","life-domain")).join(" ");assert.match(fighter,/repositioning/);assert.match(wizard,/Memorize Spell/);assert.match(cleric,/Divine Spark/);
 });

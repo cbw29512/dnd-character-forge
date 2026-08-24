@@ -1,0 +1,21 @@
+@media print{
+  /* Druid is a dense full caster. Reclaim just enough vertical space for a compact Wild Shape ledger without reducing spell text size. */
+  .theme-druid-wild .ps-spell-level-grid{height:4.78in;position:relative;isolation:isolate}
+  .theme-druid-wild .ps-spell-level-column{gap:.03in;position:relative;z-index:1}
+  .theme-druid-wild .ps-spell-entry{min-height:.136in}
+  .theme-druid-wild .ps-spell-level>header{min-height:.238in}
+  /* Original botanical mark: a quiet leaf/ring motif fills otherwise dead paper without competing with the spell ledger. */
+  .theme-druid-wild .ps-spell-level-grid::after{content:"";position:absolute;left:50%;bottom:.22in;width:1.48in;height:1.48in;transform:translateX(-50%) rotate(45deg);border:1px solid color-mix(in srgb,var(--ps-primary) 11%,transparent);border-radius:58% 9% 58% 9%;box-shadow:inset 0 0 0 .08in color-mix(in srgb,var(--ps-primary) 2.5%,transparent),0 0 0 .17in color-mix(in srgb,var(--ps-primary) 2.5%,transparent),0 0 0 .33in color-mix(in srgb,var(--ps-primary) 1.8%,transparent);z-index:0}
+
+  .ps-druid-spell-support{margin-top:.035in;padding:.035in .045in;border:1px solid color-mix(in srgb,var(--ps-primary) 66%,#c8b58d);background:linear-gradient(110deg,rgba(42,90,55,.10),rgba(255,250,236,.72) 42%,rgba(80,104,48,.08));box-shadow:inset 0 0 .1in rgba(42,70,38,.08);min-height:.72in;overflow:hidden}
+  .ps-druid-spell-support>header{display:flex;align-items:end;justify-content:space-between;gap:.08in;padding-bottom:.022in;border-bottom:1px solid color-mix(in srgb,var(--ps-primary) 68%,#c8b58d)}
+  .ps-druid-spell-support>header small{display:block;font:700 4.15pt Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--ps-primary)}
+  .ps-druid-spell-support>header h3{margin:.004in 0 0;font:700 8.15pt Georgia,serif;color:var(--ps-dark);letter-spacing:.025em}
+  .ps-druid-spell-support>header>span{font:4.35pt Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
+  .ps-druid-form-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.025in .03in;margin-top:.03in}
+  .ps-druid-form-grid article{min-width:0;padding:.025in .03in;border-left:2px solid var(--ps-primary);background:rgba(255,250,236,.58)}
+  .ps-druid-form-grid strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 5.55pt Georgia,serif;color:var(--ps-dark)}
+  .ps-druid-form-grid b{display:block;margin:.006in 0;font:700 4.05pt Arial,sans-serif;color:var(--ps-primary)}
+  .ps-druid-form-grid span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:4pt/1.08 Arial,sans-serif;color:var(--ps-ink)}
+  .ps-druid-spell-support>p{margin:.025in 0 0;padding-top:.018in;border-top:1px dotted rgba(65,49,31,.26);font:italic 3.95pt/1.08 Georgia,serif;color:var(--ps-muted)}
+}

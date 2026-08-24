@@ -1,7 +1,6 @@
-import { RAW_2014 } from "../data/raw-2014.js";
-import { RAW_2024 } from "../data/raw-2024.js";
+import { FORGE_2014, FORGE_2024 } from "../data/forge-data.js";
 
-const dataFor=state=>state.ruleset==="2014"?RAW_2014:RAW_2024;
+const dataFor=state=>state.ruleset==="2014"?FORGE_2014:FORGE_2024;
 
 export function populateOptions(state){
   try{const data=dataFor(state);fill("species",data.species);fill("class",data.classes);fill("background",data.backgrounds);populateLevels(state);populateSubclasses(state);}

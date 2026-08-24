@@ -1,0 +1,37 @@
+@media print{
+  /* Monk keeps the familiar 5e scan order while adding restrained concentric focus geometry. */
+  .theme-monk-focus .ps-frame{
+    background-image:
+      radial-gradient(circle at 88% 78%,transparent 0 .36in,rgba(122,89,44,.055) .37in .39in,transparent .40in .58in,rgba(122,89,44,.04) .59in .61in,transparent .62in),
+      radial-gradient(circle at 88% 78%,rgba(122,89,44,.035),transparent .72in);
+  }
+  .theme-monk-focus .ps-class-watermark{opacity:.055;transform:rotate(-3deg)}
+  .theme-monk-focus .ps-portrait-art.class-monk{
+    background:
+      radial-gradient(circle at 50% 43%,rgba(232,201,137,.2) 0 18%,transparent 19% 31%,rgba(232,201,137,.11) 32% 34%,transparent 35%),
+      linear-gradient(145deg,var(--ps-dark),var(--ps-primary));
+  }
+  .theme-monk-focus .utility-monk{
+    border:1.5px solid color-mix(in srgb,var(--ps-primary) 72%,var(--ps-accent));
+    box-shadow:inset 0 0 .11in rgba(122,89,44,.12),0 .012in .025in rgba(43,31,20,.09);
+  }
+  .theme-monk-focus .utility-monk .ps-panel-body{
+    background:
+      radial-gradient(circle at 50% 50%,rgba(122,89,44,.07) 0 16%,transparent 17% 31%,rgba(122,89,44,.035) 32% 33%,transparent 34%),
+      rgba(255,250,238,.34);
+  }
+  .theme-monk-focus .utility-monk .ps-utility-stats span{
+    border-radius:50% 50% 42% 42% / 22% 22% 18% 18%;
+    border-color:color-mix(in srgb,var(--ps-accent) 58%,var(--ps-frame));
+  }
+  .theme-monk-focus .utility-monk .ps-utility-stats b{color:var(--ps-primary)}
+  .theme-monk-focus .utility-monk .ps-utility-note{font-family:Georgia,serif;font-style:italic;letter-spacing:.015em}
+  .theme-monk-focus .ps-feature-list article{border-left-color:color-mix(in srgb,var(--ps-primary) 78%,var(--ps-accent))}
+  .theme-monk-focus .ps-saving-throws .proficient{background:linear-gradient(90deg,rgba(122,89,44,.075),transparent)}
+
+  /* Ink-saver must remain truly economical regardless of class ornament. */
+  .theme-monk-focus.sheet-print-ink-saver .ps-frame,
+  .theme-monk-focus.sheet-print-ink-saver .utility-monk .ps-panel-body,
+  .theme-monk-focus.sheet-print-ink-saver .ps-portrait-art.class-monk{background:#fff!important}
+  .theme-monk-focus.sheet-print-ink-saver .utility-monk{box-shadow:none}
+}
