@@ -18,7 +18,7 @@ function bardTurn(character){
       return steps;
     }
     steps.push(`Give Bardic Inspiration as a Bonus Action before a likely decisive test; you have ${uses} ${die} use${uses===1?"":"s"}, and the recipient applies it after failing a D20 Test.`);
-    if(b.wordsOfCreation)steps.push("Choose the prepared spell that changes the encounter most; Power Word Heal and Power Word Kill are always prepared and can each affect a second nearby target.");else steps.push("Choose the prepared spell that changes the encounter most, protect Concentration, and use cantrips when the encounter does not justify a slot.");
+    if(b.wordsOfCreation)steps.push("Words of Creation keeps Power Word Heal and Power Word Kill always prepared; choose the spell that changes the encounter most, and either Power Word can affect a second nearby target.");else steps.push("Choose the prepared spell that changes the encounter most, protect Concentration, and use cantrips when the encounter does not justify a slot.");
     if(b.peerlessSkill)steps.push(`Cutting Words and Peerless Skill compete for the same ${die} Inspiration pool; if Initiative starts you below ${b.superiorInspirationFloor||0}, Superior Inspiration restores you to that floor.`);else if(b.cuttingWords)steps.push(`Use Cutting Words as your Reaction when reducing a successful enemy attack/check or damage roll is worth one ${die} Inspiration use.`);else steps.push("Keep Countercharm's Reaction available when a nearby ally fails against Charmed or Frightened.");
     return steps;
   }catch(error){console.error("[print-quick-turn] Bard turn failed",error);throw error;}
