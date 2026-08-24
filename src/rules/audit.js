@@ -1,5 +1,6 @@
 import { SOURCE } from "../schema.js";
 import { entityProvenance, referenceProvenance, rulesetSource } from "../data/rule-provenance.js";
+import { monkEntityProvenance } from "../data/monk-provenance.js";
 import { speciesChoiceLabel } from "./species.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"});
@@ -13,14 +14,14 @@ export function buildRulesAudit(character,validation){
     const source=rulesetSource(character.ruleset),rulesLabel=RULESET_LABELS[character.ruleset];
     if(!rulesLabel)throw new Error(`Unsupported ruleset for audit: ${character.ruleset}.`);
     const homebrewCount=character.homebrew?.length||0,rawIntegrity=character.sourceMode===SOURCE.RAW&&homebrewCount===0;
-    const classSource=entityProvenance(character.ruleset,"class",character.class.id);
+    const isMonk=character.class?.id==="monk",classSource=isMonk?monkEntityProvenance(character.ruleset,"class"):entityProvenance(character.ruleset,"class",character.class.id);
     const mechanics=[
       mechanic("Species",speciesChoiceLabel(character),entityProvenance(character.ruleset,"species",character.species.id)),
       mechanic("Background",character.background?.name||"Unknown",entityProvenance(character.ruleset,"background",character.background.id)),
       mechanic("Class",character.class?.name||"Unknown",classSource),
       mechanic("Level",String(character.level),classSource)
     ];
-    if(character.subclass)mechanics.splice(3,0,mechanic("Subclass",character.subclass.name,entityProvenance(character.ruleset,"subclass",character.subclass.id)));
+    if(character.subclass){const subclassSource=isMonk?monkEntityProvenance(character.ruleset,"subclass"):entityProvenance(character.ruleset,"subclass",character.subclass.id);mechanics.splice(3,0,mechanic("Subclass",character.subclass.name,subclassSource));}
     if(character.spells)mechanics.push(mechanic("Spellcasting",`${character.class.name} rules; legal selections validated and remaining choices filled by Forge`,referenceProvenance(character,"feature","Spellcasting")));
     const checks=[
       "Character generation completed with zero validation errors.",
