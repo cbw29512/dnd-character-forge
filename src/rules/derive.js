@@ -4,6 +4,7 @@ import { sample } from "./random.js";
 import { speciesHpBonus, speciesSpeed, speciesMagic } from "./species.js";
 import { uniqueStrings, uniqueBy, consolidateInventory } from "./duplicates.js";
 import { monkArmorClass, monkHasSaveProficiency, monkSpeedBonus, monkUnarmedAttack, monkWeaponAttack } from "./monk-combat.js";
+import { validateMonkCharacter } from "./monk-validation.js";
 
 export function deriveCharacter(character,data){
   try{
@@ -25,7 +26,12 @@ export function deriveCharacter(character,data){
     const masteryCount=character.barbarian?.masteryCount||character.paladin?.masteryCount||character.ranger?.masteryCount||character.fighter?.masteryCount||character.rogue?.masteryCount||0,masteryPool=character.class.masteryChoices?.length?character.class.masteryChoices:Object.keys(data.weapons),equippedMasteries=[...new Set(character.equipment.weapons)].filter(id=>masteryPool.includes(id)),extraMasteries=masteryCount?sample(masteryPool,Math.max(0,masteryCount-equippedMasteries.length),equippedMasteries):[],masteryIds=masteryCount?[...equippedMasteries,...extraMasteries].slice(0,masteryCount):[];
     const focusLabel=character.class.id==="druid"?"Druidic Focus":"Arcane Focus",attackInventory=weaponAttacks.map(attack=>character.equipment.focus===attack.id?`${focusLabel} (${attack.name})`:attack.name),inventory=consolidateInventory([...attackInventory,...character.equipment.gear,...(character.backgroundEquipment||character.background.equipment||[])]),saveProficiencies=character.class.id==="monk"&&character.monk?.allSaveProficiency?[...ABILITIES]:uniqueStrings(character.saves);
     const next={...character,skills:uniqueStrings(character.skills),expertise:uniqueStrings(character.expertise),saves:saveProficiencies,languages:uniqueStrings(character.languages),toolProficiencies:uniqueStrings(character.toolProficiencies||[]),feats:uniqueBy(character.feats,feat=>feat.id),homebrew:uniqueBy(character.homebrew,item=>item.id),features:uniqueStrings(character.features),ac,hp,speciesHpBonus:speciesBonusHp,initiative:dex+alert,initiativeAdvantage:Boolean(character.barbarian?.initiativeAdvantage||character.fighter?.initiativeAdvantage),speed:speciesSpeed(character)+(character.barbarian?.speedBonus||0)+(character.ranger?.speedBonus||0)+monkSpeedBonus(character),attacks:uniqueBy(attacks,attack=>attack.name),saveBonuses,skillBonuses,passivePerception:10+skillBonuses.perception,masteryIds:uniqueStrings(masteryIds),inventory};
-    return{...next,speciesMagic:speciesMagic(next)};
+    const derived={...next,speciesMagic:speciesMagic(next)};
+    if(derived.class.id==="monk"){
+      const errors=validateMonkCharacter(derived);
+      if(errors.length)throw new Error(`Derived Monk validation failed: ${errors.join(" ")}`);
+    }
+    return derived;
   }catch(error){console.error("[derive] character derivation failed",error);throw error;}
 }
 
