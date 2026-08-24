@@ -54,10 +54,11 @@ function verifyPacket(testCase){
   const whole=normalize(extracted),fold=whole.toLowerCase(),tokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,...model.ruleIndex.map(item=>item.name),model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
   for(const token of tokens)assert.ok(fold.includes(normalize(token).toLowerCase()),`${slug}: printed PDF lost expected content: ${token}`);
   for(const phrase of ["RAW Integrity","Innate Arcane","Sorcery Points","Metamagic"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing Sorcerer contract text: ${phrase}`);
+  assert.equal(fold.includes("use your strongest reliable action for the current objective"),false,`${slug}: generic Quick Turn leaked into Sorcerer PDF`);
 
   if(testCase.ruleset==="2014"){
     assert.equal(character.spells.cantrips.all.length,6);assert.equal(character.spells.known.all.length,15);assert.equal(character.sorcererSelections.metamagic.all.length,4);assert.equal(model.spellPage.entries.length,21);assert.equal(character.sorcererSelections.draconic.ancestry.id,"red");
-    for(const phrase of ["Draconic Bloodline","Dragon Ancestor","Elemental Affinity","Dragon Wings","Draconic Presence","Sorcerous Restoration","Quickened Spell","Subtle Spell"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing 2014 Sorcerer text: ${phrase}`);
+    for(const phrase of ["Draconic Bloodline","Dragon Ancestor","Elemental Affinity","Dragon Wings","Draconic Presence","Sorcerous Restoration","Quickened Spell","Subtle Spell","Flexible Casting"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing 2014 Sorcerer text: ${phrase}`);
     for(const phrase of ["Innate Sorcery","Sorcery Incarnate","Arcane Apotheosis","Dragon Companion","Boon of Dimensional Travel"])assert.equal(fold.includes(normalize(phrase).toLowerCase()),false,`${slug}: leaked 2024 Sorcerer text: ${phrase}`);
   }else{
     assert.equal(character.spells.cantrips.all.length,6);assert.equal(character.spells.prepared.all.length,22);assert.equal(character.spells.alwaysPrepared.length,10);assert.equal(character.sorcererSelections.metamagic.all.length,6);assert.equal(model.spellPage.entries.length,38);assert.equal(character.sorcererSelections.draconic.elementalAffinity,"Fire");
