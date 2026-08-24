@@ -10,7 +10,7 @@ const ENTITY_PAGES=Object.freeze({
 
 const FEATURE_PAGES=Object.freeze({
   "2014":Object.freeze({
-    "Unarmored Defense":"26","Martial Arts":"26",Ki:"27","Unarmored Movement":"27","Monastic Tradition":"27","Deflect Missiles":"27","Ability Score Improvement":"27","Slow Fall":"27","Extra Attack":"27",
+    "Unarmored Defense":"26","Martial Arts":"26",Ki:"27","Unarmored Movement":"27","Unarmored Movement Improvement":"27","Monastic Tradition":"27","Deflect Missiles":"27","Ability Score Improvement":"27","Slow Fall":"27","Extra Attack":"27",
     "Stunning Strike":"28","Ki-Empowered Strikes":"28",Evasion:"28","Stillness of Mind":"28","Purity of Body":"28","Tongue of the Sun and Moon":"28","Diamond Soul":"28","Timeless Body":"28","Empty Body":"28","Perfect Self":"28",
     "Open Hand Technique":"28","Wholeness of Body":"28",Tranquility:"29","Quivering Palm":"29"
   }),
