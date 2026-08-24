@@ -20,4 +20,4 @@ export const MONK_SUBCLASS_2014=Object.freeze({id:"open-hand",classId:"monk",nam
 export const MONK_SUBCLASS_2024=Object.freeze({id:"open-hand",classId:"monk",name:"Warrior of the Open Hand",level:3});
 
 export const MONK_WEAPONS_2014=Object.freeze({dart:Object.freeze({name:"Dart",damage:"1d4",ability:"dex",type:"Piercing"})});
-export const MONK_WEAPONS_2024=Object.freeze({spear:Object.freeze({name:"Spear",damage:"1d6",ability:"str",type:"Piercing",mastery:"Sap"})});
+export const MONK_WEAPONS_2024=Object.freeze({});
