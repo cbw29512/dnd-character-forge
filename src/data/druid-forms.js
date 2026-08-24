@@ -1,4 +1,8 @@
-const source=(ruleset,page)=>Object.freeze({version:ruleset==="2014"?"SRD 5.1":"SRD 5.2.1",page:String(page)});
+const SOURCES=Object.freeze({
+  "2014":Object.freeze({version:"SRD 5.1",document:"System Reference Document 5.1",pdfUrl:"https://media.dndbeyond.com/compendium-images/srd/5.1/SRD_CC_v5.1.pdf"}),
+  "2024":Object.freeze({version:"SRD 5.2.1",document:"System Reference Document 5.2.1",pdfUrl:"https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf"})
+});
+const source=(ruleset,page)=>{const item=SOURCES[ruleset];if(!item)throw new Error(`Unsupported Druid form source ruleset: ${ruleset}.`);return Object.freeze({...item,page:String(page)});};
 const form=value=>Object.freeze({...value,type:"Beast",speeds:Object.freeze({...value.speeds}),traits:Object.freeze([...(value.traits||[])]),actions:Object.freeze((value.actions||[]).map(action=>Object.freeze({...action}))),source:Object.freeze(value.source)});
 
 export const DRUID_FORMS_2014=Object.freeze([
