@@ -4,6 +4,7 @@ import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildQuickReference } from "../src/rules/reference-router.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
+import { buildQuickTurn } from "../src/print/quick-turn.js";
 
 function bard(ruleset,{spellSelections={},classSelections={}}={}){
   const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="bard";state.constraints.subclass="college-lore";state.constraints.species="human";state.constraints.background=ruleset==="2014"?"acolyte":"sage";state.classSelections={instruments:["Lute"],...classSelections};state.spellSelections={...state.spellSelections,...spellSelections};return generateCharacter(state);
@@ -21,10 +22,14 @@ test("2024 Lore discovery can legally overlap level-20 Words of Creation",()=>{
   const character=bard("2024",{spellSelections:{loreDiscoveries:["power-word-heal","guidance"]}}),model=buildPremiumPrintModel(character),refs=buildQuickReference(character);assert.equal(character.validation.valid,true);assert.deepEqual(character.spells.loreDiscoveries.slice().sort(),["guidance","power-word-heal"]);assert.ok(character.spells.alwaysPrepared.includes("power-word-heal"));assert.ok(character.spells.alwaysPrepared.includes("power-word-kill"));assert.ok(character.spells.alwaysPrepared.includes("guidance"));assert.equal(character.spells.alwaysPrepared.length,3);assert.equal(new Set(character.spells.alwaysPrepared).size,3);assert.equal(character.spells.prepared.all.length,22);assert.equal(model.spellPage.entries.length,29);assert.equal(model.spellPage.entries.filter(entry=>entry.id==="power-word-heal").length,1);assert.ok(model.spellPage.entries.find(entry=>entry.id==="power-word-heal").tags.includes("A"));assert.equal(refs.find(item=>item.name==="Words of Creation").source.page,"33");assert.match(character.audit.checks.join(" "),/Words of Creation/i);assert.doesNotMatch(character.audit.checks.join(" "),/Song of Rest|Additional Magical Secrets/i);
 });
 
+test("Bard quick-turn guidance stays edition-pure and class-specific",()=>{
+  const oldTurn=buildQuickTurn(bard("2014")).join(" "),newTurn=buildQuickTurn(bard("2024")).join(" ");assert.match(oldTurn,/Bardic Inspiration/i);assert.match(oldTurn,/known spell/i);assert.match(oldTurn,/Cutting Words|Peerless Skill/i);assert.doesNotMatch(oldTurn,/D20 Test|Words of Creation|Superior Inspiration/i);assert.match(newTurn,/Bardic Inspiration/i);assert.match(newTurn,/D20 Test/i);assert.match(newTurn,/Words of Creation/i);assert.match(newTurn,/Superior Inspiration/i);assert.doesNotMatch(newTurn,/known spell|Song of Rest/i);
+});
+
 test("Bard fixed instrument choices survive constrained random completion",()=>{
   for(const ruleset of ["2014","2024"]){const character=bard(ruleset);assert.equal(character.bardSelections.instruments.length,3);assert.ok(character.bardSelections.instruments.includes("Lute"));assert.equal(new Set(character.bardSelections.instruments).size,3);for(const instrument of character.bardSelections.instruments)assert.ok(character.toolProficiencies.includes(instrument));}
 });
 
 test("Bard production surfaces survive repeated random construction",()=>{
-  for(const ruleset of ["2014","2024"]){for(let i=0;i<120;i++){const character=bard(ruleset);assert.equal(character.validation.valid,true);const refs=buildQuickReference(character),model=buildPremiumPrintModel(character);assert.ok(refs.length>15);assert.equal(model.packet.totalPages,2);assert.equal(model.classUtility.kind,"bard");assert.ok(model.spellPage.entries.length>20);}}
+  for(const ruleset of ["2014","2024"]){for(let i=0;i<120;i++){const character=bard(ruleset);assert.equal(character.validation.valid,true);const refs=buildQuickReference(character),model=buildPremiumPrintModel(character);assert.ok(refs.length>15);assert.equal(model.packet.totalPages,2);assert.equal(model.classUtility.kind,"bard");assert.ok(model.spellPage.entries.length>20);assert.equal(buildQuickTurn(character).length,3);}}
 });
