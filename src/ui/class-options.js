@@ -60,7 +60,7 @@ export function classChoiceFieldsForState(state){
       if(state.ruleset==="2024"&&level>=7)fields.push(single("elementalFury","Elemental Fury",asOptions(ELEMENTAL_FURY_2024)));
       const forms=asOptions(legalFormsForProgression(state.ruleset,p));if(state.ruleset==="2014"&&level>=2)fields.push(multi("fieldForms","Wild Shape Field Forms",forms,Math.min(4,forms.length)));if(state.ruleset==="2024"&&p.knownFormCount)fields.push(multi("knownForms","Known Wild Shape Forms",forms,p.knownFormCount));return fields;
     }
-    if(classId==="paladin"&&state.ruleset==="2024"&&level>=2)return[single("fightingStyle","Fighting Style",(cls.styleChoices||[]).map(id=>({id,name:data.fightingStyles[id]?.name||pretty(id)}))];
+    if(classId==="paladin"&&state.ruleset==="2024"&&level>=2)return[single("fightingStyle","Fighting Style",(cls.styleChoices||[]).map(id=>({id,name:data.fightingStyles[id]?.name||pretty(id)})))];
     if(classId==="ranger")return rangerFields(state,cls,data,level,subclassId);
     if(classId==="monk"&&(cls.toolChoices||[]).length)return[single("monkTool","Monk Tool",asOptions(cls.toolChoices))];
     if(classId==="sorcerer"){
