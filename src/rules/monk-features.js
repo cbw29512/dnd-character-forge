@@ -7,7 +7,7 @@ export function monkFeatures(ruleset,level,subclassId=null){
     if(level>=3){features.push(ruleset==="2014"?"Monastic Tradition":"Monk Subclass",p.deflectAttacks?"Deflect Attacks":"Deflect Missiles");if(p.openHandTechnique)features.push("Open Hand Technique");}
     if(level>=4)features.push("Ability Score Improvement","Slow Fall");
     if(level>=5)features.push("Extra Attack","Stunning Strike");
-    if(level>=6){features.push("Empowered Strikes");if(p.wholenessOfBody)features.push("Wholeness of Body");}
+    if(level>=6){features.push(ruleset==="2014"?"Ki-Empowered Strikes":"Empowered Strikes");if(p.wholenessOfBody)features.push("Wholeness of Body");}
     if(level>=7){features.push("Evasion");if(p.stillnessOfMind)features.push("Stillness of Mind");}
     if(level>=9)features.push("Unarmored Movement Improvement");
     if(p.heightenedFocus)features.push("Heightened Focus");
