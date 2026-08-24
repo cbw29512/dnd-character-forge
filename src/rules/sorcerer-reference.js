@@ -90,7 +90,7 @@ const METAMAGIC_2024=Object.freeze({
   "empowered-spell":rr("Metamagic","1 Sorcery Point","When rolling spell damage, reroll damage dice up to your Charisma modifier (minimum 1) and use the new rolls. This option can combine with another Metamagic option."),
   "extended-spell":rr("Metamagic","1 Sorcery Point","For a spell lasting at least 1 minute, double its duration to a maximum of 24 hours; you also have Advantage on saves made to maintain Concentration on it."),
   "heightened-spell":rr("Metamagic","2 Sorcery Points","One target has Disadvantage on saving throws against the spell."),
-  "quickened-spell":rr("Metamagic","2 Sorcery Points","Change an Action-casting-time spell to a Bonus Action for this casting; you can't cast another level 1+ spell on the same turn unless it is a one-Action spell slot exception allowed by the rule."),
+  "quickened-spell":rr("Metamagic","2 Sorcery Points","Change an Action-casting-time spell to a Bonus Action for this casting. You can't use Quickened Spell if you've already cast a level 1+ spell this turn, and after using it you can't cast a level 1+ spell later on the same turn."),
   "seeking-spell":rr("Metamagic","1 Sorcery Point","After a spell attack misses, reroll the d20 and use the new roll. This option can combine with another Metamagic option."),
   "subtle-spell":rr("Metamagic","1 Sorcery Point","Cast without Verbal, Somatic, or non-costly Material components; required costly or consumed Material components still apply."),
   "transmuted-spell":rr("Metamagic","1 Sorcery Point","When a spell deals Acid, Cold, Fire, Lightning, Poison, or Thunder damage, change that damage type to another type in that list for this casting."),
