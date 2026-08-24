@@ -99,7 +99,8 @@ test("2024 level-20 Open Hand Monk generates a complete RAW one-page model",()=>
     assert.equal(character.features.includes("Perfect Self"),false);
     assert.equal(character.features.includes("Empty Body"),false);
     assert.equal(character.features.includes("Diamond Soul"),false);
-    assert.equal(character.abilityMaximums.dex,25);
+    assert.equal(character.epicBoonAbility,"dex");
+    assert.equal(character.abilityMaximums.dex,30);
     assert.equal(character.abilityMaximums.wis,25);
     assert.ok(character.abilities.dex<=25&&character.abilities.wis<=25);
     assert.ok(character.feats.some(feat=>feat.id==="boon-irresistible-offense"));
