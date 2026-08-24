@@ -1,10 +1,11 @@
 import { paladinAuraBonus } from "../rules/paladin.js";
 import { monkSaveDc } from "../rules/monk.js";
 import { abilityMod } from "../rules/math.js";
+import { buildSorcererUtility } from "./sorcerer-utility.js";
 
 export function buildClassUtility(character){
   try{
-    const builders={barbarian:barbarianUtility,bard:bardUtility,monk:monkUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
+    const builders={barbarian:barbarianUtility,bard:bardUtility,monk:monkUtility,sorcerer:buildSorcererUtility,druid:druidUtility,paladin:paladinUtility,ranger:rangerUtility,fighter:fighterUtility,wizard:wizardUtility,cleric:clericUtility,rogue:rogueUtility};
     return (builders[character?.class?.id]||defaultUtility)(character);
   }catch(error){console.error("[class-utility] build failed",error);throw error;}
 }
