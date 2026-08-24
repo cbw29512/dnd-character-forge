@@ -4,7 +4,7 @@ export const PRINT_THEMES=Object.freeze({
   cleric:Object.freeze({id:"cleric-sanctum",label:"Sacred",emblem:"C",motif:"sun-halo",visualIdentity:"ivory · gold · radiant geometry",motto:"In faith we stand. In light we endure."}),
   druid:Object.freeze({id:"druid-wild",label:"The Old Wild",emblem:"D",motif:"leaf-antler",visualIdentity:"bark · leaf · moonlit knotwork",motto:"The old world is always listening."}),
   fighter:Object.freeze({id:"fighter-steel",label:"Master at Arms",emblem:"F",motif:"shield-blades",visualIdentity:"steel · heraldry · weapon crests",motto:"Steel answers when words fail."}),
-  monk:Object.freeze({id:"monk-focus",label:"Perfect Focus",emblem:"M",motif:"open-hand",visualIdentity:"ink · stone · disciplined circles",motto:"Stillness first. Then the decisive motion."}),
+  monk:Object.freeze({id:"monk-focus",label:"Centered Discipline",emblem:"M",motif:"open-hand",visualIdentity:"ink · stone · disciplined circles",motto:"Stillness first. Then the decisive motion."}),
   paladin:Object.freeze({id:"paladin-oath",label:"Oathbound",emblem:"P",motif:"radiant-sword",visualIdentity:"silver · gold · sacred heraldry",motto:"Stand between the innocent and the dark."}),
   ranger:Object.freeze({id:"ranger-warden",label:"Warden",emblem:"R",motif:"arrow-leaf",visualIdentity:"leather · greenwood · trail marks",motto:"Watch the trail. Choose the ground. Never waste the shot."}),
   rogue:Object.freeze({id:"rogue-shadow",label:"Shadow",emblem:"R",motif:"dagger-key",visualIdentity:"charcoal · teal · lockwork lines",motto:"Stay unseen. Strike once. Leave nothing behind."}),
