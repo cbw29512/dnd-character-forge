@@ -46,10 +46,10 @@ test("all twelve core classes have distinct premium theme hooks and original sig
 });
 
 test("the selected class owns the printable sheet identity regardless of subclass or other choices",()=>{
-  // Use subclasses that are legal at level 20 in the 2024 ruleset.
+  // Use verified legal 2024 subclass IDs at level 20.
   const fighter=buildPremiumPrintModel(characterAt("fighter","champion"));
-  const druid=buildPremiumPrintModel(characterAt("druid","moon"));
-  const wizard=buildPremiumPrintModel(characterAt("wizard","evocation"));
+  const druid=buildPremiumPrintModel(characterAt("druid","circle-land"));
+  const wizard=buildPremiumPrintModel(characterAt("wizard","evoker"));
   assert.equal(fighter.identity.classId,"fighter");assert.equal(fighter.theme.id,"fighter-steel");assert.match(fighter.theme.motif,/shield-blades/);
   assert.equal(druid.identity.classId,"druid");assert.equal(druid.theme.id,"druid-wild");assert.match(druid.theme.motif,/leaf-antler/);
   assert.equal(wizard.identity.classId,"wizard");assert.equal(wizard.theme.id,"wizard-arcane");assert.match(wizard.theme.motif,/spellbook-stars/);
@@ -57,7 +57,7 @@ test("the selected class owns the printable sheet identity regardless of subclas
 });
 
 test("supported classes project useful class-specific resource modules",()=>{
-  const cases=[["fighter","champion","Martial Resources"],["wizard","evocation","Arcane Toolkit"],["cleric","life-domain","Sacred Channel"]];
+  const cases=[["fighter","champion","Martial Resources"],["wizard","evoker","Arcane Toolkit"],["cleric","life-domain","Sacred Channel"]];
   for(const [classId,subclass,title] of cases){const model=buildPremiumPrintModel(characterAt(classId,subclass));assert.equal(model.classUtility.title,title);assert.equal(model.classUtility.stats.length,4);}
   assert.equal(buildPremiumPrintModel(characterAt("rogue","thief")).classUtility,null);
 });
@@ -69,7 +69,7 @@ test("portrait visibility and tuning never alter character rules",()=>{
 });
 
 test("visible uploaded portrait renders with exact focal point zoom and finish",()=>{
-  const character=characterAt("wizard","evocation"),target={innerHTML:""};
+  const character=characterAt("wizard","evoker"),target={innerHTML:""};
   character.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD",sheetCustomization:{portraitVisible:true,portraitX:7,portraitY:84,portraitZoom:143,portraitFilter:"painted",frame:"filigree"}};
   const model=renderPremiumPrintSheet(character,target);
   assert.equal(model.portraitDataUrl,"data:image/jpeg;base64,QUJD");assert.equal(model.presentation.customization.portraitX,7);assert.equal(model.presentation.customization.portraitY,84);assert.equal(model.presentation.customization.portraitZoom,143);
