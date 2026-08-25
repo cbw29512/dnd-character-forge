@@ -109,7 +109,6 @@
   .magic-option small { font-size:.68rem; }
   .magic-guidance { font-size:.68rem; }
 
-  /* The primary action remains easy to reach while the builder itself is in view. */
   .forge-button {
     position:sticky;
     bottom:10px;
@@ -126,7 +125,6 @@
   .result-label { min-height:auto; padding:2px 2px 8px; }
   .result-stage { width:100%; min-width:0; }
 
-  /* Phone character sheet: preserve all information, but reduce visual density. */
   .character-sheet {
     width:100%;
     border-radius:16px;
@@ -174,7 +172,6 @@
   .sheet-footer span,.site-footer span { display:block; margin-top:5px; }
   .sheet-footer { padding:11px 13px 14px; font-size:.61rem; }
 
-  /* Prevent long names, item names, and references from forcing horizontal scroll. */
   .character-sheet * { min-width:0; }
   .character-sheet h1,.character-sheet h2,.character-sheet h3,
   .character-sheet p,.character-sheet span,.character-sheet strong,
@@ -216,4 +213,99 @@
   .rules-audit-card { break-before:auto; page-break-before:auto; }
   .sheet-footer { padding:.09in .13in .11in; }
   a { color:inherit; text-decoration:none; }
+}
+
+/* ================================================================
+ * Premium Forge presentation pass
+ * The generator/state/rules engine is untouched. These rules make the
+ * workflow read as a deliberate cascade and keep the action layer usable.
+ * ================================================================ */
+.forge-panel { max-width:860px; width:100%; margin:0 auto; }
+
+/* The builder itself reads top-to-bottom: one decision, then the next. */
+.field-grid {
+  grid-template-columns:1fr;
+  gap:0;
+  margin-top:20px;
+  counter-reset:forge-step;
+}
+.field {
+  position:relative;
+  padding:16px 12px 17px 58px;
+  border-top:1px solid rgba(90,82,69,.12);
+  border-radius:12px;
+  transition:background .15s ease,box-shadow .15s ease;
+}
+.field::before {
+  counter-increment:forge-step;
+  content:counter(forge-step,decimal-leading-zero);
+  position:absolute;
+  left:10px;
+  top:17px;
+  width:34px;
+  height:34px;
+  display:grid;
+  place-items:center;
+  border:1px solid #d8c9ad;
+  border-radius:10px;
+  background:#fffaf1;
+  color:#8d6b32;
+  font-size:.62rem;
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.field:hover { background:rgba(201,164,92,.035); }
+.field:focus-within { background:rgba(201,164,92,.065); box-shadow:inset 3px 0 0 #b29050; }
+.field:last-child { border-bottom:1px solid rgba(90,82,69,.12); }
+.field-emphasis { grid-column:auto; }
+.field small { display:block !important; min-height:0; margin-top:1px; }
+
+/* Choice panels continue the same visual rail instead of looking like new forms. */
+.species-choice-panel,.background-choice-panel,.class-choice-panel,.choice-panel,.homebrew-panel,.magic-controls {
+  margin-left:58px;
+}
+
+.workflow-guide {
+  border-color:rgba(178,144,80,.28);
+  background:linear-gradient(135deg,rgba(201,164,92,.08),rgba(255,255,255,.025));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035);
+}
+.workflow-steps span { border:1px solid rgba(95,104,120,.14); }
+
+/* Keep the persistent action bar truly at the top of the interaction. */
+.forge-action-bar {
+  max-width:1080px;
+  margin:0 auto 24px;
+  padding:12px 14px;
+  border-color:rgba(201,164,92,.38);
+  background:linear-gradient(135deg,rgba(30,33,39,.97),rgba(20,22,27,.96));
+  box-shadow:0 18px 42px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.forge-action-copy strong { letter-spacing:-.015em; }
+.forge-action-buttons .forge-button {
+  position:static;
+  width:auto;
+  margin:0;
+  flex:1 1 auto;
+}
+.forge-action-print { min-width:155px; }
+
+/* The top action bar replaces the old in-panel action location. */
+.forge-panel > .forge-button { margin-top:0; }
+
+@media (max-width:680px) {
+  .forge-panel { max-width:none; }
+  .field { padding:15px 8px 16px 52px; }
+  .field::before { left:6px; top:16px; width:32px; height:32px; }
+  .species-choice-panel,.background-choice-panel,.class-choice-panel,.choice-panel,.homebrew-panel,.magic-controls { margin-left:0; }
+  .forge-action-bar { position:sticky; top:8px; margin:0 0 14px; padding:12px; }
+  .forge-action-copy small { max-width:48ch; }
+  .forge-action-buttons { grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr); }
+  .forge-action-buttons .forge-button { min-height:48px; }
+  .forge-action-print { min-width:0; }
+  .forge-panel > .forge-button { margin-top:0; }
+}
+
+@media print {
+  .forge-action-bar { display:none !important; }
 }
