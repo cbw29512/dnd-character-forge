@@ -33,13 +33,21 @@ function candidatesFor(classId,rarity,usedIds=[]){
   catch(error){console.error("[magic] candidate lookup failed",error);throw error;}
 }
 function pick(items,offset=0){return items.length?items[offset%items.length]:null;}
+function resolveMagicMode(mode){
+  try{
+    if(mode!==MAGIC_MODES.RANDOM_MAGIC)return mode;
+    const choices=[MAGIC_MODES.NO_MAGIC,MAGIC_MODES.LOW_MAGIC,MAGIC_MODES.NORMAL_MAGIC,MAGIC_MODES.HIGH_MAGIC];
+    return choices[Math.floor(Math.random()*choices.length)];
+  }catch(error){console.error("[magic] random mode resolution failed",error);throw error;}
+}
 
 export function startingMagicPlan(ruleset,level,mode){
   try{
-    if(mode===MAGIC_MODES.NO_MAGIC)return {ruleset,level,mode,gold:"normal starting equipment",items:[],source:"No Magic — explicit user setting"};
-    const table=ruleset==="2014"?DMG_2014:DMG_2024,band=tierFor(level),row=table[mode]?.[band];
-    if(!row)throw new Error(`No starting-magic guidance exists for ${ruleset} level ${level} mode ${mode}.`);
-    return {ruleset,level,mode,gold:row.gold,allowance:row.items,items:[],source:ruleset==="2014"?"DMG 2014 Starting at Higher Levels":"2024 Starting Equipment at Higher Levels"};
+    const resolvedMode=resolveMagicMode(mode);
+    if(resolvedMode===MAGIC_MODES.NO_MAGIC)return {ruleset,level,mode:resolvedMode,requestedMode:mode,gold:"normal starting equipment",items:[],source:mode===MAGIC_MODES.RANDOM_MAGIC?"Random campaign magic — resolved to No Magic":"No Magic — explicit user setting"};
+    const table=ruleset==="2014"?DMG_2014:DMG_2024,band=tierFor(level),row=table[resolvedMode]?.[ruleset==="2014"?({"1-1":"1-4","2-4":"1-4"}[band]||band):band];
+    if(!row)throw new Error(`No starting-magic guidance exists for ${ruleset} level ${level} mode ${resolvedMode}.`);
+    return {ruleset,level,mode:resolvedMode,requestedMode:mode,gold:row.gold,allowance:row.items,items:[],source:mode===MAGIC_MODES.RANDOM_MAGIC?`Random campaign magic — resolved to ${resolvedMode}`:(ruleset==="2014"?"DMG 2014 Starting at Higher Levels":"2024 Starting Equipment at Higher Levels")};
   }catch(error){console.error("[magic] starting plan failed",error);throw error;}
 }
 
