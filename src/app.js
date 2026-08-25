@@ -4,7 +4,7 @@ import { generateCharacter } from "./rules/generator.js";
 import { generateStartingMagic } from "./rules/magic-starting.js";
 import { createAbilityFeat } from "./rules/homebrew.js";
 import { savePregen } from "./library/local-library.js";
-import { renderCharacter } from "./ui/render.js";
+import { renderCharacter } from "./ui/render-safe.js";
 import { exportCharacterPdf } from "./ui/print.js";
 import { populateOptions, populateLevels, populateSubclasses } from "./ui/options.js";
 import { bindSpeciesOptions, renderSpeciesOptions, resetSpeciesOptions } from "./ui/species-options.js";
