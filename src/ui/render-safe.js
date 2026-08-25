@@ -47,7 +47,9 @@ function ensureTopActions(target){
       bar.className="forge-action-bar";
       bar.setAttribute("aria-label","Character Forge actions");
       bar.innerHTML=`<div class="forge-action-copy"><span class="section-kicker">READY TO PLAY?</span><strong>Forge, reforge, or print</strong><small>Leave everything Random for a complete legal character, or set only the choices you care about.</small></div><div class="forge-action-buttons"></div>`;
-      workspace.parentNode.insertBefore(bar,workspace);
+      const hero=document.querySelector(".hero-copy");
+      (hero||workspace.parentNode).parentNode?.insertBefore?.(bar,hero||workspace);
+      if(!bar.parentNode)workspace.parentNode.insertBefore(bar,workspace);
     }
 
     const buttons=bar.querySelector(".forge-action-buttons");
