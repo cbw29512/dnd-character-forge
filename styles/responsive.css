@@ -13,6 +13,14 @@
 @import url("./print/premium-bard.css");
 @import url("./print/premium-monk.css");
 @import url("./print/premium-sorcerer.css");
+
+/*
+ * Responsive state/layout contract:
+ * - Desktop keeps the two-column Forge + character workspace.
+ * - Tablet collapses the workspace into one readable column.
+ * - Phone becomes a touch-first, single-column workflow without changing
+ *   character data, rules calculations, or print output.
+ */
 @media (max-width: 980px) {
   .site-header { grid-template-columns:1fr auto; }
   .primary-nav { order:3; grid-column:1/-1; justify-self:start; }
@@ -20,31 +28,175 @@
   .forge-workspace { grid-template-columns:1fr; }
   .forge-panel { position:static; }
   .hero-copy { margin-bottom:32px; }
+
+  /* Keep the builder comfortable on tablets without changing its order. */
+  .forge-panel { max-width:760px; width:100%; margin:0 auto; }
+  .result-stage { max-width:1000px; width:100%; margin:0 auto; }
 }
+
 @media (max-width: 680px) {
-  .site-header,.site-shell,.site-footer { padding-left:18px; padding-right:18px; }
-  .site-header { gap:12px; }
+  :root { --mobile-gutter:14px; }
+
+  html { overflow-x:hidden; }
+  body { overflow-x:hidden; }
+
+  .site-header,.site-shell,.site-footer {
+    padding-left:var(--mobile-gutter);
+    padding-right:var(--mobile-gutter);
+  }
+
+  .site-header {
+    gap:10px;
+    min-height:66px;
+    padding-top:12px;
+    padding-bottom:12px;
+  }
+
+  .brand { gap:9px; }
+  .brand-mark { width:36px; height:36px; border-radius:10px; }
+  .brand strong { font-size:.92rem; }
+  .brand small { font-size:.62rem; }
+  .primary-nav { width:100%; overflow-x:auto; justify-self:stretch; scrollbar-width:none; }
+  .primary-nav::-webkit-scrollbar { display:none; }
+  .nav-link { flex:0 0 auto; min-height:40px; padding:9px 12px; }
   .header-proof { display:none; }
-  .site-shell { padding-top:34px; }
-  .hero-copy h1 { font-size:clamp(3.1rem,17vw,5.4rem); }
-  .hero-lede { font-size:.98rem; }
-  .seo-about { margin-top:42px; padding:26px 22px; }
-  .seo-about h2 { font-size:1.65rem; }
-  .field-grid { grid-template-columns:1fr; }
+
+  .site-shell { padding-top:24px; padding-bottom:42px; }
+  .hero-copy { margin-bottom:22px; }
+  .hero-copy h1 {
+    font-size:clamp(2.55rem,14vw,4.2rem);
+    line-height:.94;
+    margin-bottom:12px;
+  }
+  .hero-lede { font-size:.92rem; line-height:1.55; }
+  .trust-row { gap:6px; margin-top:14px; }
+  .trust-row span { padding:6px 8px; font-size:.67rem; }
+
+  .forge-workspace { gap:14px; }
+  .forge-panel {
+    width:100%;
+    max-width:none;
+    padding:15px;
+    border-radius:17px;
+    box-shadow:0 10px 28px rgba(0,0,0,.16);
+  }
+
+  .panel-heading { gap:10px; padding-bottom:13px; }
+  .panel-heading h2 { font-size:1.28rem; }
+  .field-grid { grid-template-columns:1fr; gap:10px; margin-top:14px; }
   .field-emphasis { grid-column:auto; }
-  .field small { min-height:auto; }
-  .homebrew-fields { grid-template-columns:1fr; }
+  .field { gap:5px; font-size:.72rem; }
+  .field small { min-height:auto; line-height:1.35; }
+  select,input { min-height:48px; border-radius:11px; font-size:.9rem; }
+
+  .workflow-guide { margin-top:14px; padding:12px; border-radius:12px; }
+  .workflow-steps { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+  .workflow-steps span { text-align:center; padding:7px 5px; font-size:.64rem; }
+
+  .species-choice-panel,.background-choice-panel,.homebrew-panel,.magic-controls {
+    margin-top:12px;
+    padding:12px;
+    border-radius:13px;
+  }
+  .species-choice-fields,.background-choice-fields,.homebrew-fields,.magic-options {
+    grid-template-columns:1fr;
+  }
+  .species-choice-field select,.background-choice-field select { min-height:44px; }
   .homebrew-fields .secondary-button { grid-column:auto; }
+  .magic-option { min-height:58px; align-items:center; padding:10px; }
+  .magic-option input { width:20px; min-height:20px; flex:0 0 20px; }
+  .magic-option strong { font-size:.8rem; }
+  .magic-option small { font-size:.68rem; }
+  .magic-guidance { font-size:.68rem; }
+
+  /* The primary action remains easy to reach while the builder itself is in view. */
+  .forge-button {
+    position:sticky;
+    bottom:10px;
+    z-index:20;
+    min-height:56px;
+    margin-top:14px;
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow:0 10px 26px rgba(67,17,22,.35),0 0 0 1px rgba(255,255,255,.04);
+  }
+
+  .error-banner { font-size:.74rem; margin-top:10px; }
+  .coverage-note { font-size:.66rem; }
+
+  .result-label { min-height:auto; padding:2px 2px 8px; }
+  .result-stage { width:100%; min-width:0; }
+
+  /* Phone character sheet: preserve all information, but reduce visual density. */
+  .character-sheet {
+    width:100%;
+    border-radius:16px;
+    box-shadow:0 10px 28px rgba(0,0,0,.18);
+  }
+  .character-hero { padding:18px 15px; }
   .character-topline { display:block; }
-  .validation-badge { margin-top:14px; }
-  .ability-grid { grid-template-columns:repeat(3,1fr); }
+  .character-name {
+    font-size:clamp(1.8rem,9vw,2.55rem);
+    margin-top:6px;
+  }
+  .character-subtitle { font-size:.78rem; line-height:1.4; }
+  .validation-badge { margin-top:11px; font-size:.62rem; }
+  .character-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin-top:14px; }
+  .action-button { min-height:44px; padding:8px; }
+
+  .ability-grid {
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+    margin-top:15px;
+  }
+  .ability-card { padding:9px 5px; border-radius:9px; }
+  .ability-card strong { font-size:1.28rem; }
+  .ability-card span,.ability-card em { font-size:.56rem; }
+
   .metric-grid { grid-template-columns:repeat(3,1fr); }
-  .detail-grid { grid-template-columns:1fr; padding:14px; }
+  .metric { padding:11px 5px; }
+  .metric span { font-size:.55rem; letter-spacing:.06em; }
+  .metric strong { font-size:1.08rem; }
+
+  .detail-grid { grid-template-columns:1fr; gap:9px; padding:10px; }
   .detail-card.span-2 { grid-column:auto; }
+  .detail-card { padding:12px; border-radius:11px; }
+  .detail-card h3 { margin-bottom:8px; font-size:.9rem; }
+  .detail-card p { font-size:.72rem; line-height:1.5; }
+
+  .origin-magic-grid { grid-template-columns:1fr; }
+  .fighter-resource-grid,.rogue-resource-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .fighter-resource,.rogue-resource { padding:9px 6px; }
+  .attack-row { grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr); gap:6px; font-size:.69rem; }
+  .skills { grid-template-columns:1fr; gap:3px; }
+  .skill { font-size:.7rem; min-height:30px; align-items:center; }
+
   .sheet-footer,.site-footer { display:block; }
   .sheet-footer span,.site-footer span { display:block; margin-top:5px; }
+  .sheet-footer { padding:11px 13px 14px; font-size:.61rem; }
+
+  /* Prevent long names, item names, and references from forcing horizontal scroll. */
+  .character-sheet * { min-width:0; }
+  .character-sheet h1,.character-sheet h2,.character-sheet h3,
+  .character-sheet p,.character-sheet span,.character-sheet strong,
+  .character-sheet em,.character-sheet a { overflow-wrap:anywhere; }
+
+  .seo-about { margin-top:30px; padding:22px 18px; }
+  .seo-about h2 { font-size:1.45rem; }
+  .seo-about > p { font-size:.86rem; }
 }
+
+@media (max-width:390px) {
+  .site-header,.site-shell,.site-footer { padding-left:11px; padding-right:11px; }
+  .brand small { display:none; }
+  .workflow-steps { grid-template-columns:1fr 1fr; }
+  .character-actions { grid-template-columns:1fr; }
+  .ability-card strong { font-size:1.18rem; }
+  .detail-grid { padding:8px; }
+  .detail-card { padding:10px; }
+}
+
 @page { size:Letter portrait; margin:.32in; }
+
 @media print {
   html,body { background:#fff !important; }
   body { margin:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
