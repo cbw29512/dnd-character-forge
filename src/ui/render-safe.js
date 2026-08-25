@@ -14,13 +14,9 @@ export function renderCharacter(character,target){
     const references=buildQuickReference(character);
     const safeCharacter={
       ...character,
-      // Class/subclass features are supplied by the class-aware router.
       features:[],
-      // Feat references are also supplied by the routed result.
       feats:[],
-      // Weapon mastery references are supplied by the routed result.
       masteryIds:[],
-      // Species/background references are supplied by the routed result.
       speciesTraits:[],
       background:{...character.background,feature:null}
     };
@@ -28,10 +24,66 @@ export function renderCharacter(character,target){
     const list=target.querySelector(".reference-list");
     if(!list)throw new Error("Character sheet reference container was not rendered.");
     list.innerHTML=references.map(item=>`<article class="reference-item"><div class="reference-head"><strong>${escapeHtml(item.name)}</strong><span class="reference-tag">${escapeHtml(item.category)}</span></div><p>${escapeHtml(item.text)}</p><div class="reference-foot"><span class="reference-timing">${escapeHtml(item.timing)}</span>${sourceLabel(item.source)}</div></article>`).join("");
+    ensureTopActions(target);
   }catch(error){
     console.error("[ui] routed character render failed",error);
     throw error;
   }
+}
+
+/*
+ * The Forge is intentionally a one-direction cascade, but its primary
+ * actions stay at the top. This lets a first-time visitor leave everything
+ * Random and immediately Forge, then Reforge or Print without scrolling.
+ */
+function ensureTopActions(target){
+  try{
+    const workspace=document.querySelector(".forge-workspace"),forgeButton=document.getElementById("forgeButton");
+    if(!workspace||!forgeButton)throw new Error("Forge action anchors are missing.");
+
+    let bar=document.querySelector(".forge-action-bar");
+    if(!bar){
+      bar=document.createElement("section");
+      bar.className="forge-action-bar";
+      bar.setAttribute("aria-label","Character Forge actions");
+      bar.innerHTML=`<div class="forge-action-copy"><span class="section-kicker">READY TO PLAY?</span><strong>Forge, reforge, or print</strong><small>Leave everything Random for a complete legal character, or set only the choices you care about.</small></div><div class="forge-action-buttons"></div>`;
+      workspace.parentNode.insertBefore(bar,workspace);
+    }
+
+    const buttons=bar.querySelector(".forge-action-buttons");
+    if(!buttons)throw new Error("Forge action button container is missing.");
+    if(forgeButton.parentElement!==buttons)buttons.appendChild(forgeButton);
+    forgeButton.classList.add("forge-action-primary");
+    forgeButton.setAttribute("aria-label",`${characterLabel(target)?"Reforge":"Forge"} character`);
+    forgeButton.querySelector(".button-arrow")?.replaceChildren(document.createTextNode("→"));
+    const label=forgeButton.childNodes[1];
+    if(label)label.nodeValue=` ${characterLabel(target)?"Reforge Character":"Forge Character"} `;
+
+    let printButton=buttons.querySelector(".forge-action-print");
+    if(!printButton){
+      printButton=document.createElement("button");
+      printButton.type="button";
+      printButton.className="action-button forge-action-print";
+      printButton.textContent="Print / Export PDF";
+      buttons.appendChild(printButton);
+      printButton.addEventListener("click",()=>{
+        try{
+          const source=target.querySelector('[data-action="print"]');
+          if(!source)throw new Error("Generate a character before printing.");
+          source.click();
+        }catch(error){console.error("[ui] top print failed",error);throw error;}
+      });
+    }
+    printButton.disabled=!target.querySelector('[data-action="print"]');
+  }catch(error){
+    console.error("[ui] top Forge actions failed",error);
+    throw error;
+  }
+}
+
+function characterLabel(target){
+  try{return Boolean(target.querySelector(".character-sheet"));}
+  catch(error){console.error("[ui] character action state failed",error);throw error;}
 }
 
 function escapeHtml(value){
