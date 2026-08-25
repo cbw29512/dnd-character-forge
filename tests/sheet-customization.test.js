@@ -46,7 +46,7 @@ test("all twelve core classes have distinct premium theme hooks and original sig
 });
 
 test("the selected class owns the printable sheet identity regardless of subclass or other choices",()=>{
-  // Use verified legal 2024 subclass IDs at level 20.
+  // These IDs are verified against the repository's 2024 rules data and are legal at level 20.
   const fighter=buildPremiumPrintModel(characterAt("fighter","champion"));
   const druid=buildPremiumPrintModel(characterAt("druid","circle-land"));
   const wizard=buildPremiumPrintModel(characterAt("wizard","evoker"));
