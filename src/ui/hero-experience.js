@@ -1,5 +1,19 @@
+function ensureHeroStyles(){
+  try{
+    if(document.querySelector('link[data-hero-experience-style]'))return;
+    const link=document.createElement("link");
+    link.rel="stylesheet";
+    link.href="styles/hero-experience.css";
+    link.dataset.heroExperienceStyle="true";
+    document.head.appendChild(link);
+  }catch(error){
+    console.error("[app] hero styles failed",error);
+  }
+}
+
 export function createHeroExperience(){
   try{
+    ensureHeroStyles();
     const hero=document.querySelector(".hero-copy");
     if(!hero)return;
     if(!hero.querySelector(".pregen-promise")){
@@ -16,6 +30,7 @@ export function createHeroExperience(){
 
 export function createForgeLoadingState(){
   try{
+    ensureHeroStyles();
     const button=document.getElementById("forgeButton"),result=document.getElementById("result");
     if(!button||!result)return null;
     let panel=document.getElementById("forgeLoading");
