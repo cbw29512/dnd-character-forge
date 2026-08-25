@@ -15,6 +15,18 @@ function make(ruleset,classId,level,subclassId="random"){
   }catch(error){console.error(`[test] ${ruleset} ${classId} level ${level} subclass ${subclassId}`,error);throw error;}
 }
 
+function assertCharacterShape(character,label){
+  try{
+    assert.equal(character.validation.valid,true,`${label} validation failed`);
+    assert.equal(character.class.id,label.split("/")[1]?.split(" ")[0]||character.class.id);
+    assert.ok(character.equipment && typeof character.equipment==="object",`${label} equipment package missing`);
+    assert.ok(Array.isArray(character.equipment.weapons),`${label} weapon selection missing`);
+    assert.ok(Array.isArray(character.equipment.gear),`${label} gear selection missing`);
+    assert.ok(Array.isArray(character.inventory),`${label} derived inventory missing`);
+    assert.ok(character.audit,`${label} audit missing`);
+  }catch(error){console.error(`[test] character shape ${label}`,error);throw error;}
+}
+
 for(const ruleset of ["2014","2024"]){
   const data=ruleset==="2014"?FORGE_2014:FORGE_2024;
   for(const cls of data.classes){
@@ -24,18 +36,15 @@ for(const ruleset of ["2014","2024"]){
         for(const level of levels){
           if(level<1||level>cls.maxLevel)continue;
           const character=make(ruleset,cls.id,level);
-          assert.equal(character.validation.valid,true,`${ruleset} ${cls.id} level ${level}`);
+          assertCharacterShape(character,`${ruleset}/${cls.id} level ${level}`);
           assert.equal(character.class.id,cls.id);
-          assert.ok(Array.isArray(character.equipment),`${cls.id} equipment missing`);
-          assert.ok(character.audit,`${cls.id} audit missing`);
         }
         for(const subclass of data.subclasses.filter(item=>item.classId===cls.id)){
           const level=cls.subclassLevel||1;
           if(level>cls.maxLevel)continue;
           const character=make(ruleset,cls.id,level,subclass.id);
-          assert.equal(character.validation.valid,true,`${ruleset} ${cls.id}/${subclass.id}`);
+          assertCharacterShape(character,`${ruleset}/${cls.id}/${subclass.id}`);
           assert.equal(character.subclass.id,subclass.id);
-          assert.ok(Array.isArray(character.equipment),`${cls.id}/${subclass.id} equipment missing`);
         }
       }catch(error){console.error(`[test] production matrix ${ruleset} ${cls.id}`,error);throw error;}
     });
