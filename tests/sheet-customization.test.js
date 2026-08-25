@@ -27,7 +27,21 @@ test("customization normalization clamps unsafe or unknown values",()=>{
 test("all twelve core classes have distinct premium theme hooks and original sigils",()=>{
   const ids=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
   assert.deepEqual(Object.keys(PRINT_THEMES).sort(),[...ids].sort());assert.equal(new Set(ids.map(id=>PRINT_THEMES[id].id)).size,12);
-  for(const id of ids){const theme=selectPrintTheme({class:{id}});assert.ok(theme.visualIdentity);assert.ok(theme.motif);assert.match(classPlaceholderArt(id),/ps-placeholder-svg/);}
+  for(const id of ids){
+    const theme=selectPrintTheme({class:{id}});
+    assert.ok(theme.visualIdentity);assert.ok(theme.motif);assert.match(classPlaceholderArt(id),/ps-placeholder-svg/);
+    assert.match(classPlaceholderArt(id),new RegExp(`aria-label=\\"[^\\"]*${id === "wizard" ? "Wizard" : id.charAt(0).toUpperCase()+id.slice(1)}`));
+  }
+});
+
+test("the selected class owns the printable sheet identity regardless of subclass or other choices",()=>{
+  const fighter=buildPremiumPrintModel(characterAt("fighter","champion"));
+  const druid=buildPremiumPrintModel(characterAt("druid","moon"));
+  const wizard=buildPremiumPrintModel(characterAt("wizard","evoker"));
+  assert.equal(fighter.identity.classId,"fighter");assert.equal(fighter.theme.id,"fighter-steel");assert.match(fighter.theme.motif,/shield-blades/);
+  assert.equal(druid.identity.classId,"druid");assert.equal(druid.theme.id,"druid-wild");assert.match(druid.theme.motif,/leaf-antler/);
+  assert.equal(wizard.identity.classId,"wizard");assert.equal(wizard.theme.id,"wizard-arcane");assert.match(wizard.theme.motif,/spellbook-stars/);
+  assert.notEqual(fighter.theme.id,druid.theme.id);assert.notEqual(druid.theme.id,wizard.theme.id);
 });
 
 test("supported classes project useful class-specific resource modules",()=>{
