@@ -8,8 +8,9 @@ export function renderPrintPageOne(m){
     const roguePanel=m.rogueResources?panel("Rogue Resources",rogue(m),"ps-rogue"):"";
     const fighterUtility=m.classUtility?.kind==="fighter"?panel(m.classUtility.title,classUtility(m.classUtility),"ps-class-utility utility-fighter"):"";
     const sideUtility=m.classUtility&&m.classUtility.kind!=="fighter"?panel(m.classUtility.title,classUtility(m.classUtility),`ps-class-utility utility-${m.classUtility.kind}`):"";
+    const magicPanel=startingMagic(m);
     const quickPanel=m.rogueResources?"":panel("Quick Turn",quickTurn(m),"ps-quick");
-    return `${sheetArticleOpen(m,`ps-page-one profile-${m.profile.id}`)}<div class="ps-frame">${classWatermark(m)}${header(m)}<main class="ps-body"><div class="ps-main-columns"><div class="ps-column ps-left">${panel("Ability Scores",abilities(m))}${panel("Saving Throws",savingThrows(m),"ps-saving-throws")}${passive(m)}${panel("Proficiencies & Languages",proficiencies(m),"ps-proficiencies")}</div><div class="ps-column ps-center">${panel("Skills",skills(m),"ps-skills")}${panel("Attacks & Spellcasting",attacks(m),"ps-attacks")}${roguePanel}${fighterUtility}${panel("Equipment",equipment(m),"ps-equipment")}${quickPanel}</div><div class="ps-column ps-right">${m.feat?panel("Feat",feat(m),"ps-feat"):""}${m.spellcasting?panel("Spellcasting",spells(m),"ps-spells"):""}${sideUtility}${panel("Features & Traits",features(m),"ps-features")}</div></div>${m.profile.caster?"":ruleIndex(m)}</main>${footer(m,1)}</div></article>`;
+    return `${sheetArticleOpen(m,`ps-page-one profile-${m.profile.id}`)}<div class="ps-frame">${classWatermark(m)}${header(m)}<main class="ps-body"><div class="ps-main-columns"><div class="ps-column ps-left">${panel("Ability Scores",abilities(m))}${panel("Saving Throws",savingThrows(m),"ps-saving-throws")}${passive(m)}${panel("Proficiencies & Languages",proficiencies(m),"ps-proficiencies")}</div><div class="ps-column ps-center">${panel("Skills",skills(m),"ps-skills")}${panel("Attacks & Spellcasting",attacks(m),"ps-attacks")}${roguePanel}${fighterUtility}${panel("Equipment",equipment(m),"ps-equipment")}${magicPanel}${quickPanel}</div><div class="ps-column ps-right">${m.feat?panel("Feat",feat(m),"ps-feat"):""}${m.spellcasting?panel("Spellcasting",spells(m),"ps-spells"):""}${sideUtility}${panel("Features & Traits",features(m),"ps-features")}</div></div>${m.profile.caster?"":ruleIndex(m)}</main>${footer(m,1)}</div></article>`;
   }catch(error){console.error("[print-page-one] render failed",error);throw error;}
 }
 
@@ -33,6 +34,14 @@ function spells(m){const s=m.spellcasting;return `<div class="ps-spell-stats"><s
 function proficiencies(m){const p=m.proficiencies;return `<p><strong>Saves:</strong> ${esc(p.saves.join(", "))}</p><p><strong>Tools:</strong> ${esc(p.tools.join(", ")||"None")}</p>${p.masteries.length?`<p><strong>Masteries:</strong> ${esc(p.masteries.join(", "))}</p>`:""}<p><strong>Languages:</strong> ${esc(p.languages.join(", "))}</p>`;}
 function quickTurn(m){return `<ol class="ps-quick-list">${m.quickTurn.map(step=>`<li>${esc(step)}</li>`).join("")}</ol>`;}
 function equipment(m){return m.rogueResources?`<p class="ps-equipment-inline">${m.equipment.map(esc).join(" · ")}</p>`:list(m.equipment);}
+function startingMagic(m){
+  try{
+    const magic=m.startingMagic;
+    if(!magic)return"";
+    const items=magic.items||[];
+    return panel("Starting Magic & Gold",`<div class="ps-magic-summary"><div class="ps-magic-mode"><span>Campaign Magic</span><b>${esc(magic.mode||"Normal")}</b></div><div class="ps-magic-gold"><span>Starting Gold</span><b>${esc(magic.gold||"—")}</b></div></div>${items.length?`<div class="ps-magic-items">${items.map(item=>`<div><strong>${esc(item.name)}</strong><small>${esc(item.rarity)}${item.attunement?" · Attunement":""}</small></div>`).join("")}</div>`:`<p class="ps-empty">No starting magic items. This character is explicitly No Magic.</p>`}<small class="ps-magic-source">${esc(magic.source||"Starting-equipment guidance")}</small>` ,"ps-starting-magic");
+  }catch(error){console.error("[print-page-one] starting magic render failed",error);throw error;}
+}
 function ruleIndex(m){return `<section class="ps-rule-index"><h2>Rules Index</h2><div>${m.ruleIndex.map(item=>`<span><b>${esc(item.name)}</b><small>${esc(item.source)}</small></span>`).join("")}</div></section>`;}
 function list(values){return `<ul class="ps-list">${values.map(value=>`<li>${esc(value)}</li>`).join("")}</ul>`;}
 function panel(title,content,className=""){return `<section class="ps-panel ${className}"><h2><span>${esc(title)}</span></h2><div class="ps-panel-body">${content}</div></section>`;}
