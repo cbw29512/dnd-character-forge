@@ -3,6 +3,7 @@ import { buildBarbarianQuickReference } from "./barbarian-reference.js";
 import { buildBardQuickReference } from "./bard-reference.js";
 import { buildMonkQuickReference } from "./monk-reference.js";
 import { buildSorcererQuickReference } from "./sorcerer-reference.js";
+import { buildWarlockQuickReference } from "./warlock-reference.js";
 import { buildDruidQuickReference } from "./druid-reference.js";
 import { buildPaladinQuickReference } from "./paladin-reference.js";
 import { buildRangerQuickReference } from "./ranger-reference.js";
@@ -13,6 +14,7 @@ export function buildQuickReference(character){
     if(character?.class?.id==="bard")return buildBardQuickReference(character);
     if(character?.class?.id==="monk")return buildMonkQuickReference(character);
     if(character?.class?.id==="sorcerer")return buildSorcererQuickReference(character);
+    if(character?.class?.id==="warlock")return buildWarlockQuickReference(character);
     if(character?.class?.id==="druid")return buildDruidQuickReference(character);
     if(character?.class?.id==="paladin")return buildPaladinQuickReference(character);
     if(character?.class?.id==="ranger")return buildRangerQuickReference(character);

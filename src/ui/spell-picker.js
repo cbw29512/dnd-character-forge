@@ -3,7 +3,7 @@ import { forgeDataFor } from "../data/forge-data.js";
 import { CASTER_IDS, spellPickerConfigForState } from "./spell-picker-config.js";
 import { emptySpellSelections } from "./spell-selection-state.js";
 
-const LABELS={cantrips:"Cantrips",known:"Known Spells",spellbook:"Spellbook",prepared:"Prepared",magicalSecrets:"Magical Secrets",loreDiscoveries:"Lore Discoveries"},CASTERS=new Set(CASTER_IDS),MASTERY_ELIGIBLE_2024=new Set(WIZARD_SPELL_MASTERY_ACTION_IDS_2024);
+const LABELS={cantrips:"Cantrips",known:"Known Spells",spellbook:"Spellbook",prepared:"Prepared",magicalSecrets:"Magical Secrets",loreDiscoveries:"Lore Discoveries",arcanum6:"Mystic Arcanum — Level 6",arcanum7:"Mystic Arcanum — Level 7",arcanum8:"Mystic Arcanum — Level 8",arcanum9:"Mystic Arcanum — Level 9"},CASTERS=new Set(CASTER_IDS),MASTERY_ELIGIBLE_2024=new Set(WIZARD_SPELL_MASTERY_ACTION_IDS_2024);
 export { emptySpellSelections, spellPickerConfigForState };
 
 export function bindSpellPicker(state,showToast){

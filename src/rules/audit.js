@@ -2,6 +2,7 @@ import { SOURCE } from "../schema.js";
 import { entityProvenance, referenceProvenance, rulesetSource } from "../data/rule-provenance.js";
 import { monkEntityProvenance } from "../data/monk-provenance.js";
 import { sorcererEntityProvenance, sorcererReferenceProvenance } from "../data/sorcerer-provenance.js";
+import { warlockEntityProvenance, warlockReferenceProvenance } from "../data/warlock-provenance.js";
 import { speciesChoiceLabel } from "./species.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"});
@@ -16,48 +17,13 @@ export function buildRulesAudit(character,validation){
     if(!rulesLabel)throw new Error(`Unsupported ruleset for audit: ${character.ruleset}.`);
     const homebrewCount=character.homebrew?.length||0,rawIntegrity=character.sourceMode===SOURCE.RAW&&homebrewCount===0;
     const classSource=classEntityProvenance(character,"class");
-    const mechanics=[
-      mechanic("Species",speciesChoiceLabel(character),entityProvenance(character.ruleset,"species",character.species.id)),
-      mechanic("Background",character.background?.name||"Unknown",entityProvenance(character.ruleset,"background",character.background.id)),
-      mechanic("Class",character.class?.name||"Unknown",classSource),
-      mechanic("Level",String(character.level),classSource)
-    ];
+    const mechanics=[mechanic("Species",speciesChoiceLabel(character),entityProvenance(character.ruleset,"species",character.species.id)),mechanic("Background",character.background?.name||"Unknown",entityProvenance(character.ruleset,"background",character.background.id)),mechanic("Class",character.class?.name||"Unknown",classSource),mechanic("Level",String(character.level),classSource)];
     if(character.subclass){const subclassSource=classEntityProvenance(character,"subclass");mechanics.splice(3,0,mechanic("Subclass",character.subclass.name,subclassSource));}
     if(character.spells)mechanics.push(mechanic("Spellcasting",`${character.class.name} rules; legal selections validated and remaining choices filled by Forge`,classReferenceProvenance(character,"feature","Spellcasting")));
-    const checks=[
-      "Character generation completed with zero validation errors.",
-      "Derived Armor Class, Hit Points, initiative, saves, skills, attacks, species effects, and spell math were recalculated from encoded mechanics.",
-      "Duplicate proficiencies, features, attacks, languages, feats, masteries, and spell selections were rejected by validation.",
-      "Displayed rule-facing identity and play-reference mechanics carry verified SRD source locators.",
-      character.sourceMode===SOURCE.RAW
-        ?"RAW integrity passed: no Homebrew mechanics are present in this character."
-        :`Homebrew mode is explicit: ${homebrewCount} structured Homebrew entr${homebrewCount===1?"y":"ies"} applied on top of RAW.`
-    ];
-    return{
-      status:"PASS",sourceMode:character.sourceMode,rawIntegrity,ruleset:character.ruleset,rulesLabel,
-      sourceDocument:source.document,sourceVersion:source.version,sourceUrl:SRD_LANDING_URL,sourcePdfUrl:source.pdfUrl,license:LICENSE,
-      scope:"Character Forge verified SRD coverage only; unsupported content is unavailable instead of guessed.",mechanics,checks
-    };
+    const checks=["Character generation completed with zero validation errors.","Derived Armor Class, Hit Points, initiative, saves, skills, attacks, species effects, and spell math were recalculated from encoded mechanics.","Duplicate proficiencies, features, attacks, languages, feats, masteries, and spell selections were rejected by validation.","Displayed rule-facing identity and play-reference mechanics carry verified SRD source locators.",character.sourceMode===SOURCE.RAW?"RAW integrity passed: no Homebrew mechanics are present in this character.":`Homebrew mode is explicit: ${homebrewCount} structured Homebrew entr${homebrewCount===1?"y":"ies"} applied on top of RAW.`];
+    return{status:"PASS",sourceMode:character.sourceMode,rawIntegrity,ruleset:character.ruleset,rulesLabel,sourceDocument:source.document,sourceVersion:source.version,sourceUrl:SRD_LANDING_URL,sourcePdfUrl:source.pdfUrl,license:LICENSE,scope:"Character Forge verified SRD coverage only; unsupported content is unavailable instead of guessed.",mechanics,checks};
   }catch(error){console.error("[audit] rules audit failed",error);throw error;}
 }
-
-function classEntityProvenance(character,kind){
-  try{
-    if(character.class?.id==="monk")return monkEntityProvenance(character.ruleset,kind);
-    if(character.class?.id==="sorcerer")return sorcererEntityProvenance(character.ruleset,kind);
-    const id=kind==="class"?character.class?.id:character.subclass?.id;
-    return entityProvenance(character.ruleset,kind,id);
-  }catch(error){console.error(`[audit] ${kind} provenance routing failed`,error);throw error;}
-}
-
-function classReferenceProvenance(character,kind,name){
-  try{
-    if(character.class?.id==="sorcerer")return sorcererReferenceProvenance(character,kind,name);
-    return referenceProvenance(character,kind,name);
-  }catch(error){console.error(`[audit] ${kind} reference provenance routing failed`,error);throw error;}
-}
-
-function mechanic(label,value,source){
-  try{if(!source?.version||!source?.page)throw new Error(`Audit mechanic ${label} is missing verified provenance.`);return{label,value,source};}
-  catch(error){console.error(`[audit] mechanic provenance failed for ${label}`,error);throw error;}
-}
+function classEntityProvenance(character,kind){try{if(character.class?.id==="monk")return monkEntityProvenance(character.ruleset,kind);if(character.class?.id==="sorcerer")return sorcererEntityProvenance(character.ruleset,kind);if(character.class?.id==="warlock")return warlockEntityProvenance(character.ruleset,kind);const id=kind==="class"?character.class?.id:character.subclass?.id;return entityProvenance(character.ruleset,kind,id);}catch(error){console.error(`[audit] ${kind} provenance routing failed`,error);throw error;}}
+function classReferenceProvenance(character,kind,name){try{if(character.class?.id==="sorcerer")return sorcererReferenceProvenance(character,kind,name);if(character.class?.id==="warlock")return warlockReferenceProvenance(character,kind,name==="Spellcasting"?"Pact Magic":name);return referenceProvenance(character,kind,name);}catch(error){console.error(`[audit] ${kind} reference provenance routing failed`,error);throw error;}}
+function mechanic(label,value,source){try{if(!source?.version||!source?.page)throw new Error(`Audit mechanic ${label} is missing verified provenance.`);return{label,value,source};}catch(error){console.error(`[audit] mechanic provenance failed for ${label}`,error);throw error;}}

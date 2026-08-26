@@ -17,7 +17,7 @@ export function createInitialState() {
       speciesSelections: {},
       backgroundSelections: {},
       classSelections: {},
-      spellSelections: { cantrips:[], known:[], spellbook:[], prepared:[], magicalSecrets:[], loreDiscoveries:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
+      spellSelections: { cantrips:[], known:[], spellbook:[], prepared:[], magicalSecrets:[], loreDiscoveries:[], arcanum6:[], arcanum7:[], arcanum8:[], arcanum9:[], masteryLevel1:null, masteryLevel2:null, signatureSpells:[] },
       portraitDataUrl: null,
       sheetCustomization: createDefaultSheetCustomization(),
       homebrew: [],
