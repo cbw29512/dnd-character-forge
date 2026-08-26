@@ -1,7 +1,7 @@
 @media print{
   /* BARD — performance folio, brass flourishes, lyrical manuscript rhythm. */
   .theme-bard-legend .ps-top{grid-template-columns:1.66in minmax(0,1fr) 2.48in}
-  .theme-bard-legend .ps-body{grid-template-columns:1.4in minmax(0,1fr) 2.36in}
+  .theme-bard-legend .ps-main-columns{grid-template-columns:1.4in minmax(0,1fr) 2.36in}
   .theme-bard-legend .ps-identity,.theme-bard-legend .ps-top-stats,.theme-bard-legend .ps-panel{border:1.5px double #633044;background:linear-gradient(180deg,rgba(251,242,226,.92),rgba(233,214,207,.76))}
   .theme-bard-legend .ps-panel{border-radius:.06in .16in .06in .16in}
   .theme-bard-legend .ps-panel h2{clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);letter-spacing:.08em}
@@ -14,7 +14,7 @@
 
   /* SORCERER — fractured crystal, asymmetrical magical pressure, faceted stats. */
   .theme-sorcerer-aether .ps-top{grid-template-columns:1.58in minmax(0,1fr) 2.58in}
-  .theme-sorcerer-aether .ps-body{grid-template-columns:1.36in minmax(0,1fr) 2.46in}
+  .theme-sorcerer-aether .ps-main-columns{grid-template-columns:1.36in minmax(0,1fr) 2.46in}
   .theme-sorcerer-aether .ps-identity,.theme-sorcerer-aether .ps-top-stats,.theme-sorcerer-aether .ps-panel{border:1.4px solid #4d335e;background:linear-gradient(145deg,rgba(247,241,237,.9),rgba(222,207,231,.73))}
   .theme-sorcerer-aether .ps-panel{clip-path:polygon(4% 0,96% 0,100% 9%,97% 100%,5% 98%,0 91%,1% 8%)}
   .theme-sorcerer-aether .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 42%,92% 100%,8% 100%,0 58%);letter-spacing:.08em}
@@ -27,7 +27,7 @@
 
   /* WARLOCK — pact seals, eye shapes, narrow occult rails. */
   .theme-warlock-eldritch .ps-top{grid-template-columns:1.62in minmax(0,1fr) 2.54in}
-  .theme-warlock-eldritch .ps-body{grid-template-columns:1.42in minmax(0,1fr) 2.35in}
+  .theme-warlock-eldritch .ps-main-columns{grid-template-columns:1.42in minmax(0,1fr) 2.35in}
   .theme-warlock-eldritch .ps-identity,.theme-warlock-eldritch .ps-top-stats,.theme-warlock-eldritch .ps-panel{border:1.4px solid #3c304c;background:linear-gradient(180deg,rgba(239,235,226,.9),rgba(213,204,219,.72))}
   .theme-warlock-eldritch .ps-panel{clip-path:polygon(5% 0,95% 0,100% 12%,96% 100%,4% 100%,0 88%)}
   .theme-warlock-eldritch .ps-panel h2{clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%);letter-spacing:.095em}
@@ -40,7 +40,7 @@
 
   /* WIZARD — arcane notebook, circles, precise geometric indexing. */
   .theme-wizard-arcane .ps-top{grid-template-columns:1.54in minmax(0,1fr) 2.68in}
-  .theme-wizard-arcane .ps-body{grid-template-columns:1.34in minmax(0,1fr) 2.58in}
+  .theme-wizard-arcane .ps-main-columns{grid-template-columns:1.34in minmax(0,1fr) 2.58in}
   .theme-wizard-arcane .ps-identity,.theme-wizard-arcane .ps-top-stats,.theme-wizard-arcane .ps-panel{border:1.3px solid #283c5a;background-color:rgba(241,241,230,.9);background-image:radial-gradient(circle at 92% 8%,transparent 0 .22in,rgba(60,86,136,.04) .225in .235in,transparent .24in)}
   .theme-wizard-arcane .ps-panel{clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px)}
   .theme-wizard-arcane .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);letter-spacing:.1em}
