@@ -105,6 +105,8 @@ test("Warlock premium print inventory is normalized into readable equipment line
     assert.ok(model.equipment.length>0,"Warlock print model should include equipment");
     assert.ok(model.equipment.every(item=>typeof item==="string"&&item.trim()),"Every Warlock print equipment entry must be a non-empty string");
     assert.equal(model.equipment.some(item=>item.includes("[object Object]")),false,"Warlock print model must never stringify inventory objects implicitly");
-    assert.ok(model.equipment.some(item=>/^2 × Dagger\b/.test(item)),"Duplicate daggers should print as a consolidated quantity");
+    const daggerInventory=(character.inventory||[]).find(item=>item&&typeof item==="object"&&item.name==="Dagger");
+    assert.equal(daggerInventory?.quantity,2,`Generated Warlock inventory must preserve two starting daggers. inventory=${JSON.stringify(character.inventory)}`);
+    assert.ok(model.equipment.some(item=>/^2 × Dagger\b/.test(item)),`Duplicate daggers should print as a consolidated quantity. inventory=${JSON.stringify(character.inventory)} equipment=${JSON.stringify(model.equipment)}`);
   }catch(error){console.error("[warlock-production-test] print equipment contract failed",error);throw error;}
 });
