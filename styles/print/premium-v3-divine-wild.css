@@ -1,0 +1,55 @@
+@media print{
+  /* CLERIC — illuminated manuscript, halo geometry, sacred page rails. */
+  .theme-cleric-sanctum .ps-top{grid-template-columns:1.62in minmax(0,1fr) 2.52in}
+  .theme-cleric-sanctum .ps-body{grid-template-columns:1.42in minmax(0,1fr) 2.34in}
+  .theme-cleric-sanctum .ps-identity,.theme-cleric-sanctum .ps-top-stats,.theme-cleric-sanctum .ps-panel{border:1.7px double #8b732f;background:linear-gradient(180deg,rgba(255,252,239,.94),rgba(244,233,197,.76))}
+  .theme-cleric-sanctum .ps-panel{border-radius:.04in}
+  .theme-cleric-sanctum .ps-panel h2{clip-path:polygon(9% 0,91% 0,100% 50%,91% 100%,9% 100%,0 50%);letter-spacing:.1em}
+  .theme-cleric-sanctum .ps-stat{clip-path:polygon(50% 0,90% 16%,100% 58%,76% 100%,24% 100%,0 58%,10% 16%)}
+  .theme-cleric-sanctum .ps-portrait-art{border-radius:50% 50% 8% 8% / 24% 24% 6% 6%;border:3px double #c9ad62;clip-path:none}
+  .theme-cleric-sanctum .ps-ornament{opacity:.18;color:#9d761a;width:.52in;height:.4in}
+  .theme-cleric-sanctum .utility-cleric{border:3px double #9d761a;background:radial-gradient(circle at 50% 0,rgba(201,173,98,.18),transparent 62%)}
+  .theme-cleric-sanctum .utility-cleric .ps-utility-stats span{clip-path:polygon(50% 0,91% 18%,100% 70%,72% 100%,28% 100%,0 70%,9% 18%)}
+  .theme-cleric-sanctum .ps-dossier-seal{border-radius:50% 50% 8% 8% / 22% 22% 6% 6%;clip-path:none}
+
+  /* DRUID — grown edges, moon circles, leaf-like asymmetry. */
+  .theme-druid-wild .ps-top{grid-template-columns:1.72in minmax(0,1fr) 2.4in}
+  .theme-druid-wild .ps-body{grid-template-columns:1.4in minmax(0,1fr) 2.28in}
+  .theme-druid-wild .ps-identity,.theme-druid-wild .ps-top-stats,.theme-druid-wild .ps-panel{border:1.4px solid #59683a;background:linear-gradient(160deg,rgba(247,242,221,.9),rgba(221,225,192,.74))}
+  .theme-druid-wild .ps-panel{border-radius:.11in .025in .11in .025in;box-shadow:inset .025in 0 rgba(87,106,53,.08)}
+  .theme-druid-wild .ps-panel h2{clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);letter-spacing:.07em}
+  .theme-druid-wild .ps-stat{clip-path:ellipse(49% 50% at 50% 50%)}
+  .theme-druid-wild .ps-portrait-art{clip-path:ellipse(49% 48% at 50% 50%);border:3px double #a58c5f}
+  .theme-druid-wild .ps-ornament{opacity:.14;color:#576a35;width:.58in;height:.43in}.theme-druid-wild .ps-ornament-tl{transform:rotate(-24deg)}.theme-druid-wild .ps-ornament-br{transform:scale(-1) rotate(-24deg)}
+  .theme-druid-wild .utility-druid{border:2px solid #576a35;border-radius:.13in;background:radial-gradient(ellipse at 50% 100%,rgba(87,106,53,.14),transparent 64%)}
+  .theme-druid-wild .utility-druid .ps-utility-stats span{border-radius:50% 50% 20% 20% / 28% 28% 10% 10%}
+  .theme-druid-wild .ps-dossier-seal{clip-path:ellipse(49% 48% at 50% 50%)}
+
+  /* PALADIN — large oath crest, cathedral arches, shield geometry, radiant steel. */
+  .theme-paladin-oath .ps-top{grid-template-columns:1.92in minmax(0,1fr) 2.18in;gap:.075in;background:radial-gradient(ellipse at 50% 100%,transparent 0 62%,rgba(208,184,117,.12) 62.5% 64%,transparent 64.5%)}
+  .theme-paladin-oath .ps-body{grid-template-columns:1.4in minmax(0,1fr) 2.5in}
+  .theme-paladin-oath .ps-identity,.theme-paladin-oath .ps-top-stats{border:2px double #6b572a;background:linear-gradient(180deg,rgba(255,252,238,.96),rgba(239,224,185,.8));border-radius:.12in .12in .025in .025in}
+  .theme-paladin-oath .ps-panel{border:2px double #6b572a;background:linear-gradient(180deg,rgba(255,250,232,.94),rgba(239,226,193,.78));border-radius:.09in .09in .015in .015in}
+  .theme-paladin-oath .ps-panel h2{clip-path:polygon(12% 0,88% 0,100% 34%,94% 100%,6% 100%,0 34%);font-size:9.4pt;letter-spacing:.095em}
+  .theme-paladin-oath .ps-stat{clip-path:polygon(50% 0,94% 15%,91% 72%,50% 100%,9% 72%,6% 15%);border:2px solid #6b572a}
+  .theme-paladin-oath .ps-portrait{border:3px double #d0b875;padding:.045in;background:rgba(255,250,235,.9)}
+  .theme-paladin-oath .ps-portrait-art{clip-path:polygon(50% 0,95% 13%,91% 75%,50% 100%,9% 75%,5% 13%);border:3px double #d0b875}
+  .theme-paladin-oath .ps-ornament{opacity:.25;color:#815d1f;width:.64in;height:.46in}
+  .theme-paladin-oath .ps-ornament-tl,.theme-paladin-oath .ps-ornament-tr{top:.02in}.theme-paladin-oath .ps-ornament-bl,.theme-paladin-oath .ps-ornament-br{bottom:.02in}
+  .theme-paladin-oath .utility-paladin{border:3px double #815d1f;background:radial-gradient(ellipse at 50% 0,rgba(208,184,117,.2),transparent 72%);box-shadow:inset 0 0 .13in rgba(208,184,117,.16)}
+  .theme-paladin-oath .utility-paladin .ps-utility-stats span{clip-path:polygon(50% 0,92% 16%,90% 72%,50% 100%,10% 72%,8% 16%);border:1.5px solid #9b7a34;background:rgba(255,252,240,.75)}
+  .theme-paladin-oath .ps-dossier-seal{clip-path:polygon(50% 0,95% 12%,91% 76%,50% 100%,9% 76%,5% 12%);border:2px double #d0b875}
+  .theme-paladin-oath .ps-dossier-panel h2{border-bottom:3px double #815d1f}
+
+  /* RANGER — field journal rails, arrows, trail geometry, practical asymmetry. */
+  .theme-ranger-warden .ps-top{grid-template-columns:1.68in minmax(0,1fr) 2.46in}
+  .theme-ranger-warden .ps-body{grid-template-columns:1.48in minmax(0,1fr) 2.24in}
+  .theme-ranger-warden .ps-identity,.theme-ranger-warden .ps-top-stats,.theme-ranger-warden .ps-panel{border:1.2px solid #45624a;background-color:rgba(244,242,216,.88);background-image:repeating-linear-gradient(0deg,transparent 0 .16in,rgba(63,97,63,.035) .16in .168in)}
+  .theme-ranger-warden .ps-panel{clip-path:polygon(0 0,97% 0,100% 6%,100% 100%,3% 100%,0 94%)}
+  .theme-ranger-warden .ps-panel h2{clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%,4% 50%);text-align:left;padding-left:.17in;letter-spacing:.07em}
+  .theme-ranger-warden .ps-stat{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
+  .theme-ranger-warden .ps-portrait-art{clip-path:polygon(7% 0,100% 0,93% 100%,0 100%);border:2px solid #9c9668}
+  .theme-ranger-warden .ps-ornament{opacity:.16;color:#3f613f;width:.55in;height:.4in}.theme-ranger-warden .ps-ornament-tr,.theme-ranger-warden .ps-ornament-bl{opacity:.07}
+  .theme-ranger-warden .utility-ranger{border:1.7px dashed #3f613f;background:linear-gradient(135deg,rgba(63,97,63,.08),transparent 60%)}
+  .theme-ranger-warden .ps-dossier-seal{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
+}
