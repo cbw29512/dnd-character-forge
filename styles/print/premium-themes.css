@@ -11,3 +11,17 @@
 .premium-sheet.theme-sorcerer-aether{--ps-primary:#70478a;--ps-dark:#342341;--ps-accent:#bc9a71;--ps-frame:#4d335e;--ps-paper:#eee7dc;--ps-pattern:radial-gradient(circle at 80% 18%,rgba(112,71,138,.09),transparent 26%)}
 .premium-sheet.theme-warlock-eldritch{--ps-primary:#594374;--ps-dark:#211b2e;--ps-accent:#9a8a70;--ps-frame:#3c304c;--ps-paper:#e6e1d6;--ps-pattern:radial-gradient(ellipse at 82% 17%,rgba(89,67,116,.09),transparent 25%)}
 .premium-sheet.theme-wizard-arcane{--ps-primary:#3c5688;--ps-dark:#1c2942;--ps-accent:#ae9565;--ps-panel:#edf0eb;--ps-panel-2:#d2d8d2;--ps-frame:#283c5a;--ps-glow:rgba(46,73,125,.29);--ps-paper:#ecebdd;--ps-pattern:radial-gradient(circle at 82% 18%,transparent 0 34px,rgba(60,86,136,.05) 35px 36px,transparent 37px 58px,rgba(60,86,136,.04) 59px 60px,transparent 61px)}
+
+@media print{
+  .theme-warlock-eldritch:not(.sheet-print-ink-saver) .ps-frame{background-image:radial-gradient(circle at 86% 13%,rgba(89,67,116,.10),transparent .78in),linear-gradient(135deg,transparent 0 79%,rgba(89,67,116,.035) 79.2% 79.8%,transparent 80%),linear-gradient(45deg,transparent 0 86%,rgba(154,138,112,.035) 86.2% 86.7%,transparent 87%)}
+  .theme-warlock-eldritch:not(.sheet-print-ink-saver) .ps-portrait-art.class-warlock{background:radial-gradient(circle at 50% 42%,rgba(205,188,230,.16),transparent 22%),radial-gradient(circle at 50% 42%,transparent 0 30%,rgba(154,138,112,.12) 31% 33%,transparent 34%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary))}
+  .theme-warlock-eldritch .utility-warlock{border:1.5px solid color-mix(in srgb,var(--ps-primary) 75%,var(--ps-accent));box-shadow:inset 0 0 .1in rgba(89,67,116,.12)}
+  .theme-warlock-eldritch .utility-warlock .ps-utility-stats span{border-color:color-mix(in srgb,var(--ps-accent) 58%,var(--ps-frame));border-radius:50% 50% 6px 6px}
+  .theme-warlock-eldritch .utility-warlock .ps-utility-stats b{color:var(--ps-primary)}
+  .theme-warlock-eldritch .ps-warlock-support{margin-top:.08in;border:1px solid color-mix(in srgb,var(--ps-primary) 55%,var(--ps-accent));padding:.07in;background:rgba(89,67,116,.035);break-inside:avoid}
+  .theme-warlock-eldritch .ps-warlock-pact,.theme-warlock-eldritch .ps-warlock-arcanum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.04in;margin:.05in 0}
+  .theme-warlock-eldritch .ps-warlock-pact>span,.theme-warlock-eldritch .ps-warlock-arcanum>span{display:grid;text-align:center;border:1px solid rgba(89,67,116,.22);padding:.035in;min-height:.36in}
+  .theme-warlock-eldritch .ps-warlock-pact small,.theme-warlock-eldritch .ps-warlock-arcanum small{font-size:5.5pt;text-transform:uppercase;letter-spacing:.04em}.theme-warlock-eldritch .ps-warlock-pact b,.theme-warlock-eldritch .ps-warlock-arcanum b{font-size:8pt}.theme-warlock-eldritch .ps-warlock-pact em,.theme-warlock-eldritch .ps-warlock-arcanum em{font-size:5.3pt;color:var(--ps-muted)}
+  .theme-warlock-eldritch .ps-warlock-extras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.05in}.theme-warlock-eldritch .ps-warlock-sub{border-left:2px solid var(--ps-primary);padding:.035in .055in}.theme-warlock-eldritch .ps-warlock-sub strong{font-size:6.3pt}.theme-warlock-eldritch .ps-warlock-sub p,.theme-warlock-eldritch .ps-warlock-key{font-size:5.5pt;line-height:1.25;margin:.018in 0}
+  .theme-warlock-eldritch.sheet-print-ink-saver .ps-frame,.theme-warlock-eldritch.sheet-print-ink-saver .ps-portrait-art.class-warlock,.theme-warlock-eldritch.sheet-print-ink-saver .ps-warlock-support{background:#fff!important;box-shadow:none}
+}
