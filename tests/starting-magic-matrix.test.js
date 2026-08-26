@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { MAGIC_MODES } from "../src/state.js";
+import { forgeDataFor } from "../src/data/forge-data.js";
 import { generateStartingMagic } from "../src/rules/magic-starting.js";
 
 const CLASSES=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
@@ -9,6 +10,7 @@ const MODES=[MAGIC_MODES.NO_MAGIC,MAGIC_MODES.LOW_MAGIC,MAGIC_MODES.NORMAL_MAGIC
 
 for(const ruleset of ["2014","2024"]){
   test(`${ruleset} starting resources resolve for every class, tier boundary, and explicit magic mode`,()=>{
+    const data=forgeDataFor(ruleset);
     for(const classId of CLASSES)for(const level of LEVELS)for(const mode of MODES){
       const plan=generateStartingMagic({ruleset,level,mode,classId});
       assert.equal(plan.ruleset,ruleset,`${ruleset} ${classId} L${level} ${mode}: wrong ruleset`);
@@ -27,7 +29,13 @@ for(const ruleset of ["2014","2024"]){
       for(const item of plan.items){
         assert.ok(item.id&&item.name&&item.rarity,`${ruleset} ${classId} L${level} ${mode}: incomplete item`);
         assert.equal(item.source,plan.source,`${ruleset} ${classId} L${level} ${mode}: item provenance lost`);
-        if(classId==="wizard")assert.notEqual(item.id,"weapon-plus-1",`${ruleset} Wizard received excluded weapon candidate`);
+        if(classId==="wizard")assert.equal(item.kind==="weapon",false,`${ruleset} Wizard received excluded weapon candidate`);
+        if(item.kind==="weapon"){
+          assert.match(item.baseItemId||"",/^weapon-plus-[123]$/,`${ruleset} ${classId}: concrete weapon lost its verified template id`);
+          assert.ok(item.weaponId&&data.weapons[item.weaponId],`${ruleset} ${classId}: concrete magic weapon is not in the verified weapon catalog`);
+          assert.equal(item.name.startsWith("Weapon, "),false,`${ruleset} ${classId}: generic magic weapon leaked into final output`);
+          assert.ok(item.name.startsWith(data.weapons[item.weaponId].name),`${ruleset} ${classId}: magic weapon name does not match its verified weapon record`);
+        }
       }
     }
   });
