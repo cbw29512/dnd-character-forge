@@ -13,10 +13,12 @@ function forge(ruleset,level,{subclass="random",classSelections={},spellSelectio
     state.constraints.class="warlock";
     state.constraints.level=String(level);
     state.constraints.subclass=subclass;
-    // Keep production fixtures deterministic so unrelated random background
-    // equipment cannot change the quantity of the Warlock class's two daggers.
-    state.constraints.species="human";
-    state.constraints.background="soldier";
+    // Keep the 2024 production fixture deterministic so unrelated random
+    // background equipment cannot change the Warlock class's two daggers.
+    if(ruleset==="2024"){
+      state.constraints.species="human";
+      state.constraints.background="soldier";
+    }
     state.classSelections={...classSelections};
     state.spellSelections={...state.spellSelections,...spellSelections};
     return generateCharacter(state);
