@@ -8,7 +8,7 @@ import { renderPrintDossier } from "./print-dossier.js";
 
 export function renderPremiumPrintSheet(character,target){
   try{
-    const model=character?.class?.id==="warlock"?buildWarlockPremiumPrintModel(character):buildPremiumPrintModel(character),packetMode=model.presentation?.customization?.packetMode||"deluxe",profile=exportProfileFor(character,packetMode);
+    const model=character?.class?.id==="warlock"?buildWarlockPremiumPrintModel(character):buildPremiumPrintModel(character),requestedPacket=character?.presentation?.sheetCustomization?.packetMode,packetMode=requestedPacket==="deluxe"?"deluxe":"table",profile=exportProfileFor(character,packetMode);
     model.profile=profile;
     model.packet={totalPages:profile.maxPages};
     model.dossier=profile.dossierPages?buildNarrativeDossier(character,{quickTurn:model.quickTurn}):null;
