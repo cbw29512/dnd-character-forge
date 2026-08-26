@@ -4,12 +4,13 @@ import { BARD_CLASS_2014, BARD_CLASS_2024, BARD_SUBCLASS_2014, BARD_SUBCLASS_202
 import { MONK_CLASS_2014, MONK_CLASS_2024, MONK_SUBCLASS_2014, MONK_SUBCLASS_2024, MONK_WEAPONS_2014, MONK_WEAPONS_2024 } from "./monk-class.js";
 import { SORCERER_CLASS_2014, SORCERER_CLASS_2024, SORCERER_SUBCLASS_2014, SORCERER_SUBCLASS_2024 } from "./sorcerer-class.js";
 import { WARLOCK_CLASS_2014, WARLOCK_CLASS_2024, WARLOCK_SUBCLASSES_2014, WARLOCK_SUBCLASSES_2024 } from "./warlock-class.js";
+import { deepFreeze } from "./deep-freeze.js";
 
 function extend(raw,classExtensions,subclassExtensions,weaponAdditions){
   try{
     for(const extension of classExtensions){const classId=extension.id;if(raw.classes.some(item=>item.id===classId)||raw.subclasses.some(item=>item.classId===classId))throw new Error(`Base ${raw.ruleset} RAW catalog already contains ${classId}; remove the extension instead of duplicating it.`);}
     for(const weaponId of Object.keys(weaponAdditions||{}))if(raw.weapons[weaponId])throw new Error(`Base ${raw.ruleset} RAW catalog already contains weapon ${weaponId}; remove the extension instead of duplicating it.`);
-    return Object.freeze({...raw,classes:Object.freeze([...raw.classes,...classExtensions]),subclasses:Object.freeze([...raw.subclasses,...subclassExtensions]),weapons:Object.freeze({...raw.weapons,...weaponAdditions})});
+    return deepFreeze({...raw,classes:[...raw.classes,...classExtensions],subclasses:[...raw.subclasses,...subclassExtensions],weapons:{...raw.weapons,...weaponAdditions}});
   }catch(error){console.error(`[forge-data] ${raw?.ruleset||"unknown"} extension failed`,error);throw error;}
 }
 
