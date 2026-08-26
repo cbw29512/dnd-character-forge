@@ -26,13 +26,13 @@ function characterAt(classId,level="20"){
 
 test("premium customization defaults are presentation-only and stable",()=>{
   const value=createDefaultSheetCustomization();
-  assert.deepEqual(value,{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
+  assert.deepEqual(value,{packetMode:"deluxe",style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
 });
 
 test("customization normalization clamps unsafe or unknown values",()=>{
-  const value=normalizeSheetCustomization({style:"unknown",paper:"white",portraitX:-50,portraitY:500,portraitZoom:999,portraitFilter:"grayscale",portraitVisible:false});
-  assert.equal(value.style,"ornate");assert.equal(value.paper,"white");assert.equal(value.portraitX,0);assert.equal(value.portraitY,100);assert.equal(value.portraitZoom,165);assert.equal(value.portraitFilter,"grayscale");assert.equal(value.portraitVisible,false);
-  assert.match(sheetCustomizationClasses(value),/sheet-paper-white/);assert.match(sheetCustomizationClasses(value),/portrait-filter-grayscale/);
+  const value=normalizeSheetCustomization({packetMode:"invalid",style:"unknown",paper:"white",portraitX:-50,portraitY:500,portraitZoom:999,portraitFilter:"grayscale",portraitVisible:false});
+  assert.equal(value.packetMode,"deluxe");assert.equal(value.style,"ornate");assert.equal(value.paper,"white");assert.equal(value.portraitX,0);assert.equal(value.portraitY,100);assert.equal(value.portraitZoom,165);assert.equal(value.portraitFilter,"grayscale");assert.equal(value.portraitVisible,false);
+  assert.match(sheetCustomizationClasses(value),/sheet-packet-deluxe/);assert.match(sheetCustomizationClasses(value),/sheet-paper-white/);assert.match(sheetCustomizationClasses(value),/portrait-filter-grayscale/);
 });
 
 test("all twelve core classes have distinct premium theme hooks and original sigils",()=>{
