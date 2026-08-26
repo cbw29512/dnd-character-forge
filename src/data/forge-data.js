@@ -3,6 +3,7 @@ import { RAW_2024 } from "./raw-2024.js";
 import { BARD_CLASS_2014, BARD_CLASS_2024, BARD_SUBCLASS_2014, BARD_SUBCLASS_2024 } from "./bard-class.js";
 import { MONK_CLASS_2014, MONK_CLASS_2024, MONK_SUBCLASS_2014, MONK_SUBCLASS_2024, MONK_WEAPONS_2014, MONK_WEAPONS_2024 } from "./monk-class.js";
 import { SORCERER_CLASS_2014, SORCERER_CLASS_2024, SORCERER_SUBCLASS_2014, SORCERER_SUBCLASS_2024 } from "./sorcerer-class.js";
+import { WARLOCK_CLASS_2014, WARLOCK_CLASS_2024, WARLOCK_SUBCLASSES_2014, WARLOCK_SUBCLASSES_2024 } from "./warlock-class.js";
 
 function extend(raw,classExtensions,subclassExtensions,weaponAdditions){
   try{
@@ -12,6 +13,6 @@ function extend(raw,classExtensions,subclassExtensions,weaponAdditions){
   }catch(error){console.error(`[forge-data] ${raw?.ruleset||"unknown"} extension failed`,error);throw error;}
 }
 
-export const FORGE_2014=extend(RAW_2014,[BARD_CLASS_2014,MONK_CLASS_2014,SORCERER_CLASS_2014],[BARD_SUBCLASS_2014,MONK_SUBCLASS_2014,SORCERER_SUBCLASS_2014],MONK_WEAPONS_2014);
-export const FORGE_2024=extend(RAW_2024,[BARD_CLASS_2024,MONK_CLASS_2024,SORCERER_CLASS_2024],[BARD_SUBCLASS_2024,MONK_SUBCLASS_2024,SORCERER_SUBCLASS_2024],MONK_WEAPONS_2024);
+export const FORGE_2014=extend(RAW_2014,[BARD_CLASS_2014,MONK_CLASS_2014,SORCERER_CLASS_2014,WARLOCK_CLASS_2014],[BARD_SUBCLASS_2014,MONK_SUBCLASS_2014,SORCERER_SUBCLASS_2014,...WARLOCK_SUBCLASSES_2014],MONK_WEAPONS_2014);
+export const FORGE_2024=extend(RAW_2024,[BARD_CLASS_2024,MONK_CLASS_2024,SORCERER_CLASS_2024,WARLOCK_CLASS_2024],[BARD_SUBCLASS_2024,MONK_SUBCLASS_2024,SORCERER_SUBCLASS_2024,...WARLOCK_SUBCLASSES_2024],MONK_WEAPONS_2024);
 export function forgeDataFor(ruleset){try{if(ruleset==="2014")return FORGE_2014;if(ruleset==="2024")return FORGE_2024;throw new Error(`Unsupported forge ruleset: ${ruleset}.`);}catch(error){console.error("[forge-data] ruleset lookup failed",error);throw error;}}
