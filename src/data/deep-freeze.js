@@ -1,10 +1,13 @@
 /**
  * Deep-freezes authoritative RAW data, including nested records and arrays.
- * Homebrew may copy or extend RAW data, but must never mutate RAW in place.
+ *
+ * Important: an object may already be shallow-frozen while still containing
+ * mutable nested arrays/objects. Therefore we recurse BEFORE the final freeze
+ * instead of returning early for Object.isFrozen(value).
  */
 export function deepFreeze(value) {
   try {
-    if (value === null || typeof value !== "object" || Object.isFrozen(value)) return value;
+    if (value === null || typeof value !== "object") return value;
     for (const key of Reflect.ownKeys(value)) deepFreeze(value[key]);
     return Object.freeze(value);
   } catch (error) {
