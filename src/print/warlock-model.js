@@ -83,12 +83,22 @@ function spellCatalog(character){
 
 function equipmentLines(items){
   try{
-    return items.map((item,index)=>{
-      if(typeof item==="string"){const text=item.trim();if(!text)throw new Error(`Warlock inventory item ${index+1} is blank.`);return text;}
-      if(!item||typeof item!=="object"||typeof item.name!=="string"||!item.name.trim())throw new Error(`Warlock inventory item ${index+1} has no printable name.`);
-      const quantity=Number(item.quantity??1);if(!Number.isInteger(quantity)||quantity<1)throw new Error(`Warlock inventory item ${item.name} has invalid quantity ${String(item.quantity)}.`);
-      return quantity===1?item.name.trim():`${quantity} × ${item.name.trim()}`;
-    });
+    const grouped=new Map();
+    for(const [index,item] of items.entries()){
+      let name,quantity;
+      if(typeof item==="string"){
+        name=item.trim();quantity=1;
+        if(!name)throw new Error(`Warlock inventory item ${index+1} is blank.`);
+      }else{
+        if(!item||typeof item!=="object"||typeof item.name!=="string"||!item.name.trim())throw new Error(`Warlock inventory item ${index+1} has no printable name.`);
+        name=item.name.trim();quantity=Number(item.quantity??1);
+        if(!Number.isInteger(quantity)||quantity<1)throw new Error(`Warlock inventory item ${item.name} has invalid quantity ${String(item.quantity)}.`);
+      }
+      const key=name.toLocaleLowerCase("en-US"),existing=grouped.get(key);
+      if(existing)existing.quantity+=quantity;
+      else grouped.set(key,{name,quantity});
+    }
+    return[...grouped.values()].map(({name,quantity})=>quantity===1?name:`${quantity} × ${name}`);
   }catch(error){console.error("[warlock-print-model] equipment normalization failed",error);throw error;}
 }
 function chooseFeat(character,references){
