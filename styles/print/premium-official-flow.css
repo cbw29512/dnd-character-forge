@@ -82,6 +82,10 @@
 
   /* Warlock spell pages need table-facing Pact resources beside the normal 0-9 record. */
   .theme-warlock-eldritch .ps-spell-level-grid{height:3.32in}
+  .theme-warlock-eldritch .ps-spell-level-column{gap:.025in}
+  .theme-warlock-eldritch .ps-spell-level>header{min-height:.215in}
+  .theme-warlock-eldritch .ps-spell-entry{min-height:.116in;font-size:4.75pt}
+  .theme-warlock-eldritch .ps-spell-entry em{font-size:4pt}
   .ps-warlock-support{margin-top:.05in;padding:.05in .06in;border:1px solid color-mix(in srgb,var(--ps-primary) 72%,#d5bf97);background:linear-gradient(112deg,rgba(48,34,68,.12),rgba(255,250,236,.76) 42%,rgba(89,67,116,.09));box-shadow:inset 0 0 .12in rgba(48,34,68,.1);overflow:hidden}
   .ps-warlock-support .ps-section-title{margin-bottom:.035in}
   .ps-warlock-pact{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.04in}
