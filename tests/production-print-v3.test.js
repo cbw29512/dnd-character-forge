@@ -15,9 +15,9 @@ function make(classId,{level="7",packetMode="deluxe",ruleset="2024"}={}){
 
 test("export profiles preserve compact packets and add one deluxe dossier page",()=>{
   try{
-    assert.deepEqual(exportProfileFor(make("fighter"),"table"),{id:"martial-table",maxPages:1,tablePages:1,dossierPages:0,caster:false,packetMode:"table"});
-    assert.deepEqual(exportProfileFor(make("fighter"),"deluxe"),{id:"martial-deluxe",maxPages:2,tablePages:1,dossierPages:1,caster:false,packetMode:"deluxe"});
-    assert.equal(exportProfileFor(make("paladin"),"table").maxPages,2);assert.equal(exportProfileFor(make("paladin"),"deluxe").maxPages,3);
+    assert.deepEqual(exportProfileFor(make("fighter"),"table"),{id:"martial-one-page",maxPages:1,tablePages:1,dossierPages:0,caster:false,packetMode:"table"});
+    assert.deepEqual(exportProfileFor(make("fighter"),"deluxe"),{id:"martial-deluxe-two-page",maxPages:2,tablePages:1,dossierPages:1,caster:false,packetMode:"deluxe"});
+    assert.equal(exportProfileFor(make("paladin"),"table").id,"caster-two-page");assert.equal(exportProfileFor(make("paladin"),"table").maxPages,2);assert.equal(exportProfileFor(make("paladin"),"deluxe").id,"caster-deluxe-three-page");assert.equal(exportProfileFor(make("paladin"),"deluxe").maxPages,3);
   }catch(error){console.error("[production-print-v3] profile contract failed",error);throw error;}
 });
 
@@ -36,8 +36,8 @@ test("deluxe caster and half-caster packets render class, spell, and dossier pag
 
 test("table packet mode retains the established one and two page contracts",()=>{
   try{
-    const fighterTarget={innerHTML:""},fighter=renderPremiumPrintSheet(make("fighter",{packetMode:"table"}),fighterTarget);assert.equal(fighter.packet.totalPages,1);assert.doesNotMatch(fighterTarget.innerHTML,/ps-dossier-page/);
-    const wizardTarget={innerHTML:""},wizard=renderPremiumPrintSheet(make("wizard",{packetMode:"table"}),wizardTarget);assert.equal(wizard.packet.totalPages,2);assert.match(wizardTarget.innerHTML,/Page 2\/2/);assert.doesNotMatch(wizardTarget.innerHTML,/ps-dossier-page/);
+    const fighterTarget={innerHTML:""},fighter=renderPremiumPrintSheet(make("fighter",{packetMode:"table"}),fighterTarget);assert.equal(fighter.profile.id,"martial-one-page");assert.equal(fighter.packet.totalPages,1);assert.doesNotMatch(fighterTarget.innerHTML,/ps-dossier-page/);
+    const wizardTarget={innerHTML:""},wizard=renderPremiumPrintSheet(make("wizard",{packetMode:"table"}),wizardTarget);assert.equal(wizard.profile.id,"caster-two-page");assert.equal(wizard.packet.totalPages,2);assert.match(wizardTarget.innerHTML,/Page 2\/2/);assert.doesNotMatch(wizardTarget.innerHTML,/ps-dossier-page/);
   }catch(error){console.error("[production-print-v3] table compatibility failed",error);throw error;}
 });
 
