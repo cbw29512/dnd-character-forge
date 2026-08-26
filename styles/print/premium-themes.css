@@ -1,3 +1,7 @@
+@import url("./premium-class-martial.css");
+@import url("./premium-class-divine-wild.css");
+@import url("./premium-class-arcane.css");
+
 .premium-sheet{--ps-primary:#6f5432;--ps-dark:#2c241a;--ps-accent:#b8955e;--ps-ink:#241f18;--ps-muted:#6d6254;--ps-panel:#f6ecd8;--ps-panel-2:#ead9b9;--ps-frame:#4b3925;--ps-glow:rgba(86,58,30,.22);--ps-paper:#f4ead4;--ps-pattern:radial-gradient(circle at 20% 15%,rgba(255,255,255,.55),transparent 24%)}
 .premium-sheet.theme-barbarian-rage{--ps-primary:#8c281d;--ps-dark:#291813;--ps-accent:#c1a06a;--ps-panel:#ead7b7;--ps-panel-2:#cdb18a;--ps-frame:#4b261c;--ps-glow:rgba(116,35,22,.34);--ps-paper:#eadabb;--ps-pattern:repeating-linear-gradient(125deg,rgba(96,37,22,.035) 0 2px,transparent 2px 18px)}
 .premium-sheet.theme-bard-legend{--ps-primary:#8b3e58;--ps-dark:#3f1f2c;--ps-accent:#c39c69;--ps-frame:#633044;--ps-paper:#f0e3d1;--ps-pattern:radial-gradient(circle at 75% 20%,rgba(139,62,88,.07),transparent 28%)}
