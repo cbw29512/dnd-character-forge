@@ -9,8 +9,10 @@ export function sheetArticleOpen(model,extraClass=""){
 }
 
 export function classWatermark(model){
-  try{return `<div class="ps-class-watermark" aria-hidden="true">${classPlaceholderArt(model.identity.classId)}</div><div class="ps-theme-ribbon" aria-hidden="true"><span>${escapeHtml(model.theme.label)}</span><small>${escapeHtml(model.theme.motif)}</small></div>`;}
-  catch(error){console.error("[print-decoration] watermark failed",error);throw error;}
+  try{
+    const art=classPlaceholderArt(model.identity.classId);
+    return `<div class="ps-class-watermark" aria-hidden="true">${art}</div><div class="ps-class-ornaments" aria-hidden="true"><i class="ps-ornament ps-ornament-tl">${art}</i><i class="ps-ornament ps-ornament-tr">${art}</i><i class="ps-ornament ps-ornament-bl">${art}</i><i class="ps-ornament ps-ornament-br">${art}</i></div><div class="ps-theme-ribbon" aria-hidden="true"><span>${escapeHtml(model.theme.label)}</span><small>${escapeHtml(model.theme.motif)}</small></div>`;
+  }catch(error){console.error("[print-decoration] watermark failed",error);throw error;}
 }
 
 export function portraitImageStyle(model){
