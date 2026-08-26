@@ -26,3 +26,13 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 3px s
 [hidden] { display: none !important; }
 .ambient { position: fixed; inset: 0; pointer-events: none; z-index: -1; background: radial-gradient(circle at 78% 8%, rgba(156,47,56,.18), transparent 30%), radial-gradient(circle at 16% 12%, rgba(201,164,92,.13), transparent 27%), linear-gradient(180deg,#11141a 0%,#0d0f13 58%,#11141a 100%); }
 .ambient::after { content:""; position:absolute; inset:0; opacity:.2; background-image: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,.018) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom,#000,transparent 78%); }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,*::before,*::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
