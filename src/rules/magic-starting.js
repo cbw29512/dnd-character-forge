@@ -1,4 +1,5 @@
 import { MAGIC_MODES } from "../state.js";
+import { forgeDataFor } from "../data/forge-data.js";
 
 const DMG_2014={
   low:{"1-4":{gold:"normal starting equipment",items:{}},"5-10":{gold:"500 gp + 1d10 × 25 gp",items:{uncommon:0}},"11-16":{gold:"5,000 gp + 1d10 × 250 gp",items:{uncommon:1}},"17-20":{gold:"20,000 gp + 1d10 × 250 gp",items:{uncommon:2}}},
@@ -40,6 +41,20 @@ function resolveMagicMode(mode){
     return choices[Math.floor(Math.random()*choices.length)];
   }catch(error){console.error("[magic] random mode resolution failed",error);throw error;}
 }
+function concreteItem(item,ruleset,classId){
+  try{
+    if(item.kind!=="weapon")return {...item};
+    const data=forgeDataFor(ruleset),cls=data.classes.find(value=>value.id===classId);
+    if(!cls)throw new Error(`Cannot resolve a magic weapon for unknown ${ruleset} class ${classId}.`);
+    const packageWithWeapon=(cls.equipmentPackages||[]).find(pkg=>(pkg.weapons||[]).some(id=>data.weapons[id]));
+    const weaponId=packageWithWeapon?.weapons?.find(id=>data.weapons[id]);
+    const weapon=weaponId?data.weapons[weaponId]:null;
+    if(!weapon)throw new Error(`No verified class-legal weapon is available to resolve ${item.name} for ${ruleset} ${cls.name}.`);
+    const enhancement=item.name.match(/,\s*\+\d+$/)?.[0];
+    if(!enhancement)throw new Error(`Magic weapon template ${item.name} has no enhancement suffix.`);
+    return {...item,id:`${item.id}:${weaponId}`,baseItemId:item.id,weaponId,name:`${weapon.name}${enhancement}`};
+  }catch(error){console.error("[magic] concrete item resolution failed",error);throw error;}
+}
 
 export function startingMagicPlan(ruleset,level,mode){
   try{
@@ -58,7 +73,7 @@ export function generateStartingMagic({ruleset,level,mode,classId}){
     for(const [rarity,count] of Object.entries(plan.allowance||{}))for(let i=0;i<count;i++){
       const candidates=candidatesFor(classId,rarity,usedIds),item=pick(candidates,index++);
       if(!item)throw new Error(`No verified ${rarity} magic item is available for ${classId}.`);
-      usedIds.push(item.id);plan.items.push({...item,source:plan.source});
+      usedIds.push(item.id);plan.items.push({...concreteItem(item,ruleset,classId),source:plan.source});
     }
     return plan;
   }catch(error){console.error("[magic] starting magic generation failed",error);throw error;}
