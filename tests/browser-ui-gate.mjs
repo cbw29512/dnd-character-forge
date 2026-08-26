@@ -1,10 +1,12 @@
 import assert from "node:assert/strict";
-import { execFileSync } from "node:child_process";
+import { execFile } from "node:child_process";
 import { createServer } from "node:http";
 import { mkdirSync, readFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
 
+const execFileAsync=promisify(execFile);
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
 const OUT=path.join(ROOT,"tests/.browser-ui");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
@@ -48,16 +50,16 @@ const server=createServer((req,res)=>{
 await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
 const {port}=server.address();
 try{
-  for(const item of CASES) verifyViewport(item,port);
+  for(const item of CASES) await verifyViewport(item,port);
   console.log(`[browser-ui] verified ${CASES.length} responsive Forge viewports in Chrome`);
 }finally{
   await new Promise(resolve=>server.close(resolve));
 }
 
-function verifyViewport(item,port){
+async function verifyViewport(item,port){
   const url=`http://127.0.0.1:${port}/__ui-audit.html?case=${item.name}`;
-  const common=["--headless","--no-sandbox","--disable-gpu","--hide-scrollbars",`--window-size=${item.width},${item.height}`,"--virtual-time-budget=3000",url];
-  const dom=execFileSync(CHROME,[...common.slice(0,-1),"--dump-dom",common.at(-1)],{encoding:"utf8",stdio:["ignore","pipe","pipe"]});
+  const common=["--headless","--no-sandbox","--disable-gpu","--disable-dev-shm-usage","--hide-scrollbars",`--window-size=${item.width},${item.height}`,"--virtual-time-budget=3000"];
+  const {stdout:dom}=await execFileAsync(CHROME,[...common,"--dump-dom",url],{encoding:"utf8",timeout:30000,maxBuffer:8*1024*1024});
   const match=dom.match(/<pre id="uiAuditResult">([^<]+)<\/pre>/);
   assert.ok(match,`${item.name}: UI audit result was not produced`);
   const audit=JSON.parse(decodeHtml(match[1]));
@@ -73,7 +75,7 @@ function verifyViewport(item,port){
     assert.ok(box.width>0,`${item.name}: ${selector} collapsed to zero width`);
   }
   const png=path.join(OUT,`${item.name}.png`);
-  execFileSync(CHROME,[...common.slice(0,-1),`--screenshot=${png}`,common.at(-1)],{stdio:"pipe"});
+  await execFileAsync(CHROME,[...common,`--screenshot=${png}`,url],{encoding:"utf8",timeout:30000,maxBuffer:4*1024*1024});
   console.log(`[browser-ui] ${item.name}: ${audit.viewportWidth}px · overflow ${audit.horizontalOverflow}px · character rendered`);
 }
 
