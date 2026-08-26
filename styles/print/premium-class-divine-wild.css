@@ -1,0 +1,43 @@
+@media print{
+  /* Cleric — illuminated manuscript, halo geometry, sacred framing. */
+  .theme-cleric-sanctum .ps-frame{border:.055in double #70591c;outline:1px solid #c9ad62;outline-offset:-.09in;background-image:radial-gradient(circle at 84% 14%,transparent 0 .55in,rgba(157,118,26,.05) .56in .58in,transparent .59in),repeating-conic-gradient(from 0deg at 84% 14%,rgba(157,118,26,.025) 0deg 3deg,transparent 3deg 18deg)}
+  .theme-cleric-sanctum .ps-frame:before,.theme-cleric-sanctum .ps-frame:after{content:"✦";width:auto;height:auto;background:none;color:#c9ad62;font-size:17pt;text-shadow:0 0 0 #70591c}
+  .theme-cleric-sanctum .ps-panel{border:1.4px solid #8b732f;background:rgba(253,247,228,.84)}
+  .theme-cleric-sanctum .ps-panel h2{clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);background:linear-gradient(90deg,#5b4510,#9d761a,#5b4510);letter-spacing:.08em}
+  .theme-cleric-sanctum .ps-stat{clip-path:polygon(50% 0,92% 14%,100% 62%,76% 100%,24% 100%,0 62%,8% 14%)}
+  .theme-cleric-sanctum .ps-portrait-art{border-radius:48% 48% 8% 8% / 22% 22% 6% 6%;clip-path:none;border:3px double #c9ad62}
+  .theme-cleric-sanctum .utility-cleric{border:2px double #9d761a;background:radial-gradient(circle at 50% 0,rgba(201,173,98,.13),transparent 55%)}
+  .theme-cleric-sanctum .utility-cleric .ps-utility-stats span{border-color:#b89b4f;background:rgba(255,252,240,.7)}
+
+  /* Druid — bark, leaf curves, moon circles, organic edges. */
+  .theme-druid-wild .ps-frame{border:.055in double #46572d;outline:1px solid #a58c5f;outline-offset:-.09in;background-image:radial-gradient(ellipse at 82% 17%,rgba(87,106,53,.08),transparent 24%),repeating-linear-gradient(100deg,rgba(66,78,42,.025) 0 1px,transparent 1px 19px)}
+  .theme-druid-wild .ps-frame:before,.theme-druid-wild .ps-frame:after{content:"☾";width:auto;height:auto;background:none;color:#576a35;font-size:18pt;opacity:.72}
+  .theme-druid-wild .ps-panel{border:1.4px solid #59683a;border-radius:.08in .02in .08in .02in;background:linear-gradient(180deg,rgba(247,241,218,.82),rgba(226,225,194,.76))}
+  .theme-druid-wild .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);background:linear-gradient(90deg,#2b361f,#576a35,#2b361f)}
+  .theme-druid-wild .ps-stat{clip-path:ellipse(48% 50% at 50% 50%)}
+  .theme-druid-wild .ps-portrait-art{clip-path:ellipse(49% 48% at 50% 50%);border:3px double #a58c5f}
+  .theme-druid-wild .utility-druid{border:2px solid #576a35;border-radius:.12in;background:radial-gradient(ellipse at 50% 100%,rgba(87,106,53,.11),transparent 58%)}
+  .theme-druid-wild .utility-druid .ps-utility-stats span{border-radius:50% 50% 18% 18% / 24% 24% 8% 8%;background:rgba(87,106,53,.04)}
+
+  /* Paladin — oath shield, cathedral arches, radiant metal. */
+  .theme-paladin-oath .ps-frame{border:.065in double #5d4820;outline:.018in solid #d0b875;outline-offset:-.10in;background-image:linear-gradient(90deg,transparent 0 49.75%,rgba(208,184,117,.035) 49.8% 50.2%,transparent 50.25%),radial-gradient(circle at 82% 15%,rgba(208,184,117,.12),transparent 23%)}
+  .theme-paladin-oath .ps-frame:before,.theme-paladin-oath .ps-frame:after{content:"✦";width:auto;height:auto;background:none;color:#d0b875;font-size:16pt;text-shadow:0 0 1px #5d4820}
+  .theme-paladin-oath .ps-panel{border:1.5px solid #6b572a;background:rgba(253,247,229,.86)}
+  .theme-paladin-oath .ps-panel h2{clip-path:polygon(10% 0,90% 0,100% 35%,94% 100%,6% 100%,0 35%);background:linear-gradient(90deg,#3e341e,#815d1f,#3e341e)}
+  .theme-paladin-oath .ps-stat{clip-path:polygon(50% 0,94% 14%,90% 74%,50% 100%,10% 74%,6% 14%)}
+  .theme-paladin-oath .ps-portrait-art{clip-path:polygon(50% 0,95% 14%,90% 76%,50% 100%,10% 76%,5% 14%);border:3px double #d0b875}
+  .theme-paladin-oath .utility-paladin{border:2px double #815d1f;box-shadow:inset 0 0 .12in rgba(208,184,117,.13)}
+  .theme-paladin-oath .utility-paladin .ps-utility-stats span{border-radius:45% 45% 8% 8% / 20% 20% 6% 6%;background:rgba(208,184,117,.07)}
+
+  /* Ranger — field journal, compass/trail marks, arrowhead geometry. */
+  .theme-ranger-warden .ps-frame{border:.045in double #314b34;outline:1px dashed #9c9668;outline-offset:-.085in;background-image:repeating-linear-gradient(90deg,rgba(63,97,63,.022) 0 1px,transparent 1px .18in),repeating-linear-gradient(0deg,rgba(63,97,63,.018) 0 1px,transparent 1px .18in)}
+  .theme-ranger-warden .ps-frame:before,.theme-ranger-warden .ps-frame:after{content:"➤";width:auto;height:auto;background:none;color:#3f613f;font-size:14pt;opacity:.8}
+  .theme-ranger-warden .ps-frame:before{transform:rotate(-35deg)}
+  .theme-ranger-warden .ps-frame:after{transform:rotate(145deg)}
+  .theme-ranger-warden .ps-panel{border:1px solid #45624a;background:rgba(244,242,216,.82)}
+  .theme-ranger-warden .ps-panel h2{clip-path:polygon(0 0,94% 0,100% 50%,94% 100%,0 100%,4% 50%);background:linear-gradient(90deg,#223526,#3f613f,#223526);text-align:left;padding-left:.17in}
+  .theme-ranger-warden .ps-stat{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
+  .theme-ranger-warden .ps-portrait-art{clip-path:polygon(8% 0,100% 0,92% 100%,0 100%);border:2px solid #9c9668}
+  .theme-ranger-warden .utility-ranger{border:1.5px dashed #3f613f;background:linear-gradient(135deg,rgba(63,97,63,.06),transparent 58%)}
+  .theme-ranger-warden .utility-ranger .ps-utility-stats span{border-color:#62765f;background:rgba(63,97,63,.035)}
+}
