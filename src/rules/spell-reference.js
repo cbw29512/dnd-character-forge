@@ -11,7 +11,15 @@ export function resolveSpellReference(character,spellId){
   catch(error){console.error("[spell-reference] resolution failed",error);throw error;}
 }
 export function resolveCantripReference(character,spellId){
-  try{const base=getSpellReference(character.ruleset,spellId);if(!base)return null;if(base.level!==0)throw new Error(`${base.name} is not a cantrip.`);const current={...base};if(base.damage?.scales){const dice=tierDice(character.level);current.currentEffect=`${dice}d${base.damage.die} ${base.damage.type} damage`;}else if(base.trueStrikeScaling){const extra=character.level>=17?3:character.level>=11?2:character.level>=5?1:0;current.currentEffect=extra?`Weapon attack + ${extra}d6 Radiant damage`:`Weapon attack; no extra cantrip damage yet`;}else if(base.rangeScaling){const range=character.level>=17?120:character.level>=11?60:character.level>=5?30:15;current.range=`${range} ft`;current.currentEffect=`Stabilize a creature at 0 HP within ${range} ft`;}else current.currentEffect=null;return current;}
+  try{
+    const base=getSpellReference(character.ruleset,spellId);if(!base)return null;if(base.level!==0)throw new Error(`${base.name} is not a cantrip.`);const current={...base};
+    if(base.beamScaling){const beams=tierDice(character.level);current.currentEffect=`${beams} beam${beams===1?"":"s"}; each beam makes a separate ranged spell attack for 1d${base.damage.die} ${base.damage.type} damage and can target the same or different targets`;}
+    else if(base.shillelaghScaling){const die=character.level>=17?"2d6":character.level>=11?"d12":character.level>=5?"d10":"d8";current.currentEffect=`Held Club or Quarterstaff uses your spellcasting ability; weapon damage die ${die}, dealing Force or its normal damage type`;}
+    else if(base.damage?.scales){const dice=tierDice(character.level);current.currentEffect=`${dice}d${base.damage.die} ${base.damage.type} damage`;}
+    else if(base.trueStrikeScaling){const extra=character.level>=17?3:character.level>=11?2:character.level>=5?1:0;current.currentEffect=extra?`Weapon attack + ${extra}d6 Radiant damage`:`Weapon attack; no extra cantrip damage yet`;}
+    else if(base.rangeScaling){const range=character.level>=17?120:character.level>=11?60:character.level>=5?30:15;current.range=`${range} ft`;current.currentEffect=`Stabilize a creature at 0 HP within ${range} ft`;}
+    else current.currentEffect=null;return current;
+  }
   catch(error){console.error("[spell-reference] cantrip resolution failed",error);throw error;}
 }
 export function characterActiveSpellReferences(character){
