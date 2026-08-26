@@ -15,7 +15,7 @@ test("Eldritch Blast preserves SRD separate-beam scaling",()=>{
 test("Shillelagh preserves its SRD weapon-die progression",()=>{
   try{
     const ref=getSpellReference("2024","shillelagh");assert.equal(ref.castingTime,"Bonus Action");assert.equal(ref.range,"Self");assert.equal(ref.components,"V, S, M");assert.equal(ref.duration,"1 minute");assert.equal(ref.srdPage,162);assert.equal(ref.shillelaghScaling,true);
-    for(const [level,die] of [[1,"d8"],[5,"d10"],[11,"d12"],[17,"2d6"]]){const resolved=resolveCantripReference(character(level),"shillelagh");assert.match(resolved.currentEffect,new RegExp(`damage die ${die.replace("d","\\d")}`));assert.match(resolved.currentEffect,/spellcasting ability/);assert.match(resolved.currentEffect,/Force or its normal damage type/);}
+    for(const [level,die] of [[1,"d8"],[5,"d10"],[11,"d12"],[17,"2d6"]]){const resolved=resolveCantripReference(character(level),"shillelagh");assert.match(resolved.currentEffect,new RegExp(`damage die ${die}`));assert.match(resolved.currentEffect,/spellcasting ability/);assert.match(resolved.currentEffect,/Force or its normal damage type/);}
   }catch(error){console.error("[class-exclusive-cantrip-test] Shillelagh failed",error);throw error;}
 });
 
