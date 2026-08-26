@@ -57,6 +57,8 @@ jobs:
           BROWSER="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           test -n "$BROWSER"
           echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
+      - name: Verify responsive Forge UI in Chrome
+        run: node tests/browser-ui-gate.mjs
       - name: Verify premium PDF packets in Chrome
         run: node tests/browser-print-gate.mjs
       - name: Verify Bard premium PDFs in Chrome
@@ -67,6 +69,15 @@ jobs:
         run: node tests/sorcerer-browser-print-gate.mjs
       - name: Verify Warlock premium PDFs in Chrome
         run: node tests/warlock-browser-print-gate.mjs
+      - name: Upload responsive UI review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: responsive-ui-review
+          path: tests/.browser-ui/*.png
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
       - name: Upload premium print visual review
         if: always()
         uses: actions/upload-artifact@v4
