@@ -3,6 +3,16 @@
 ## Objective
 Improve the Forge workflow without removing rules functionality, then audit supported 2014/2024 classes, subclasses, equipment, weapons, spellcasting, gold, and starting magic against the applicable source guidance.
 
+## Current certification status
+- Master production tracker: Issue #37.
+- Active exhaustive audit: PR #39.
+- Warlock 2014/2024 production support and premium print coverage are merged.
+- Exhaustive generation covers every supported class at levels 1–20 in both rulesets and every supported subclass from its legal unlock level through 20.
+- Warlock has an independent 1–20 progression oracle.
+- Starting-magic class-usability coverage includes all 12 supported classes in both rulesets.
+- Saved-character persistence now includes Warlock class selections and Starting Resources state.
+- Final certification remains blocked until the full rules suite, browser/PDF gates, visual artifact review, post-merge main CI, Pages deployment, live smoke test, and user acceptance pass are all green.
+
 ## UI acceptance criteria
 - The constraint/workflow panel scrolls as one coherent unit.
 - The result panel does not create a nested scroll trap.
