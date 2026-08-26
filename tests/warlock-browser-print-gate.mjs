@@ -30,6 +30,9 @@ function verifyPacket(testCase){
   assert.equal(model.spellPage.warlock.pactSlotCount,4,`${slug}: max-level Pact slot count missing`);
   assert.equal(model.spellPage.warlock.pactSlotLevel,5,`${slug}: max-level Pact slot level missing`);
   assert.equal(Object.keys(model.spellPage.warlock.mysticArcanum).length,4,`${slug}: Mystic Arcanum state incomplete`);
+  assert.ok(model.equipment.length>0,`${slug}: printable equipment is missing`);
+  assert.ok(model.equipment.every(item=>typeof item==="string"&&item.trim()),`${slug}: every printable equipment entry must be a non-empty string`);
+  assert.equal(model.equipment.some(item=>item.includes("[object Object]")),false,`${slug}: Warlock print model contains an unformatted inventory object`);
   for(const [key,value] of Object.entries(testCase.customization))assert.equal(model.presentation.customization[key],value,`${slug}: customization ${key}`);
 
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
@@ -47,6 +50,7 @@ function verifyPacket(testCase){
   }
 
   const whole=normalize(extracted),fold=whole.toLowerCase(),tokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,...model.ruleIndex.map(item=>item.name),model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
+  assert.equal(fold.includes("[object object]"),false,`${slug}: printed PDF exposed an unformatted inventory object`);
   for(const token of tokens)assert.ok(fold.includes(normalize(token).toLowerCase()),`${slug}: printed PDF lost expected content: ${token}`);
   for(const phrase of ["RAW Integrity","Eldritch Pact","Pact Resources","Pact Magic","Eldritch Invocations","Mystic Arcanum"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing Warlock contract text: ${phrase}`);
 
