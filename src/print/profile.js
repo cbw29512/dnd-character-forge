@@ -1,11 +1,11 @@
 const CASTER_CLASSES=Object.freeze(new Set(["wizard","cleric","druid","sorcerer","warlock","bard"]));
 const HALF_CASTER_CLASSES=Object.freeze(new Set(["paladin","ranger"]));
 
-export function exportProfileFor(character){
+export function exportProfileFor(character,packetMode="deluxe"){
   try{
     const classId=character?.class?.id;if(!classId)throw new Error("Export profile requires a class id.");
-    const caster=Boolean(character.spells)||CASTER_CLASSES.has(classId)||HALF_CASTER_CLASSES.has(classId);
-    return Object.freeze({id:caster?"caster-two-page":"martial-one-page",maxPages:caster?2:1,caster});
+    const caster=Boolean(character.spells)||CASTER_CLASSES.has(classId)||HALF_CASTER_CLASSES.has(classId),mode=packetMode==="table"?"table":"deluxe",tablePages=caster?2:1,dossierPages=mode==="deluxe"?1:0;
+    return Object.freeze({id:`${caster?"caster":"martial"}-${mode}`,maxPages:tablePages+dossierPages,tablePages,dossierPages,caster,packetMode:mode});
   }catch(error){console.error("[print-profile] profile resolution failed",error);throw error;}
 }
 
