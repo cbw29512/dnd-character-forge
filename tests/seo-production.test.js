@@ -117,10 +117,10 @@ test("social and install icons have production dimensions",()=>{
 });
 
 test("homepage trust copy reflects the verified class engine",()=>{
-  assert.match(index,/eleven SRD classes in both editions/i);
-  for(const name of ["Barbarian","Bard","Cleric","Druid","Fighter","Monk","Paladin","Ranger","Rogue","Sorcerer","Wizard"]){
+  assert.match(index,/twelve SRD classes in both editions/i);
+  for(const name of ["Barbarian","Bard","Cleric","Druid","Fighter","Monk","Paladin","Ranger","Rogue","Sorcerer","Warlock","Wizard"]){
     assert.match(index,new RegExp(`\\b${name}\\b`));
   }
-  assert.match(index,/Warlock stays unavailable until its complete RAW engine passes the same production gates/i);
+  assert.doesNotMatch(index,/Warlock stays unavailable/i);
   assert.doesNotMatch(index,/Fix Divine Order or Blessed Strikes only when you care/);
 });
