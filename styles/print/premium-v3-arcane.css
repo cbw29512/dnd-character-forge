@@ -1,0 +1,53 @@
+@media print{
+  /* BARD — performance folio, brass flourishes, lyrical manuscript rhythm. */
+  .theme-bard-legend .ps-top{grid-template-columns:1.66in minmax(0,1fr) 2.48in}
+  .theme-bard-legend .ps-body{grid-template-columns:1.4in minmax(0,1fr) 2.36in}
+  .theme-bard-legend .ps-identity,.theme-bard-legend .ps-top-stats,.theme-bard-legend .ps-panel{border:1.5px double #633044;background:linear-gradient(180deg,rgba(251,242,226,.92),rgba(233,214,207,.76))}
+  .theme-bard-legend .ps-panel{border-radius:.06in .16in .06in .16in}
+  .theme-bard-legend .ps-panel h2{clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);letter-spacing:.08em}
+  .theme-bard-legend .ps-stat{clip-path:polygon(50% 0,92% 12%,100% 50%,82% 92%,50% 100%,18% 92%,0 50%,8% 12%)}
+  .theme-bard-legend .ps-portrait-art{border:3px double #c39c69;border-radius:44% 44% 12% 12% / 18% 18% 8% 8%;clip-path:none}
+  .theme-bard-legend .ps-ornament{opacity:.18;color:#8b3e58;width:.58in;height:.42in}.theme-bard-legend .ps-ornament-tl{transform:rotate(-15deg)}.theme-bard-legend .ps-ornament-br{transform:scale(-1) rotate(-15deg)}
+  .theme-bard-legend .utility-bard{border:2px double #8b3e58;background:linear-gradient(135deg,rgba(195,156,105,.1),transparent 62%)}
+  .theme-bard-legend .utility-bard .ps-utility-stats span{border-radius:50% 50% 42% 42% / 18% 18% 10% 10%}
+  .theme-bard-legend .ps-dossier-seal{border-radius:48% 48% 10% 10% / 20% 20% 8% 8%;clip-path:none}
+
+  /* SORCERER — fractured crystal, asymmetrical magical pressure, faceted stats. */
+  .theme-sorcerer-aether .ps-top{grid-template-columns:1.58in minmax(0,1fr) 2.58in}
+  .theme-sorcerer-aether .ps-body{grid-template-columns:1.36in minmax(0,1fr) 2.46in}
+  .theme-sorcerer-aether .ps-identity,.theme-sorcerer-aether .ps-top-stats,.theme-sorcerer-aether .ps-panel{border:1.4px solid #4d335e;background:linear-gradient(145deg,rgba(247,241,237,.9),rgba(222,207,231,.73))}
+  .theme-sorcerer-aether .ps-panel{clip-path:polygon(4% 0,96% 0,100% 9%,97% 100%,5% 98%,0 91%,1% 8%)}
+  .theme-sorcerer-aether .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 42%,92% 100%,8% 100%,0 58%);letter-spacing:.08em}
+  .theme-sorcerer-aether .ps-stat{clip-path:polygon(50% 0,90% 18%,100% 62%,68% 100%,30% 92%,0 60%,10% 16%)}
+  .theme-sorcerer-aether .ps-portrait-art{clip-path:polygon(12% 0,88% 0,100% 22%,90% 100%,14% 94%,0 76%,4% 16%);border:2px solid #bc9a71}
+  .theme-sorcerer-aether .ps-ornament{opacity:.19;color:#70478a;width:.6in;height:.44in}.theme-sorcerer-aether .ps-ornament-tr{transform:scaleX(-1) rotate(14deg)}
+  .theme-sorcerer-aether .utility-sorcerer{border:2px solid #70478a;background:linear-gradient(135deg,rgba(112,71,138,.12),transparent 62%);box-shadow:inset 0 0 .12in rgba(112,71,138,.13)}
+  .theme-sorcerer-aether .utility-sorcerer .ps-utility-stats span{clip-path:polygon(8% 0,92% 0,100% 14%,100% 86%,92% 100%,8% 100%,0 86%,0 14%)}
+  .theme-sorcerer-aether .ps-dossier-seal{clip-path:polygon(50% 0,92% 18%,100% 62%,68% 100%,30% 92%,0 60%,10% 16%)}
+
+  /* WARLOCK — pact seals, eye shapes, narrow occult rails. */
+  .theme-warlock-eldritch .ps-top{grid-template-columns:1.62in minmax(0,1fr) 2.54in}
+  .theme-warlock-eldritch .ps-body{grid-template-columns:1.42in minmax(0,1fr) 2.35in}
+  .theme-warlock-eldritch .ps-identity,.theme-warlock-eldritch .ps-top-stats,.theme-warlock-eldritch .ps-panel{border:1.4px solid #3c304c;background:linear-gradient(180deg,rgba(239,235,226,.9),rgba(213,204,219,.72))}
+  .theme-warlock-eldritch .ps-panel{clip-path:polygon(5% 0,95% 0,100% 12%,96% 100%,4% 100%,0 88%)}
+  .theme-warlock-eldritch .ps-panel h2{clip-path:polygon(12% 0,88% 0,100% 50%,88% 100%,12% 100%,0 50%);letter-spacing:.095em}
+  .theme-warlock-eldritch .ps-stat{clip-path:ellipse(49% 40% at 50% 50%)}
+  .theme-warlock-eldritch .ps-portrait-art{clip-path:polygon(50% 0,92% 20%,100% 55%,80% 100%,20% 100%,0 55%,8% 20%);border:2px solid #9a8a70}
+  .theme-warlock-eldritch .ps-ornament{opacity:.21;color:#594374;width:.58in;height:.42in}.theme-warlock-eldritch .ps-ornament-bl,.theme-warlock-eldritch .ps-ornament-tr{opacity:.08}
+  .theme-warlock-eldritch .utility-warlock{border:2px double #594374;background:radial-gradient(ellipse at 50% 40%,rgba(89,67,116,.14),transparent 62%)}
+  .theme-warlock-eldritch .utility-warlock .ps-utility-stats span{clip-path:ellipse(49% 44% at 50% 50%)}
+  .theme-warlock-eldritch .ps-dossier-seal{clip-path:ellipse(48% 42% at 50% 50%)}
+
+  /* WIZARD — arcane notebook, circles, precise geometric indexing. */
+  .theme-wizard-arcane .ps-top{grid-template-columns:1.54in minmax(0,1fr) 2.68in}
+  .theme-wizard-arcane .ps-body{grid-template-columns:1.34in minmax(0,1fr) 2.58in}
+  .theme-wizard-arcane .ps-identity,.theme-wizard-arcane .ps-top-stats,.theme-wizard-arcane .ps-panel{border:1.3px solid #283c5a;background-color:rgba(241,241,230,.9);background-image:radial-gradient(circle at 92% 8%,transparent 0 .22in,rgba(60,86,136,.04) .225in .235in,transparent .24in)}
+  .theme-wizard-arcane .ps-panel{clip-path:polygon(5px 0,calc(100% - 5px) 0,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0 calc(100% - 5px),0 5px)}
+  .theme-wizard-arcane .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);letter-spacing:.1em}
+  .theme-wizard-arcane .ps-stat{clip-path:polygon(50% 0,88% 18%,100% 58%,72% 100%,28% 100%,0 58%,12% 18%)}
+  .theme-wizard-arcane .ps-portrait-art{clip-path:polygon(7% 0,93% 0,100% 7%,100% 93%,93% 100%,7% 100%,0 93%,0 7%);border:2px double #ae9565}
+  .theme-wizard-arcane .ps-ornament{opacity:.16;color:#3c5688;width:.6in;height:.45in}
+  .theme-wizard-arcane .utility-wizard{border:2px solid #3c5688;background:radial-gradient(circle at 50% 50%,rgba(60,86,136,.09),transparent 64%)}
+  .theme-wizard-arcane .utility-wizard .ps-utility-stats span{border:1.2px solid #526c99;background:rgba(255,255,255,.5)}
+  .theme-wizard-arcane .ps-dossier-seal{clip-path:polygon(50% 0,88% 18%,100% 58%,72% 100%,28% 100%,0 58%,12% 18%)}
+}
