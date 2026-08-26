@@ -42,8 +42,12 @@ export function applySheetCustomizationToCurrent(state){
 }
 
 export function restoreSheetCustomizationFromCharacter(state,character){
-  try{state.sheetCustomization={...normalizeSheetCustomization(character?.presentation?.sheetCustomization)};renderSheetCustomizer(state);}
-  catch(error){console.error("[sheet-customizer] restore failed",error);throw error;}
+  try{
+    const value=normalizeSheetCustomization(character?.presentation?.sheetCustomization);
+    state.sheetCustomization={...value};
+    if(character)character.presentation={...(character.presentation||{}),sheetCustomization:{...value}};
+    renderSheetCustomizer(state);
+  }catch(error){console.error("[sheet-customizer] restore failed",error);throw error;}
 }
 
 function updateStateFromPanel(state,panel){
