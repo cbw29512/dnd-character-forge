@@ -1,7 +1,7 @@
 @media print{
   /* BARBARIAN — hide, iron, axes, torn geometry. */
   .theme-barbarian-rage .ps-top{grid-template-columns:1.86in minmax(0,1fr) 2.24in}
-  .theme-barbarian-rage .ps-main-columns{grid-template-columns:1.43in minmax(0,1fr) 2.08in}
+  .theme-barbarian-rage .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.30in}
   .theme-barbarian-rage .ps-identity,.theme-barbarian-rage .ps-top-stats{border:2px solid #4b261c;background:linear-gradient(180deg,rgba(239,218,183,.94),rgba(224,199,158,.86))}
   .theme-barbarian-rage .ps-panel{clip-path:polygon(1.5% 0,98.5% 0,100% 2.5%,99% 97%,96% 100%,3% 99%,0 96%,1% 4%);border:1.6px solid #5b2b20;background:linear-gradient(135deg,rgba(238,219,186,.9),rgba(210,180,140,.78))}
   .theme-barbarian-rage .ps-panel h2{font-size:9.4pt;letter-spacing:.075em;clip-path:polygon(0 28%,4% 10%,9% 16%,14% 0,86% 0,91% 16%,96% 10%,100% 28%,98% 76%,92% 100%,8% 100%,2% 76%)}
@@ -14,7 +14,7 @@
 
   /* FIGHTER — riveted steel, squared military geometry, heraldic structure. */
   .theme-fighter-steel .ps-top{grid-template-columns:1.64in minmax(0,1fr) 2.5in}
-  .theme-fighter-steel .ps-main-columns{grid-template-columns:1.5in minmax(0,1fr) 2.13in}
+  .theme-fighter-steel .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.13in}
   .theme-fighter-steel .ps-identity,.theme-fighter-steel .ps-top-stats,.theme-fighter-steel .ps-panel{border:1.8px solid #3b3030;background-color:rgba(242,229,207,.88);background-image:radial-gradient(circle at 5px 5px,rgba(70,61,57,.24) 0 1px,transparent 1.2px),radial-gradient(circle at calc(100% - 5px) 5px,rgba(70,61,57,.24) 0 1px,transparent 1.2px)}
   .theme-fighter-steel .ps-panel{clip-path:polygon(4px 0,calc(100% - 4px) 0,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0 calc(100% - 4px),0 4px)}
   .theme-fighter-steel .ps-panel h2{clip-path:polygon(4% 0,96% 0,100% 50%,96% 100%,4% 100%,0 50%);letter-spacing:.09em}
@@ -27,7 +27,7 @@
 
   /* MONK — circles, restraint, asymmetrical brush-like rails. */
   .theme-monk-focus .ps-top{grid-template-columns:1.56in minmax(0,1fr) 2.58in}
-  .theme-monk-focus .ps-main-columns{grid-template-columns:1.38in minmax(0,1fr) 2.28in}
+  .theme-monk-focus .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.28in}
   .theme-monk-focus .ps-identity,.theme-monk-focus .ps-top-stats,.theme-monk-focus .ps-panel{border:1px solid #655041;background:rgba(246,238,223,.84);box-shadow:none}
   .theme-monk-focus .ps-panel{border-radius:.08in .02in .08in .02in}
   .theme-monk-focus .ps-panel h2{clip-path:none;border-top:1px solid #7a5436;border-bottom:1px solid #7a5436;background:linear-gradient(90deg,transparent,#7a5436 20%,#7a5436 80%,transparent);letter-spacing:.11em}
@@ -41,7 +41,7 @@
   /* ROGUE — lockwork, clipped corners, deliberate asymmetry.
      V3 geometry is Deluxe-only; Table mode preserves the proven compact packet. */
   .sheet-packet-deluxe.theme-rogue-shadow .ps-top{grid-template-columns:1.58in minmax(0,1fr) 2.55in;transform:skewX(-.18deg)}
-  .sheet-packet-deluxe.theme-rogue-shadow .ps-main-columns{grid-template-columns:1.46in minmax(0,1fr) 2.32in}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.32in}
   .sheet-packet-deluxe.theme-rogue-shadow .ps-panel{clip-path:polygon(0 0,96% 0,100% 8%,100% 100%,4% 100%,0 92%);border:1.3px dashed #245d61;background:linear-gradient(135deg,rgba(235,238,226,.92),rgba(203,214,205,.74))}
   .sheet-packet-deluxe.theme-rogue-shadow .ps-panel h2{clip-path:polygon(0 0,95% 0,100% 50%,95% 100%,0 100%,3% 50%);text-align:left;padding-left:.17in;letter-spacing:.08em}
   .sheet-packet-deluxe.theme-rogue-shadow .ps-stat{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
