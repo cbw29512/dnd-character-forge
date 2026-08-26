@@ -83,12 +83,24 @@ function spellCatalog(character){
 
 function equipmentLines(items){
   try{
-    return items.map((item,index)=>{
-      if(typeof item==="string"){const text=item.trim();if(!text)throw new Error(`Warlock inventory item ${index+1} is blank.`);return text;}
+    const normalized=items.map((item,index)=>{
+      if(typeof item==="string"){
+        const name=item.trim();
+        if(!name)throw new Error(`Warlock inventory item ${index+1} is blank.`);
+        return{name,quantity:1};
+      }
       if(!item||typeof item!=="object"||typeof item.name!=="string"||!item.name.trim())throw new Error(`Warlock inventory item ${index+1} has no printable name.`);
-      const quantity=Number(item.quantity??1);if(!Number.isInteger(quantity)||quantity<1)throw new Error(`Warlock inventory item ${item.name} has invalid quantity ${String(item.quantity)}.`);
-      return quantity===1?item.name.trim():`${quantity} × ${item.name.trim()}`;
+      const quantity=Number(item.quantity??1);
+      if(!Number.isInteger(quantity)||quantity<1)throw new Error(`Warlock inventory item ${item.name} has invalid quantity ${String(item.quantity)}.`);
+      return{name:item.name.trim(),quantity};
     });
+    const grouped=new Map();
+    for(const item of normalized){
+      const key=item.name.toLocaleLowerCase("en-US"),existing=grouped.get(key);
+      if(existing)existing.quantity+=item.quantity;
+      else grouped.set(key,{...item});
+    }
+    return[...grouped.values()].map(item=>item.quantity===1?item.name:`${item.quantity} × ${item.name}`);
   }catch(error){console.error("[warlock-print-model] equipment normalization failed",error);throw error;}
 }
 function chooseFeat(character,references){
