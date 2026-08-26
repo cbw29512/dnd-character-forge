@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { CHAIN_FAMILIARS_2024 } from "../src/data/warlock-class.js";
+import { buildWarlockPremiumPrintModel } from "../src/print/warlock-model.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { warlockProgressionFor } from "../src/rules/warlock.js";
 
@@ -73,4 +74,14 @@ test("2024 level-20 Fiend Warlock carries Contact Patron, all Mystic Arcana, and
     assert.ok(character.feats.some(feat=>feat.id==="boon-fate"));
     assert.equal(character.warlock.invocations,10);
   }catch(error){console.error("[warlock-production-test] 2024 capstone contract failed",error);throw error;}
+});
+
+test("Warlock premium print inventory is normalized into readable equipment lines",()=>{
+  try{
+    const character=forge("2024",20,{subclass:"fiend-patron"}),model=buildWarlockPremiumPrintModel(character);
+    assert.ok(model.equipment.length>0,"Warlock print model should include equipment");
+    assert.ok(model.equipment.every(item=>typeof item==="string"&&item.trim()),"Every Warlock print equipment entry must be a non-empty string");
+    assert.equal(model.equipment.some(item=>item.includes("[object Object]")),false,"Warlock print model must never stringify inventory objects implicitly");
+    assert.ok(model.equipment.some(item=>/^2 × Dagger\b/.test(item)),"Duplicate daggers should print as a consolidated quantity");
+  }catch(error){console.error("[warlock-production-test] print equipment contract failed",error);throw error;}
 });
