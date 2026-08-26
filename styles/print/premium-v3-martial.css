@@ -38,14 +38,16 @@
   .theme-monk-focus .utility-monk .ps-utility-stats span{border-radius:50%;border:1px solid #8e704f;min-height:.42in}
   .theme-monk-focus .ps-dossier-seal{clip-path:circle(48% at 50% 50%)}
 
-  /* ROGUE — lockwork, clipped corners, deliberate asymmetry. */
-  .theme-rogue-shadow .ps-top{grid-template-columns:1.58in minmax(0,1fr) 2.55in;transform:skewX(-.18deg)}
-  .theme-rogue-shadow .ps-main-columns{grid-template-columns:1.46in minmax(0,1fr) 2.32in}
-  .theme-rogue-shadow .ps-panel{clip-path:polygon(0 0,96% 0,100% 8%,100% 100%,4% 100%,0 92%);border:1.3px dashed #245d61;background:linear-gradient(135deg,rgba(235,238,226,.92),rgba(203,214,205,.74))}
-  .theme-rogue-shadow .ps-panel h2{clip-path:polygon(0 0,95% 0,100% 50%,95% 100%,0 100%,3% 50%);text-align:left;padding-left:.17in;letter-spacing:.08em}
-  .theme-rogue-shadow .ps-stat{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
-  .theme-rogue-shadow .ps-portrait-art{clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);border:2px solid #819d94}
-  .theme-rogue-shadow .ps-ornament{opacity:.18;width:.54in;height:.4in}.theme-rogue-shadow .ps-ornament-tr,.theme-rogue-shadow .ps-ornament-bl{display:none}
-  .theme-rogue-shadow .ps-rogue{border:2px solid #245d61;background:linear-gradient(90deg,rgba(36,93,97,.07),transparent)}
-  .theme-rogue-shadow .ps-dossier-seal{clip-path:polygon(8% 0,100% 0,92% 100%,0 100%)}
+  /* ROGUE — lockwork, clipped corners, deliberate asymmetry.
+     V3 geometry is Deluxe-only; Table mode preserves the proven compact packet. */
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-top{grid-template-columns:1.58in minmax(0,1fr) 2.55in;transform:skewX(-.18deg)}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-main-columns{grid-template-columns:1.46in minmax(0,1fr) 2.32in}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-panel{clip-path:polygon(0 0,96% 0,100% 8%,100% 100%,4% 100%,0 92%);border:1.3px dashed #245d61;background:linear-gradient(135deg,rgba(235,238,226,.92),rgba(203,214,205,.74))}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-panel h2{clip-path:polygon(0 0,95% 0,100% 50%,95% 100%,0 100%,3% 50%);text-align:left;padding-left:.17in;letter-spacing:.08em}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-stat{clip-path:polygon(0 12%,82% 0,100% 50%,82% 100%,0 88%,10% 50%)}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-portrait-art{clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);border:2px solid #819d94}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-ornament{opacity:.18;width:.54in;height:.4in}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-ornament-tr,.sheet-packet-deluxe.theme-rogue-shadow .ps-ornament-bl{display:none}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-rogue{border:2px solid #245d61;background:linear-gradient(90deg,rgba(36,93,97,.07),transparent)}
+  .sheet-packet-deluxe.theme-rogue-shadow .ps-dossier-seal{clip-path:polygon(8% 0,100% 0,92% 100%,0 100%)}
 }
