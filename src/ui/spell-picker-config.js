@@ -1,5 +1,4 @@
-import { RAW_2014 } from "../data/raw-2014.js";
-import { RAW_2024 } from "../data/raw-2024.js";
+import { forgeDataFor } from "../data/forge-data.js";
 import { wizardSpellsFor } from "../data/wizard-spells.js";
 import { clericSpellsFor } from "../data/cleric-spells.js";
 import { bardSpellsFor } from "../data/bard-spells.js";
@@ -9,6 +8,7 @@ import { rangerSpellsFor, RANGER_DRUIDIC_WARRIOR_CANTRIPS_2024 } from "../data/r
 import { paladinSpellsFor } from "../data/paladin-spells.js";
 import { sorcererSpellsFor } from "../data/sorcerer-spells.js";
 import { draconicSpellsForLevel } from "../data/sorcerer-draconic-spells.js";
+import { warlockAlwaysPrepared2024, warlockSpellsFor } from "../data/warlock-spells.js";
 import { validateWizardSelections, wizardPickerLimits } from "../rules/wizard.js";
 import { clericPickerLimits, lifeDomainAlwaysPrepared, validateClericSelections } from "../rules/cleric.js";
 import { bardAlwaysPrepared, validateBardSpellSelections } from "../rules/bard-spellcasting.js";
@@ -21,18 +21,17 @@ import { rangerAlwaysPrepared, validateRangerSpellSelections } from "../rules/ra
 import { rangerMaxSpellLevel, rangerProgressionFor } from "../rules/ranger.js";
 import { validateSorcererSpellSelections } from "../rules/sorcerer-spellcasting.js";
 import { maxSorcererSpellLevel, sorcererProgressionFor } from "../rules/sorcerer.js";
+import { validateWarlockSpellSelections } from "../rules/warlock-spellcasting.js";
+import { activeMysticArcanumLevels, warlockProgressionFor } from "../rules/warlock.js";
 import { generateBaseAbilities, apply2014Species } from "../rules/abilities.js";
 import { applyClassAsi } from "../rules/features.js";
 import { abilityMod } from "../rules/math.js";
 
-export const CASTER_IDS=Object.freeze(["wizard","cleric","bard","druid","paladin","ranger","sorcerer"]);
-const dataFor=state=>state.ruleset==="2014"?RAW_2014:RAW_2024;
+export const CASTER_IDS=Object.freeze(["wizard","cleric","bard","druid","paladin","ranger","sorcerer","warlock"]);
+const dataFor=state=>forgeDataFor(state.ruleset);
 
 export function spellPickerConfigForState(state){
-  try{
-    const p=profile(state),id=state.constraints.class;if(!CASTER_IDS.includes(id))throw new Error("Choose a supported spellcasting class first.");if(!Number.isInteger(p.level)||p.level<1)throw new Error("Choose a specific level before selecting spells.");
-    if(id==="wizard")return wizardConfig(state,p);if(id==="cleric")return clericConfig(state,p);if(id==="bard")return bardConfig(state,p);if(id==="sorcerer")return sorcererConfig(state,p);if(id==="druid")return druidConfig(state,p);if(id==="paladin")return paladinConfig(state,p);if(id==="ranger")return rangerConfig(state,p);throw new Error("Choose a supported spellcasting class first.");
-  }catch(error){console.error("[spell-picker-config] config failed",error);throw error;}
+  try{const p=profile(state),id=state.constraints.class;if(!CASTER_IDS.includes(id))throw new Error("Choose a supported spellcasting class first.");if(!Number.isInteger(p.level)||p.level<1)throw new Error("Choose a specific level before selecting spells.");if(id==="wizard")return wizardConfig(state,p);if(id==="cleric")return clericConfig(state,p);if(id==="bard")return bardConfig(state,p);if(id==="sorcerer")return sorcererConfig(state,p);if(id==="warlock")return warlockConfig(state,p);if(id==="druid")return druidConfig(state,p);if(id==="paladin")return paladinConfig(state,p);if(id==="ranger")return rangerConfig(state,p);throw new Error("Choose a supported spellcasting class first.");}catch(error){console.error("[spell-picker-config] config failed",error);throw error;}
 }
 function wizardConfig(state,p){const spells=wizardSpellsFor(state.ruleset),limits=wizardPickerLimits(p),maxLevel=Math.min(9,Math.ceil(p.level/2));return config({spells,buckets:["cantrips","spellbook","prepared"],limits,maxLevel,dynamicLimit:"INT-based limit",validate:selections=>validateWizardSelections({...p,selections})});}
 function clericConfig(state,p){const divineOrder=state.ruleset==="2024"?(state.classSelections?.divineOrder||null):null,spells=clericSpellsFor(state.ruleset),limits=clericPickerLimits({...p,divineOrder}),always=new Set(lifeDomainAlwaysPrepared(state.ruleset,p.level)),maxLevel=Math.min(9,Math.ceil(p.level/2));return config({spells,buckets:["cantrips","prepared"],limits,maxLevel,dynamicLimit:"WIS-based limit",always,alwaysLabel:"Life Domain · does not use prepared slots",validate:selections=>validateClericSelections({...p,selections,divineOrder}),notes:{cantrips:state.ruleset==="2024"&&!divineOrder?"choosing the extra cantrip requires Thaumaturge":null}});}
@@ -44,6 +43,12 @@ function bardConfig(state,p){
   return config({spells:uniqueSpells([...base,...secrets,...lorePool]),buckets,limits,maxLevel,always,alwaysLabel:state.ruleset==="2024"?"Words of Creation · always prepared":null,poolFor,validate:selections=>validateBardSpellSelections(preview,selections)});
 }
 function sorcererConfig(state,p){const progression=sorcererProgressionFor(state.ruleset,p.level,p.subclassId),base=sorcererSpellsFor(state.ruleset),maxLevel=maxSorcererSpellLevel(p.level),preview={ruleset:state.ruleset,level:p.level,subclass:p.subclassId?{id:p.subclassId}:null},extras=state.ruleset==="2024"?draconicSpellsForLevel(p.level,p.subclassId):[],always=new Set(extras.map(s=>s.id)),bucket=state.ruleset==="2014"?"known":"prepared",limits={cantrips:progression.cantrips,[bucket]:state.ruleset==="2014"?progression.known:progression.prepared};return config({spells:uniqueSpells([...base,...extras]),buckets:["cantrips",bucket],limits,maxLevel,always,alwaysLabel:always.size?"Draconic Spells · always prepared":null,validate:selections=>validateSorcererSpellSelections(preview,selections)});}
+function warlockConfig(state,p){
+  const progression=warlockProgressionFor(state.ruleset,p.level,p.subclassId),base=warlockSpellsFor(state.ruleset,{subclassId:p.subclassId}),preview={ruleset:state.ruleset,level:p.level,subclass:p.subclassId?{id:p.subclassId}:null},automatic=state.ruleset==="2024"?warlockAlwaysPrepared2024(p.level,p.subclassId):[],always=new Set(automatic.map(s=>s.id)),bucket=state.ruleset==="2014"?"known":"prepared",buckets=["cantrips",bucket],limits={cantrips:progression.cantrips,[bucket]:state.ruleset==="2014"?progression.known:progression.prepared};
+  for(const level of activeMysticArcanumLevels(p.level)){buckets.push(`arcanum${level}`);limits[`arcanum${level}`]=1;}
+  const poolFor=name=>name==="cantrips"?base.filter(s=>s.level===0):name.startsWith("arcanum")?base.filter(s=>s.level===Number(name.replace("arcanum",""))):base.filter(s=>s.level>0&&s.level<=progression.maxPactSpellLevel&&!always.has(s.id));
+  return config({spells:uniqueSpells([...base,...automatic]),buckets,limits,maxLevel:9,always,alwaysLabel:always.size?"Warlock automatic spells · do not use prepared slots":null,poolFor,validate:selections=>validateWarlockSpellSelections(preview,selections)});
+}
 function druidConfig(state,p){
   const primalOrder=state.ruleset==="2024"?(state.classSelections?.primalOrder||null):null,circleLand=state.classSelections?.circleLand||null,limits=druidPickerLimits({...p,primalOrder}),maxLevel=maxDruidSpellLevel(p.level),abilities={wis:previewAbility(state,"wis")},preview={ruleset:state.ruleset,level:p.level,subclass:p.subclassId?{id:p.subclassId}:null,abilities,druidSelections:{primalOrder,circleLand}},always=new Set(druidAlwaysPrepared(preview)),base=druidSpellsFor(state.ruleset),blocked=new Set(always);
   if(p.subclassId==="circle-land"&&!circleLand){for(const land of state.ruleset==="2014"?LAND_2014:LAND_2024)for(const id of druidCircleSpellIds(state.ruleset,land,p.level))blocked.add(id);}if(state.ruleset==="2014")limits.prepared=Math.max(1,p.level+abilityMod(abilities.wis));

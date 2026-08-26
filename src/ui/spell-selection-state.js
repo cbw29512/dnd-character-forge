@@ -1,5 +1,5 @@
 export function emptySpellSelections(){
-  return{cantrips:[],known:[],spellbook:[],prepared:[],magicalSecrets:[],loreDiscoveries:[],masteryLevel1:null,masteryLevel2:null,signatureSpells:[]};
+  return{cantrips:[],known:[],spellbook:[],prepared:[],magicalSecrets:[],loreDiscoveries:[],arcanum6:[],arcanum7:[],arcanum8:[],arcanum9:[],masteryLevel1:null,masteryLevel2:null,signatureSpells:[]};
 }
 
 export function spellSelectionsFromCharacter(character){
@@ -18,6 +18,10 @@ export function spellSelectionsFromCharacter(character){
     }
     if(classId==="ranger"){if(character.ruleset==="2014")out.known=[...(spells.known?.all||[])];else out.prepared=[...(spells.prepared?.all||[])];return out;}
     if(classId==="sorcerer"){if(character.ruleset==="2014")out.known=[...(spells.known?.all||[])];else out.prepared=[...(spells.prepared?.all||[])];return out;}
+    if(classId==="warlock"){
+      if(character.ruleset==="2014")out.known=[...(spells.known?.all||[])];else out.prepared=[...(spells.prepared?.all||[])];
+      for(const level of [6,7,8,9]){const id=spells.mysticArcanum?.[level];out[`arcanum${level}`]=id?[id]:[];}return out;
+    }
     if(["cleric","druid","paladin"].includes(classId)){out.prepared=[...(spells.prepared?.all||[])];return out;}
     return out;
   }catch(error){console.error("[spell-selection-state] restore failed",error);throw error;}
