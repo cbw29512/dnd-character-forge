@@ -1,3 +1,7 @@
+@import url("./premium-class-martial.css");
+@import url("./premium-class-divine-wild.css");
+@import url("./premium-class-arcane.css");
+
 @media print{
   /* Sorcerer: faceted aether/crystal geometry while preserving the familiar 5e scan order. */
   .theme-sorcerer-aether:not(.sheet-print-ink-saver) .ps-frame{
