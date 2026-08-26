@@ -2,7 +2,11 @@ name: Character Forge tests
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - "audit/**"
+      - "fix/**"
+      - "release/**"
   pull_request:
 
 permissions:
