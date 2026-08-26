@@ -1,0 +1,40 @@
+@media print{
+  /* Bard — manuscript, strings, brass, performance flourishes. */
+  .theme-bard-legend .ps-frame{border:.055in double #633044;outline:1px solid #c39c69;outline-offset:-.09in;background-image:repeating-linear-gradient(0deg,transparent 0 .16in,rgba(139,62,88,.025) .16in .17in),radial-gradient(circle at 82% 16%,rgba(139,62,88,.07),transparent 25%)}
+  .theme-bard-legend .ps-frame:before,.theme-bard-legend .ps-frame:after{content:"✦";width:auto;height:auto;background:none;color:#c39c69;font-size:15pt;text-shadow:.12in 0 #8b3e58,-.12in 0 #8b3e58}
+  .theme-bard-legend .ps-panel{border:1.4px double #7c4660;border-radius:.06in;background:rgba(250,241,226,.83)}
+  .theme-bard-legend .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);background:linear-gradient(90deg,#431f2d,#8b3e58,#431f2d);letter-spacing:.08em}
+  .theme-bard-legend .ps-stat{clip-path:none;border-radius:50% 50% 12% 12% / 18% 18% 7% 7%}
+  .theme-bard-legend .ps-portrait-art{border-radius:48% 48% 10% 10% / 20% 20% 8% 8%;clip-path:none;border:3px double #c39c69}
+  .theme-bard-legend .utility-bard{border:2px double #8b3e58;border-radius:.08in;background:linear-gradient(135deg,rgba(139,62,88,.06),transparent 52%,rgba(195,156,105,.06))}
+  .theme-bard-legend .utility-bard .ps-utility-stats span{border-radius:50% 50% 44% 44% / 18% 18% 9% 9%}
+
+  /* Sorcerer — crystal facets, living energy, unstable geometry. */
+  .theme-sorcerer-aether .ps-frame{border:.05in double #4d335e;outline:1px solid #bc9a71;outline-offset:-.085in;background-image:linear-gradient(135deg,transparent 0 76%,rgba(112,71,138,.045) 76.2% 77%,transparent 77.2%),linear-gradient(45deg,transparent 0 84%,rgba(188,154,113,.035) 84.2% 84.8%,transparent 85%)}
+  .theme-sorcerer-aether .ps-frame:before,.theme-sorcerer-aether .ps-frame:after{content:"◇";width:auto;height:auto;background:none;color:#70478a;font-size:18pt;transform:rotate(45deg)}
+  .theme-sorcerer-aether .ps-panel{border:1.4px solid #674979;clip-path:polygon(.04in 0,calc(100% - .04in) 0,100% .04in,100% calc(100% - .04in),calc(100% - .04in) 100%,.04in 100%,0 calc(100% - .04in),0 .04in)}
+  .theme-sorcerer-aether .ps-panel h2{clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);background:linear-gradient(90deg,#352341,#70478a,#352341)}
+  .theme-sorcerer-aether .ps-stat{clip-path:polygon(50% 0,100% 22%,90% 83%,50% 100%,10% 83%,0 22%)}
+  .theme-sorcerer-aether .ps-portrait-art{clip-path:polygon(50% 0,96% 18%,86% 82%,50% 100%,14% 82%,4% 18%);border:2px solid #bc9a71}
+  .theme-sorcerer-aether .utility-sorcerer{border:2px solid #70478a;background:radial-gradient(circle at 50% 50%,rgba(112,71,138,.09),transparent 58%);box-shadow:inset 0 0 .11in rgba(112,71,138,.11)}
+  .theme-sorcerer-aether .utility-sorcerer .ps-utility-stats span{clip-path:polygon(10% 0,90% 0,100% 20%,92% 100%,8% 100%,0 20%)}
+
+  /* Warlock — pact seal, eye/crescent motifs, occult circles. */
+  .theme-warlock-eldritch .ps-frame{border:.055in double #3c304c;outline:1px solid #9a8a70;outline-offset:-.09in;background-image:radial-gradient(ellipse at 83% 16%,transparent 0 .42in,rgba(89,67,116,.06) .43in .45in,transparent .46in),radial-gradient(circle at 83% 16%,rgba(89,67,116,.055),transparent .27in)}
+  .theme-warlock-eldritch .ps-frame:before,.theme-warlock-eldritch .ps-frame:after{content:"☾";width:auto;height:auto;background:none;color:#594374;font-size:19pt;opacity:.82}
+  .theme-warlock-eldritch .ps-panel{border:1.4px solid #4a3a5d;background:rgba(238,233,225,.82)}
+  .theme-warlock-eldritch .ps-panel h2{clip-path:ellipse(50% 58% at 50% 50%);background:linear-gradient(90deg,#20192d,#594374,#20192d);padding-left:.16in;padding-right:.16in}
+  .theme-warlock-eldritch .ps-stat{clip-path:ellipse(49% 50% at 50% 50%)}
+  .theme-warlock-eldritch .ps-portrait-art{clip-path:ellipse(49% 47% at 50% 50%);border:3px double #9a8a70}
+  .theme-warlock-eldritch .utility-warlock{border:2px double #594374;border-radius:50% 50% 6% 6% / 9% 9% 4% 4%;background:radial-gradient(ellipse at 50% 0,rgba(89,67,116,.11),transparent 55%)}
+
+  /* Wizard — spellbook, arcane circles, star-map structure. */
+  .theme-wizard-arcane .ps-frame{border:.05in double #283c5a;outline:1px solid #ae9565;outline-offset:-.085in;background-image:radial-gradient(circle at 84% 15%,transparent 0 .42in,rgba(60,86,136,.05) .43in .45in,transparent .46in .61in,rgba(60,86,136,.035) .62in .64in,transparent .65in),linear-gradient(90deg,transparent 0 49.8%,rgba(60,86,136,.025) 49.9% 50.1%,transparent 50.2%)}
+  .theme-wizard-arcane .ps-frame:before,.theme-wizard-arcane .ps-frame:after{content:"✧";width:auto;height:auto;background:none;color:#3c5688;font-size:18pt;text-shadow:.12in .06in #ae9565,-.12in -.06in #ae9565}
+  .theme-wizard-arcane .ps-panel{border:1.4px solid #344f75;background:rgba(244,245,238,.84)}
+  .theme-wizard-arcane .ps-panel h2{clip-path:polygon(7% 0,93% 0,100% 50%,93% 100%,7% 100%,0 50%);background:linear-gradient(90deg,#1c2942,#3c5688,#1c2942);letter-spacing:.09em}
+  .theme-wizard-arcane .ps-stat{clip-path:polygon(50% 0,96% 28%,78% 100%,22% 100%,4% 28%)}
+  .theme-wizard-arcane .ps-portrait-art{clip-path:polygon(50% 0,96% 24%,86% 86%,50% 100%,14% 86%,4% 24%);border:3px double #ae9565}
+  .theme-wizard-arcane .utility-wizard{border:2px double #3c5688;background:radial-gradient(circle at 50% 45%,rgba(60,86,136,.09),transparent 55%)}
+  .theme-wizard-arcane .utility-wizard .ps-utility-stats span{border-color:#58709a;background:rgba(60,86,136,.035)}
+}
