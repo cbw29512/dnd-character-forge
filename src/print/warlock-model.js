@@ -31,7 +31,7 @@ export function buildWarlockPremiumPrintModel(character){
       rogueResources:null,druidSupport:null,rangerSupport:null,
       classUtility:buildWarlockUtility(character),
       proficiencies:{saves:character.saves.map(abilityName),tools:[...(character.toolProficiencies||[])],languages:[...(character.languages||[])],masteries:[]},
-      equipment:[...(character.inventory||[])],
+      equipment:equipmentLines(character.inventory||[]),
       spellcasting:spellcastingModel(character,catalog),
       spellPage:spellPageModel(character,catalog),
       quickTurn:warlockQuickTurn(character,catalog),
@@ -81,6 +81,16 @@ function spellCatalog(character){
   }catch(error){console.error("[warlock-print-model] spell catalog failed",error);throw error;}
 }
 
+function equipmentLines(items){
+  try{
+    return items.map((item,index)=>{
+      if(typeof item==="string"){const text=item.trim();if(!text)throw new Error(`Warlock inventory item ${index+1} is blank.`);return text;}
+      if(!item||typeof item!=="object"||typeof item.name!=="string"||!item.name.trim())throw new Error(`Warlock inventory item ${index+1} has no printable name.`);
+      const quantity=Number(item.quantity??1);if(!Number.isInteger(quantity)||quantity<1)throw new Error(`Warlock inventory item ${item.name} has invalid quantity ${String(item.quantity)}.`);
+      return quantity===1?item.name.trim():`${quantity} × ${item.name.trim()}`;
+    });
+  }catch(error){console.error("[warlock-print-model] equipment normalization failed",error);throw error;}
+}
 function chooseFeat(character,references){
   try{const feat=character.feats?.[0];if(!feat)return null;const ref=references.find(item=>item.name===feat.name);return{name:feat.name,text:shorten(ref?.text||"Applied to this character.",190),source:ref?.source?`${ref.source.version} · p.${ref.source.page}`:null};}
   catch(error){console.error("[warlock-print-model] feat selection failed",error);throw error;}
