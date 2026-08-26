@@ -14,6 +14,7 @@ function forge(ruleset,level,{subclass="random",classSelections={},spellSelectio
     state.constraints.class="warlock";
     state.constraints.level=String(level);
     state.constraints.subclass=subclass;
+    state.constraints.background="acolyte";
     state.classSelections={...classSelections};
     state.spellSelections={...state.spellSelections,...spellSelections};
     return generateCharacter(state);
