@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import { MAGIC_MODES } from "../src/state.js";
 import { generateStartingMagic } from "../src/rules/magic-starting.js";
 
+const ALL_CLASSES=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
+
 test("2014 DMG starting magic follows low/standard/high campaign guidance",()=>{
   try{
     const low=generateStartingMagic({ruleset:"2014",level:12,mode:MAGIC_MODES.LOW_MAGIC,classId:"fighter"});
@@ -29,13 +31,15 @@ test("2024 higher-level starting equipment uses the official table and no-magic 
   }catch(error){console.error("[test] 2024 starting magic guidance",error);throw error;}
 });
 
-test("magic candidates remain usable by the generated class",()=>{
+test("magic candidates remain usable by every supported class",()=>{
   try{
-    for(const classId of ["fighter","rogue","cleric","druid","bard","monk","paladin","ranger","sorcerer","wizard"]){
-      const character=generateStartingMagic({ruleset:"2024",level:17,mode:MAGIC_MODES.NORMAL_MAGIC,classId});
-      assert.ok(character.items.length>0,classId);
-      assert.ok(character.items.every(item=>item.name),classId);
-      assert.ok(!character.items.some(item=>item.id==="weapon-plus-1"&&classId==="wizard"),classId);
+    for(const classId of ALL_CLASSES){
+      for(const ruleset of ["2014","2024"]){
+        const character=generateStartingMagic({ruleset,level:17,mode:MAGIC_MODES.NORMAL_MAGIC,classId});
+        assert.ok(character.items.length>0,`${ruleset} ${classId}`);
+        assert.ok(character.items.every(item=>item.name),`${ruleset} ${classId}`);
+        assert.ok(!character.items.some(item=>item.id==="weapon-plus-1"&&classId==="wizard"),`${ruleset} ${classId}`);
+      }
     }
   }catch(error){console.error("[test] class-usable magic candidates",error);throw error;}
 });
