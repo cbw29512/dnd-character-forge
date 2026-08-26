@@ -6,6 +6,14 @@ function stable(value) {
   } catch (error) { console.error("[fingerprint] stable failed", error); throw error; }
 }
 
+function resolvedMechanics(value) {
+  try {
+    if (Array.isArray(value)) return value.map(resolvedMechanics);
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).filter(([key])=>!new Set(["selected","randomized"]).has(key)).map(([key,item])=>[key,resolvedMechanics(item)]));
+    return value;
+  } catch (error) { console.error("[fingerprint] class mechanics normalization failed", error); throw error; }
+}
+
 export function pregenFingerprintPayload(character) {
   try {
     const styles=character.fightingStyles?.length?character.fightingStyles:(character.fightingStyle?[character.fightingStyle]:[]);
@@ -18,7 +26,16 @@ export function pregenFingerprintPayload(character) {
       speciesChoices:character.speciesChoices||null,
       class:character.class?.id,
       subclass:character.subclass?.id ?? null,
-      classChoices:{divineOrder:character.divineOrder||null,blessedStrikes:character.blessedStrikes||null},
+      classChoices:resolvedMechanics({
+        divineOrder:character.divineOrder||null,
+        blessedStrikes:character.blessedStrikes||null,
+        bard:character.bardSelections||null,
+        monk:character.monkSelections||null,
+        sorcerer:character.sorcererSelections||null,
+        warlock:character.warlockSelections||null,
+        druid:character.druidSelections||null,
+        ranger:character.rangerSelections||null
+      }),
       background:character.background?.id,
       backgroundChoices:character.backgroundChoices||null,
       toolProficiencies:[...(character.toolProficiencies||[])].sort(),
@@ -34,6 +51,10 @@ export function pregenFingerprintPayload(character) {
       fightingStyles:styles.map(item=>item.id||item.name).sort(),
       masteryIds:[...(character.masteryIds||[])].sort(),
       inventory:(character.inventory||[]).map(item=>({name:item.name,quantity:item.quantity})),
+      startingResources:{
+        gold:character.startingMagic?.gold||character.startingGold||null,
+        magicItems:(character.startingMagic?.items||[]).map(item=>({id:item.id||item.name,rarity:item.rarity||null,attunement:Boolean(item.attunement)}))
+      },
       homebrew:(character.homebrew||[]).map(item=>({id:item.id||item.name,version:item.version||1,effects:item.effects||[]})),
       spells:character.spells||null
     };
