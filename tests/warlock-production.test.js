@@ -4,6 +4,7 @@ import { createInitialState } from "../src/state.js";
 import { CHAIN_FAMILIARS_2024 } from "../src/data/warlock-class.js";
 import { buildWarlockPremiumPrintModel } from "../src/print/warlock-model.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { buildQuickReference } from "../src/rules/reference-router.js";
 import { warlockProgressionFor } from "../src/rules/warlock.js";
 
 function forge(ruleset,level,{subclass="random",classSelections={},spellSelections={}}={}){
@@ -74,6 +75,25 @@ test("2024 level-20 Fiend Warlock carries Contact Patron, all Mystic Arcana, and
     assert.ok(character.feats.some(feat=>feat.id==="boon-fate"));
     assert.equal(character.warlock.invocations,10);
   }catch(error){console.error("[warlock-production-test] 2024 capstone contract failed",error);throw error;}
+});
+
+test("2024 Fiend Patron play references preserve the exact SRD 5.2.1 mechanics",()=>{
+  try{
+    const character=forge("2024",20,{subclass:"fiend-patron"}),refs=buildQuickReference(character),byName=new Map(refs.map(item=>[item.name,item]));
+    const blessing=byName.get("Dark One's Blessing"),luck=byName.get("Dark One's Own Luck"),resilience=byName.get("Fiendish Resilience"),hurl=byName.get("Hurl Through Hell");
+    assert.ok(blessing&&luck&&resilience&&hurl,"All four Fiend Patron feature references must be present");
+    assert.match(blessing.text,/within 10 feet/i,"Dark One's Blessing must include the nearby-enemy trigger");
+    assert.match(blessing.text,/Temporary Hit Points/i);
+    assert.match(luck.text,/Charisma modifier/i,"Dark One's Own Luck must use Charisma-modifier uses");
+    assert.match(luck.text,/Long Rest/i);
+    assert.match(resilience.timing,/Short or Long Rest/i,"Fiendish Resilience choice must refresh after either rest");
+    assert.match(resilience.text,/other than Force/i,"Fiendish Resilience must exclude Force");
+    assert.match(hurl.text,/Charisma save/i,"Hurl Through Hell must use a Charisma save");
+    assert.match(hurl.text,/8d10 Psychic/i,"Hurl Through Hell damage must be 8d10 Psychic");
+    assert.match(hurl.text,/Incapacitated/i);
+    assert.match(hurl.text,/Long Rest/i);
+    assert.match(hurl.text,/Pact Magic slot/i,"Hurl Through Hell must support Pact-slot recharge");
+  }catch(error){console.error("[warlock-production-test] 2024 Fiend Patron SRD contract failed",error);throw error;}
 });
 
 test("Warlock premium print inventory is normalized into readable equipment lines",()=>{
