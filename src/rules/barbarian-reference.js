@@ -3,6 +3,7 @@ import { MASTERY_REFERENCE } from "../data/quick-reference.js";
 import { RAW_2024 } from "../data/raw-2024.js";
 import { referenceProvenance } from "../data/rule-provenance.js";
 import { barbarianReferenceProvenance } from "../data/barbarian-provenance.js";
+import { barbarianOriginalReference } from "../data/barbarian-subclasses.js";
 import { abilityMod } from "./math.js";
 import { barbarianFrenzyDamage, barbarianIntimidatingPresenceDc } from "./barbarian.js";
 
@@ -18,6 +19,7 @@ export function buildBarbarianQuickReference(character){
 }
 function featureReference(c,name){
   try{
+    const original=barbarianOriginalReference(c.ruleset,c.subclass?.id,name);if(original)return original;
     const b=c.barbarian,con=abilityMod(c.abilities.con),str=abilityMod(c.abilities.str),rageUses=b.unlimitedRage?"unlimited":`${b.rageUses} use${b.rageUses===1?"":"s"}`;
     const refs={
       Rage:rr("Barbarian","Bonus Action",rageText(c,rageUses)),
