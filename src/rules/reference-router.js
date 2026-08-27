@@ -16,10 +16,11 @@ const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
 
 export function buildQuickReference(character){
   try{
-    const originalBackground=isForgeOriginalBackground(character?.background);
-    if(character?.class?.id==="barbarian")return originalBackground?buildBarbarianWithOriginalBackground(character):buildBarbarianQuickReference(character);
-    if(originalBackground||isForgeOriginalSubclass(character?.subclass))return buildForgeCompatibleQuickReference(character);
-    return routeBaseReference(character);
+    const originalBackground=isForgeOriginalBackground(character?.background);let items;
+    if(character?.class?.id==="barbarian")items=originalBackground?buildBarbarianWithOriginalBackground(character):buildBarbarianQuickReference(character);
+    else if(originalBackground||isForgeOriginalSubclass(character?.subclass))items=buildForgeCompatibleQuickReference(character);
+    else items=routeBaseReference(character);
+    return enhanceMagicInitiate(items,character);
   }catch(error){console.error("[reference-router] build failed",error);throw error;}
 }
 
@@ -51,6 +52,15 @@ function buildForgeCompatibleQuickReference(character){
     }
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate compatible-content quick-reference entries detected.");return items;
   }catch(error){console.error("[reference-router] Forge-compatible reference build failed",error);throw error;}
+}
+
+function enhanceMagicInitiate(items,character){
+  try{
+    const magic=character?.magicInitiate;if(!magic)return items;
+    const featId=character.background?.feat,ability=({int:"Intelligence",wis:"Wisdom",cha:"Charisma"})[magic.spellcastingAbility]||String(magic.spellcastingAbility||"").toUpperCase();
+    let found=false;const next=items.map(item=>{if(item.id!==`feat:${featId}`)return item;found=true;return{...item,category:`Magic Initiate (${magic.spellListName})`,timing:"At will cantrips · 1 free level-1 cast / Long Rest",text:`${ability} is your spellcasting ability. Cantrips: ${magic.cantripNames.join(", ")}. Level-1 spell: ${magic.level1SpellName}. You can cast that level-1 spell once without a spell slot, regaining that free cast after a Long Rest, and you can also cast it using spell slots you have.`};});
+    if(!found)throw new Error(`Magic Initiate reference ${featId} is missing.`);return next;
+  }catch(error){console.error("[reference-router] Magic Initiate reference enhancement failed",error);throw error;}
 }
 
 function routeBaseReference(character){
