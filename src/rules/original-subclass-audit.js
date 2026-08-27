@@ -11,6 +11,7 @@ import { rangerEntityProvenance } from "../data/ranger-provenance.js";
 import { isForgeOriginalSubclass, originalSubclassFeatureRecordsFor, originalSubclassSource } from "../data/original-subclasses.js";
 import { barbarianOriginalFeaturesFor, isBarbarianForgeOriginal } from "../data/barbarian-subclasses.js";
 import { isForgeOriginalBackground, originalBackgroundSource } from "../data/original-backgrounds.js";
+import { advancementFeatSource, isForgeOriginalFeat } from "../data/feat-library.js";
 import { speciesChoiceLabel } from "./species.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"});
@@ -19,8 +20,8 @@ const SRD_LANDING_URL="https://www.dndbeyond.com/srd";
 export function buildForgeOriginalAudit(character,validation){
   try{
     if(!validation?.valid)throw new Error("Forge-compatible rules audit requires a validated character.");
-    const originalBackground=isForgeOriginalBackground(character?.background),barbarianOriginal=character?.class?.id==="barbarian"&&isBarbarianForgeOriginal(character?.subclass),originalSubclass=barbarianOriginal||isForgeOriginalSubclass(character?.subclass);
-    if(!originalBackground&&!originalSubclass)throw new Error("Forge-compatible audit received no Character Forge Original content.");
+    const originalBackground=isForgeOriginalBackground(character?.background),barbarianOriginal=character?.class?.id==="barbarian"&&isBarbarianForgeOriginal(character?.subclass),originalSubclass=barbarianOriginal||isForgeOriginalSubclass(character?.subclass),originalFeats=(character?.feats||[]).filter(isForgeOriginalFeat);
+    if(!originalBackground&&!originalSubclass&&!originalFeats.length)throw new Error("Forge-compatible audit received no Character Forge Original content.");
     const source=rulesetSource(character.ruleset),classSource=classProvenance(character),homebrewCount=character.homebrew?.length||0;
     const backgroundSource=originalBackground?originalBackgroundSource():entityProvenance(character.ruleset,"background",character.background.id);
     const mechanics=[
@@ -29,6 +30,7 @@ export function buildForgeOriginalAudit(character,validation){
       mechanic("Class",character.class.name,classSource)
     ];
     if(character.subclass)mechanics.push(mechanic("Subclass",originalSubclass?`${character.subclass.name} — Forge Original`:character.subclass.name,subclassProvenance(character,originalSubclass)));
+    for(const feat of originalFeats)mechanics.push(mechanic("Feat",`${feat.name} — Forge Original`,advancementFeatSource(feat)));
     mechanics.push(mechanic("Level",String(character.level),classSource));
     const spellSource=spellListProvenance(character);if(spellSource)mechanics.push(mechanic(`${character.class.name} spell list`,"SRD class spell catalog",spellSource));
     const checks=["Character generation completed with zero validation errors.",`${character.class.name} base mechanics remain sourced to ${source.version}.`];
@@ -38,6 +40,7 @@ export function buildForgeOriginalAudit(character,validation){
       checks.push(`${character.subclass.name} is explicitly Character Forge Original subclass content; it is not represented as official D&D RAW or SRD content.`);
       checks.push(`${count} active original subclass feature${count===1?"":"s"} passed the encoded level-gate progression for level ${character.level}.`);
     }
+    for(const feat of originalFeats)checks.push(`${feat.name} is explicitly Character Forge Original feat content; its advancement slot and source label passed validation and it is not represented as official D&D RAW or SRD content.`);
     checks.push("Content integrity passed: SRD mechanics remain sourced and Character Forge Original content is clearly separated from official RAW.");
     if(character.sourceMode===SOURCE.HOMEBREW)checks.push(`Homebrew mode is explicit: ${homebrewCount} structured Homebrew entr${homebrewCount===1?"y":"ies"} applied in addition to compatible content.`);
     return{
