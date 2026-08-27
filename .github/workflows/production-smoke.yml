@@ -1,0 +1,68 @@
+name: Production site smoke
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-site-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify live Character Forge
+        shell: bash
+        env:
+          BASE_URL: https://cbw29512.github.io/dnd-character-forge/
+        run: |
+          set -Eeuo pipefail
+          trap 'echo "::error::Production smoke failed at line ${LINENO}."' ERR
+
+          index_file="$(mktemp)"
+          ready=0
+
+          for attempt in $(seq 1 18); do
+            echo "[production-smoke] attempt ${attempt}/18: ${BASE_URL}"
+            if curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              -H 'Cache-Control: no-cache' \
+              "${BASE_URL}?smoke=${GITHUB_SHA}" -o "${index_file}"; then
+              if grep -Fq '<title>D&D 5e Character Forge | RAW 2014 & 2024 Pregen Generator</title>' "${index_file}" \
+                && grep -Fq 'Rules edition' "${index_file}" \
+                && grep -Fq 'Warlock' "${index_file}"; then
+                ready=1
+                break
+              fi
+              echo "[production-smoke] site responded, but expected Forge markers are not live yet."
+            else
+              echo "[production-smoke] site is not ready yet."
+            fi
+            sleep 10
+          done
+
+          if [[ "${ready}" -ne 1 ]]; then
+            echo "::error::Production homepage never reached the expected Character Forge contract."
+            exit 1
+          fi
+
+          for asset in \
+            src/app.js \
+            styles/base.css \
+            styles/print/premium-dossier.css \
+            src/ui/print-dossier.js \
+            site.webmanifest; do
+            echo "[production-smoke] checking ${asset}"
+            curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              -H 'Cache-Control: no-cache' \
+              "${BASE_URL}${asset}?smoke=${GITHUB_SHA}" -o /dev/null
+          done
+
+          echo "[production-smoke] live Character Forge and critical Print V3 assets are healthy."
