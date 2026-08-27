@@ -42,7 +42,7 @@ function paladin(ruleset,styleId){
 function ranger(ruleset,styleId){
   const state=createInitialState();
   state.ruleset=ruleset;
-  state.constraints={level:"2",species:"human",class:"ranger",subclass:"random",background:ruleset==="2014"?"outlander":"criminal",name:`${ruleset} ${styleId??"random"} Ranger`};
+  state.constraints={level:"2",species:"human",class:"ranger",subclass:"random",background:ruleset==="2014"?"acolyte":"criminal",name:`${ruleset} ${styleId??"random"} Ranger`};
   state.classSelections=styleId?{fightingStyle:styleId}:{};
   if(ruleset==="2024"&&styleId==="druidic-warrior")state.spellSelections={...state.spellSelections,cantrips:RANGER_DRUIDIC_WARRIOR_CANTRIPS_2024.slice(0,2).map(spell=>spell.id)};
   return generateCharacter(state);
