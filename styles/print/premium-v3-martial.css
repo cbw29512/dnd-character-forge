@@ -12,6 +12,46 @@
   .theme-barbarian-rage .utility-barbarian .ps-utility-stats span{clip-path:polygon(50% 0,92% 20%,100% 72%,70% 100%,30% 100%,0 72%,8% 20%);border:1.5px solid #7a3323}
   .theme-barbarian-rage .ps-dossier-seal{clip-path:polygon(50% 0,92% 18%,100% 68%,72% 100%,28% 100%,0 68%,8% 18%)}
 
+  /* V4 Barbarian hierarchy — class fantasy without sacrificing table speed. */
+  .sheet-packet-deluxe.theme-barbarian-rage:not(.sheet-print-ink-saver) .ps-frame{
+    background-image:
+      linear-gradient(126deg,transparent 0 16%,rgba(91,43,32,.035) 16.2% 16.7%,transparent 16.9% 58%,rgba(91,43,32,.028) 58.2% 58.7%,transparent 58.9%),
+      radial-gradient(ellipse at 13% 17%,rgba(116,33,22,.10),transparent .78in),
+      radial-gradient(ellipse at 88% 76%,rgba(92,49,27,.07),transparent 1.05in),
+      repeating-linear-gradient(118deg,rgba(67,35,23,.022) 0 1px,transparent 1px 17px);
+  }
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-top:before{
+    content:"PRIMAL FURY";position:absolute;z-index:4;top:-.072in;left:50%;transform:translateX(-50%);min-width:1.28in;padding:.025in .15in .02in;text-align:center;
+    font:700 5.7pt Georgia,serif;letter-spacing:.16em;color:#f3dfb5;background:linear-gradient(90deg,#3a1d18,#7a241c 48%,#3a1d18);border:1px solid #b78b56;clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%);
+  }
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-identity h1{font-size:16.4pt;letter-spacing:.018em;text-shadow:.015in .015in 0 rgba(92,49,27,.08)}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-portrait-caption{font-family:Georgia,serif;font-weight:700;letter-spacing:.025em;border-top:1px solid #8d5d39;background:linear-gradient(90deg,rgba(70,30,22,.94),rgba(117,38,27,.91),rgba(70,30,22,.94));color:#f4e1b8;padding:.025in .035in}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-ability b{font-size:9.4pt}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-ability em{font-weight:800;color:#6d241a}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-attacks{border-width:2px;background:linear-gradient(180deg,rgba(255,247,226,.9),rgba(231,205,166,.80))}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-attack-head{font-family:Georgia,serif;letter-spacing:.05em;border-bottom:1.5px solid #6b281d}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-attack-row{min-height:.19in;border-bottom:1px solid rgba(91,43,32,.25);padding:.025in .035in}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-attack-row strong{font-size:7.6pt;color:#4b2118}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-attack-row b{font-size:8.1pt;color:#79251c}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian{clip-path:polygon(2% 0,98% 0,100% 12%,99% 88%,96% 100%,4% 100%,1% 88%,0 12%);margin-top:.015in}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian h2{font-size:10pt;letter-spacing:.13em;background:linear-gradient(90deg,#3d1d18 0,#84281e 50%,#3d1d18 100%)}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-panel-body{padding:.055in .065in .06in;background-image:linear-gradient(118deg,transparent 0 48%,rgba(116,33,22,.035) 48.3% 49.2%,transparent 49.5%)}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-utility-stats{gap:.035in}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-utility-stats span{min-height:.43in;background:linear-gradient(180deg,rgba(255,247,226,.92),rgba(215,183,142,.70));box-shadow:inset 0 0 .055in rgba(91,43,32,.13)}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-utility-stats span:first-child{background:linear-gradient(180deg,rgba(128,40,28,.16),rgba(255,243,214,.90));border-width:2px}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-utility-stats span:first-child b{font-size:10.7pt;color:#7b251b}
+  .sheet-packet-deluxe.theme-barbarian-rage .utility-barbarian .ps-utility-note{margin-top:.035in;padding-top:.03in;border-top:1px solid rgba(107,40,29,.38);font-family:Georgia,serif;font-size:5.7pt;font-weight:700;letter-spacing:.018em;color:#4c271d}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-features .ps-panel-body{padding:.045in .055in}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-feature-list article{position:relative;margin:0 0 .038in;padding:.025in .025in .035in .065in;border-left:2.4px solid #7b291f;border-bottom:1px solid rgba(91,43,32,.16);background:linear-gradient(90deg,rgba(122,41,31,.052),transparent 64%)}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-feature-list article:before{content:"◆";position:absolute;left:.012in;top:.027in;font-size:4pt;color:#8a3a28}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-feature-list strong{font-family:Georgia,serif;font-size:7.35pt;letter-spacing:.012em;color:#4b2118}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-feature-list p{font-size:6.05pt;line-height:1.26;margin-top:.012in}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-feature-list small{font-size:4.55pt;letter-spacing:.02em;color:#775e4b}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-quick{border-top-width:2px}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-quick-list li{padding-left:.015in;margin-bottom:.018in}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-quick-list li::marker{font-weight:800;color:#79251c}
+  .sheet-packet-deluxe.theme-barbarian-rage .ps-starting-magic{background:linear-gradient(180deg,rgba(244,225,191,.86),rgba(226,196,153,.76))}
+
   /* FIGHTER — riveted steel, squared military geometry, heraldic structure. */
   .theme-fighter-steel .ps-top{grid-template-columns:1.64in minmax(0,1fr) 2.5in}
   .theme-fighter-steel .ps-main-columns{grid-template-columns:1.66in minmax(0,1fr) 2.13in}
