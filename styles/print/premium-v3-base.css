@@ -11,6 +11,7 @@
   .sheet-ornament-minimal .ps-class-ornaments,.sheet-print-ink-saver .ps-class-ornaments{display:none}
 
   /* A stronger physical-sheet hierarchy without destabilizing fixed Letter output. */
+  .sheet-packet-deluxe .ps-main-columns{height:auto;min-height:0}
   .sheet-packet-deluxe .ps-skill{font-size:6.55pt;line-height:1.12}
   .sheet-packet-deluxe .ps-attack-row{font-size:7.05pt}
   .sheet-packet-deluxe .ps-attack-row span{font-size:6.25pt}
