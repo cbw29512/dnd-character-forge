@@ -9,6 +9,7 @@ import { buildPaladinQuickReference } from "./paladin-reference.js";
 import { buildRangerQuickReference } from "./ranger-reference.js";
 import { isForgeOriginalSubclass, originalSubclassDefinition, originalSubclassFeatureNamesFor, originalSubclassFeatureRecordsFor, originalSubclassSource } from "../data/original-subclasses.js";
 import { isForgeOriginalBackground, originalBackgroundReference } from "../data/original-backgrounds.js";
+import { advancementFeatReference } from "../data/feat-library.js";
 
 const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
   sorcerer:Object.freeze(new Set(["Sorcerous Origin","Sorcerer Subclass"]))
@@ -16,10 +17,13 @@ const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
 
 export function buildQuickReference(character){
   try{
-    const originalBackground=isForgeOriginalBackground(character?.background);let items;
-    if(character?.class?.id==="barbarian")items=originalBackground?buildBarbarianWithOriginalBackground(character):buildBarbarianQuickReference(character);
-    else if(originalBackground||isForgeOriginalSubclass(character?.subclass))items=buildForgeCompatibleQuickReference(character);
-    else items=routeBaseReference(character);
+    const advancementFeats=(character?.feats||[]).filter(feat=>feat.advancementFeat),safeCharacter=advancementFeats.length?{...character,feats:(character.feats||[]).filter(feat=>!feat.advancementFeat)}:character;
+    const originalBackground=isForgeOriginalBackground(safeCharacter?.background);let items;
+    if(safeCharacter?.class?.id==="barbarian")items=originalBackground?buildBarbarianWithOriginalBackground(safeCharacter):buildBarbarianQuickReference(safeCharacter);
+    else if(originalBackground||isForgeOriginalSubclass(safeCharacter?.subclass))items=buildForgeCompatibleQuickReference(safeCharacter);
+    else items=routeBaseReference(safeCharacter);
+    for(const feat of advancementFeats)items.push(advancementFeatReference(feat));
+    const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate routed quick-reference entries detected.");
     return enhanceMagicInitiate(items,character);
   }catch(error){console.error("[reference-router] build failed",error);throw error;}
 }
