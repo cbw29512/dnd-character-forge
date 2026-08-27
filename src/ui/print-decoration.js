@@ -4,7 +4,8 @@ export function sheetArticleOpen(model,extraClass=""){
   try{
     const classes=["premium-sheet",extraClass,`theme-${safeToken(model.theme.id)}`,`class-${safeToken(model.identity?.classId)}`,model.presentation?.classes||""].filter(Boolean).join(" ");
     const presentation=String(model.presentation?.style||"").replace(/["<>]/g,"");
-    return `<article class="${classes}" data-print-class="${escapeHtml(model.identity?.classId||"adventurer")}" style="${presentation}">`;
+    const separator=presentation&&!presentation.endsWith(";")?";":"";
+    return `<article class="${classes}" data-print-class="${escapeHtml(model.identity?.classId||"adventurer")}" style="${presentation}${separator}${classPaletteVariables(model.theme)}">`;
   }catch(error){console.error("[print-decoration] article open failed",error);throw error;}
 }
 
@@ -25,5 +26,10 @@ export function portraitImageStyle(model){
   catch(error){console.error("[print-decoration] portrait style failed",error);return"";}
 }
 
+function classPaletteVariables(theme){
+  try{const p=theme?.palette;if(!p)return"";return `--class-primary:${cssValue(p.primary)};--class-dark:${cssValue(p.dark)};--class-accent:${cssValue(p.accent)};--class-frame:${cssValue(p.frame)};--class-glow:${cssValue(p.glow)};`;}
+  catch(error){console.error("[print-decoration] class palette variables failed",error);return"";}
+}
+function cssValue(value){const text=String(value||"").trim();return /^#[0-9a-f]{3,8}$/i.test(text)||/^rgba?\([0-9.,%\s]+\)$/i.test(text)?text:"transparent";}
 function safeToken(value){return String(value||"parchment").replace(/[^a-z0-9_-]/gi,"");}
 function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));}
