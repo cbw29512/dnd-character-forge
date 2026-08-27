@@ -22,7 +22,9 @@ export function renderPremiumPrintSheet(character,target){
       source:character.startingMagic.source,
       items:(character.startingMagic.items||[]).map(item=>({name:item.name,rarity:item.rarity,attunement:Boolean(item.attunement)}))
     }:null;
-    target.innerHTML=`${renderPrintPageOne(model)}${renderPrintPageTwo(model)}${renderPrintDossier(model)}`;
+    const packet=`${renderPrintPageOne(model)}${renderPrintPageTwo(model)}${renderPrintDossier(model)}`;
+    const forgeOriginal=!model.audit.rawIntegrity&&String(model.audit.license||"").includes("Character Forge Original");
+    target.innerHTML=forgeOriginal?packet.replace(/ · RAW · /g," · 5E Compatible · ").replace(/RAW integrity/g,"Compatible content"):packet;
     return model;
   }catch(error){
     console.error("[premium-print] render failed",error);
