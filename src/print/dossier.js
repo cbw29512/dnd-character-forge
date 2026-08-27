@@ -1,4 +1,5 @@
 import { CLASS_DOSSIER, BACKGROUND_DOSSIER, STORY_EVENTS, STORY_PLACES } from "./dossier-data.js";
+import { ORIGINAL_BACKGROUND_DOSSIER } from "./original-background-dossier.js";
 
 const ABILITIES=["str","dex","con","int","wis","cha"];
 const ABILITY_BEARING=Object.freeze({str:"a compact, forceful physical presence",dex:"quick, economical movement and a ready stance",con:"a durable, weather-tested bearing",int:"an analytical gaze that seems to catalog details",wis:"a watchful calm that notices changes in a room",cha:"a presence that draws attention without requiring volume"});
@@ -27,7 +28,7 @@ export function buildNarrativeDossier(character,{quickTurn=[]}={}){
   }catch(error){console.error("[dossier] build failed",error);throw error;}
 }
 
-function backgroundStory(background){const id=String(background?.id||background?.name||"").toLowerCase();for(const [key,value] of Object.entries(BACKGROUND_DOSSIER))if(id.includes(key))return value;return{origin:"learned a trade and a set of obligations before taking up the adventuring life",token:"a small keepsake from home",bond:"the people who trusted them before anyone called them an adventurer",mentor:"an older hand who valued reliability over reputation"};}
+function backgroundStory(background){const id=String(background?.id||background?.name||"").toLowerCase(),original=ORIGINAL_BACKGROUND_DOSSIER[id];if(original)return original;for(const [key,value] of Object.entries(BACKGROUND_DOSSIER))if(id.includes(key))return value;return{origin:"learned a trade and a set of obligations before taking up the adventuring life",token:"a small keepsake from home",bond:"the people who trusted them before anyone called them an adventurer",mentor:"an older hand who valued reliability over reputation"};}
 function seedFor(character){return hash([character.name,character.ruleset,character.level,character.class?.id,character.species?.id||character.species?.name,character.background?.id||character.background?.name].join("|"));}
 function highestAbility(abilities={}){return ABILITIES.reduce((best,id)=>Number(abilities[id]||0)>Number(abilities[best]||0)?id:best,"str");}
 function pick(values,seed,salt=0){return values[Math.abs((seed+salt*2654435761)|0)%values.length];}

@@ -13,6 +13,7 @@ export function renderPremiumPrintSheet(character,target){
     model.profile=profile;
     model.packet={totalPages:profile.maxPages};
     model.presentation={...model.presentation,customization,classes:sheetCustomizationClasses(customization)};
+    if(character?.background?.contentKind==="forge-original")model.identity.background=character.background.displayName||`${character.background.name} — Forge Original`;
     model.dossier=profile.dossierPages?buildNarrativeDossier(character,{quickTurn:model.quickTurn}):null;
     // Keep starting-resource data beside the printable model so the sheet shows
     // exactly what the Forge generated, without duplicating rules calculations.

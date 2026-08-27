@@ -1,4 +1,4 @@
-import { RAW_2024 } from "../data/raw-2024.js";
+import { FORGE_2024 } from "../data/forge-data.js";
 import { magicInitiateCatalog } from "../rules/magic-initiate.js";
 
 const SPELL_ABILITIES=[{id:"int",name:"Intelligence"},{id:"wis",name:"Wisdom"},{id:"cha",name:"Charisma"}];
@@ -16,7 +16,7 @@ export function resetBackgroundOptions(state){try{state.backgroundSelections={};
 export function renderBackgroundOptions(state){
   try{
     const panel=document.getElementById("backgroundChoicePanel"),fieldsNode=document.getElementById("backgroundChoiceFields"),summary=document.getElementById("backgroundChoiceSummary");if(!panel||!fieldsNode||!summary)throw new Error("Background option UI is incomplete.");
-    const background=state.ruleset==="2024"?RAW_2024.backgrounds.find(item=>item.id===state.constraints.background):null,fields=fieldsFor(background,state.backgroundSelections||{});panel.hidden=fields.length===0;fieldsNode.innerHTML=fields.map(field=>fieldHtml(field,state.backgroundSelections||{})).join("");summary.textContent=fields.length?summaryText(fields,state.backgroundSelections||{}):"";
+    const background=state.ruleset==="2024"?FORGE_2024.backgrounds.find(item=>item.id===state.constraints.background):null,fields=fieldsFor(background,state.backgroundSelections||{});panel.hidden=fields.length===0;fieldsNode.innerHTML=fields.map(field=>fieldHtml(field,state.backgroundSelections||{})).join("");summary.textContent=fields.length?summaryText(background,fields,state.backgroundSelections||{}):"";
   }catch(error){console.error("[background-ui] render failed",error);throw error;}
 }
 function fieldsFor(background,selections){
@@ -31,5 +31,5 @@ function fieldsFor(background,selections){
   }catch(error){console.error("[background-ui] field definition failed",error);throw error;}
 }
 function fieldHtml(field,selections){try{const value=selections[field.key]||"random",options=[`<option value="random">Random</option>`,...field.options.map(option=>`<option value="${escapeHtml(option.id)}"${value===option.id?" selected":""}>${escapeHtml(option.name)}</option>`)].join("");return `<label class="background-choice-field">${escapeHtml(field.label)}<select data-background-choice="${escapeHtml(field.key)}">${options}</select></label>`;}catch(error){console.error(`[background-ui] ${field.key} field failed`,error);throw error;}}
-function summaryText(fields,selections){try{const fixed=fields.filter(field=>selections[field.key]).length;return fixed?`${fixed} background option${fixed===1?"":"s"} fixed · every other background choice stays Random`:`All background choices Random`;}catch(error){console.error("[background-ui] summary failed",error);throw error;}}
+function summaryText(background,fields,selections){try{const fixed=fields.filter(field=>selections[field.key]).length,source=background?.contentKind==="forge-original"?"Forge Original · 5E Compatible":"SRD";return fixed?`${source} · ${fixed} background option${fixed===1?"":"s"} fixed · every other background choice stays Random`:`${source} · all background choices Random`;}catch(error){console.error("[background-ui] summary failed",error);throw error;}}
 function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));}
