@@ -1,3 +1,5 @@
+import { printSourceLabel } from "./source-label.js";
+
 const CASTER_CLASSES=Object.freeze(new Set(["wizard","cleric","druid","sorcerer","warlock","bard"]));
 const HALF_CASTER_CLASSES=Object.freeze(new Set(["paladin","ranger"]));
 
@@ -12,13 +14,13 @@ export function exportProfileFor(character,packetMode="table"){
 export function compactRuleIndex(references,maxEntries){
   try{
     const ordered=[...references].sort((a,b)=>priority(a)-priority(b)||a.name.localeCompare(b.name));
-    return ordered.slice(0,maxEntries).map(item=>Object.freeze({id:item.id,name:item.name,source:`${item.source.version} · p.${item.source.page}`,category:item.category||"Rule"}));
+    return ordered.slice(0,maxEntries).map(item=>Object.freeze({id:item.id,name:item.name,source:printSourceLabel(item.source),category:item.category||"Rule"}));
   }catch(error){console.error("[print-profile] rule index failed",error);throw error;}
 }
 
 export function compactFeatureCards(references,featName,maxCards=9){
   try{
-    return references.filter(item=>item.name!==featName&&!item.id?.startsWith("mastery:")).sort((a,b)=>priority(a)-priority(b)||originalContentPriority(a)-originalContentPriority(b)).slice(0,maxCards).map(item=>Object.freeze({name:item.name,text:shorten(item.text,170),timing:item.timing,source:`${item.source.version} · p.${item.source.page}`}));
+    return references.filter(item=>item.name!==featName&&!item.id?.startsWith("mastery:")).sort((a,b)=>priority(a)-priority(b)||originalContentPriority(a)-originalContentPriority(b)).slice(0,maxCards).map(item=>Object.freeze({name:item.name,text:shorten(item.text,170),timing:item.timing,source:printSourceLabel(item.source)}));
   }catch(error){console.error("[print-profile] feature cards failed",error);throw error;}
 }
 
