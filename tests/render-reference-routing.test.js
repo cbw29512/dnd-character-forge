@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { RANGER_DRUIDIC_WARRIOR_CANTRIPS_2024 } from "../src/data/ranger-spells.js";
 import { buildQuickReference as buildCoreQuickReference } from "../src/rules/reference.js";
 import { buildQuickReference } from "../src/rules/reference-router.js";
 import { legacySafeCharacter } from "../src/ui/render-safe.js";
@@ -38,6 +39,15 @@ function paladin(ruleset,styleId){
   return generateCharacter(state);
 }
 
+function ranger(ruleset,styleId){
+  const state=createInitialState();
+  state.ruleset=ruleset;
+  state.constraints={level:"2",species:"human",class:"ranger",subclass:"random",background:ruleset==="2014"?"acolyte":"criminal",name:`${ruleset} ${styleId??"random"} Ranger`};
+  state.classSelections=styleId?{fightingStyle:styleId}:{};
+  if(ruleset==="2024"&&styleId==="druidic-warrior")state.spellSelections={...state.spellSelections,cantrips:RANGER_DRUIDIC_WARRIOR_CANTRIPS_2024.slice(0,2).map(spell=>spell.id)};
+  return generateCharacter(state);
+}
+
 test("every legal Paladin Fighting Style has a routed quick reference in both editions",()=>{
   try{
     const pools={"2014":["defense","dueling","great-weapon","protection"],"2024":["archery","defense","great-weapon","two-weapon","blessed-warrior"]};
@@ -49,6 +59,22 @@ test("every legal Paladin Fighting Style has a routed quick reference in both ed
       assert.ok(reference.source.page);
     }
   }catch(error){console.error("[test] Paladin style routing completeness failed",error);throw error;}
+});
+
+test("every Forge-supported Ranger Fighting Style has a routed quick reference in both editions",()=>{
+  try{
+    for(const ruleset of ["2014","2024"]){
+      const baseline=ranger(ruleset,null),styleIds=baseline.class.styleChoices;
+      assert.ok(Array.isArray(styleIds)&&styleIds.length>0,`${ruleset} Ranger should expose its authoritative styleChoices pool`);
+      for(const styleId of styleIds){
+        const character=ranger(ruleset,styleId),style=character.fightingStyle,references=buildQuickReference(character),reference=references.find(item=>item.id===`style:${style.name}`);
+        assert.ok(reference,`${ruleset} ${style.name} should have a routed style reference`);
+        assert.equal(reference.name,style.name);
+        assert.match(reference.source.version,/^SRD 5\./);
+        assert.ok(reference.source.page);
+      }
+    }
+  }catch(error){console.error("[test] Ranger style routing completeness failed",error);throw error;}
 });
 
 test("Blessed Warrior stays in Paladin routing and cannot leak into the legacy generic reference lookup",()=>{
@@ -67,6 +93,21 @@ test("Blessed Warrior stays in Paladin routing and cannot leak into the legacy g
     assert.deepEqual(safe.fightingStyles,[]);
     assert.doesNotThrow(()=>buildCoreQuickReference(safe));
   }catch(error){console.error("[test] Blessed Warrior legacy routing isolation failed",error);throw error;}
+});
+
+test("Druidic Warrior stays in Ranger routing and cannot leak into the legacy generic reference lookup",()=>{
+  try{
+    const character=ranger("2024","druidic-warrior"),references=buildQuickReference(character),druidic=references.find(item=>item.name==="Druidic Warrior");
+    assert.ok(druidic,"Druidic Warrior routed reference should exist");
+    assert.equal(druidic.category,"Fighting Style");
+    assert.equal(druidic.source.version,"SRD 5.2.1");
+    assert.equal(druidic.source.page,"59");
+    assert.match(druidic.text,/two Druid cantrips/i);
+    const safe=legacySafeCharacter(character);
+    assert.equal(safe.fightingStyle,null);
+    assert.deepEqual(safe.fightingStyles,[]);
+    assert.doesNotThrow(()=>buildCoreQuickReference(safe));
+  }catch(error){console.error("[test] Druidic Warrior legacy routing isolation failed",error);throw error;}
 });
 
 test("legacy-safe adapter preserves generated Fighter style state used by the visible Fighter resource summary",()=>{

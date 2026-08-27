@@ -1,0 +1,35 @@
+@media print{
+  /* Structural class ornaments are real SVG class emblems, not color swaps. */
+  .ps-class-ornaments{position:absolute;z-index:1!important;inset:.025in;pointer-events:none;overflow:hidden}
+  .ps-ornament{position:absolute;display:block;width:.48in;height:.34in;color:var(--ps-primary);opacity:.16;overflow:hidden}
+  .ps-ornament svg{width:100%;height:100%}
+  .ps-ornament-tl{top:.015in;left:.015in;transform:rotate(-8deg)}
+  .ps-ornament-tr{top:.015in;right:.015in;transform:scaleX(-1) rotate(-8deg)}
+  .ps-ornament-bl{bottom:.015in;left:.015in;transform:scaleY(-1) rotate(-8deg)}
+  .ps-ornament-br{right:.015in;bottom:.015in;transform:scale(-1) rotate(-8deg)}
+  .sheet-ornament-balanced .ps-ornament{opacity:.09;width:.4in;height:.3in}
+  .sheet-ornament-minimal .ps-class-ornaments,.sheet-print-ink-saver .ps-class-ornaments{display:none}
+
+  /* A stronger physical-sheet hierarchy without destabilizing fixed Letter output. */
+  .sheet-packet-deluxe .ps-skill{font-size:6.55pt;line-height:1.12}
+  .sheet-packet-deluxe .ps-attack-row{font-size:7.05pt}
+  .sheet-packet-deluxe .ps-attack-row span{font-size:6.25pt}
+  .sheet-packet-deluxe .ps-list{font-size:6.75pt;line-height:1.34}
+  .sheet-packet-deluxe .ps-feature-list strong{font-size:7.15pt}
+  .sheet-packet-deluxe .ps-feature-list p{font-size:5.95pt;line-height:1.24}
+  .sheet-packet-deluxe .ps-feat p,.sheet-packet-deluxe .ps-spells p,.sheet-packet-deluxe .ps-proficiencies p{font-size:6.3pt}
+  .sheet-packet-deluxe .ps-quick-list{font-size:6.45pt;line-height:1.33}
+  .sheet-packet-deluxe .ps-utility-stats small{font-size:4.55pt}
+  .sheet-packet-deluxe .ps-utility-stats b{font-size:7.3pt}
+  .sheet-packet-deluxe .ps-magic-items strong{font-size:5.45pt}
+  .sheet-packet-deluxe .ps-identity dd{font-size:7.7pt}
+
+  .premium-sheet:not(.sheet-style-minimal) .ps-top{position:relative;padding-bottom:.035in}
+  .premium-sheet:not(.sheet-style-minimal) .ps-top:after{content:"";position:absolute;left:.04in;right:.04in;bottom:0;border-bottom:1px solid color-mix(in srgb,var(--ps-accent) 72%,transparent)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-panel{position:relative}
+  .premium-sheet:not(.sheet-style-minimal) .ps-panel:after{content:"";position:absolute;inset:.025in;pointer-events:none;border:1px solid color-mix(in srgb,var(--ps-accent) 15%,transparent)}
+
+  /* Uploaded portraits remain art; class fallback crests stay large enough to read. */
+  .ps-portrait-art.has-image img,.ps-dossier-portrait-art.has-image img{width:100%;height:100%;object-fit:cover}
+  .ps-placeholder-svg{max-width:92%;max-height:92%}
+}

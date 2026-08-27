@@ -1,0 +1,39 @@
+@media print{
+  .ps-dossier-frame{grid-template-rows:1.68in 1fr .34in;gap:.075in}
+  .ps-dossier-header{display:grid;grid-template-columns:1.48in minmax(0,1fr) 1.42in;gap:.1in;min-height:0;align-items:stretch}
+  .ps-dossier-portrait,.ps-dossier-title,.ps-dossier-seal,.ps-dossier-story,.ps-dossier-panel{box-sizing:border-box;border:1px solid color-mix(in srgb,var(--ps-frame) 72%,#d5bf97);background:rgba(249,241,222,.84);box-shadow:inset 0 0 .07in rgba(91,66,36,.06)}
+  .ps-dossier-portrait{padding:.055in;overflow:hidden}
+  .ps-dossier-portrait-art{height:100%;display:grid;place-items:center;align-content:center;gap:.04in;overflow:hidden;border:2px solid var(--ps-accent);background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.16),transparent 30%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary));color:#f8e8c5;box-shadow:inset 0 0 .23in rgba(0,0,0,.42)}
+  .ps-dossier-portrait-art small{font:700 6.2pt Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+  .ps-dossier-title{padding:.13in .16in;display:flex;flex-direction:column;justify-content:center}
+  .ps-dossier-title>small{font:700 6.2pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ps-muted)}
+  .ps-dossier-title h1{margin:.025in 0 .035in;font-size:27pt;line-height:.9}
+  .ps-dossier-title p{margin:0;font-size:8.4pt;font-weight:700;color:var(--ps-dark)}
+  .ps-dossier-title blockquote{margin:.08in 0 0;padding-left:.09in;border-left:2px solid var(--ps-primary);font-size:8.4pt;line-height:1.25;font-style:italic;color:var(--ps-muted)}
+  .ps-dossier-seal{display:grid;place-items:center;align-content:center;text-align:center;padding:.08in;clip-path:polygon(50% 0,95% 12%,92% 76%,50% 100%,8% 76%,5% 12%);background:linear-gradient(180deg,rgba(255,249,233,.92),var(--ps-panel-2))}
+  .ps-dossier-seal span{font:700 6.6pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--ps-primary)}
+  .ps-dossier-seal small{margin:.045in 0;font-size:6.7pt;color:var(--ps-muted)}
+  .ps-dossier-seal b{font-size:8.4pt;color:var(--ps-dark)}
+
+  .ps-dossier-body{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,.92fr);gap:.085in;min-height:0;overflow:hidden}
+  .ps-dossier-main,.ps-dossier-side{display:flex;flex-direction:column;gap:.07in;min-height:0}
+  .ps-dossier-story{padding:.12in .14in;flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .ps-dossier-story h2,.ps-dossier-panel h2{margin:0 0 .07in;padding-bottom:.04in;border-bottom:2px solid var(--ps-primary);font-size:10.2pt;text-transform:uppercase;letter-spacing:.055em;color:var(--ps-dark)}
+  .ps-dossier-story p{margin:0 0 .105in;font-size:8.35pt;line-height:1.44;text-align:justify;hyphens:auto}
+  .ps-dossier-story p:last-child{margin-bottom:0}
+  .ps-dossier-panel{padding:.08in .095in;break-inside:avoid;overflow:hidden}
+  .ps-dossier-panel>div{font-size:6.75pt;line-height:1.32}
+  .ps-dossier-panel ul{margin:0;padding-left:.16in}
+  .ps-dossier-panel li+li{margin-top:.028in}
+  .ps-dossier-combat{flex:0 0 auto}
+  .ps-dossier-traits{margin:0;display:grid;gap:.026in}
+  .ps-dossier-traits div{display:grid;grid-template-columns:.4in 1fr;gap:.04in;padding-bottom:.02in;border-bottom:1px dotted rgba(65,49,31,.22)}
+  .ps-dossier-traits dt{font:700 5.8pt Arial,sans-serif;text-transform:uppercase;color:var(--ps-primary)}
+  .ps-dossier-traits dd{margin:0;font-size:6.5pt;line-height:1.28}
+  .ps-dossier-tags{margin:.046in 0 0;font-size:6.15pt;line-height:1.3}
+  .ps-dossier-roleplay blockquote{margin:0 0 .045in;padding:.05in .075in;border-left:3px solid var(--ps-primary);background:rgba(255,255,255,.38);font-size:7.45pt;line-height:1.28;font-style:italic}
+  .ps-dossier-roleplay p{margin:0;font-size:6.55pt;line-height:1.32}
+  .ps-dossier-hooks li{font-size:6.35pt;line-height:1.3}
+
+  .sheet-print-ink-saver .ps-dossier-portrait-art,.sheet-print-ink-saver .ps-dossier-seal,.sheet-print-ink-saver .ps-dossier-title,.sheet-print-ink-saver .ps-dossier-story,.sheet-print-ink-saver .ps-dossier-panel{background:#fff!important;box-shadow:none}
+}

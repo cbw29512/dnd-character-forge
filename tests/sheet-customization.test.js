@@ -26,7 +26,7 @@ function characterAt(classId,level="20"){
 
 test("premium customization defaults are presentation-only and stable",()=>{
   const value=createDefaultSheetCustomization();
-  assert.deepEqual(value,{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
+  assert.deepEqual(value,{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium",packetMode:"deluxe",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
 });
 
 test("customization normalization clamps unsafe or unknown values",()=>{

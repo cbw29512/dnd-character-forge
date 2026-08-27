@@ -1,4 +1,5 @@
 const OPTIONS=Object.freeze({
+  packetMode:new Set(["deluxe","table"]),
   style:new Set(["ornate","classic","minimal"]),
   paper:new Set(["ivory","parchment","white"]),
   ornament:new Set(["rich","balanced","minimal"]),
@@ -8,6 +9,7 @@ const OPTIONS=Object.freeze({
 });
 
 export const DEFAULT_SHEET_CUSTOMIZATION=Object.freeze({
+  packetMode:"deluxe",
   style:"ornate",
   paper:"ivory",
   ornament:"rich",
@@ -29,6 +31,7 @@ export function normalizeSheetCustomization(input={}){
   try{
     const source=input&&typeof input==="object"?input:{};
     return Object.freeze({
+      packetMode:enumValue(source.packetMode,OPTIONS.packetMode,DEFAULT_SHEET_CUSTOMIZATION.packetMode),
       style:enumValue(source.style,OPTIONS.style,DEFAULT_SHEET_CUSTOMIZATION.style),
       paper:enumValue(source.paper,OPTIONS.paper,DEFAULT_SHEET_CUSTOMIZATION.paper),
       ornament:enumValue(source.ornament,OPTIONS.ornament,DEFAULT_SHEET_CUSTOMIZATION.ornament),
@@ -47,6 +50,7 @@ export function sheetCustomizationClasses(input={}){
   try{
     const value=normalizeSheetCustomization(input);
     return [
+      `sheet-packet-${value.packetMode}`,
       `sheet-style-${value.style}`,
       `sheet-paper-${value.paper}`,
       `sheet-ornament-${value.ornament}`,
