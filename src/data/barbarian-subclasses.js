@@ -6,11 +6,11 @@ const ORIGINAL_SOURCE=Object.freeze({
 });
 
 const IRON_TEMPEST_2014=Object.freeze({
-  id:"iron-tempest",classId:"barbarian",name:"Path of the Iron Tempest",displayName:"Path of the Iron Tempest — Forge Original",level:3,contentKind:"forge-original",
+  id:"iron-tempest",classId:"barbarian",name:"Path of the Iron Tempest",displayName:"Path of the Iron Tempest — Forge Original",level:3,contentKind:"forge-original",randomEligible:false,
   tagline:"Turn raw momentum into crushing battlefield control."
 });
 const STONEHEART_2014=Object.freeze({
-  id:"stoneheart",classId:"barbarian",name:"Path of the Stoneheart",displayName:"Path of the Stoneheart — Forge Original",level:3,contentKind:"forge-original",
+  id:"stoneheart",classId:"barbarian",name:"Path of the Stoneheart",displayName:"Path of the Stoneheart — Forge Original",level:3,contentKind:"forge-original",randomEligible:false,
   tagline:"Become the immovable center of the fight."
 });
 const IRON_TEMPEST_2024=Object.freeze({...IRON_TEMPEST_2014});
