@@ -4,8 +4,9 @@ export function sheetArticleOpen(model,extraClass=""){
   try{
     const classes=["premium-sheet",extraClass,`theme-${safeToken(model.theme.id)}`,`class-${safeToken(model.identity?.classId)}`,model.presentation?.classes||""].filter(Boolean).join(" ");
     const presentation=String(model.presentation?.style||"").replace(/["<>]/g,"");
+    const separator=presentation&&!presentation.endsWith(";")?";":"";
     const theme=themeVariables(model.theme);
-    return `<article class="${classes}" data-print-class="${escapeHtml(model.identity?.classId||"adventurer")}" style="${presentation}${theme}">`;
+    return `<article class="${classes}" data-print-class="${escapeHtml(model.identity?.classId||"adventurer")}" style="${presentation}${separator}${theme}">`;
   }catch(error){console.error("[print-decoration] article open failed",error);throw error;}
 }
 
