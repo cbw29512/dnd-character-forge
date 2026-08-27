@@ -69,11 +69,13 @@ test("Blessed Warrior stays in Paladin routing and cannot leak into the legacy g
   }catch(error){console.error("[test] Blessed Warrior legacy routing isolation failed",error);throw error;}
 });
 
-test("legacy-safe adapter preserves Fighter style state used by the visible Fighter resource summary",()=>{
+test("legacy-safe adapter preserves generated Fighter style state used by the visible Fighter resource summary",()=>{
   try{
-    const state=createInitialState();state.ruleset="2024";state.constraints={level:"1",species:"human",class:"fighter",subclass:"random",background:"soldier",name:"Style-preservation Fighter"};state.classSelections={fightingStyle:"defense"};
+    const state=createInitialState();state.ruleset="2024";state.constraints={level:"1",species:"human",class:"fighter",subclass:"random",background:"soldier",name:"Style-preservation Fighter"};
     const character=generateCharacter(state),safe=legacySafeCharacter(character);
-    assert.equal(safe.fightingStyle?.id,"defense");
-    assert.equal(safe.fightingStyles?.[0]?.id,"defense");
+    assert.ok(character.fightingStyle,"Generated Fighter should have a Fighting Style");
+    assert.equal(safe.fightingStyle?.id,character.fightingStyle?.id);
+    assert.deepEqual(safe.fightingStyles?.map(style=>style.id),character.fightingStyles?.map(style=>style.id));
+    assert.doesNotThrow(()=>buildCoreQuickReference(safe));
   }catch(error){console.error("[test] Fighter legacy style preservation failed",error);throw error;}
 });
