@@ -16,10 +16,19 @@ const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
 
 export function buildQuickReference(character){
   try{
-    if(isForgeOriginalBackground(character?.background)||isForgeOriginalSubclass(character?.subclass))return buildForgeCompatibleQuickReference(character);
-    if(character?.class?.id==="barbarian")return buildBarbarianQuickReference(character);
+    const originalBackground=isForgeOriginalBackground(character?.background);
+    if(character?.class?.id==="barbarian")return originalBackground?buildBarbarianWithOriginalBackground(character):buildBarbarianQuickReference(character);
+    if(originalBackground||isForgeOriginalSubclass(character?.subclass))return buildForgeCompatibleQuickReference(character);
     return routeBaseReference(character);
   }catch(error){console.error("[reference-router] build failed",error);throw error;}
+}
+
+function buildBarbarianWithOriginalBackground(character){
+  try{
+    const safe={...character,background:{...character.background,feature:null}},items=[...buildBarbarianQuickReference(safe)],backgroundRef=originalBackgroundReference(character.ruleset,character.background.id);
+    if(backgroundRef)items.push(backgroundRef);
+    const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate Barbarian/background quick-reference entries detected.");return items;
+  }catch(error){console.error("[reference-router] Barbarian compatible background build failed",error);throw error;}
 }
 
 function buildForgeCompatibleQuickReference(character){
