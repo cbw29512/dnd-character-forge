@@ -31,25 +31,36 @@ function expected2024FeatureState(level){return{
   frenzy:level>=3,mindlessRage:level>=6,retaliation:level>=10,intimidatingPresence:level>=14,epicBoon:level>=19
 };}
 
+function eq(actual,expected,ruleset,level,label){assert.equal(actual,expected,`${ruleset} Barbarian L${level}: ${label}`);}
+
 test("2014 Barbarian matches the SRD progression table at every level 1-20",()=>{
   for(const expected of TABLE_2014){
     const c=generateCharacter(stateFor("2014",expected.level)),b=c.barbarian,p=barbarianProgressionFor("2014",expected.level,c.subclass?.id),flags=expected2014FeatureState(expected.level);
-    assert.equal(c.validation.valid,true,`2014 L${expected.level}`);assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,true);
-    assert.equal(b.rageUses,expected.rages);assert.equal(b.unlimitedRage,expected.level===20);assert.equal(b.rageDamage,expected.rageDamage);assert.equal(b.brutalCriticalDice,expected.brutalCriticalDice);assert.equal(b.masteryCount,0);assert.equal(b.brutalStrikeDice,0);assert.deepEqual(b,p);
-    assert.equal(b.attacksPerAction,flags.extraAttack?2:1);assert.equal(b.speedBonus,flags.fastMovement?10:0);assert.equal(b.initiativeAdvantage,flags.feralInstinct);assert.equal(b.relentlessRage,flags.relentlessRage);assert.equal(b.persistentRage,flags.persistentRage);assert.equal(b.indomitableMight,flags.indomitableMight);assert.equal(b.primalChampion,flags.primalChampion);
-    assert.equal(b.frenzy,flags.frenzy);assert.equal(b.mindlessRage,flags.mindlessRage);assert.equal(b.intimidatingPresence,flags.intimidatingPresence);assert.equal(b.retaliation,flags.retaliation);
-    assert.equal(c.features.includes("Weapon Mastery — Barbarian"),false);assert.equal(c.features.includes("Primal Knowledge"),false);assert.equal(c.features.includes("Brutal Strike"),false);assert.equal(c.feats.some(feat=>feat.category==="Epic Boon"),false);
+    eq(c.validation.valid,true,"2014",expected.level,"validation");eq(c.audit.status,"PASS","2014",expected.level,"audit status");eq(c.audit.rawIntegrity,true,"2014",expected.level,"RAW integrity");
+    eq(b.rageUses,expected.rages,"2014",expected.level,"Rage uses");eq(b.unlimitedRage,expected.level===20,"2014",expected.level,"unlimited Rage");eq(b.rageDamage,expected.rageDamage,"2014",expected.level,"Rage damage");eq(b.brutalCriticalDice,expected.brutalCriticalDice,"2014",expected.level,"Brutal Critical dice");eq(b.masteryCount,0,"2014",expected.level,"Weapon Mastery count");eq(b.brutalStrikeDice,0,"2014",expected.level,"Brutal Strike dice");assert.deepEqual(b,p,`2014 Barbarian L${expected.level}: generated progression must equal resolver output`);
+    eq(b.attacksPerAction,flags.extraAttack?2:1,"2014",expected.level,"attacks per Attack action");eq(b.speedBonus,flags.fastMovement?10:0,"2014",expected.level,"Fast Movement bonus");eq(b.initiativeAdvantage,flags.feralInstinct,"2014",expected.level,"Feral Instinct initiative advantage");eq(b.relentlessRage,flags.relentlessRage,"2014",expected.level,"Relentless Rage");eq(b.persistentRage,flags.persistentRage,"2014",expected.level,"Persistent Rage");eq(b.indomitableMight,flags.indomitableMight,"2014",expected.level,"Indomitable Might");eq(b.primalChampion,flags.primalChampion,"2014",expected.level,"Primal Champion");
+    eq(b.frenzy,flags.frenzy,"2014",expected.level,"Berserker Frenzy");eq(b.mindlessRage,flags.mindlessRage,"2014",expected.level,"Berserker Mindless Rage");eq(b.intimidatingPresence,flags.intimidatingPresence,"2014",expected.level,"Berserker Intimidating Presence");eq(b.retaliation,flags.retaliation,"2014",expected.level,"Berserker Retaliation");
+    eq(c.features.includes("Weapon Mastery — Barbarian"),false,"2014",expected.level,"no 2024 Weapon Mastery leakage");eq(c.features.includes("Primal Knowledge"),false,"2014",expected.level,"no 2024 Primal Knowledge leakage");eq(c.features.includes("Brutal Strike"),false,"2014",expected.level,"no 2024 Brutal Strike leakage");eq(c.feats.some(feat=>feat.category==="Epic Boon"),false,"2014",expected.level,"no 2024 Epic Boon leakage");
   }
 });
 
 test("2024 Barbarian matches the SRD progression table at every level 1-20",()=>{
   for(const expected of TABLE_2024){
     const c=generateCharacter(stateFor("2024",expected.level)),b=c.barbarian,p=barbarianProgressionFor("2024",expected.level,c.subclass?.id),flags=expected2024FeatureState(expected.level);
-    assert.equal(c.validation.valid,true,`2024 L${expected.level}`);assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,true);
-    assert.equal(b.rageUses,expected.rages);assert.equal(b.unlimitedRage,false);assert.equal(b.rageDamage,expected.rageDamage);assert.equal(b.masteryCount,expected.masteryCount);assert.equal(b.brutalCriticalDice,0);assert.equal(b.brutalStrikeDice,expected.brutalStrikeDice);assert.equal(b.brutalStrikeEffectCount,expected.brutalStrikeEffectCount);assert.equal(b.brutalStrikeEffects.length,expected.brutalStrikeOptions);assert.deepEqual(b,p);
-    assert.equal(b.primalKnowledge,flags.primalKnowledge);assert.equal(b.attacksPerAction,flags.extraAttack?2:1);assert.equal(b.speedBonus,flags.fastMovement?10:0);assert.equal(b.initiativeAdvantage,flags.feralInstinct);assert.equal(b.instinctivePounce,flags.instinctivePounce);assert.equal(b.relentlessRage,flags.relentlessRage);assert.equal(b.relentlessRageHp,flags.relentlessRage?expected.level*2:0);assert.equal(b.persistentRage,flags.persistentRage);assert.equal(b.indomitableMight,flags.indomitableMight);assert.equal(b.primalChampion,flags.primalChampion);
-    assert.equal(b.frenzy,flags.frenzy);assert.equal(b.mindlessRage,flags.mindlessRage);assert.equal(b.retaliation,flags.retaliation);assert.equal(b.intimidatingPresence,flags.intimidatingPresence);assert.equal(c.feats.some(feat=>feat.category==="Epic Boon"),flags.epicBoon);
-    assert.equal(c.features.includes("Brutal Critical"),false);assert.equal(c.features.includes("Weapon Mastery — Barbarian"),true);
+    eq(c.validation.valid,true,"2024",expected.level,"validation");eq(c.audit.status,"PASS","2024",expected.level,"audit status");eq(c.audit.rawIntegrity,true,"2024",expected.level,"RAW integrity");
+    eq(b.rageUses,expected.rages,"2024",expected.level,"Rage uses");eq(b.unlimitedRage,false,"2024",expected.level,"no unlimited Rage");eq(b.rageDamage,expected.rageDamage,"2024",expected.level,"Rage damage");eq(b.masteryCount,expected.masteryCount,"2024",expected.level,"Weapon Mastery count");eq(b.brutalCriticalDice,0,"2024",expected.level,"no 2014 Brutal Critical dice");eq(b.brutalStrikeDice,expected.brutalStrikeDice,"2024",expected.level,"Brutal Strike dice");eq(b.brutalStrikeEffectCount,expected.brutalStrikeEffectCount,"2024",expected.level,"Brutal Strike simultaneous effect count");eq(b.brutalStrikeEffects.length,expected.brutalStrikeOptions,"2024",expected.level,"Brutal Strike option count");assert.deepEqual(b,p,`2024 Barbarian L${expected.level}: generated progression must equal resolver output`);
+    eq(b.primalKnowledge,flags.primalKnowledge,"2024",expected.level,"Primal Knowledge");
+    eq(b.attacksPerAction,flags.extraAttack?2:1,"2024",expected.level,"attacks per Attack action");
+    eq(b.speedBonus,flags.fastMovement?10:0,"2024",expected.level,"Fast Movement bonus");
+    eq(b.initiativeAdvantage,flags.feralInstinct,"2024",expected.level,"Feral Instinct initiative advantage");
+    eq(b.instinctivePounce,flags.instinctivePounce,"2024",expected.level,"Instinctive Pounce");
+    eq(b.relentlessRage,flags.relentlessRage,"2024",expected.level,"Relentless Rage");
+    eq(b.relentlessRageHp,flags.relentlessRage?expected.level*2:0,"2024",expected.level,"Relentless Rage HP");
+    eq(b.persistentRage,flags.persistentRage,"2024",expected.level,"Persistent Rage");
+    eq(b.indomitableMight,flags.indomitableMight,"2024",expected.level,"Indomitable Might");
+    eq(b.primalChampion,flags.primalChampion,"2024",expected.level,"Primal Champion");
+    eq(b.frenzy,flags.frenzy,"2024",expected.level,"Berserker Frenzy");eq(b.mindlessRage,flags.mindlessRage,"2024",expected.level,"Berserker Mindless Rage");eq(b.retaliation,flags.retaliation,"2024",expected.level,"Berserker Retaliation");eq(b.intimidatingPresence,flags.intimidatingPresence,"2024",expected.level,"Berserker Intimidating Presence");eq(c.feats.some(feat=>feat.category==="Epic Boon"),flags.epicBoon,"2024",expected.level,"Epic Boon schedule");
+    eq(c.features.includes("Brutal Critical"),false,"2024",expected.level,"no 2014 Brutal Critical leakage");eq(c.features.includes("Weapon Mastery — Barbarian"),true,"2024",expected.level,"Weapon Mastery feature");
   }
 });
 
