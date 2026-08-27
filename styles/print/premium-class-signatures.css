@@ -1,0 +1,116 @@
+@media print{
+  /* V4 signature layer: class identity must survive color, grayscale, and economical home printing. */
+  .premium-sheet:not(.sheet-style-minimal) .ps-class-ornaments{inset:.018in;overflow:visible}
+  .premium-sheet:not(.sheet-style-minimal) .ps-ornament{width:.62in;height:.46in;opacity:.22;color:var(--ps-primary);filter:none}
+  .premium-sheet:not(.sheet-style-minimal) .ps-ornament-tl{top:.005in;left:.005in;transform:rotate(-10deg)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-ornament-tr{top:.005in;right:.005in;transform:scaleX(-1) rotate(-10deg)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-ornament-bl{bottom:.005in;left:.005in;transform:scaleY(-1) rotate(-10deg)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-ornament-br{right:.005in;bottom:.005in;transform:scale(-1) rotate(-10deg)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-class-watermark{width:1.82in;height:1.82in;right:.12in;bottom:.38in;opacity:.052;color:var(--ps-primary)}
+
+  .ps-class-signature{position:absolute;z-index:1!important;inset:.035in;pointer-events:none;color:var(--ps-primary)}
+  .ps-signature-rail{position:absolute;top:1.1in;bottom:.55in;display:flex;align-items:center;justify-content:center;width:.13in;overflow:hidden;font:700 3.35pt/1 Georgia,serif;letter-spacing:.16em;text-transform:uppercase;white-space:nowrap;opacity:.38}
+  .ps-signature-left{left:-.018in;writing-mode:vertical-rl;transform:rotate(180deg)}
+  .ps-signature-right{right:-.018in;writing-mode:vertical-rl}
+  .ps-signature-seal{position:absolute;left:50%;bottom:-.018in;transform:translateX(-50%);display:flex;align-items:center;gap:.055in;min-width:1.45in;justify-content:center;padding:.012in .085in;border:1px solid color-mix(in srgb,var(--ps-primary) 58%,var(--ps-accent));background:color-mix(in srgb,var(--ps-paper) 93%,white);font:700 3.8pt/1 Georgia,serif;letter-spacing:.12em;text-transform:uppercase;clip-path:polygon(8% 0,92% 0,100% 50%,92% 100%,8% 100%,0 50%)}
+  .ps-signature-seal b{font-size:5pt;color:var(--ps-primary)}
+  .ps-signature-seal em{font-style:normal;color:var(--ps-dark)}
+
+  .premium-sheet:not(.sheet-style-minimal) .ps-theme-ribbon{top:-.03in;min-width:1.62in;padding:.018in .16in .022in;border:1.4px solid var(--ps-accent);border-top:0;background:linear-gradient(180deg,var(--ps-dark),var(--ps-primary));box-shadow:0 .015in .035in rgba(28,20,13,.14)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-theme-ribbon span{font:700 6.4pt/1 Georgia,serif;letter-spacing:.18em;text-transform:uppercase}
+  .premium-sheet:not(.sheet-style-minimal) .ps-theme-ribbon small{margin-top:.008in;font:700 3.25pt/1 Arial,sans-serif;letter-spacing:.11em;text-transform:uppercase;opacity:.88}
+
+  /* Class labels read as typography, not just color. */
+  .premium-sheet:not(.sheet-style-minimal) .ps-panel h2 span{font-variant:small-caps;letter-spacing:.105em}
+  .premium-sheet:not(.sheet-style-minimal) .ps-portrait-caption{font-weight:700;letter-spacing:.035em;color:var(--ps-dark)}
+  .premium-sheet:not(.sheet-style-minimal) .ps-class-utility h2{border-bottom-width:2px}
+  .premium-sheet:not(.sheet-style-minimal) .ps-class-utility .ps-panel-body{position:relative}
+  .premium-sheet:not(.sheet-style-minimal) .ps-class-utility .ps-panel-body:after{content:"";position:absolute;right:.04in;bottom:.03in;width:.36in;height:.36in;border:1px solid color-mix(in srgb,var(--ps-primary) 20%,transparent);border-radius:50%;opacity:.45;pointer-events:none}
+
+  /* Barbarian — jagged runes and brutal slab typography. */
+  .theme-barbarian-rage .ps-theme-ribbon span,.theme-barbarian-rage .ps-panel h2 span{font-family:"Arial Black",Impact,sans-serif;letter-spacing:.08em}
+  .theme-barbarian-rage .ps-panel h2:before,.theme-barbarian-rage .ps-panel h2:after{content:"ᚱ"}
+  .theme-barbarian-rage .ps-signature-seal{clip-path:polygon(0 22%,7% 5%,18% 13%,28% 0,72% 0,82% 13%,93% 5%,100% 22%,97% 82%,88% 100%,12% 100%,3% 82%)}
+  .theme-barbarian-rage .ps-signature-rail{font-family:"Arial Black",Impact,sans-serif;letter-spacing:.11em}
+
+  /* Bard — lyrical manuscript, strings, and flowing italic cues. */
+  .theme-bard-legend .ps-theme-ribbon span,.theme-bard-legend .ps-panel h2 span{font-family:Georgia,serif;font-style:italic;letter-spacing:.09em}
+  .theme-bard-legend .ps-panel h2:before,.theme-bard-legend .ps-panel h2:after{content:"♪"}
+  .theme-bard-legend .ps-signature-seal{border-radius:50% 50% 12% 12% / 34% 34% 18% 18%;clip-path:none}
+  .theme-bard-legend .ps-signature-rail{font-family:Georgia,serif;font-style:italic;letter-spacing:.13em}
+
+  /* Cleric — illuminated small caps with halo/star marks. */
+  .theme-cleric-sanctum .ps-theme-ribbon span,.theme-cleric-sanctum .ps-panel h2 span{font-family:Georgia,serif;font-variant:small-caps;letter-spacing:.16em}
+  .theme-cleric-sanctum .ps-panel h2:before,.theme-cleric-sanctum .ps-panel h2:after{content:"✦"}
+  .theme-cleric-sanctum .ps-signature-seal{clip-path:polygon(50% 0,96% 22%,100% 68%,80% 100%,20% 100%,0 68%,4% 22%)}
+
+  /* Druid — organic serif, moon marks, leaf-shaped seal. */
+  .theme-druid-wild .ps-theme-ribbon span,.theme-druid-wild .ps-panel h2 span{font-family:Georgia,serif;font-style:italic;letter-spacing:.09em}
+  .theme-druid-wild .ps-panel h2:before,.theme-druid-wild .ps-panel h2:after{content:"☾"}
+  .theme-druid-wild .ps-signature-seal{border-radius:55% 12% 55% 12% / 70% 18% 70% 18%;clip-path:none}
+
+  /* Fighter — compact military lettering and shield geometry. */
+  .theme-fighter-steel .ps-theme-ribbon span,.theme-fighter-steel .ps-panel h2 span{font-family:"Arial Narrow",Arial,sans-serif;font-weight:900;letter-spacing:.14em}
+  .theme-fighter-steel .ps-panel h2:before,.theme-fighter-steel .ps-panel h2:after{content:"◆"}
+  .theme-fighter-steel .ps-signature-seal{clip-path:polygon(8% 0,92% 0,100% 18%,94% 76%,50% 100%,6% 76%,0 18%)}
+  .theme-fighter-steel .ps-signature-rail{font-family:"Arial Narrow",Arial,sans-serif;font-weight:900}
+
+  /* Monk — centered small caps, open-circle rhythm, deliberate whitespace. */
+  .theme-monk-focus .ps-theme-ribbon span,.theme-monk-focus .ps-panel h2 span{font-family:Georgia,serif;font-weight:700;font-variant:small-caps;letter-spacing:.19em}
+  .theme-monk-focus .ps-panel h2:before,.theme-monk-focus .ps-panel h2:after{content:"○"}
+  .theme-monk-focus .ps-signature-seal{border-radius:50%;min-width:1.34in;clip-path:none}
+  .theme-monk-focus .ps-signature-rail{font-family:Georgia,serif;letter-spacing:.18em}
+  .theme-monk-focus .ps-class-utility .ps-panel-body:after{width:.48in;height:.48in;border:3px double color-mix(in srgb,var(--ps-primary) 25%,transparent)}
+
+  /* Paladin — heraldic small caps and oath-cross geometry. */
+  .theme-paladin-oath .ps-theme-ribbon span,.theme-paladin-oath .ps-panel h2 span{font-family:Georgia,serif;font-weight:700;font-variant:small-caps;letter-spacing:.15em}
+  .theme-paladin-oath .ps-panel h2:before,.theme-paladin-oath .ps-panel h2:after{content:"✠"}
+  .theme-paladin-oath .ps-signature-seal{clip-path:polygon(50% 0,95% 16%,91% 72%,50% 100%,9% 72%,5% 16%)}
+
+  /* Ranger — condensed field-journal typography and arrow markers. */
+  .theme-ranger-warden .ps-theme-ribbon span,.theme-ranger-warden .ps-panel h2 span{font-family:"Trebuchet MS",Arial,sans-serif;font-weight:800;letter-spacing:.13em}
+  .theme-ranger-warden .ps-panel h2:before,.theme-ranger-warden .ps-panel h2:after{content:"➤"}
+  .theme-ranger-warden .ps-signature-seal{clip-path:polygon(0 15%,82% 0,100% 50%,82% 100%,0 85%,10% 50%)}
+  .theme-ranger-warden .ps-signature-rail{font-family:"Trebuchet MS",Arial,sans-serif}
+
+  /* Rogue — narrow lockwork lettering, clipped angles. */
+  .theme-rogue-shadow .ps-theme-ribbon span,.theme-rogue-shadow .ps-panel h2 span{font-family:"Arial Narrow",Arial,sans-serif;font-weight:900;font-style:italic;letter-spacing:.16em}
+  .theme-rogue-shadow .ps-panel h2:before,.theme-rogue-shadow .ps-panel h2:after{content:"◇"}
+  .theme-rogue-shadow .ps-signature-seal{clip-path:polygon(8% 0,100% 0,92% 100%,0 100%)}
+  .theme-rogue-shadow .ps-signature-rail{font-family:"Arial Narrow",Arial,sans-serif;font-style:italic}
+
+  /* Sorcerer — faceted italic title treatment and crystal diamonds. */
+  .theme-sorcerer-aether .ps-theme-ribbon span,.theme-sorcerer-aether .ps-panel h2 span{font-family:Georgia,serif;font-style:italic;font-weight:700;letter-spacing:.11em}
+  .theme-sorcerer-aether .ps-panel h2:before,.theme-sorcerer-aether .ps-panel h2:after{content:"◆"}
+  .theme-sorcerer-aether .ps-signature-seal{clip-path:polygon(12% 0,88% 0,100% 22%,92% 100%,8% 100%,0 22%)}
+
+  /* Warlock — occult serif, eye glyph, elongated pact seal. */
+  .theme-warlock-eldritch .ps-theme-ribbon span,.theme-warlock-eldritch .ps-panel h2 span{font-family:Georgia,serif;font-weight:700;letter-spacing:.17em}
+  .theme-warlock-eldritch .ps-panel h2:before,.theme-warlock-eldritch .ps-panel h2:after{content:"◉"}
+  .theme-warlock-eldritch .ps-signature-seal{border-radius:50% / 72%;clip-path:none}
+  .theme-warlock-eldritch .ps-signature-rail{font-family:Georgia,serif;letter-spacing:.2em}
+
+  /* Wizard — formal scholarly type and arcane star marks. */
+  .theme-wizard-arcane .ps-theme-ribbon span,.theme-wizard-arcane .ps-panel h2 span{font-family:Georgia,serif;font-weight:700;font-variant:small-caps;letter-spacing:.17em}
+  .theme-wizard-arcane .ps-panel h2:before,.theme-wizard-arcane .ps-panel h2:after{content:"✧"}
+  .theme-wizard-arcane .ps-signature-seal{clip-path:polygon(50% 0,96% 28%,80% 100%,20% 100%,4% 28%)}
+
+  /* Black-and-white / ink-saver keeps identity through shape, symbol, and typography. */
+  .sheet-print-ink-saver .ps-theme-ribbon{display:block!important;background:#fff!important;color:#111!important;border:1px solid #222!important;box-shadow:none!important}
+  .sheet-print-ink-saver .ps-theme-ribbon span,.sheet-print-ink-saver .ps-theme-ribbon small{color:#111!important}
+  .sheet-print-ink-saver .ps-class-ornaments{display:block!important}
+  .sheet-print-ink-saver .ps-ornament{display:block!important;color:#111!important;opacity:.18!important;width:.54in;height:.4in}
+  .sheet-print-ink-saver .ps-class-signature{display:block!important;color:#111!important}
+  .sheet-print-ink-saver .ps-signature-rail{color:#111!important;opacity:.42!important}
+  .sheet-print-ink-saver .ps-signature-seal{color:#111!important;background:#fff!important;border-color:#333!important}
+  .sheet-print-ink-saver .ps-signature-seal b,.sheet-print-ink-saver .ps-signature-seal em{color:#111!important}
+  .sheet-print-ink-saver .ps-panel h2:before,.sheet-print-ink-saver .ps-panel h2:after{color:#111!important}
+  .sheet-print-ink-saver .ps-class-utility{border-color:#222!important}
+  .sheet-print-ink-saver .ps-class-utility .ps-panel-body:after{border-color:#555!important;background:transparent!important}
+  .sheet-print-ink-saver .ps-class-watermark{display:none!important}
+
+  /* Balanced ornament still keeps a readable class signature; explicit minimal ornament wins over every print mode. */
+  .sheet-ornament-balanced .ps-signature-rail{opacity:.24}
+  .sheet-ornament-balanced .ps-signature-seal{opacity:.88}
+  .sheet-ornament-minimal .ps-class-signature,.sheet-ornament-minimal .ps-class-ornaments{display:none!important}
+}
