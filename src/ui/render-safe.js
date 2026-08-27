@@ -26,7 +26,11 @@ export function renderCharacter(character,target){
 
 export function legacySafeCharacter(character){
   try{
-    const paladin=character?.class?.id==="paladin";
+    // Class-aware routing owns every Paladin/Ranger style reference, including
+    // Blessed Warrior and Druidic Warrior. Fighter style state is the one
+    // legacy dependency we intentionally preserve because its visible resource
+    // summary still reads those fields before routed references are restored.
+    const preserveLegacyFightingStyles=character?.class?.id==="fighter";
     return{
       ...character,
       features:[],
@@ -34,8 +38,8 @@ export function legacySafeCharacter(character){
       masteryIds:[],
       speciesTraits:[],
       background:{...character.background,feature:null},
-      fightingStyle:paladin?null:character.fightingStyle,
-      fightingStyles:paladin?[]:character.fightingStyles
+      fightingStyle:preserveLegacyFightingStyles?character.fightingStyle:null,
+      fightingStyles:preserveLegacyFightingStyles?character.fightingStyles:[]
     };
   }catch(error){
     console.error("[ui] legacy-safe character build failed",error);
