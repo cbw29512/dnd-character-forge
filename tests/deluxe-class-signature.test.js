@@ -52,6 +52,11 @@ test("ink saver preserves class typography and symbology while class colors rema
   assert.match(SIGNATURES,/\.sheet-print-ink-saver \.ps-class-ornaments\{display:block!important/);
   assert.match(SIGNATURES,/\.sheet-print-ink-saver \.ps-class-signature\{display:block!important/);
   assert.match(SIGNATURES,/\.sheet-print-ink-saver \.ps-class-watermark\{display:none!important/);
+  assert.match(SIGNATURES,/\.sheet-ornament-minimal \.ps-class-signature,\.sheet-ornament-minimal \.ps-class-ornaments\{display:none!important\}/);
+});
+
+test("decorative tracking never breaks searchable semantic panel headings",()=>{
+  assert.match(PALETTES,/\.premium-sheet:not\(\.sheet-style-minimal\) \.ps-panel h2 span\{letter-spacing:normal!important\}/);
 });
 
 test("signature and palette layers load after the existing class identity stack",()=>{
