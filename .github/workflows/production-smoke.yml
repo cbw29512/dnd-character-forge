@@ -40,26 +40,8 @@ jobs:
               -H 'X-GitHub-Api-Version: 2026-03-10' \
               -H "Authorization: Bearer ${GH_TOKEN}" \
               "${runs_api}" -o "${runs_file}"; then
-              read -r pages_status pages_conclusion < <(python3 - "${runs_file}" "${GITHUB_SHA}" <<'PY'
-import json
-import sys
-
-path, sha = sys.argv[1], sys.argv[2]
-with open(path, encoding="utf-8") as handle:
-    payload = json.load(handle)
-
-matches = [
-    run for run in payload.get("workflow_runs", [])
-    if run.get("name") == "pages build and deployment"
-    and run.get("head_sha") == sha
-]
-
-if not matches:
-    print("missing missing")
-else:
-    run = max(matches, key=lambda item: item.get("run_number", 0))
-    print(run.get("status", "missing"), run.get("conclusion") or "missing")
-PY
+              read -r pages_status pages_conclusion < <(
+                python3 -c 'import json,sys; p=json.load(open(sys.argv[1], encoding="utf-8")); m=[r for r in p.get("workflow_runs",[]) if r.get("name")=="pages build and deployment" and r.get("head_sha")==sys.argv[2]]; r=max(m,key=lambda x:x.get("run_number",0)) if m else {}; print(r.get("status","missing"), r.get("conclusion") or "missing")' "${runs_file}" "${GITHUB_SHA}"
               )
 
               echo "[production-smoke] exact Pages Actions status=${pages_status} conclusion=${pages_conclusion}"
