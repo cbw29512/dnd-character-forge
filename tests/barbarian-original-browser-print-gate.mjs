@@ -10,7 +10,6 @@ import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
 const OUT=path.join(ROOT,"tests/.browser-print");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
-const BODY_PATTERN=/<body\b([^>]*)>[\s\S]*<\/body>/i;
 const CASES=[
   {ruleset:"2014",subclass:"iron-tempest",background:"acolyte",features:["Driving Fury","Unbroken Advance","Steel Through the Gap","Tempest Reprisal"]},
   {ruleset:"2014",subclass:"stoneheart",background:"acolyte",features:["Stonehide Rage","Rooted Stance","Weather the Blow","The Mountain Remains"]},
@@ -33,14 +32,13 @@ function verify(testCase){
     assert.ok(normalizeHtml(target.innerHTML).includes(normalizeHtml(character.subclass.name)),`${slug}: rendered sheet lost subclass identity before Chrome`);
     for(const feature of testCase.features){assert.ok(character.features.includes(feature),`${slug}: missing ${feature}`);assert.ok(model.ruleIndex.some(item=>item.name===feature),`${slug}: rules index missing ${feature}`);}
 
-    const templatePath=path.join(OUT,`${testCase.ruleset}-human-barbarian.html`),template=readFileSync(templatePath,"utf8"),bodyMatch=template.match(BODY_PATTERN);
-    assert.ok(bodyMatch,`${slug}: baseline browser fixture is unavailable`);
-    const html=template.replace(BODY_PATTERN,`<body${bodyMatch[1]}>${target.innerHTML}</body>`),htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),rawTxtPath=path.join(OUT,`${slug}-raw.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
-    writeFileSync(htmlPath,html,"utf8");
+    const htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),rawTxtPath=path.join(OUT,`${slug}-raw.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
+    writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
     execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,pathToFileURL(htmlPath).href],{stdio:"pipe"});
     const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"});assert.match(info,/Pages:\s+1\b/,`${slug}: browser PDF is not one page`);assert.match(info,/Page size:\s+612 x 792 pts/i,`${slug}: PDF is not US Letter`);
     execFileSync("pdftotext",["-layout",pdfPath,txtPath]);execFileSync("pdftotext",["-raw",pdfPath,rawTxtPath]);execFileSync("pdftoppm",["-png","-r","96",pdfPath,pngPrefix]);
-    const extracted=`${readFileSync(txtPath,"utf8")} ${readFileSync(rawTxtPath,"utf8")}`,text=normalize(extracted),fold=text.toLowerCase();
+    const layout=normalize(readFileSync(txtPath,"utf8")),raw=normalize(readFileSync(rawTxtPath,"utf8")),fold=`${layout} ${raw}`.toLowerCase();
+    assert.ok(layout.length>500,`${slug}: rendered PDF is suspiciously sparse (${layout.length} chars)`);
     assertPhrase(fold,character.subclass.name,`${slug}: subclass identity missing from PDF`);
     assertPhrase(fold,"compatible content",`${slug}: compatible-content footer missing`);
     assertPhrase(fold,"character forge original",`${slug}: original-content provenance missing from PDF`);
@@ -53,6 +51,7 @@ function verify(testCase){
 function characterAt({ruleset,subclass,background}){
   const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="barbarian";state.constraints.subclass=subclass;state.constraints.species="human";state.constraints.background=background;state.constraints.name=`Forge ${subclass}`;return generateCharacter(state);
 }
-function normalize(value){return String(value||"").replace(/[\u2010-\u2015]/g,"-").replace(/\s+/g," ").trim();}
+function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
+function normalize(value){return String(value||"").normalize("NFKC").replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/[\u2010-\u2015]/g,"-").replace(/\s+/g," ").trim();}
 function normalizeHtml(value){return normalize(String(value||"").replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"')).toLowerCase();}
 function assertPhrase(fold,phrase,message){const tokens=normalize(phrase).toLowerCase().split(/\s+/).filter(Boolean);assert.ok(tokens.every(token=>fold.includes(token)),message);}
