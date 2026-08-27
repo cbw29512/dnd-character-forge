@@ -7,4 +7,7 @@
     --ps-frame:var(--class-frame);
     --ps-glow:var(--class-glow);
   }
+
+  /* Decorative class ribbons/rails may be widely tracked, but semantic panel titles must remain searchable/selectable PDF text. */
+  .premium-sheet:not(.sheet-style-minimal) .ps-panel h2 span{letter-spacing:normal!important}
 }
