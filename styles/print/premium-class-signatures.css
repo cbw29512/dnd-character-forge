@@ -109,8 +109,8 @@
   .sheet-print-ink-saver .ps-class-utility .ps-panel-body:after{border-color:#555!important;background:transparent!important}
   .sheet-print-ink-saver .ps-class-watermark{display:none!important}
 
-  /* Balanced ornament still keeps a readable class signature; minimal remains intentionally clean. */
+  /* Balanced ornament still keeps a readable class signature; explicit minimal ornament wins over every print mode. */
   .sheet-ornament-balanced .ps-signature-rail{opacity:.24}
   .sheet-ornament-balanced .ps-signature-seal{opacity:.88}
-  .sheet-ornament-minimal .ps-class-signature{display:none}
+  .sheet-ornament-minimal .ps-class-signature,.sheet-ornament-minimal .ps-class-ornaments{display:none!important}
 }
