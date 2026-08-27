@@ -18,9 +18,9 @@ export function resolveRogueExpertise({ruleset,level,subclassId=null,skills=[],s
   }
 }
 
-export function reserveRogueExpertiseSkills(cls,background,selections={}){
+export function reserveRogueExpertiseSkills(cls,background,selections={},guaranteedSkills=[]){
   try{
-    const backgroundSkills=[...(background?.skills||[])],requested=[...(selections.expertise||[])],requestedSkills=requested.filter(value=>value!=="Thieves' Tools"),reserved=uniqueStrings(requestedSkills.filter(skill=>!backgroundSkills.includes(skill)&&cls.skillChoices.includes(skill))),unsupported=requestedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!cls.skillChoices.includes(skill));
+    const backgroundSkills=[...(background?.skills||[])],guaranteed=new Set(guaranteedSkills),requested=[...(selections.expertise||[])],requestedSkills=requested.filter(value=>value!=="Thieves' Tools"),reserved=uniqueStrings(requestedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!guaranteed.has(skill)&&cls.skillChoices.includes(skill))),unsupported=requestedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!guaranteed.has(skill)&&!cls.skillChoices.includes(skill));
     if(unsupported.length)throw new Error(`Fixed Rogue Expertise must come from a fixed background, species-granted skill, or Rogue skill choice: ${unsupported.join(", ")}.`);
     if(reserved.length>cls.skillCount)throw new Error("Fixed Rogue Expertise requires more Rogue skill proficiencies than the class can choose.");
     return{backgroundSkills,reserved};
