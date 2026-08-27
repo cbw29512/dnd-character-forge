@@ -41,7 +41,7 @@ test("Forge-original Barbarian references and print model are complete without p
   for(const ruleset of ["2014","2024"])for(const subclass of ORIGINALS){
     const c=barbarian(ruleset,subclass.id),refs=buildQuickReference(c),model=buildPremiumPrintModel(c);assert.equal(c.validation.valid,true);assert.equal(c.subclass.name,subclass.name);assert.equal(model.identity.subclassName,subclass.name);assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,false);assert.match(c.audit.license,/Character Forge Original/);assert.match(c.audit.scope,/official non-SRD D&D subclasses are not reproduced/i);
     const subclassAudit=c.audit.mechanics.find(item=>item.label==="Subclass");assert.equal(subclassAudit.source.version,"Character Forge Original");
-    for(const [,name] of subclass.features){const ref=refs.find(item=>item.name===name);assert.ok(ref,`${ruleset} ${subclass.id} missing reference ${name}`);assert.equal(ref.source.version,"Character Forge Original");assert.ok(ref.text.length>40,`${name} reference too thin`);}
+    for(const [,name] of subclass.features){const ref=refs.find(item=>item.name===name);assert.ok(ref,`${ruleset} ${subclass.id} missing reference ${name}`);assert.equal(ref.source.version,"Character Forge Original");assert.ok(ref.text.length>40,`${name} reference too thin`);assert.ok(model.features.some(item=>item.name===name),`${ruleset} ${subclass.id} printed feature cards lost ${name}`);}
     assert.equal(model.classUtility.title,"Primal Fury");
   }
 });
