@@ -1,0 +1,10 @@
+@media print{
+  /* Palette mapping is deliberately excluded from Ink Saver so monochrome output stays monochrome. */
+  .premium-sheet:not(.sheet-print-ink-saver){
+    --ps-primary:var(--class-primary);
+    --ps-dark:var(--class-dark);
+    --ps-accent:var(--class-accent);
+    --ps-frame:var(--class-frame);
+    --ps-glow:var(--class-glow);
+  }
+}
