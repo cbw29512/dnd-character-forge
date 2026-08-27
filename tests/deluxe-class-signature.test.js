@@ -6,6 +6,7 @@ import { classWatermark, sheetArticleOpen } from "../src/ui/print-decoration.js"
 
 const SIGNATURES=read("styles/print/premium-class-signatures.css");
 const PALETTES=read("styles/print/premium-class-palettes.css");
+const INK_SAVER=read("styles/print/premium-ink-saver.css");
 const LOAD_POINT=read("styles/print/premium-sorcerer.css");
 const CLASS_IDS=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
 
@@ -55,16 +56,29 @@ test("ink saver preserves class typography and symbology while class colors rema
   assert.match(SIGNATURES,/\.sheet-ornament-minimal \.ps-class-signature,\.sheet-ornament-minimal \.ps-class-ornaments\{display:none!important\}/);
 });
 
+test("final Ink Saver layer removes toner-heavy class color even from hard-coded legacy skins",()=>{
+  assert.match(INK_SAVER,/\.sheet-print-ink-saver \*\{/);
+  assert.match(INK_SAVER,/background-image:none!important/);
+  assert.match(INK_SAVER,/background-color:transparent!important/);
+  assert.match(INK_SAVER,/color:#111!important/);
+  assert.match(INK_SAVER,/border-color:#555!important/);
+  assert.match(INK_SAVER,/print-color-adjust:economy!important/);
+  assert.match(INK_SAVER,/filter:grayscale\(1\) contrast\(1\.08\)!important/);
+  assert.match(INK_SAVER,/\.sheet-print-ink-saver \.ps-class-watermark\{display:none!important\}/);
+  assert.match(INK_SAVER,/\.sheet-print-ink-saver\.sheet-ornament-minimal \.ps-class-signature/);
+});
+
 test("decorative tracking never breaks searchable semantic panel headings",()=>{
   assert.match(PALETTES,/\.premium-sheet:not\(\.sheet-style-minimal\) \.ps-panel h2 span\{letter-spacing:normal!important\}/);
 });
 
-test("signature and palette layers load after the existing class identity stack",()=>{
-  const signatureImport='@import url("./premium-class-signatures.css");',paletteImport='@import url("./premium-class-palettes.css");';
-  assert.ok(LOAD_POINT.includes(signatureImport));assert.ok(LOAD_POINT.includes(paletteImport));
+test("signature, palette, and final monochrome layers load after the existing class identity stack",()=>{
+  const signatureImport='@import url("./premium-class-signatures.css");',paletteImport='@import url("./premium-class-palettes.css");',inkImport='@import url("./premium-ink-saver.css");';
+  assert.ok(LOAD_POINT.includes(signatureImport));assert.ok(LOAD_POINT.includes(paletteImport));assert.ok(LOAD_POINT.includes(inkImport));
   assert.ok(LOAD_POINT.indexOf(signatureImport)>LOAD_POINT.indexOf('@import url("./premium-class-arcane.css");'));
   assert.ok(LOAD_POINT.indexOf(paletteImport)>LOAD_POINT.indexOf(signatureImport));
-  assert.ok(LOAD_POINT.indexOf(paletteImport)<LOAD_POINT.indexOf("@media print"));
+  assert.ok(LOAD_POINT.indexOf(inkImport)>LOAD_POINT.indexOf(paletteImport));
+  assert.ok(LOAD_POINT.indexOf(inkImport)<LOAD_POINT.indexOf("@media print"));
 });
 
 function dummyModel(classId,theme){return{theme,identity:{classId,className:theme.className},presentation:{classes:"sheet-packet-deluxe sheet-style-ornate sheet-paper-ivory sheet-ornament-rich sheet-frame-class sheet-print-premium portrait-filter-natural",style:"--portrait-x:50%;--portrait-y:32%;--portrait-zoom:1"}};}
