@@ -61,6 +61,8 @@ jobs:
         run: node tests/browser-ui-gate.mjs
       - name: Verify premium PDF packets in Chrome
         run: node tests/browser-print-gate.mjs
+      - name: Verify 2014 Fighter premium PDF in Chrome
+        run: node tests/fighter-2014-browser-print-gate.mjs
       - name: Verify Bard premium PDFs in Chrome
         run: node tests/bard-browser-print-gate.mjs
       - name: Verify Monk premium PDFs in Chrome
@@ -69,6 +71,8 @@ jobs:
         run: node tests/sorcerer-browser-print-gate.mjs
       - name: Verify Warlock premium PDFs in Chrome
         run: node tests/warlock-browser-print-gate.mjs
+      - name: Verify all 12 deluxe class identities in Chrome
+        run: node tests/class-identity-browser-print-gate.mjs
       - name: Upload responsive UI review
         if: always()
         uses: actions/upload-artifact@v4
