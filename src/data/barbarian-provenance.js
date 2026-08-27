@@ -1,3 +1,5 @@
+import { barbarianOriginalFeatureNames, barbarianOriginalSource, isBarbarianForgeOriginal } from "./barbarian-subclasses.js";
+
 const SOURCES=Object.freeze({
   "2014":Object.freeze({version:"SRD 5.1",document:"System Reference Document 5.1",pdfUrl:"https://media.dndbeyond.com/compendium-images/srd/5.1/SRD_CC_v5.1.pdf"}),
   "2024":Object.freeze({version:"SRD 5.2.1",document:"System Reference Document 5.2.1",pdfUrl:"https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf"})
@@ -16,17 +18,25 @@ const FEATURE_PAGES=Object.freeze({
 });
 const FEAT_PAGES=Object.freeze({"2024":Object.freeze({"Boon of Irresistible Offense":"88"})});
 const MASTERY_PAGES=Object.freeze({"2024":Object.freeze({Cleave:"90"})});
+const ORIGINAL_FEATURE_NAMES=barbarianOriginalFeatureNames();
 
 function sourceAt(ruleset,page){
-  try{const source=SOURCES[ruleset];if(!source||!page)throw new Error(`Missing Barbarian SRD provenance for ${ruleset}.`);return Object.freeze({...source,page:String(page)});}
+  try{const source=SOURCES[ruleset];if(!source||!page)throw new Error(`Missing Barbarian SRD provenance for ${ruleset}.`);return Object.freeze({...source,page:String(page),license:"CC BY 4.0"});}
   catch(error){console.error("[barbarian-provenance] source lookup failed",error);throw error;}
 }
 export function barbarianEntityProvenance(ruleset,kind){
   try{const page=ENTITY_PAGES[ruleset]?.[kind];if(!page)throw new Error(`Missing Barbarian ${kind} provenance for ${ruleset}.`);return sourceAt(ruleset,page);}
   catch(error){console.error("[barbarian-provenance] entity lookup failed",error);throw error;}
 }
+export function barbarianSubclassProvenance(character){
+  try{
+    if(isBarbarianForgeOriginal(character?.subclass))return barbarianOriginalSource();
+    return barbarianEntityProvenance(character?.ruleset,"subclass");
+  }catch(error){console.error("[barbarian-provenance] subclass lookup failed",error);throw error;}
+}
 export function barbarianReferenceProvenance(character,kind,name){
   try{
+    if(kind==="feature"&&ORIGINAL_FEATURE_NAMES.has(name))return barbarianOriginalSource();
     const ruleset=character?.ruleset;let page=null;
     if(kind==="feature")page=FEATURE_PAGES[ruleset]?.[name];
     if(kind==="feat")page=FEAT_PAGES[ruleset]?.[name];

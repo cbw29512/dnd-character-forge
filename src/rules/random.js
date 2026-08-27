@@ -1,7 +1,9 @@
 export function pick(items) {
   try {
     if (!Array.isArray(items) || items.length === 0) throw new Error("Cannot pick from an empty list");
-    return items[Math.floor(Math.random() * items.length)];
+    const eligible = items.filter(item => item?.randomEligible !== false);
+    if (eligible.length === 0) throw new Error("Cannot pick from a list with no Random-eligible choices");
+    return eligible[Math.floor(Math.random() * eligible.length)];
   } catch (error) { console.error("[random] pick failed", error); throw error; }
 }
 export function sample(items, count, excluded = []) {

@@ -1,3 +1,5 @@
+import { barbarianOriginalFeaturesFor } from "../data/barbarian-subclasses.js";
+
 export function barbarianFeatures(ruleset,level,subclassId=null){
   try{
     const value=Number(level),features=["Rage","Unarmored Defense"];
@@ -16,6 +18,7 @@ export function barbarianFeatures(ruleset,level,subclassId=null){
       if(value>=15)features.push("Persistent Rage");
       if(value>=18)features.push("Indomitable Might");
       if(value>=20)features.push("Primal Champion");
+      features.push(...barbarianOriginalFeaturesFor(ruleset,value,subclassId));
       return features;
     }
     if(ruleset!=="2024")throw new Error(`Unsupported Barbarian ruleset: ${ruleset}.`);
@@ -35,6 +38,7 @@ export function barbarianFeatures(ruleset,level,subclassId=null){
     if(value>=18)features.push("Indomitable Might");
     if(value>=19)features.push("Epic Boon");
     if(value>=20)features.push("Primal Champion");
+    features.push(...barbarianOriginalFeaturesFor(ruleset,value,subclassId));
     return features;
   }catch(error){console.error("[barbarian-features] feature resolution failed",error);throw error;}
 }

@@ -25,6 +25,6 @@ export function populateSubclasses(state){
   }catch(error){console.error("[ui] populateSubclasses failed",error);throw error;}
 }
 function fill(id,items){
-  try{const el=document.getElementById(id),current=el.value;el.innerHTML=`<option value="random">Random</option>${items.map(i=>`<option value="${i.id}">${i.name}</option>`).join("")}`;el.value=[...el.options].some(option=>option.value===current)?current:"random";}
+  try{const el=document.getElementById(id),current=el.value;el.innerHTML=`<option value="random">Random</option>${items.map(i=>`<option value="${i.id}">${i.displayName||i.name}</option>`).join("")}`;el.value=[...el.options].some(option=>option.value===current)?current:"random";}
   catch(error){console.error(`[ui] fill ${id} failed`,error);throw error;}
 }
