@@ -61,6 +61,8 @@ jobs:
         run: node tests/browser-ui-gate.mjs
       - name: Verify premium PDF packets in Chrome
         run: node tests/browser-print-gate.mjs
+      - name: Verify expanded Barbarian premium PDFs in Chrome
+        run: node tests/barbarian-original-browser-print-gate.mjs
       - name: Verify 2014 Fighter premium PDF in Chrome
         run: node tests/fighter-2014-browser-print-gate.mjs
       - name: Verify Bard premium PDFs in Chrome
