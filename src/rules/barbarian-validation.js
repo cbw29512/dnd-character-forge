@@ -1,8 +1,10 @@
 import { abilityMod } from "./math.js";
 import { speciesSpeed } from "./species.js";
 import { barbarianProgressionFor } from "./barbarian.js";
+import { barbarianOriginalFeatureNames, barbarianOriginalFeaturesFor, isBarbarianForgeOriginal } from "../data/barbarian-subclasses.js";
 
 const PROGRESSION_KEYS=["rageUses","unlimitedRage","rageDamage","masteryCount","attacksPerAction","speedBonus","initiativeAdvantage","primalKnowledge","instinctivePounce","brutalCriticalDice","brutalStrikeDice","brutalStrikeEffectCount","relentlessRage","relentlessRageHp","persistentRage","indomitableMight","primalChampion","primalChampionMaximum","frenzy","mindlessRage","retaliation","intimidatingPresence"];
+const ORIGINAL_FEATURE_NAMES=barbarianOriginalFeatureNames();
 
 export function validateBarbarianCharacter(character){
   try{
@@ -14,9 +16,18 @@ export function validateBarbarianCharacter(character){
     if(Boolean(character.initiativeAdvantage)!==Boolean(expected.initiativeAdvantage))errors.push("Barbarian Feral Instinct initiative state is incorrect.");
     const expectedSpeed=speciesSpeed(character)+expected.speedBonus;if(character.speed!==expectedSpeed)errors.push(`Barbarian Speed should be ${expectedSpeed} ft.`);
     if(!character.equipment.armor){const expectedAc=10+abilityMod(character.abilities.dex)+abilityMod(character.abilities.con)+(character.equipment.shield?2:0)+(character.homebrewAcBonus||0);if(character.ac!==expectedAc)errors.push(`Barbarian Unarmored Defense AC should be ${expectedAc}.`);}
+    validateSubclassFeatures(errors,character);
     if(character.ruleset==="2014")validate2014(errors,character,expected);else if(character.ruleset==="2024")validate2024(errors,character,expected);else errors.push(`Barbarian is not verified for ruleset ${character.ruleset}.`);
     return errors;
   }catch(error){console.error("[barbarian-validation] validation failed",error);throw error;}
+}
+function validateSubclassFeatures(errors,character){
+  try{
+    const expected=new Set(barbarianOriginalFeaturesFor(character.ruleset,character.level,character.subclass?.id)),present=new Set((character.features||[]).filter(name=>ORIGINAL_FEATURE_NAMES.has(name)));
+    for(const name of expected)if(!present.has(name))errors.push(`Barbarian subclass feature ${name} is missing.`);
+    for(const name of present)if(!expected.has(name))errors.push(`Barbarian subclass feature ${name} is illegal for ${character.subclass?.name||"this subclass"} at level ${character.level}.`);
+    if(isBarbarianForgeOriginal(character.subclass)&&!character.subclass.displayName?.includes("Forge Original"))errors.push("Forge-original Barbarian subclass is missing its explicit content label.");
+  }catch(error){console.error("[barbarian-validation] subclass validation failed",error);throw error;}
 }
 function validate2014(errors,character,progression){
   try{
