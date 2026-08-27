@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: read
   contents: read
 
 concurrency:
@@ -17,47 +18,71 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Verify exact Pages build and live Character Forge
+      - name: Verify exact Pages deployment and live Character Forge
         shell: bash
         env:
           BASE_URL: https://cbw29512.github.io/dnd-character-forge/
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           trap 'echo "::error::Production smoke failed at line ${LINENO}."' ERR
 
-          pages_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/pages/builds/latest"
-          pages_file="$(mktemp)"
+          runs_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=50"
+          runs_file="$(mktemp)"
           index_file="$(mktemp)"
           deployment_ready=0
 
           for attempt in $(seq 1 24); do
-            echo "[production-smoke] Pages build attempt ${attempt}/24 for ${GITHUB_SHA}"
+            echo "[production-smoke] Pages Actions attempt ${attempt}/24 for ${GITHUB_SHA}"
             if curl --fail --silent --show-error --location \
               --connect-timeout 10 --max-time 20 \
               -H 'Accept: application/vnd.github+json' \
               -H 'X-GitHub-Api-Version: 2026-03-10' \
-              "${pages_api}" -o "${pages_file}"; then
-              pages_status="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("status", ""))' "${pages_file}")"
-              pages_commit="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("commit", ""))' "${pages_file}")"
-              echo "[production-smoke] latest Pages build status=${pages_status:-missing} commit=${pages_commit:-missing}"
+              -H "Authorization: Bearer ${GH_TOKEN}" \
+              "${runs_api}" -o "${runs_file}"; then
+              read -r pages_status pages_conclusion < <(python3 - "${runs_file}" "${GITHUB_SHA}" <<'PY'
+import json
+import sys
 
-              if [[ "${pages_status}" == "built" && "${pages_commit}" == "${GITHUB_SHA}" ]]; then
+path, sha = sys.argv[1], sys.argv[2]
+with open(path, encoding="utf-8") as handle:
+    payload = json.load(handle)
+
+matches = [
+    run for run in payload.get("workflow_runs", [])
+    if run.get("name") == "pages build and deployment"
+    and run.get("head_sha") == sha
+]
+
+if not matches:
+    print("missing missing")
+else:
+    run = max(matches, key=lambda item: item.get("run_number", 0))
+    print(run.get("status", "missing"), run.get("conclusion") or "missing")
+PY
+              )
+
+              echo "[production-smoke] exact Pages Actions status=${pages_status} conclusion=${pages_conclusion}"
+              if [[ "${pages_status}" == "completed" && "${pages_conclusion}" == "success" ]]; then
                 deployment_ready=1
                 break
               fi
+              if [[ "${pages_status}" == "completed" && "${pages_conclusion}" != "success" ]]; then
+                echo "::error::Exact Pages workflow completed with ${pages_conclusion}."
+                exit 1
+              fi
             else
-              echo "[production-smoke] latest Pages build is not available yet."
+              echo "[production-smoke] exact Pages Actions run is not available yet."
             fi
             sleep 10
           done
 
           if [[ "${deployment_ready}" -ne 1 ]]; then
-            echo "::error::Pages never reported a successful latest build for exact SHA ${GITHUB_SHA}."
-            cat "${pages_file}" || true
+            echo "::error::No successful Pages workflow completed for exact SHA ${GITHUB_SHA}."
             exit 1
           fi
 
-          echo "[production-smoke] exact SHA is built; verifying public site contract."
+          echo "[production-smoke] exact SHA deployed; verifying public site contract."
           site_ready=0
           for attempt in $(seq 1 12); do
             echo "[production-smoke] site attempt ${attempt}/12: ${BASE_URL}"
@@ -96,4 +121,4 @@ jobs:
               "${BASE_URL}${asset}?smoke=${GITHUB_SHA}" -o /dev/null
           done
 
-          echo "[production-smoke] exact Pages build, live Forge contract, and critical Print V3 assets are healthy."
+          echo "[production-smoke] exact Pages Actions run, live Forge contract, and critical Print V3 assets are healthy."
