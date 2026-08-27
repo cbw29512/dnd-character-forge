@@ -42,8 +42,8 @@ function paladin(ruleset,styleId){
 function ranger(ruleset,styleId){
   const state=createInitialState();
   state.ruleset=ruleset;
-  state.constraints={level:"2",species:"human",class:"ranger",subclass:"random",background:ruleset==="2014"?"outlander":"criminal",name:`${ruleset} ${styleId} Ranger`};
-  state.classSelections={fightingStyle:styleId};
+  state.constraints={level:"2",species:"human",class:"ranger",subclass:"random",background:ruleset==="2014"?"outlander":"criminal",name:`${ruleset} ${styleId??"random"} Ranger`};
+  state.classSelections=styleId?{fightingStyle:styleId}:{};
   if(ruleset==="2024"&&styleId==="druidic-warrior")state.spellSelections={...state.spellSelections,cantrips:RANGER_DRUIDIC_WARRIOR_CANTRIPS_2024.slice(0,2).map(spell=>spell.id)};
   return generateCharacter(state);
 }
@@ -61,15 +61,18 @@ test("every legal Paladin Fighting Style has a routed quick reference in both ed
   }catch(error){console.error("[test] Paladin style routing completeness failed",error);throw error;}
 });
 
-test("every legal Ranger Fighting Style has a routed quick reference in both editions",()=>{
+test("every Forge-supported Ranger Fighting Style has a routed quick reference in both editions",()=>{
   try{
-    const pools={"2014":["archery","defense","dueling","two-weapon"],"2024":["archery","defense","great-weapon","two-weapon","druidic-warrior"]};
-    for(const ruleset of ["2014","2024"])for(const styleId of pools[ruleset]){
-      const character=ranger(ruleset,styleId),style=character.fightingStyle,references=buildQuickReference(character),reference=references.find(item=>item.id===`style:${style.name}`);
-      assert.ok(reference,`${ruleset} ${style.name} should have a routed style reference`);
-      assert.equal(reference.name,style.name);
-      assert.match(reference.source.version,/^SRD 5\./);
-      assert.ok(reference.source.page);
+    for(const ruleset of ["2014","2024"]){
+      const baseline=ranger(ruleset,null),styleIds=baseline.class.styleChoices;
+      assert.ok(Array.isArray(styleIds)&&styleIds.length>0,`${ruleset} Ranger should expose its authoritative styleChoices pool`);
+      for(const styleId of styleIds){
+        const character=ranger(ruleset,styleId),style=character.fightingStyle,references=buildQuickReference(character),reference=references.find(item=>item.id===`style:${style.name}`);
+        assert.ok(reference,`${ruleset} ${style.name} should have a routed style reference`);
+        assert.equal(reference.name,style.name);
+        assert.match(reference.source.version,/^SRD 5\./);
+        assert.ok(reference.source.page);
+      }
     }
   }catch(error){console.error("[test] Ranger style routing completeness failed",error);throw error;}
 });
