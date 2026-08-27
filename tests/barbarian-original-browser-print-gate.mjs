@@ -29,7 +29,10 @@ function verify(testCase){
     assert.equal(model.packet.totalPages,1,`${slug}: Barbarian packet must remain one page`);
     assert.equal(model.classUtility?.title,"Primal Fury",`${slug}: Barbarian utility missing`);
     assert.equal(model.identity.subclassName,character.subclass.name,`${slug}: print model lost subclass identity`);
-    assert.ok(normalizeHtml(target.innerHTML).includes(normalizeHtml(character.subclass.name)),`${slug}: rendered sheet lost subclass identity before Chrome`);
+    const renderedHtml=normalizeHtml(target.innerHTML);
+    assert.ok(renderedHtml.includes(normalizeHtml(character.subclass.name)),`${slug}: rendered sheet lost subclass identity before Chrome`);
+    assert.ok(renderedHtml.includes("5e compatible"),`${slug}: rendered sheet lost compatible-content labeling`);
+    assert.equal(renderedHtml.includes("pass · raw ·"),false,`${slug}: rendered footer still presents original content as RAW`);
     for(const feature of testCase.features){assert.ok(character.features.includes(feature),`${slug}: missing ${feature}`);assert.ok(model.ruleIndex.some(item=>item.name===feature),`${slug}: rules index missing ${feature}`);}
 
     const htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),rawTxtPath=path.join(OUT,`${slug}-raw.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
