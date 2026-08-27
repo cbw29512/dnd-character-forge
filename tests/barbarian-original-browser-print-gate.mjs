@@ -10,6 +10,7 @@ import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
 const OUT=path.join(ROOT,"tests/.browser-print");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
+const BODY_PATTERN=/<body\b([^>]*)>[\s\S]*<\/body>/i;
 const CASES=[
   {ruleset:"2014",subclass:"iron-tempest",background:"acolyte",features:["Driving Fury","Unbroken Advance","Steel Through the Gap","Tempest Reprisal"]},
   {ruleset:"2014",subclass:"stoneheart",background:"acolyte",features:["Stonehide Rage","Rooted Stance","Weather the Blow","The Mountain Remains"]},
@@ -30,9 +31,9 @@ function verify(testCase){
     assert.equal(model.classUtility?.title,"Primal Fury",`${slug}: Barbarian utility missing`);
     for(const feature of testCase.features){assert.ok(character.features.includes(feature),`${slug}: missing ${feature}`);assert.ok(model.ruleIndex.some(item=>item.name===feature),`${slug}: rules index missing ${feature}`);}
 
-    const templatePath=path.join(OUT,`${testCase.ruleset}-human-barbarian.html`),template=readFileSync(templatePath,"utf8");
-    assert.match(template,/<body>[\s\S]*<\/body>/i,`${slug}: baseline browser fixture is unavailable`);
-    const html=template.replace(/<body>[\s\S]*<\/body>/i,`<body>${target.innerHTML}</body>`),htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
+    const templatePath=path.join(OUT,`${testCase.ruleset}-human-barbarian.html`),template=readFileSync(templatePath,"utf8"),bodyMatch=template.match(BODY_PATTERN);
+    assert.ok(bodyMatch,`${slug}: baseline browser fixture is unavailable`);
+    const html=template.replace(BODY_PATTERN,`<body${bodyMatch[1]}>${target.innerHTML}</body>`),htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
     writeFileSync(htmlPath,html,"utf8");
     execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,pathToFileURL(htmlPath).href],{stdio:"pipe"});
     const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"});assert.match(info,/Pages:\s+1\b/,`${slug}: browser PDF is not one page`);assert.match(info,/Page size:\s+612 x 792 pts/i,`${slug}: PDF is not US Letter`);
