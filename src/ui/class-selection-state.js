@@ -11,6 +11,7 @@ export function classSelectionsFromCharacter(character){
     if(classId==="paladin")return removeEmpty({fightingStyle:character.fightingStyle?.id||null,advancements});
     if(classId==="fighter")return removeEmpty({fightingStyle:character.fightingStyles?.[0]?.id||character.fightingStyle?.id||null,additionalFightingStyle:character.fightingStyles?.[1]?.id||null,advancements});
     if(classId==="rogue")return removeEmpty({expertise:[...(character.expertise||[])],advancements});
+    if(classId==="wizard"&&character.ruleset==="2024"&&Number(character.level)>=2)return removeEmpty({scholarExpertise:character.expertise?.[0]||null,advancements});
     return removeEmpty({advancements});
   }catch(error){console.error("[class-selection-state] restore failed",error);throw error;}
 }
