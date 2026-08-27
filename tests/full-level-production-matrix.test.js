@@ -45,7 +45,16 @@ function assertProductionCharacter(character,{ruleset,classId,level,subclassId=n
 
     assert.equal(character.validation?.valid,true,`${label}: validation failed: ${(character.validation?.errors||[]).join(" | ")}`);
     assert.equal(character.audit?.status,"PASS",`${label}: Rules Audit did not pass`);
-    assert.equal(character.audit?.rawIntegrity,true,`${label}: RAW integrity failed`);
+    const forgeOriginal=character.subclass?.contentKind==="forge-original";
+    if(forgeOriginal){
+      assert.equal(character.audit?.rawIntegrity,false,`${label}: Forge-original content was incorrectly labeled RAW`);
+      assert.match(character.audit?.license||"",/Character Forge Original/,`${label}: original-content license label missing`);
+      assert.match(character.audit?.scope||"",/official non-SRD D&D subclasses are not reproduced/i,`${label}: protected-content boundary missing`);
+      const subclassAudit=character.audit?.mechanics?.find(item=>item.label==="Subclass");
+      assert.equal(subclassAudit?.source?.version,"Character Forge Original",`${label}: original subclass provenance missing`);
+    }else{
+      assert.equal(character.audit?.rawIntegrity,true,`${label}: RAW integrity failed`);
+    }
 
     for(const field of FINITE_FIELDS){
       assert.equal(Number.isFinite(character[field]),true,`${label}: ${field} is not finite (${character[field]})`);
