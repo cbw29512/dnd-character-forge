@@ -12,14 +12,7 @@ import { buildQuickReference } from "../rules/reference-router.js";
 export function renderCharacter(character,target){
   try{
     const references=buildQuickReference(character);
-    const safeCharacter={
-      ...character,
-      features:[],
-      feats:[],
-      masteryIds:[],
-      speciesTraits:[],
-      background:{...character.background,feature:null}
-    };
+    const safeCharacter=legacySafeCharacter(character);
     renderBaseCharacter(safeCharacter,target);
     const list=target.querySelector(".reference-list");
     if(!list)throw new Error("Character sheet reference container was not rendered.");
@@ -27,6 +20,25 @@ export function renderCharacter(character,target){
     ensureTopActions(target);
   }catch(error){
     console.error("[ui] routed character render failed",error);
+    throw error;
+  }
+}
+
+export function legacySafeCharacter(character){
+  try{
+    const paladin=character?.class?.id==="paladin";
+    return{
+      ...character,
+      features:[],
+      feats:[],
+      masteryIds:[],
+      speciesTraits:[],
+      background:{...character.background,feature:null},
+      fightingStyle:paladin?null:character.fightingStyle,
+      fightingStyles:paladin?[]:character.fightingStyles
+    };
+  }catch(error){
+    console.error("[ui] legacy-safe character build failed",error);
     throw error;
   }
 }
