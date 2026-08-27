@@ -3,17 +3,20 @@ import { buildRulesAudit as buildCoreRulesAudit } from "./audit.js";
 import { entityProvenance, rulesetSource } from "../data/rule-provenance.js";
 import { barbarianEntityProvenance, barbarianSubclassProvenance } from "../data/barbarian-provenance.js";
 import { isBarbarianForgeOriginal } from "../data/barbarian-subclasses.js";
+import { isForgeOriginalSubclass } from "../data/original-subclasses.js";
 import { bardEntityProvenance } from "../data/bard-provenance.js";
 import { druidEntityProvenance } from "../data/druid-provenance.js";
 import { paladinEntityProvenance } from "../data/paladin-provenance.js";
 import { rangerEntityProvenance } from "../data/ranger-provenance.js";
 import { speciesChoiceLabel } from "./species.js";
+import { buildForgeOriginalAudit } from "./original-subclass-audit.js";
 
 const RULESET_LABELS=Object.freeze({"2014":"2014 / 5e","2024":"2024 / 5.5e"}),LICENSE="CC BY 4.0",SRD_LANDING_URL="https://www.dndbeyond.com/srd";
 
 export function buildRulesAudit(character,validation){
   try{
     if(character?.class?.id==="barbarian")return buildBarbarianAudit(character,validation);
+    if(isForgeOriginalSubclass(character?.subclass))return buildForgeOriginalAudit(character,validation);
     if(character?.class?.id==="bard")return buildBardAudit(character,validation);
     if(character?.class?.id==="druid")return buildDruidAudit(character,validation);
     if(character?.class?.id==="paladin")return buildPaladinAudit(character,validation);
