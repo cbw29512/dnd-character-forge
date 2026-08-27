@@ -7,6 +7,7 @@
 @import url("./premium-v3-arcane.css");
 @import url("./premium-dossier.css");
 @import url("./premium-class-signatures.css");
+@import url("./premium-class-palettes.css");
 
 @media print{
   /* Sorcerer: faceted aether/crystal geometry while preserving the familiar 5e scan order. */
