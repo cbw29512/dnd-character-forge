@@ -18,9 +18,10 @@ export function compactRuleIndex(references,maxEntries){
 
 export function compactFeatureCards(references,featName,maxCards=9){
   try{
-    return references.filter(item=>item.name!==featName&&!item.id?.startsWith("mastery:")).sort((a,b)=>priority(a)-priority(b)).slice(0,maxCards).map(item=>Object.freeze({name:item.name,text:shorten(item.text,170),timing:item.timing,source:`${item.source.version} · p.${item.source.page}`}));
+    return references.filter(item=>item.name!==featName&&!item.id?.startsWith("mastery:")).sort((a,b)=>priority(a)-priority(b)||originalContentPriority(a)-originalContentPriority(b)).slice(0,maxCards).map(item=>Object.freeze({name:item.name,text:shorten(item.text,170),timing:item.timing,source:`${item.source.version} · p.${item.source.page}`}));
   }catch(error){console.error("[print-profile] feature cards failed",error);throw error;}
 }
 
 function priority(item){if(item.id?.startsWith("feature:"))return 0;if(item.id?.startsWith("mastery:"))return 1;if(item.id?.startsWith("species:"))return 2;if(item.id?.startsWith("feat:"))return 3;if(item.id?.startsWith("style:"))return 4;return 5;}
+function originalContentPriority(item){return item?.source?.version==="Character Forge Original"?-1:0;}
 function shorten(value,max){const text=String(value||"").replace(/\s+/g," ").trim();return text.length<=max?text:`${text.slice(0,max-1).trimEnd()}…`;}
