@@ -1,0 +1,85 @@
+@media print{
+  /* Final monochrome override. This loads after every class skin so hard-coded
+     decorative colors cannot leak back into economical black-and-white output. */
+  .sheet-print-ink-saver{
+    --ps-primary:#222!important;
+    --ps-dark:#111!important;
+    --ps-accent:#666!important;
+    --ps-frame:#444!important;
+    --ps-glow:transparent!important;
+    --ps-paper:#fff!important;
+    --ps-panel:#fff!important;
+    --ps-panel-2:#fff!important;
+    background:#fff!important;
+    color:#111!important;
+    -webkit-print-color-adjust:economy!important;
+    print-color-adjust:economy!important;
+  }
+
+  /* Toner economy comes from removing fills, gradients, shadows, and tinted
+     surfaces. Class recognition remains in borders, geometry, symbols, and type. */
+  .sheet-print-ink-saver *{
+    color:#111!important;
+    background-color:transparent!important;
+    background-image:none!important;
+    border-color:#555!important;
+    outline-color:#666!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+
+  .sheet-print-ink-saver .ps-frame,
+  .sheet-print-ink-saver .ps-identity,
+  .sheet-print-ink-saver .ps-top-stats,
+  .sheet-print-ink-saver .ps-panel,
+  .sheet-print-ink-saver .ps-passive,
+  .sheet-print-ink-saver .ps-caster-spells,
+  .sheet-print-ink-saver .ps-caster-rules,
+  .sheet-print-ink-saver .ps-caster-audit,
+  .sheet-print-ink-saver .ps-dossier-panel,
+  .sheet-print-ink-saver .ps-dossier-story{
+    background:#fff!important;
+  }
+
+  .sheet-print-ink-saver .ps-panel h2,
+  .sheet-print-ink-saver .ps-theme-ribbon,
+  .sheet-print-ink-saver .ps-stat.large,
+  .sheet-print-ink-saver .ps-spell-level>header,
+  .sheet-print-ink-saver .ps-caster-header,
+  .sheet-print-ink-saver .ps-dossier-header{
+    background:#fff!important;
+    color:#111!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+
+  .sheet-print-ink-saver .ps-panel h2,
+  .sheet-print-ink-saver .ps-theme-ribbon{
+    border-top:1px solid #333!important;
+    border-bottom:1px solid #333!important;
+  }
+
+  .sheet-print-ink-saver .ps-portrait-art,
+  .sheet-print-ink-saver .ps-dossier-portrait-art{
+    background:#fff!important;
+    color:#111!important;
+    box-shadow:none!important;
+  }
+  .sheet-print-ink-saver .ps-portrait-art.has-image img,
+  .sheet-print-ink-saver .ps-dossier-portrait-art.has-image img{
+    filter:grayscale(1) contrast(1.08)!important;
+  }
+
+  /* Preserve the unmistakable class signature without spending ink on large fills. */
+  .sheet-print-ink-saver .ps-theme-ribbon{display:block!important}
+  .sheet-print-ink-saver .ps-class-ornaments{display:block!important}
+  .sheet-print-ink-saver .ps-ornament{display:block!important;opacity:.2!important}
+  .sheet-print-ink-saver .ps-class-signature{display:block!important}
+  .sheet-print-ink-saver .ps-signature-rail{opacity:.48!important}
+  .sheet-print-ink-saver .ps-signature-seal{background:#fff!important;border-color:#333!important}
+  .sheet-print-ink-saver .ps-class-watermark{display:none!important}
+
+  /* Explicit Minimal ornament still wins over Ink Saver's identity ornament. */
+  .sheet-print-ink-saver.sheet-ornament-minimal .ps-class-signature,
+  .sheet-print-ink-saver.sheet-ornament-minimal .ps-class-ornaments{display:none!important}
+}
