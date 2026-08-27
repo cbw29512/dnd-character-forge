@@ -4,6 +4,7 @@ import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildQuickReference } from "../src/rules/reference-router.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
+import { buildWarlockPremiumPrintModel } from "../src/print/warlock-model.js";
 import { FORGE_2014, FORGE_2024 } from "../src/data/forge-data.js";
 import { FORGE_ORIGINAL_SUBCLASSES_2014, FORGE_ORIGINAL_SUBCLASSES_2024, originalSubclassFeatureRecordsFor } from "../src/data/original-subclasses.js";
 
@@ -25,6 +26,10 @@ const SCHEDULES=Object.freeze({
 
 function generate(ruleset,classId,subclassId,level=20){
   const state=createInitialState();state.ruleset=ruleset;state.constraints.level=String(level);state.constraints.class=classId;state.constraints.subclass=subclassId;state.constraints.species="human";state.constraints.background=ruleset==="2014"?"acolyte":"soldier";return generateCharacter(state);
+}
+
+function buildProductionPrintModel(character){
+  return character.class.id==="warlock"?buildWarlockPremiumPrintModel(character):buildPremiumPrintModel(character);
 }
 
 test("every supported class exposes at least three subclass choices in both editions",()=>{
@@ -53,7 +58,7 @@ test("original subclass feature schedules match each class and edition cadence",
 
 test("every original subclass generates valid characters at unlock and level 20 with complete references and source-safe audit",()=>{
   for(const ruleset of ["2014","2024"])for(const subclass of ORIGINALS[ruleset])for(const level of [...new Set([subclass.level,20])]){
-    const c=generate(ruleset,subclass.classId,subclass.id,level),records=originalSubclassFeatureRecordsFor(ruleset,subclass.classId,level,subclass.id),refs=buildQuickReference(c),model=buildPremiumPrintModel(c);
+    const c=generate(ruleset,subclass.classId,subclass.id,level),records=originalSubclassFeatureRecordsFor(ruleset,subclass.classId,level,subclass.id),refs=buildQuickReference(c),model=buildProductionPrintModel(c);
     assert.equal(c.validation.valid,true,`${ruleset} ${subclass.id} L${level} validation`);assert.equal(c.subclass.id,subclass.id);assert.equal(c.subclass.name,subclass.name);assert.equal(c.audit.status,"PASS");assert.equal(c.audit.rawIntegrity,false);assert.match(c.audit.license,/Character Forge Original/);assert.match(c.audit.scope,/official non-SRD D&D subclasses are not reproduced/i);assert.equal(c.audit.mechanics.find(item=>item.label==="Subclass")?.source.version,"Character Forge Original");assert.equal(model.identity.subclassName,subclass.name);
     for(const record of records){assert.ok(c.features.includes(record.name),`${ruleset} ${subclass.id} L${level} missing ${record.name}`);const ref=refs.find(item=>item.name===record.name);assert.ok(ref,`${ruleset} ${subclass.id} missing reference ${record.name}`);assert.equal(ref.source.version,"Character Forge Original");assert.ok(ref.text.length>45,`${record.name} reference too thin`);}
     for(const future of originalSubclassFeatureRecordsFor(ruleset,subclass.classId,20,subclass.id).filter(record=>record.level>level))assert.equal(c.features.includes(future.name),false,`${ruleset} ${subclass.id} gained ${future.name} early`);
