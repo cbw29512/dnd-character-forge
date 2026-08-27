@@ -15,9 +15,9 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 6
     steps:
-      - name: Verify live Character Forge
+      - name: Verify exact Pages deployment and live Character Forge
         shell: bash
         env:
           BASE_URL: https://cbw29512.github.io/dnd-character-forge/
@@ -25,11 +25,39 @@ jobs:
           set -Eeuo pipefail
           trap 'echo "::error::Production smoke failed at line ${LINENO}."' ERR
 
+          deployment_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/pages/deployments/${GITHUB_SHA}"
+          deployment_file="$(mktemp)"
           index_file="$(mktemp)"
-          ready=0
+          deployment_ready=0
 
-          for attempt in $(seq 1 18); do
-            echo "[production-smoke] attempt ${attempt}/18: ${BASE_URL}"
+          for attempt in $(seq 1 24); do
+            echo "[production-smoke] deployment attempt ${attempt}/24 for ${GITHUB_SHA}"
+            if curl --fail --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              -H 'Accept: application/vnd.github+json' \
+              -H 'X-GitHub-Api-Version: 2026-03-10' \
+              "${deployment_api}" -o "${deployment_file}"; then
+              if grep -Eq '"status"[[:space:]]*:[[:space:]]*"succeed"' "${deployment_file}"; then
+                deployment_ready=1
+                break
+              fi
+              echo "[production-smoke] exact Pages deployment exists but is not successful yet."
+            else
+              echo "[production-smoke] exact Pages deployment is not available yet."
+            fi
+            sleep 10
+          done
+
+          if [[ "${deployment_ready}" -ne 1 ]]; then
+            echo "::error::Pages never reported a successful deployment for ${GITHUB_SHA}."
+            cat "${deployment_file}" || true
+            exit 1
+          fi
+
+          echo "[production-smoke] exact SHA is deployed; verifying public site contract."
+          site_ready=0
+          for attempt in $(seq 1 12); do
+            echo "[production-smoke] site attempt ${attempt}/12: ${BASE_URL}"
             if curl --fail --silent --show-error --location \
               --connect-timeout 10 --max-time 20 \
               -H 'Cache-Control: no-cache' \
@@ -37,18 +65,18 @@ jobs:
               if grep -Fq '<title>D&D 5e Character Forge | RAW 2014 & 2024 Pregen Generator</title>' "${index_file}" \
                 && grep -Fq 'Rules edition' "${index_file}" \
                 && grep -Fq 'Warlock' "${index_file}"; then
-                ready=1
+                site_ready=1
                 break
               fi
-              echo "[production-smoke] site responded, but expected Forge markers are not live yet."
+              echo "[production-smoke] public response does not match the expected Forge contract yet."
             else
-              echo "[production-smoke] site is not ready yet."
+              echo "[production-smoke] public site is not responding successfully yet."
             fi
             sleep 10
           done
 
-          if [[ "${ready}" -ne 1 ]]; then
-            echo "::error::Production homepage never reached the expected Character Forge contract."
+          if [[ "${site_ready}" -ne 1 ]]; then
+            echo "::error::Public homepage never reached the expected Character Forge contract."
             exit 1
           fi
 
@@ -65,4 +93,4 @@ jobs:
               "${BASE_URL}${asset}?smoke=${GITHUB_SHA}" -o /dev/null
           done
 
-          echo "[production-smoke] live Character Forge and critical Print V3 assets are healthy."
+          echo "[production-smoke] exact deployment, live Forge contract, and critical Print V3 assets are healthy."
