@@ -70,6 +70,12 @@
     filter:grayscale(1) contrast(1.08)!important;
   }
 
+  /* Inline SVG artwork can carry literal fill/stroke colors that CSS text color
+     cannot neutralize. Force all decorative SVG paint into a monochrome base,
+     then let the premium crest rules below restore deliberate light/dark values. */
+  .sheet-print-ink-saver svg [fill]:not([fill="none"]){fill:#e5e5e5!important}
+  .sheet-print-ink-saver svg [stroke]:not([stroke="none"]){stroke:#333!important}
+
   /* Premium heraldry has a deliberate line-art monochrome treatment rather than
      merely printing the color shield as gray mud. The motif-wide fill rule is a
      defensive backstop so future hard-coded accent colors cannot leak into B&W. */
