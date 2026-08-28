@@ -5,7 +5,7 @@ import { generateCharacter } from "../src/rules/generator.js";
 import { buildPremiumPrintModel } from "../src/print/model.js";
 import { createDefaultSheetCustomization, normalizeSheetCustomization, sheetCustomizationClasses } from "../src/print/customization.js";
 import { PRINT_THEMES, selectPrintTheme } from "../src/print/theme.js";
-import { classPlaceholderArt } from "../src/print/class-art.js";
+import { classDecorationArt, classPlaceholderArt } from "../src/print/class-art.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
 function characterAt(classId,level="20"){
@@ -35,13 +35,14 @@ test("internal customization normalization remains backward compatible",()=>{
   assert.match(sheetCustomizationClasses(value),/sheet-paper-white/);assert.match(sheetCustomizationClasses(value),/portrait-filter-grayscale/);assert.match(sheetCustomizationClasses(value),/sheet-print-ink-saver/);
 });
 
-test("all twelve core classes have distinct premium theme hooks and original symbolic crests",()=>{
+test("all twelve core classes have distinct premium theme hooks and professional heraldic portrait crests",()=>{
   const ids=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
   assert.deepEqual(Object.keys(PRINT_THEMES).sort(),[...ids].sort());assert.equal(new Set(ids.map(id=>PRINT_THEMES[id].id)).size,12);
   for(const id of ids){
-    const theme=selectPrintTheme({class:{id}}),art=classPlaceholderArt(id);
-    assert.ok(theme.visualIdentity);assert.ok(theme.motif);assert.match(art,/ps-class-crest/);assert.match(art,/viewBox="0 0 180 220"/);
-    assert.match(art,new RegExp(`aria-label=\\"[^\\"]*${id === "wizard" ? "Wizard" : id.charAt(0).toUpperCase()+id.slice(1)}`));
+    const theme=selectPrintTheme({class:{id}}),art=classPlaceholderArt(id),decoration=classDecorationArt(id),label=id.charAt(0).toUpperCase()+id.slice(1);
+    assert.ok(theme.visualIdentity);assert.ok(theme.motif);
+    assert.match(art,/ps-premium-class-crest/);assert.match(art,/viewBox="0 0 240 260"/);assert.match(art,new RegExp(`data-crest-class="${id}"`));assert.match(art,new RegExp(`aria-label="${label} heraldic class crest"`));
+    assert.match(decoration,/ps-class-crest/);assert.match(decoration,/viewBox="0 0 180 220"/);assert.doesNotMatch(decoration,/ps-premium-class-crest/);
   }
 });
 
@@ -76,12 +77,15 @@ test("internal uploaded portrait framing remains supported for saved exports",()
   character.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD",sheetCustomization:{portraitVisible:true,portraitX:7,portraitY:84,portraitZoom:143,portraitFilter:"painted",frame:"filigree"}};
   const model=renderPremiumPrintSheet(character,target);
   assert.equal(model.portraitDataUrl,"data:image/jpeg;base64,QUJD");assert.equal(model.presentation.customization.portraitX,7);assert.equal(model.presentation.customization.portraitY,84);assert.equal(model.presentation.customization.portraitZoom,143);
-  assert.match(target.innerHTML,/has-image/);assert.match(target.innerHTML,/portrait-filter-painted/);assert.match(target.innerHTML,/sheet-frame-filigree/);assert.match(target.innerHTML,/--portrait-x:7%;--portrait-y:84%;--portrait-zoom:1\.43/);assert.match(target.innerHTML,/object-position:var\(--portrait-x\) var\(--portrait-y\)/);assert.doesNotMatch(target.innerHTML,/class-placeholder class-wizard/);
+  assert.match(target.innerHTML,/has-image/);assert.match(target.innerHTML,/portrait-filter-painted/);assert.match(target.innerHTML,/sheet-frame-filigree/);assert.match(target.innerHTML,/--portrait-x:7%;--portrait-y:84%;--portrait-zoom:1\.43/);assert.match(target.innerHTML,/object-position:var\(--portrait-x\) var\(--portrait-y\)/);assert.doesNotMatch(target.innerHTML,/class-placeholder class-wizard/);assert.doesNotMatch(target.innerHTML,/ps-premium-class-crest/);
 });
 
-test("no uploaded portrait prints the class crest on the first page",()=>{
+test("no uploaded portrait prints the matching premium class crest on sheet and dossier",()=>{
   const character=characterAt("sorcerer"),target={innerHTML:""};
   renderPremiumPrintSheet(character,target);
   assert.match(target.innerHTML,/class-placeholder class-sorcerer/);
-  assert.match(target.innerHTML,/Sorcerer living flame and innate magic crest/);
+  assert.match(target.innerHTML,/ps-premium-class-crest/);
+  assert.match(target.innerHTML,/data-crest-class="sorcerer"/);
+  assert.match(target.innerHTML,/Sorcerer heraldic class crest/);
+  assert.ok((target.innerHTML.match(/data-crest-class="sorcerer"/g)||[]).length>=2,"premium crest should appear on sheet and deluxe dossier");
 });
