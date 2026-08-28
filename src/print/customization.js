@@ -1,13 +1,8 @@
-const OPTIONS=Object.freeze({
-  packetMode:new Set(["deluxe","table"]),
-  style:new Set(["ornate","classic","minimal"]),
-  paper:new Set(["ivory","parchment","white"]),
-  ornament:new Set(["rich","balanced","minimal"]),
-  frame:new Set(["class","filigree","clean"]),
-  printMode:new Set(["premium","ink-saver"]),
-  portraitFilter:new Set(["natural","painted","grayscale"])
-});
+const PRINT_MODES=new Set(["premium","ink-saver"]);
 
+// The printable sheet now has one production-quality presentation preset.
+// Players only choose whether that preset prints in full color or black & white.
+// Keeping the legacy object shape avoids breaking previously saved characters.
 export const DEFAULT_SHEET_CUSTOMIZATION=Object.freeze({
   packetMode:"deluxe",
   style:"ornate",
@@ -31,17 +26,8 @@ export function normalizeSheetCustomization(input={}){
   try{
     const source=input&&typeof input==="object"?input:{};
     return Object.freeze({
-      packetMode:enumValue(source.packetMode,OPTIONS.packetMode,DEFAULT_SHEET_CUSTOMIZATION.packetMode),
-      style:enumValue(source.style,OPTIONS.style,DEFAULT_SHEET_CUSTOMIZATION.style),
-      paper:enumValue(source.paper,OPTIONS.paper,DEFAULT_SHEET_CUSTOMIZATION.paper),
-      ornament:enumValue(source.ornament,OPTIONS.ornament,DEFAULT_SHEET_CUSTOMIZATION.ornament),
-      frame:enumValue(source.frame,OPTIONS.frame,DEFAULT_SHEET_CUSTOMIZATION.frame),
-      printMode:enumValue(source.printMode,OPTIONS.printMode,DEFAULT_SHEET_CUSTOMIZATION.printMode),
-      portraitVisible:source.portraitVisible!==false,
-      portraitX:clampNumber(source.portraitX,0,100,DEFAULT_SHEET_CUSTOMIZATION.portraitX),
-      portraitY:clampNumber(source.portraitY,0,100,DEFAULT_SHEET_CUSTOMIZATION.portraitY),
-      portraitZoom:clampNumber(source.portraitZoom,100,165,DEFAULT_SHEET_CUSTOMIZATION.portraitZoom),
-      portraitFilter:enumValue(source.portraitFilter,OPTIONS.portraitFilter,DEFAULT_SHEET_CUSTOMIZATION.portraitFilter)
+      ...DEFAULT_SHEET_CUSTOMIZATION,
+      printMode:PRINT_MODES.has(source.printMode)?source.printMode:DEFAULT_SHEET_CUSTOMIZATION.printMode
     });
   }catch(error){console.error("[sheet-customization] normalization failed",error);throw error;}
 }
@@ -67,6 +53,3 @@ export function sheetCustomizationStyle(input={}){
     return `--portrait-x:${value.portraitX}%;--portrait-y:${value.portraitY}%;--portrait-zoom:${value.portraitZoom/100}`;
   }catch(error){console.error("[sheet-customization] style build failed",error);throw error;}
 }
-
-function enumValue(value,allowed,fallback){return allowed.has(value)?value:fallback;}
-function clampNumber(value,min,max,fallback){const numeric=Number(value);return Number.isFinite(numeric)?Math.min(max,Math.max(min,numeric)):fallback;}
