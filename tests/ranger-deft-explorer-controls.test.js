@@ -58,6 +58,20 @@ test("fixed Deft Explorer choices preserve Expertise and two additional unique l
   assert.deepEqual(new Set(character.rangerSelections.deftExplorerLanguages),new Set(["Sylvan","Draconic"]));
 });
 
+test("legacy display-form Expertise is canonicalized without losing the lock",()=>{
+  const character=generateCharacter(rangerState(2,{expertise:["Stealth"]}));
+  assert.deepEqual(character.expertise,["stealth"]);
+  assert.deepEqual(character.rangerSelections.expertise,["stealth"]);
+  assert.ok(character.skills.includes("stealth"));
+});
+
+test("Deft Explorer can use a background-granted skill proficiency for Expertise",()=>{
+  const character=generateCharacter(rangerState(2,{expertise:["Intimidation"]}));
+  assert.deepEqual(character.expertise,["intimidation"]);
+  assert.deepEqual(character.rangerSelections.expertise,["intimidation"]);
+  assert.ok(character.background.skills.includes("intimidation"));
+});
+
 test("level 9 Ranger can lock all three Expertise proficiencies",()=>{
   const requested=["stealth","survival","perception"],character=generateCharacter(rangerState(9,{expertise:requested}));
   assert.equal(character.expertise.length,3);
