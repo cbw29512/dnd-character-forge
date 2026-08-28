@@ -63,5 +63,5 @@ test("malformed or off-list Primal Knowledge lock is discarded instead of leakin
 
 test("Primal Knowledge selection is inactive before level 3 and in 2014",()=>{
   const low=barbarianState(2);low.classSelections.primalKnowledgeSkill="Nature";const lowCharacter=generateCharacter(low);assert.equal(lowCharacter.barbarianSelections.primalKnowledgeSkill,null);
-  const old=barbarianState(3);old.ruleset="2014";old.constraints.subclass="berserker";old.classSelections.primalKnowledgeSkill="Nature";const oldCharacter=generateCharacter(old);assert.equal(oldCharacter.barbarianSelections.primalKnowledgeSkill,null);
+  const old=barbarianState(3);old.ruleset="2014";old.constraints.background="acolyte";old.constraints.subclass="berserker";old.classSelections.primalKnowledgeSkill="Nature";const oldCharacter=generateCharacter(old);assert.equal(oldCharacter.barbarianSelections.primalKnowledgeSkill,null);
 });
