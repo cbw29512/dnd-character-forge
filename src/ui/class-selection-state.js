@@ -1,18 +1,18 @@
 export function classSelectionsFromCharacter(character){
   try{
-    const classId=character?.class?.id,advancements=advancementValues(character);
-    if(classId==="cleric")return removeEmpty({divineOrder:character.divineOrder,blessedStrikes:character.blessedStrikes,advancements});
-    if(classId==="bard")return removeEmpty({instruments:[...(character.bardSelections?.instruments||[])],loreBonusSkills:[...(character.bardSelections?.loreBonusSkills||[])],expertise:[...(character.bardSelections?.expertise||[])],advancements});
-    if(classId==="monk")return removeEmpty({monkTool:character.monkSelections?.tool||null,advancements});
-    if(classId==="sorcerer")return removeEmpty({metamagic:[...(character.sorcererSelections?.metamagic?.all||[])],draconicAncestry:character.sorcererSelections?.draconic?.ancestry?.id||null,elementalAffinity:character.sorcererSelections?.draconic?.elementalAffinity||null,advancements});
-    if(classId==="warlock")return removeEmpty({pactBoon:character.warlockSelections?.pactBoon?.id||null,eldritchInvocations:[...(character.warlockSelections?.invocations?.all||[])],advancements});
-    if(classId==="druid")return removeEmpty({...structuredClone(character.druidSelections||{}),advancements});
-    if(classId==="ranger")return removeEmpty({...structuredClone(character.rangerSelections||{}),fightingStyle:character.fightingStyle?.id||null,advancements});
-    if(classId==="paladin")return removeEmpty({fightingStyle:character.fightingStyle?.id||null,advancements});
-    if(classId==="fighter")return removeEmpty({fightingStyle:character.fightingStyles?.[0]?.id||character.fightingStyle?.id||null,additionalFightingStyle:character.fightingStyles?.[1]?.id||null,advancements});
-    if(classId==="rogue")return removeEmpty({expertise:[...(character.expertise||[])],advancements});
-    if(classId==="wizard"&&character.ruleset==="2024"&&Number(character.level)>=2)return removeEmpty({scholarExpertise:character.expertise?.[0]||null,advancements});
-    return removeEmpty({advancements});
+    const classId=character?.class?.id,base={classSkills:[...(character?.classSkillChoices||[])],advancements:advancementValues(character)};
+    if(classId==="cleric")return removeEmpty({...base,divineOrder:character.divineOrder,blessedStrikes:character.blessedStrikes});
+    if(classId==="bard")return removeEmpty({...base,instruments:[...(character.bardSelections?.instruments||[])],loreBonusSkills:[...(character.bardSelections?.loreBonusSkills||[])],expertise:[...(character.bardSelections?.expertise||[])]});
+    if(classId==="monk")return removeEmpty({...base,monkTool:character.monkSelections?.tool||null});
+    if(classId==="sorcerer")return removeEmpty({...base,metamagic:[...(character.sorcererSelections?.metamagic?.all||[])],draconicAncestry:character.sorcererSelections?.draconic?.ancestry?.id||null,elementalAffinity:character.sorcererSelections?.draconic?.elementalAffinity||null});
+    if(classId==="warlock")return removeEmpty({...base,pactBoon:character.warlockSelections?.pactBoon?.id||null,eldritchInvocations:[...(character.warlockSelections?.invocations?.all||[])]});
+    if(classId==="druid")return removeEmpty({...base,...structuredClone(character.druidSelections||{})});
+    if(classId==="ranger")return removeEmpty({...base,...structuredClone(character.rangerSelections||{}),fightingStyle:character.fightingStyle?.id||null});
+    if(classId==="paladin")return removeEmpty({...base,fightingStyle:character.fightingStyle?.id||null});
+    if(classId==="fighter")return removeEmpty({...base,fightingStyle:character.fightingStyles?.[0]?.id||character.fightingStyle?.id||null,additionalFightingStyle:character.fightingStyles?.[1]?.id||null});
+    if(classId==="rogue")return removeEmpty({...base,expertise:[...(character.expertise||[])]});
+    if(classId==="wizard"&&character.ruleset==="2024"&&Number(character.level)>=2)return removeEmpty({...base,scholarExpertise:character.expertise?.[0]||null});
+    return removeEmpty(base);
   }catch(error){console.error("[class-selection-state] restore failed",error);throw error;}
 }
 function advancementValues(character){const values=(character?.classAdvancements||[]).map(record=>record?.optionId==="asi"?null:record?.optionId||null);while(values.length&&values.at(-1)==null)values.pop();return values;}
