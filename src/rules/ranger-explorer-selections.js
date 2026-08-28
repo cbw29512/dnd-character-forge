@@ -10,9 +10,10 @@ export const RANGER_LANGUAGE_OPTIONS_2024=Object.freeze([
 
 const requestedList=value=>Array.isArray(value)?uniqueStrings(value.filter(item=>typeof item==="string"&&item.trim())):[];
 
-function requestedSkillList(value,legalSkills=[]){
+function requestedSkillList(value,legalSkills=null){
   try{
-    return uniqueStrings(requestedList(value).map(skill=>canonicalSkillId(skill,legalSkills)).filter(Boolean));
+    const canonical=skill=>Array.isArray(legalSkills)?canonicalSkillId(skill,legalSkills):canonicalSkillId(skill);
+    return uniqueStrings(requestedList(value).map(canonical).filter(Boolean));
   }catch(error){
     console.error("[ranger-explorer] Expertise request normalization failed",error);
     throw error;
@@ -24,7 +25,11 @@ export function reserveRangerExpertiseSkills({ruleset,level,subclassId=null,cls,
     if(ruleset!=="2024")return[];
     const count=rangerProgressionFor(ruleset,level,subclassId).expertiseCount;
     if(!count)return[];
-    const requested=requestedSkillList(selections.expertise,cls?.skillChoices||[]).slice(0,count),
+
+    // Deft Explorer can target any proficiency the Ranger actually has. A requested
+    // class-pool skill may need to reserve one of the class proficiency slots, while
+    // a background/species proficiency must not consume that class budget.
+    const requested=requestedSkillList(selections.expertise).slice(0,count),
       backgroundSkills=new Set(canonicalizeSkillValues(background?.skills||[])),
       guaranteed=new Set(canonicalizeSkillValues(guaranteedSkills)),
       classPool=new Set(cls?.skillChoices||[]);
