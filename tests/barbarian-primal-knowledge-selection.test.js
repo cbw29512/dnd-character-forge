@@ -30,14 +30,33 @@ test("2024 Barbarian Random Primal Knowledge records one legal new proficiency",
   assert.ok(!character.background.skills.includes(choice));
 });
 
-test("Primal Knowledge cannot duplicate a fixed base Barbarian skill",()=>{
+test("stale Primal Knowledge lock that duplicates a base Barbarian skill is canonicalized",()=>{
   const state=barbarianState(3);state.classSelections.primalKnowledgeSkill="Athletics";
-  assert.throws(()=>generateCharacter(state),/must add new proficiencies|already proficient|fixed class or class-feature skill/i);
+  const character=generateCharacter(state),choice=character.barbarianSelections.primalKnowledgeSkill;
+  assert.deepEqual(character.classSkillChoices,["Athletics","Survival"]);
+  assert.notEqual(choice,"Athletics");
+  assert.ok(character.class.skillChoices.includes(choice));
+  assert.ok(character.skills.includes(choice));
+  assert.equal(new Set(character.skills).size,character.skills.length);
 });
 
-test("Primal Knowledge cannot duplicate a fixed background proficiency",()=>{
+test("stale Primal Knowledge lock that collides with a changed background is re-resolved",()=>{
   const state=barbarianState(3);state.constraints.background="soldier";state.classSelections.classSkills=["Animal Handling","Survival"];state.classSelections.primalKnowledgeSkill="Athletics";
-  assert.throws(()=>generateCharacter(state),/fixed class or class-feature skill|already granted/i);
+  const character=generateCharacter(state),choice=character.barbarianSelections.primalKnowledgeSkill;
+  assert.notEqual(choice,"Athletics");
+  assert.ok(character.class.skillChoices.includes(choice));
+  assert.ok(!character.background.skills.includes(choice));
+  assert.ok(!character.classSkillChoices.includes(choice));
+  assert.equal(character.validation.valid,true);
+  assert.equal(character.audit.rawIntegrity,true);
+});
+
+test("malformed or off-list Primal Knowledge lock is discarded instead of leaking",()=>{
+  const state=barbarianState(3);state.classSelections.primalKnowledgeSkill="Arcana";
+  const character=generateCharacter(state),choice=character.barbarianSelections.primalKnowledgeSkill;
+  assert.notEqual(choice,"Arcana");
+  assert.ok(character.class.skillChoices.includes(choice));
+  assert.ok(character.skills.includes(choice));
 });
 
 test("Primal Knowledge selection is inactive before level 3 and in 2014",()=>{
