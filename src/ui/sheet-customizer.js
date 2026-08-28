@@ -1,4 +1,4 @@
-import { normalizeSheetCustomization } from "../print/customization.js";
+import { createDefaultSheetCustomization, normalizeSheetCustomization } from "../print/customization.js";
 import { selectPrintTheme } from "../print/theme.js";
 
 const MODE_SELECTOR='input[name="sheetPrintMode"]';
@@ -13,13 +13,15 @@ export function bindSheetCustomizer(state,showToast){
         catch(error){console.error("[sheet-customizer] update failed",error);showToast(error.message,true);}
       });
     }
+    state.sheetCustomization=simpleCustomization(state.sheetCustomization);
+    applySheetCustomizationToCurrent(state);
     renderSheetCustomizer(state);
   }catch(error){console.error("[sheet-customizer] bind failed",error);throw error;}
 }
 
 export function renderSheetCustomizer(state){
   try{
-    const panel=ensurePanel(),value=normalizeSheetCustomization(state.sheetCustomization),theme=selectPrintTheme({class:{id:resolvedClassId(state)}});
+    const panel=ensurePanel(),value=simpleCustomization(state.sheetCustomization),theme=selectPrintTheme({class:{id:resolvedClassId(state)}});
     state.sheetCustomization={...value};
     for(const node of panel.querySelectorAll(MODE_SELECTOR))node.checked=node.value===value.printMode;
     panel.querySelector("#sheetThemeName").textContent=`${theme.label} · automatic class design`;
@@ -29,14 +31,14 @@ export function renderSheetCustomizer(state){
 export function applySheetCustomizationToCurrent(state){
   try{
     if(!state.currentCharacter)return;
-    const value=normalizeSheetCustomization(state.sheetCustomization);
+    const value=simpleCustomization(state.sheetCustomization);
     state.currentCharacter.presentation={...(state.currentCharacter.presentation||{}),sheetCustomization:{...value}};
   }catch(error){console.error("[sheet-customizer] apply failed",error);throw error;}
 }
 
 export function restoreSheetCustomizationFromCharacter(state,character){
   try{
-    const value=normalizeSheetCustomization(character?.presentation?.sheetCustomization);
+    const value=simpleCustomization(character?.presentation?.sheetCustomization);
     state.sheetCustomization={...value};
     if(character)character.presentation={...(character.presentation||{}),sheetCustomization:{...value}};
     renderSheetCustomizer(state);
@@ -47,12 +49,16 @@ function updateStateFromPanel(state,panel){
   try{
     const selected=panel.querySelector(`${MODE_SELECTOR}:checked`);
     if(!selected)throw new Error("Choose Color or Black & White for the printed sheet.");
-    state.sheetCustomization={...normalizeSheetCustomization({printMode:selected.value})};
+    state.sheetCustomization=simpleCustomization({printMode:selected.value});
     applySheetCustomizationToCurrent(state);
     renderSheetCustomizer(state);
   }catch(error){console.error("[sheet-customizer] update failed",error);throw error;}
 }
 
+function simpleCustomization(input={}){
+  try{const normalized=normalizeSheetCustomization(input),defaults=createDefaultSheetCustomization();return{...defaults,printMode:normalized.printMode};}
+  catch(error){console.error("[sheet-customizer] simple preset failed",error);throw error;}
+}
 function ensurePanel(){
   try{
     let panel=document.getElementById("sheetCustomizerPanel");if(panel)return panel;
