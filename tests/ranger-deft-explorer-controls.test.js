@@ -110,10 +110,15 @@ test("duplicate, excessive, and unsupported Deft Explorer locks canonicalize to 
 });
 
 test("stale Expertise lock after an upstream proficiency change is re-resolved",()=>{
-  const character=generateCharacter(rangerState(2,{expertise:["arcana"]}));
+  const state=rangerState(2,{expertise:["arcana"]});
+  // Force Human Skillful to a known non-Arcana proficiency so this lifecycle test
+  // actually proves that the stale lock cannot survive an upstream skill change.
+  state.speciesSelections={skill:"medicine"};
+  const character=generateCharacter(state);
   assert.equal(character.expertise.length,1);
   assert.notEqual(character.expertise[0],"arcana");
   assert.ok(character.skills.includes(character.expertise[0]));
+  assert.ok(character.skills.includes("medicine"));
 });
 
 test("saved Ranger restores resolved Deft Explorer choices into Forge state",()=>{
