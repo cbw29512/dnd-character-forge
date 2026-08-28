@@ -104,7 +104,7 @@ function paladin(id){return `<g stroke-linecap="round" stroke-linejoin="round">
   <path class="crest-steel crest-line" fill="${steel(id)}" stroke="#3f444b" stroke-width="4" d="M120 56 82 70v48c0 31 13 56 38 76 25-20 38-45 38-76V70l-38-14Z"/>
   <path class="crest-steel crest-line" fill="${steel(id)}" stroke="#34383e" stroke-width="3" d="m114 40 12 0 2 108-8 22-8-22 2-108Z"/>
   <path class="crest-metal crest-line" fill="${gold(id)}" stroke="#724d17" stroke-width="3" d="M91 91h58v10H91zM105 38h30l-15-19-15 19Z"/>
-  <path fill="#a51f2e" stroke="#f1cf74" stroke-width="2" d="m120 87 9 10-9 10-9-10 9-10Z"/>
+  <path class="crest-dark crest-line" fill="#a51f2e" stroke="#f1cf74" stroke-width="2" d="m120 87 9 10-9 10-9-10 9-10Z"/>
   <path class="crest-line" fill="none" stroke="${gold(id)}" stroke-width="3" d="M88 183c9 7 19 12 32 17 13-5 23-10 32-17"/>
 </g>`;}
 
@@ -127,15 +127,15 @@ function rogue(id){return `<g stroke-linecap="round" stroke-linejoin="round">
 
 function sorcerer(id){return `<g stroke-linecap="round" stroke-linejoin="round">
   <path class="crest-metal crest-line" fill="${gold(id)}" stroke="#704416" stroke-width="3" d="M120 61c20 25 27 43 20 58 18-5 34 8 35 27 1 29-24 52-55 52s-56-23-55-52c1-19 17-32 35-27-7-15 0-33 20-58Z"/>
-  <path fill="#a82156" stroke="#f5d272" stroke-width="3" d="m120 105 17 25-17 32-17-32 17-25Z"/>
-  <path fill="#ff7847" stroke="#ffdf84" stroke-width="3" d="M120 54c8 23 5 38-8 47 14 1 24 10 25 24 1 13-5 23-17 32-12-9-18-19-17-32 1-14 11-23 25-24-13-9-16-24-8-47Z" opacity=".95"/>
+  <path class="crest-dark crest-line" fill="#a82156" stroke="#f5d272" stroke-width="3" d="m120 105 17 25-17 32-17-32 17-25Z"/>
+  <path class="crest-metal crest-line" fill="#ff7847" stroke="#ffdf84" stroke-width="3" d="M120 54c8 23 5 38-8 47 14 1 24 10 25 24 1 13-5 23-17 32-12-9-18-19-17-32 1-14 11-23 25-24-13-9-16-24-8-47Z" opacity=".95"/>
   <path class="crest-line" fill="none" stroke="#f7d578" stroke-width="3" d="M77 181c12 15 26 23 43 23s31-8 43-23M70 99l-17-13m117 13 17-13"/>
 </g>`;}
 
 function warlock(id){return `<g stroke-linecap="round" stroke-linejoin="round">
   <path class="crest-metal crest-line" fill="${gold(id)}" stroke="#654619" stroke-width="3" d="M56 120c17-27 39-41 64-41s47 14 64 41c-17 27-39 41-64 41s-47-14-64-41Z"/>
   <path class="crest-dark crest-line" fill="#25122e" stroke="#e0bd62" stroke-width="3" d="M72 120c14-17 30-25 48-25s34 8 48 25c-14 17-30 25-48 25s-34-8-48-25Z"/>
-  <ellipse fill="#b78b4d" stroke="#f0d37a" stroke-width="3" cx="120" cy="120" rx="18" ry="25"/><path fill="#140b18" d="M120 99c9 9 9 33 0 42-9-9-9-33 0-42Z"/>
+  <ellipse class="crest-metal crest-line" fill="#b78b4d" stroke="#f0d37a" stroke-width="3" cx="120" cy="120" rx="18" ry="25"/><path class="crest-dark" fill="#140b18" d="M120 99c9 9 9 33 0 42-9-9-9-33 0-42Z"/>
   <g class="crest-line" fill="none" stroke="${gold(id)}" stroke-width="5"><path d="M83 160c-20 10-27 26-20 48m37-43c-13 15-16 30-8 46m65-51c20 10 27 26 20 48m-37-43c13 15 16 30 8 46"/><path d="M87 79c-15-12-18-27-8-43m74 43c15-12 18-27 8-43"/></g>
 </g>`;}
 
