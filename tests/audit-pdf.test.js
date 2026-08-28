@@ -44,7 +44,7 @@ test("site exposes the rule-audit stylesheet and PDF export action",()=>{
     const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
     const render=readFileSync(new URL("../src/ui/render.js",import.meta.url),"utf8");
     assert.match(html,/styles\/audit\.css/);
-    assert.match(html,/Rule-audit PDF/);
+    assert.match(html,/printable rules audit/i);
     assert.match(render,/Export PDF \/ Print/);
     assert.match(render,/Rules Audit/);
   }catch(error){console.error("[test] audit UI contract",error);throw error;}
