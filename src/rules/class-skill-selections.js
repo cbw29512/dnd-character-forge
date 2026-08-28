@@ -4,7 +4,7 @@ import { duplicateValues, uniqueStrings } from "./duplicates.js";
 export function resolveClassSkillChoices({cls,background,selections={},reservedSkills=[],guaranteedSkills=[],excludedSkills=[]}){
   try{
     if(!cls?.skillCount||!Array.isArray(cls.skillChoices))return[];
-    const requested=[...(selections.classSkills||[])],duplicates=duplicateValues(requested),backgroundSkills=[...(background?.skills||[])],guaranteed=new Set(guaranteedSkills),excluded=new Set(excludedSkills);
+    const requested=[...(selections.classSkills||[])],duplicates=duplicateValues(requested),backgroundSkills=[...(background?.skills||[])],guaranteed=new Set(guaranteedSkills),featureExcluded=cls.id==="barbarian"&&selections.primalKnowledgeSkill?[selections.primalKnowledgeSkill]:[],excluded=new Set([...excludedSkills,...featureExcluded]);
     if(duplicates.length)throw new Error(`Duplicate ${cls.name} class skill choice: ${duplicates.join(", ")}.`);
     if(requested.length>cls.skillCount)throw new Error(`Choose at most ${cls.skillCount} ${cls.name} class skill proficienc${cls.skillCount===1?"y":"ies"}.`);
     const illegal=requested.filter(skill=>!cls.skillChoices.includes(skill));
@@ -12,8 +12,8 @@ export function resolveClassSkillChoices({cls,background,selections={},reservedS
     const conflicts=requested.filter(skill=>backgroundSkills.includes(skill)||guaranteed.has(skill)||excluded.has(skill));
     if(conflicts.length)throw new Error(`${cls.name} class skill choices must add new proficiencies: ${conflicts.join(", ")}. Choose a different class skill or change the conflicting background/species/class feature choice.`);
 
-    // An excluded skill is supplied by another verified class feature (for example College of Lore),
-    // so an Expertise lock on that skill must not consume a base class proficiency slot.
+    // An excluded skill is supplied by another verified class feature (for example College of Lore
+    // or a fixed Primal Knowledge choice), so it must not consume a base class proficiency slot.
     const requiredReservations=uniqueStrings(reservedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!guaranteed.has(skill)&&!excluded.has(skill)));
     const illegalReservations=requiredReservations.filter(skill=>!cls.skillChoices.includes(skill));
     if(illegalReservations.length)throw new Error(`${cls.name} fixed feature choices require unavailable class skill proficiencies: ${illegalReservations.join(", ")}.`);
