@@ -82,6 +82,7 @@ test("internal uploaded portrait framing remains supported for saved exports",()
 
 test("no uploaded portrait prints the matching premium class crest on sheet and dossier",()=>{
   const character=characterAt("sorcerer"),target={innerHTML:""};
+  character.presentation={sheetCustomization:{packetMode:"deluxe"}};
   renderPremiumPrintSheet(character,target);
   assert.match(target.innerHTML,/class-placeholder class-sorcerer/);
   assert.match(target.innerHTML,/ps-premium-class-crest/);
