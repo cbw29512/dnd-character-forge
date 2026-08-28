@@ -2,6 +2,7 @@ import { ABILITIES, SKILLS } from "../schema.js";
 import { DRAGONBORN_ANCESTRIES, ELF_LINEAGES, GNOME_LINEAGES, GOLIATH_ANCESTRIES, TIEFLING_LEGACIES } from "../data/species-2024.js";
 import { DRAGONBORN_ANCESTRIES_2014, DWARF_TOOLS_2014, LANGUAGES_2014 } from "../data/species-2014.js";
 import { WIZARD_SPELLS_2014, WIZARD_SPELLS_2024 } from "../data/wizard-spells.js";
+import { renderClassOptions, sanitizeClassSelectionsForCurrentState } from "./class-options.js";
 
 const SPELL_ABILITIES=[{id:"int",name:"Intelligence"},{id:"wis",name:"Wisdom"},{id:"cha",name:"Charisma"}];
 const KEEN_SENSES=[{id:"insight",name:"Insight"},{id:"perception",name:"Perception"},{id:"survival",name:"Survival"}];
@@ -24,7 +25,7 @@ export function bindSpeciesOptions(state){
         if(state.ruleset==="2024"&&key==="lineage"&&value!=="high")delete state.speciesSelections.cantrip;
         if(state.ruleset==="2014"&&key==="ability1"&&state.speciesSelections.ability2===value)delete state.speciesSelections.ability2;
         if(state.ruleset==="2014"&&key==="skill1"&&state.speciesSelections.skill2===value)delete state.speciesSelections.skill2;
-        renderSpeciesOptions(state);
+        repairClassState(state);renderSpeciesOptions(state);
       }catch(error){console.error("[species-ui] change failed",error);throw error;}
     });
     renderSpeciesOptions(state);
@@ -32,7 +33,7 @@ export function bindSpeciesOptions(state){
 }
 
 export function resetSpeciesOptions(state){
-  try{state.speciesSelections={};renderSpeciesOptions(state);}
+  try{state.speciesSelections={};repairClassState(state);renderSpeciesOptions(state);}
   catch(error){console.error("[species-ui] reset failed",error);throw error;}
 }
 
@@ -80,6 +81,7 @@ function fields2014(speciesId,selections){
     return[];
   }catch(error){console.error("[species-ui] 2014 field definition failed",error);throw error;}
 }
+function repairClassState(state){try{sanitizeClassSelectionsForCurrentState(state);renderClassOptions(state);}catch(error){console.error("[species-ui] class-choice repair failed",error);throw error;}}
 function languageOptions(excluded){return LANGUAGE_OPTIONS.filter(option=>!excluded.includes(option.id));}
 function fieldHtml(field,selections){
   try{const value=selections[field.key]||"random",options=[`<option value="random">Random</option>`,...field.options.map(option=>`<option value="${escapeHtml(option.id)}"${value===option.id?" selected":""}>${escapeHtml(option.name)}</option>`)].join("");return `<label class="species-choice-field">${escapeHtml(field.label)}<select data-species-choice="${escapeHtml(field.key)}">${options}</select></label>`;}
