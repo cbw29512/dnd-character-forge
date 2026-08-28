@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { forgeDataFor } from "../src/data/forge-data.js";
 import { generateCharacter } from "../src/rules/generator.js";
-import { classChoiceFieldsForState } from "../src/ui/class-options.js";
+import { deriveCharacter } from "../src/rules/derive.js";
+import { validateWeaponMasteryCharacter } from "../src/rules/weapon-mastery-selections.js";
+import { classChoiceFieldsForState, sanitizeWeaponMasterySelectionsForState } from "../src/ui/class-options.js";
 import { classSelectionsFromCharacter } from "../src/ui/class-selection-state.js";
 
 function stateFor(classId,level=1,{ruleset="2024",weaponMasteries=null}={}){
@@ -53,6 +55,35 @@ test("fixed Fighter Weapon Masteries survive generation exactly",()=>{
 test("legacy display-form weapon names canonicalize to engine ids",()=>{
   const character=generateCharacter(stateFor("fighter",1,{weaponMasteries:["Greatsword","Longbow","Spear"]}));
   assert.deepEqual(character.masteryIds,["greatsword","longbow","spear"]);
+});
+
+test("UI transition sanitization preserves unrelated legal class choices",()=>{
+  const state=stateFor("rogue",1,{weaponMasteries:["Greatsword","Spear","spear","Dagger","not-a-weapon"]});
+  state.classSelections.classSkills=["stealth","perception","investigation","deception"];
+  state.classSelections.expertise=["stealth"];
+  const fixed=sanitizeWeaponMasterySelectionsForState(state);
+  assert.deepEqual(fixed,["spear","dagger"]);
+  assert.deepEqual(state.classSelections.weaponMasteries,["spear","dagger"]);
+  assert.deepEqual(state.classSelections.classSkills,["stealth","perception","investigation","deception"]);
+  assert.deepEqual(state.classSelections.expertise,["stealth"]);
+});
+
+test("edition transition removes only stale Weapon Mastery state",()=>{
+  const state=stateFor("fighter",4,{ruleset:"2014",weaponMasteries:["Greatsword","Longbow","Spear"]});
+  state.classSelections.fightingStyle="defense";
+  const fixed=sanitizeWeaponMasterySelectionsForState(state);
+  assert.deepEqual(fixed,[]);
+  assert.equal("weaponMasteries" in state.classSelections,false);
+  assert.equal(state.classSelections.fightingStyle,"defense");
+});
+
+test("malformed UI mastery state becomes Random without clearing other choices",()=>{
+  const state=stateFor("fighter",1,{weaponMasteries:"Greatsword"});
+  state.classSelections.fightingStyle="defense";
+  const fixed=sanitizeWeaponMasterySelectionsForState(state);
+  assert.deepEqual(fixed,[]);
+  assert.equal("weaponMasteries" in state.classSelections,false);
+  assert.equal(state.classSelections.fightingStyle,"defense");
 });
 
 test("Sickle and Spear remain legal for every 2024 mastery class proficient with them",()=>{
@@ -105,6 +136,22 @@ test("malformed persisted mastery state is discarded rather than crashing genera
   const character=generateCharacter(stateFor("fighter",1,{weaponMasteries:"Greatsword"}));
   assert.equal(character.masteryIds.length,3);
   assert.equal(new Set(character.masteryIds).size,3);
+});
+
+test("runtime mastery validator rejects count, duplicate, unknown, and off-pool corruption",()=>{
+  const data=forgeDataFor("2024"),fighter=generateCharacter(stateFor("fighter",1)),rogue=generateCharacter(stateFor("rogue",1));
+  const corruptFighter={...fighter,masteryIds:["greatsword","greatsword","not-a-weapon"]},fighterErrors=validateWeaponMasteryCharacter(corruptFighter,data);
+  assert.ok(fighterErrors.some(error=>/Duplicate Weapon Mastery/.test(error)));
+  assert.ok(fighterErrors.some(error=>/Unknown Weapon Mastery weapon/.test(error)));
+  const corruptRogue={...rogue,masteryIds:["greatsword","dagger"]},rogueErrors=validateWeaponMasteryCharacter(corruptRogue,data);
+  assert.ok(rogueErrors.some(error=>/outside the verified Rogue Weapon Mastery pool/.test(error)));
+  const wrongCount={...fighter,masteryIds:["greatsword"]},countErrors=validateWeaponMasteryCharacter(wrongCount,data);
+  assert.ok(countErrors.some(error=>/should have 3 Weapon Mastery choices/.test(error)));
+});
+
+test("derive boundary fails closed if canonical mastery state is corrupted",()=>{
+  const data=forgeDataFor("2024"),character=generateCharacter(stateFor("rogue",1)),corrupt={...character,masteryIds:["greatsword","dagger"]};
+  assert.throws(()=>deriveCharacter(corrupt,data),/Derived Weapon Mastery validation failed/);
 });
 
 test("saved characters restore resolved Weapon Masteries into Forge state",()=>{
