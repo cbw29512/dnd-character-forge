@@ -32,6 +32,17 @@ test("2024 Weapon Mastery controls expose exact class progression counts",()=>{
   assert.equal(masteryField("fighter",4,"2014"),null);
 });
 
+test("2024 Weapon Mastery pools match the verified weapon-proficiency contract",()=>{
+  const all=["greataxe","handaxe","greatsword","longsword","flail","javelin","scimitar","sickle","spear","shortsword","shortbow","longbow","dagger","quarterstaff","mace"],
+    melee=all.filter(id=>!["shortbow","longbow"].includes(id)),
+    rogue=["handaxe","javelin","shortbow","dagger","quarterstaff","mace","sickle","spear","scimitar","shortsword"],
+    expected={barbarian:melee,fighter:all,paladin:all,ranger:all,rogue};
+  for(const [classId,pool] of Object.entries(expected)){
+    const field=masteryField(classId,1);
+    assert.deepEqual(new Set(field.options.map(option=>option.id)),new Set(pool),`${classId} mastery pool drifted from verified proficiency rules`);
+  }
+});
+
 test("fixed Fighter Weapon Masteries survive generation exactly",()=>{
   const requested=["greatsword","longbow","spear"],character=generateCharacter(stateFor("fighter",1,{weaponMasteries:requested}));
   assert.deepEqual(character.masteryIds,requested);
