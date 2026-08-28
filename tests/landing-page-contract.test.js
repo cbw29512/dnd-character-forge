@@ -5,6 +5,8 @@ import { readFileSync } from "node:fs";
 const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const css=readFileSync(new URL("../styles/landing.css",import.meta.url),"utf8");
 const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
+const heroExperience=readFileSync(new URL("../src/ui/hero-experience.js",import.meta.url),"utf8");
+const heroCss=readFileSync(new URL("../styles/hero-experience.css",import.meta.url),"utf8");
 const renderSafe=readFileSync(new URL("../src/ui/render-safe.js",import.meta.url),"utf8");
 
 test("landing page puts the actual Forge in the launch experience",()=>{
@@ -18,10 +20,15 @@ test("landing page puts the actual Forge in the launch experience",()=>{
   assert.ok(html.indexOf('id="forgeButton"')<html.indexOf('class="field-grid"'),"Forge action should appear before the long choice list");
 });
 
-test("landing page has a deliberate pre-generation result preview",()=>{
+test("landing remains a deliberate pre-generation state until the user Forges",()=>{
   assert.match(html,/class="forge-empty-state"/);
   assert.match(html,/YOUR HERO AWAITS/);
   assert.match(html,/Choose what matters\.<br>We handle the rules\./);
+  const boot=app.match(/function boot\(\)\{[\s\S]*?\}\nfunction createWorkflowGuide/)?.[0]||"";
+  assert.match(boot,/addEventListener\("click",forge\)/);
+  assert.doesNotMatch(boot,/;forge\(\);/,"boot must not replace the landing state with an automatic random character");
+  assert.match(heroExperience,/if\(hero\.querySelector\("\.hero-flow"\)\)return/);
+  assert.match(heroCss,/\.forge-workspace:has\(\.character-sheet\) \.hero-copy\{display:none\}/);
   assert.match(css,/\.forge-workspace:not\(:has\(\.character-sheet\)\)/);
   assert.match(css,/\.forge-workspace:has\(\.character-sheet\)/);
   assert.match(css,/grid-template-areas:\s*"hero panel"\s*"result result"/);
