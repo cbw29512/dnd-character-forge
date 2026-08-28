@@ -65,12 +65,15 @@ function bard(id){return `<g stroke-linecap="round" stroke-linejoin="round">
   <path class="crest-line" fill="none" stroke="#f3d779" stroke-width="3" d="M64 177c20 13 38 20 56 20s36-7 56-20"/>
 </g>`;}
 
-function cleric(id){return `<g stroke-linecap="round" stroke-linejoin="round">
-  <g class="crest-line" stroke="${gold(id)}" stroke-width="4"><path d="M120 55v-24M120 185v24M55 120H31m178 0h-24M74 74 57 57m109 109 17 17m0-126-17 17M74 166l-17 17"/></g>
-  <circle class="crest-line" cx="120" cy="120" r="59" fill="#fff9e9" fill-opacity=".72" stroke="${gold(id)}" stroke-width="4"/>
-  <path class="crest-metal crest-line" fill="${gold(id)}" stroke="#805618" stroke-width="3" d="M108 63h24v39h38v24h-38v66h-24v-66H70v-24h38V63Z"/>
-  <path class="crest-line" fill="none" stroke="#f6dc7c" stroke-width="3" d="M72 196c13-6 23-15 30-28m66 28c-13-6-23-15-30-28"/>
-  <path class="crest-metal" fill="${gold(id)}" d="M59 191c15 1 27 7 36 17-18 4-31-2-36-17Zm122 0c-15 1-27 7-36 17 18 4 31-2 36-17Z"/>
+function cleric(id){return `<g class="crest-sacred-light" stroke-linecap="round" stroke-linejoin="round">
+  <g class="crest-line" fill="none" stroke="${gold(id)}" stroke-width="4"><path d="M120 53V31M120 187v22M53 120H31m178 0h-22M73 73 57 57m110 110 16 16m0-126-16 16M73 167l-16 16"/></g>
+  <circle class="crest-line" cx="120" cy="120" r="61" fill="#fff9e9" fill-opacity=".72" stroke="${gold(id)}" stroke-width="4"/>
+  <circle class="crest-line" cx="120" cy="120" r="48" fill="none" stroke="#f4d978" stroke-width="2.5" opacity=".9"/>
+  <path class="crest-metal crest-line" fill="${gold(id)}" stroke="#805618" stroke-width="3" d="m120 66 12 39 39 15-39 15-12 39-12-39-39-15 39-15 12-39Z"/>
+  <path class="crest-steel crest-line" fill="#fffdf1" stroke="#b17b20" stroke-width="2.5" d="m120 91 8 21 21 8-21 8-8 21-8-21-21-8 21-8 8-21Z"/>
+  <circle class="crest-metal crest-line" cx="120" cy="120" r="9" fill="${gold(id)}" stroke="#7b5319" stroke-width="2"/>
+  <path class="crest-line" fill="none" stroke="#f6dc7c" stroke-width="3" d="M70 196c14-6 25-16 33-29m67 29c-14-6-25-16-33-29"/>
+  <g class="crest-metal" fill="${gold(id)}"><ellipse cx="75" cy="189" rx="5" ry="11" transform="rotate(-48 75 189)"/><ellipse cx="87" cy="181" rx="5" ry="11" transform="rotate(-38 87 181)"/><ellipse cx="165" cy="189" rx="5" ry="11" transform="rotate(48 165 189)"/><ellipse cx="153" cy="181" rx="5" ry="11" transform="rotate(38 153 181)"/></g>
 </g>`;}
 
 function druid(id){return `<g stroke-linecap="round" stroke-linejoin="round">
