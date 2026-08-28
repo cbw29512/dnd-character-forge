@@ -28,6 +28,20 @@
     text-shadow:none!important;
   }
 
+  /* Pseudo-elements are not matched by the universal element rule above. Class
+     skins use them for corner diamonds, stars, feature markers, separators, and
+     ordered-list markers, so each pseudo-element layer needs its own B&W pass. */
+  .sheet-print-ink-saver *::before,
+  .sheet-print-ink-saver *::after{
+    color:#111!important;
+    background-image:none!important;
+    border-color:#555!important;
+    outline-color:#666!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+  .sheet-print-ink-saver *::marker{color:#111!important}
+
   .sheet-print-ink-saver .ps-frame,
   .sheet-print-ink-saver .ps-identity,
   .sheet-print-ink-saver .ps-top-stats,
@@ -69,6 +83,27 @@
   .sheet-print-ink-saver .ps-dossier-portrait-art.has-image img{
     filter:grayscale(1) contrast(1.08)!important;
   }
+
+  /* Inline SVG artwork can carry literal fill/stroke colors that CSS text color
+     cannot neutralize. Force all decorative SVG paint into a monochrome base,
+     then let the premium crest rules below restore deliberate light/dark values. */
+  .sheet-print-ink-saver svg [fill]:not([fill="none"]){fill:#e5e5e5!important}
+  .sheet-print-ink-saver svg [stroke]:not([stroke="none"]){stroke:#333!important}
+
+  /* Premium heraldry has a deliberate line-art monochrome treatment rather than
+     merely printing the color shield as gray mud. The motif-wide fill rule is a
+     defensive backstop so future hard-coded accent colors cannot leak into B&W. */
+  .sheet-print-ink-saver .ps-premium-class-crest{filter:none!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-shadow{filter:none!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-field{fill:#fff!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-motif [fill]:not([fill="none"]){fill:#e5e5e5!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-metal{fill:#d8d8d8!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-steel{fill:#f2f2f2!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-dark{fill:#111!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-line{stroke:#222!important}
+  .sheet-print-ink-saver .ps-premium-class-crest [fill^="url("]{fill:#e5e5e5!important}
+  .sheet-print-ink-saver .ps-portrait-art.class-placeholder:after,
+  .sheet-print-ink-saver .ps-dossier-portrait-art:not(.has-image):after{border-color:#777!important}
 
   /* Preserve the unmistakable class signature without spending ink on large fills. */
   .sheet-print-ink-saver .ps-theme-ribbon{display:block!important}

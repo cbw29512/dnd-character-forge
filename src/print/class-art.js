@@ -1,10 +1,17 @@
+import { classPremiumCrest } from "./class-premium-crests.js";
+
 const ART=Object.freeze({
   barbarian:barbarianArt,bard:bardArt,cleric:clericArt,druid:druidArt,fighter:fighterArt,monk:monkArt,paladin:paladinArt,ranger:rangerArt,rogue:rogueArt,sorcerer:sorcererArt,warlock:warlockArt,wizard:wizardArt
 });
 
 export function classPlaceholderArt(classId){
+  try{return classPremiumCrest(classId);}
+  catch(error){console.error("[print-art] premium placeholder build failed",error);return classPremiumCrest("fighter");}
+}
+
+export function classDecorationArt(classId){
   try{return (ART[classId]||adventurerArt)();}
-  catch(error){console.error("[print-art] placeholder build failed",error);return adventurerArt();}
+  catch(error){console.error("[print-art] decoration build failed",error);return adventurerArt();}
 }
 
 function shell(inner,label="Class crest"){
