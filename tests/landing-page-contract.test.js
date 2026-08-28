@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 const css=readFileSync(new URL("../styles/landing.css",import.meta.url),"utf8");
+const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
 const renderSafe=readFileSync(new URL("../src/ui/render-safe.js",import.meta.url),"utf8");
 
 test("landing page puts the actual Forge in the launch experience",()=>{
@@ -41,6 +42,12 @@ test("landing stylesheet loads after responsive rules and stays out of print",()
   assert.match(css,/@media print\{/);
   assert.match(css,/\.support-card/);
   assert.match(css,/display:none !important/);
+});
+
+test("dynamic controls do not depend on the Forge button being a direct panel child",()=>{
+  assert.match(app,/errorAnchor=document\.getElementById\("error"\)/);
+  assert.match(app,/errorAnchor\?\.parentElement===panel\)panel\.insertBefore\(wrapper,errorAnchor\)/);
+  assert.doesNotMatch(app,/panel\.insertBefore\(wrapper,anchor\)/);
 });
 
 test("post-render action bar is inserted above the workspace, not into the hero grid",()=>{
