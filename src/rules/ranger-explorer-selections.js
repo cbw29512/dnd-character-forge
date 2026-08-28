@@ -35,6 +35,19 @@ export function resolveRangerExpertise({ruleset,level,subclassId=null,skills=[],
   }
 }
 
+export function reserveRangerExplorerLanguages({ruleset,level,subclassId=null,selections={}}){
+  try{
+    if(ruleset!=="2024")return[];
+    const count=rangerProgressionFor(ruleset,level,subclassId).extraLanguages;
+    if(!count)return[];
+    const legal=new Set(RANGER_LANGUAGE_OPTIONS_2024);
+    return requestedList(selections.deftExplorerLanguages).filter(language=>legal.has(language)).slice(0,count);
+  }catch(error){
+    console.error("[ranger-explorer] language reservation failed",error);
+    throw error;
+  }
+}
+
 export function resolveRangerExplorerLanguages({ruleset,level,subclassId=null,baseLanguages=[],selections={}}){
   try{
     if(ruleset!=="2024")return[];
