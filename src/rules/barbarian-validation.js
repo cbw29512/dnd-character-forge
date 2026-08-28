@@ -32,6 +32,7 @@ function validateSubclassFeatures(errors,character){
 function validate2014(errors,character,progression){
   try{
     if(character.masteryIds.length)errors.push("2014 Barbarian cannot contain Weapon Mastery.");
+    if(character.barbarianSelections?.primalKnowledgeSkill)errors.push("2014 Barbarian cannot contain a Primal Knowledge skill choice.");
     if(character.feats.some(feat=>feat.category==="Epic Boon"))errors.push("2014 Barbarian cannot contain a 2024 Epic Boon.");
     if(progression.primalChampion){if(character.abilityMaximums.str!==24||character.abilityMaximums.con!==24)errors.push("2014 Primal Champion must set Strength and Constitution maximums to 24.");}
     for(const name of ["Weapon Mastery — Barbarian","Primal Knowledge","Instinctive Pounce","Brutal Strike","Improved Brutal Strike","Epic Boon"])if(character.features.includes(name))errors.push(`2014 Barbarian cannot contain 2024 feature ${name}.`);
@@ -39,7 +40,16 @@ function validate2014(errors,character,progression){
 }
 function validate2024(errors,character,progression){
   try{
-    if(character.level>=3&&character.skills.length<5)errors.push("2024 Barbarian Primal Knowledge is missing its extra skill proficiency.");
+    const primalSkill=character.barbarianSelections?.primalKnowledgeSkill||null;
+    if(character.level>=3){
+      if(character.skills.length<5)errors.push("2024 Barbarian Primal Knowledge is missing its extra skill proficiency.");
+      if(!primalSkill)errors.push("2024 Barbarian Primal Knowledge choice is not recorded.");
+      else{
+        if(!(character.class.skillChoices||[]).includes(primalSkill))errors.push(`2024 Barbarian Primal Knowledge cannot choose ${primalSkill}.`);
+        if(!character.skills.includes(primalSkill))errors.push(`2024 Barbarian Primal Knowledge skill ${primalSkill} is missing from proficiencies.`);
+        if((character.background.skills||[]).includes(primalSkill)||(character.classSkillChoices||[]).includes(primalSkill))errors.push(`2024 Barbarian Primal Knowledge must grant another skill; ${primalSkill} was already proficient.`);
+      }
+    }else if(primalSkill)errors.push("2024 Barbarian Primal Knowledge appeared before level 3.");
     const legalMasteries=new Set(character.class.masteryChoices||[]);if(!legalMasteries.size)errors.push("2024 Barbarian legal Weapon Mastery pool is missing.");else for(const weaponId of character.masteryIds)if(!legalMasteries.has(weaponId))errors.push(`2024 Barbarian cannot choose Weapon Mastery for ${weaponId}.`);
     const boon=character.feats.some(feat=>feat.id==="boon-irresistible-offense");
     if(character.level>=19&&!boon)errors.push("Level 19+ Barbarian is missing Boon of Irresistible Offense.");
