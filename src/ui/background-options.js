@@ -1,5 +1,6 @@
 import { FORGE_2024 } from "../data/forge-data.js";
 import { magicInitiateCatalog } from "../rules/magic-initiate.js";
+import { sanitizeClassSelectionsForBackgroundChange } from "./class-background-transition.js";
 
 const SPELL_ABILITIES=[{id:"int",name:"Intelligence"},{id:"wis",name:"Wisdom"},{id:"cha",name:"Charisma"}];
 
@@ -12,7 +13,7 @@ export function bindBackgroundOptions(state){
     renderBackgroundOptions(state);
   }catch(error){console.error("[background-ui] bind failed",error);throw error;}
 }
-export function resetBackgroundOptions(state){try{state.backgroundSelections={};renderBackgroundOptions(state);}catch(error){console.error("[background-ui] reset failed",error);throw error;}}
+export function resetBackgroundOptions(state){try{state.backgroundSelections={};sanitizeClassSelectionsForBackgroundChange(state);renderBackgroundOptions(state);}catch(error){console.error("[background-ui] reset failed",error);throw error;}}
 export function renderBackgroundOptions(state){
   try{
     const panel=document.getElementById("backgroundChoicePanel"),fieldsNode=document.getElementById("backgroundChoiceFields"),summary=document.getElementById("backgroundChoiceSummary");if(!panel||!fieldsNode||!summary)throw new Error("Background option UI is incomplete.");
