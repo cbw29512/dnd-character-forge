@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
+import { forgeDataFor } from "../src/data/forge-data.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { classChoiceFieldsForState } from "../src/ui/class-options.js";
 import { classSelectionsFromCharacter } from "../src/ui/class-selection-state.js";
@@ -44,11 +45,11 @@ test("legacy display-form weapon names canonicalize to engine ids",()=>{
 });
 
 test("partial Weapon Mastery locks fill remaining slots with distinct legal choices",()=>{
-  const character=generateCharacter(stateFor("fighter",4,{weaponMasteries:["Longbow"]}));
+  const data=forgeDataFor("2024"),character=generateCharacter(stateFor("fighter",4,{weaponMasteries:["Longbow"]})),pool=character.class.masteryChoices?.length?character.class.masteryChoices:Object.keys(data.weapons);
   assert.equal(character.masteryIds.length,4);
   assert.ok(character.masteryIds.includes("longbow"));
   assert.equal(new Set(character.masteryIds).size,4);
-  for(const id of character.masteryIds)assert.ok(character.class.masteryChoices?.includes(id)||character.attacks||id);
+  for(const id of character.masteryIds){assert.ok(data.weapons[id],`unknown mastery weapon ${id}`);assert.ok(pool.includes(id),`mastery ${id} escaped Fighter pool`);}
 });
 
 test("duplicate, excessive, and unsupported stale mastery state canonicalizes to the legal cap",()=>{
