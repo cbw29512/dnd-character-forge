@@ -12,8 +12,10 @@ export function resolveClassSkillChoices({cls,background,selections={},reservedS
     const conflicts=requested.filter(skill=>backgroundSkills.includes(skill)||guaranteed.has(skill)||excluded.has(skill));
     if(conflicts.length)throw new Error(`${cls.name} class skill choices must add new proficiencies: ${conflicts.join(", ")}. Choose a different class skill or change the conflicting background/species/class feature choice.`);
 
-    const requiredReservations=uniqueStrings(reservedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!guaranteed.has(skill)));
-    const illegalReservations=requiredReservations.filter(skill=>!cls.skillChoices.includes(skill)||excluded.has(skill));
+    // An excluded skill is supplied by another verified class feature (for example College of Lore),
+    // so an Expertise lock on that skill must not consume a base class proficiency slot.
+    const requiredReservations=uniqueStrings(reservedSkills.filter(skill=>!backgroundSkills.includes(skill)&&!guaranteed.has(skill)&&!excluded.has(skill)));
+    const illegalReservations=requiredReservations.filter(skill=>!cls.skillChoices.includes(skill));
     if(illegalReservations.length)throw new Error(`${cls.name} fixed feature choices require unavailable class skill proficiencies: ${illegalReservations.join(", ")}.`);
     const fixed=uniqueStrings([...requested,...requiredReservations]);
     if(fixed.length>cls.skillCount)throw new Error(`${cls.name} fixed skill and Expertise choices require ${fixed.length} class proficiencies, but the class grants only ${cls.skillCount}.`);
