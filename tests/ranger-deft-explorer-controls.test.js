@@ -74,11 +74,32 @@ test("partial Ranger locks leave remaining Expertise and language choices Random
   assert.equal(new Set(character.languages).size,character.languages.length);
 });
 
-test("premature and excessive Deft Explorer locks are rejected",()=>{
-  assert.throws(()=>generateCharacter(rangerState(1,{expertise:["stealth"]})),/unavailable before level 2/);
-  assert.throws(()=>generateCharacter(rangerState(1,{deftExplorerLanguages:["Sylvan"]})),/unavailable before Ranger level 2/);
-  assert.throws(()=>generateCharacter(rangerState(2,{expertise:["stealth","survival"]})),/Choose at most 1 Ranger Expertise/);
-  assert.throws(()=>generateCharacter(rangerState(2,{deftExplorerLanguages:["Sylvan","Celestial","Draconic"]})),/Choose at most 2 Deft Explorer/);
+test("stale Deft Explorer locks are discarded when the feature is unavailable",()=>{
+  const character=generateCharacter(rangerState(1,{expertise:["stealth"],deftExplorerLanguages:["Sylvan"]}));
+  assert.deepEqual(character.expertise,[]);
+  assert.deepEqual(character.rangerSelections.expertise,[]);
+  assert.deepEqual(character.rangerSelections.deftExplorerLanguages,[]);
+  assert.equal(character.languages.includes("Sylvan"),false);
+});
+
+test("duplicate, excessive, and unsupported Deft Explorer locks canonicalize to legal counts",()=>{
+  const character=generateCharacter(rangerState(2,{expertise:["stealth","stealth","not-a-skill","survival"],deftExplorerLanguages:["Sylvan","Sylvan","Not A Language","Celestial","Draconic"]}));
+  assert.equal(character.expertise.length,1);
+  assert.equal(new Set(character.expertise).size,1);
+  assert.ok(character.skills.includes(character.expertise[0]));
+  assert.equal(character.rangerSelections.deftExplorerLanguages.length,2);
+  assert.equal(new Set(character.rangerSelections.deftExplorerLanguages).size,2);
+  for(const language of character.rangerSelections.deftExplorerLanguages)assert.ok(RANGER_LANGUAGE_OPTIONS_2024.includes(language));
+  assert.equal(character.languages.includes("Not A Language"),false);
+  assert.equal(character.validation.valid,true);
+  assert.equal(character.audit.rawIntegrity,true);
+});
+
+test("stale Expertise lock after an upstream proficiency change is re-resolved",()=>{
+  const character=generateCharacter(rangerState(2,{expertise:["arcana"]}));
+  assert.equal(character.expertise.length,1);
+  assert.notEqual(character.expertise[0],"arcana");
+  assert.ok(character.skills.includes(character.expertise[0]));
 });
 
 test("saved Ranger restores resolved Deft Explorer choices into Forge state",()=>{
