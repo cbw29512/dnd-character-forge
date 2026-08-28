@@ -44,6 +44,15 @@ test("legacy display-form weapon names canonicalize to engine ids",()=>{
   assert.deepEqual(character.masteryIds,["greatsword","longbow","spear"]);
 });
 
+test("Sickle and Spear remain legal for every 2024 mastery class proficient with them",()=>{
+  for(const classId of ["barbarian","paladin","ranger","rogue"]){
+    const character=generateCharacter(stateFor(classId,1,{weaponMasteries:["Sickle","Spear"]}));
+    assert.deepEqual(character.masteryIds,["sickle","spear"],`${classId} lost a legal Simple weapon mastery`);
+  }
+  const fighter=generateCharacter(stateFor("fighter",1,{weaponMasteries:["Sickle","Spear","Greatsword"]}));
+  assert.deepEqual(fighter.masteryIds,["sickle","spear","greatsword"]);
+});
+
 test("partial Weapon Mastery locks fill remaining slots with distinct legal choices",()=>{
   const data=forgeDataFor("2024"),character=generateCharacter(stateFor("fighter",4,{weaponMasteries:["Longbow"]})),pool=character.class.masteryChoices?.length?character.class.masteryChoices:Object.keys(data.weapons);
   assert.equal(character.masteryIds.length,4);
