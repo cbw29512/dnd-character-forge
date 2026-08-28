@@ -16,6 +16,10 @@ export function createHeroExperience(){
     ensureHeroStyles();
     const hero=document.querySelector(".hero-copy");
     if(!hero)return;
+    // The polished landing page owns its hero messaging. Keep the legacy
+    // promise block only as a fallback for older/custom shells that do not
+    // already provide the static three-step hero experience.
+    if(hero.querySelector(".hero-flow"))return;
     if(!hero.querySelector(".pregen-promise")){
       const promise=document.createElement("section");
       promise.className="pregen-promise";
