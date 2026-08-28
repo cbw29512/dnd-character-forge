@@ -71,10 +71,12 @@
   }
 
   /* Premium heraldry has a deliberate line-art monochrome treatment rather than
-     merely printing the color shield as gray mud. */
+     merely printing the color shield as gray mud. The motif-wide fill rule is a
+     defensive backstop so future hard-coded accent colors cannot leak into B&W. */
   .sheet-print-ink-saver .ps-premium-class-crest{filter:none!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-shadow{filter:none!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-field{fill:#fff!important}
+  .sheet-print-ink-saver .ps-premium-class-crest .crest-motif [fill]:not([fill="none"]){fill:#e5e5e5!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-metal{fill:#d8d8d8!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-steel{fill:#f2f2f2!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-dark{fill:#111!important}
