@@ -8,7 +8,7 @@ import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
 const ROOT=fileURLToPath(new URL("../",import.meta.url)),OUT=path.join(ROOT,"tests/.browser-print"),CHROME=process.env.CHROME_BIN||"google-chrome";
-const CASES=["barbarian","monk","rogue","wizard"];
+const CASES=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
 mkdirSync(OUT,{recursive:true});
 for(const classId of CASES)verifyInkSaver(classId);
 console.log(`[class-signature-ink-saver] verified ${CASES.length} monochrome premium class crests in Chrome`);
