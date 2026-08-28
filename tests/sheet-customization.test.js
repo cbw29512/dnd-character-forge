@@ -24,17 +24,15 @@ function characterAt(classId,level="20"){
   }
 }
 
-test("premium sheet has one stable class preset with color as the default",()=>{
+test("premium sheet production preset is stable",()=>{
   const value=createDefaultSheetCustomization();
   assert.deepEqual(value,{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium",packetMode:"deluxe",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
 });
 
-test("legacy sheet knobs collapse to the production preset while black and white survives",()=>{
-  const value=normalizeSheetCustomization({style:"minimal",paper:"white",ornament:"minimal",frame:"clean",packetMode:"table",portraitX:2,portraitY:99,portraitZoom:165,portraitFilter:"grayscale",portraitVisible:false,printMode:"ink-saver"});
-  assert.deepEqual(value,{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"ink-saver",packetMode:"deluxe",portraitVisible:true,portraitX:50,portraitY:32,portraitZoom:100,portraitFilter:"natural"});
-  assert.match(sheetCustomizationClasses(value),/sheet-print-ink-saver/);
-  assert.match(sheetCustomizationClasses(value),/sheet-paper-ivory/);
-  assert.match(sheetCustomizationClasses(value),/sheet-frame-class/);
+test("internal customization normalization remains backward compatible",()=>{
+  const value=normalizeSheetCustomization({style:"unknown",paper:"white",portraitX:-50,portraitY:500,portraitZoom:999,portraitFilter:"grayscale",portraitVisible:false,printMode:"ink-saver"});
+  assert.equal(value.style,"ornate");assert.equal(value.paper,"white");assert.equal(value.portraitX,0);assert.equal(value.portraitY,100);assert.equal(value.portraitZoom,165);assert.equal(value.portraitFilter,"grayscale");assert.equal(value.portraitVisible,false);assert.equal(value.printMode,"ink-saver");
+  assert.match(sheetCustomizationClasses(value),/sheet-paper-white/);assert.match(sheetCustomizationClasses(value),/portrait-filter-grayscale/);assert.match(sheetCustomizationClasses(value),/sheet-print-ink-saver/);
 });
 
 test("all twelve core classes have distinct premium theme hooks and original symbolic crests",()=>{
@@ -67,19 +65,18 @@ test("supported classes project useful class-specific resource modules",()=>{
   assert.equal(buildPremiumPrintModel(characterAt("rogue")).classUtility,null);
 });
 
-test("old portrait presentation controls cannot hide or restyle the printed portrait",()=>{
+test("internal portrait visibility and tuning never alter character rules",()=>{
   const character=characterAt("fighter"),original={ac:character.ac,hp:character.hp,attacks:structuredClone(character.attacks),validation:structuredClone(character.validation)};
-  character.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD",sheetCustomization:{portraitVisible:false,portraitX:3,portraitY:97,portraitZoom:165,portraitFilter:"grayscale",style:"minimal",paper:"white",frame:"clean",printMode:"ink-saver"}};
-  const model=buildPremiumPrintModel(character);
-  assert.equal(model.portraitDataUrl,"data:image/jpeg;base64,QUJD");assert.equal(model.presentation.customization.portraitVisible,true);assert.equal(model.presentation.customization.portraitX,50);assert.equal(model.presentation.customization.portraitY,32);assert.equal(model.presentation.customization.portraitZoom,100);assert.equal(model.presentation.customization.portraitFilter,"natural");assert.match(model.presentation.classes,/sheet-style-ornate/);assert.match(model.presentation.classes,/sheet-print-ink-saver/);assert.equal(character.ac,original.ac);assert.equal(character.hp,original.hp);assert.deepEqual(character.attacks,original.attacks);assert.deepEqual(character.validation,original.validation);
+  character.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD",sheetCustomization:{portraitVisible:false,portraitX:3,portraitY:97,portraitZoom:165,style:"minimal",printMode:"ink-saver"}};
+  const model=buildPremiumPrintModel(character);assert.equal(model.portraitDataUrl,null);assert.match(model.presentation.classes,/sheet-style-minimal/);assert.match(model.presentation.classes,/sheet-print-ink-saver/);assert.equal(character.ac,original.ac);assert.equal(character.hp,original.hp);assert.deepEqual(character.attacks,original.attacks);assert.deepEqual(character.validation,original.validation);
 });
 
-test("uploaded portrait automatically replaces the class crest using the fixed production framing",()=>{
+test("internal uploaded portrait framing remains supported for saved exports",()=>{
   const character=characterAt("wizard"),target={innerHTML:""};
   character.presentation={portraitDataUrl:"data:image/jpeg;base64,QUJD",sheetCustomization:{portraitVisible:true,portraitX:7,portraitY:84,portraitZoom:143,portraitFilter:"painted",frame:"filigree"}};
   const model=renderPremiumPrintSheet(character,target);
-  assert.equal(model.portraitDataUrl,"data:image/jpeg;base64,QUJD");assert.equal(model.presentation.customization.portraitX,50);assert.equal(model.presentation.customization.portraitY,32);assert.equal(model.presentation.customization.portraitZoom,100);
-  assert.match(target.innerHTML,/has-image/);assert.match(target.innerHTML,/portrait-filter-natural/);assert.match(target.innerHTML,/sheet-frame-class/);assert.match(target.innerHTML,/--portrait-x:50%;--portrait-y:32%;--portrait-zoom:1/);assert.match(target.innerHTML,/object-position:var\(--portrait-x\) var\(--portrait-y\)/);assert.doesNotMatch(target.innerHTML,/class-placeholder class-wizard/);
+  assert.equal(model.portraitDataUrl,"data:image/jpeg;base64,QUJD");assert.equal(model.presentation.customization.portraitX,7);assert.equal(model.presentation.customization.portraitY,84);assert.equal(model.presentation.customization.portraitZoom,143);
+  assert.match(target.innerHTML,/has-image/);assert.match(target.innerHTML,/portrait-filter-painted/);assert.match(target.innerHTML,/sheet-frame-filigree/);assert.match(target.innerHTML,/--portrait-x:7%;--portrait-y:84%;--portrait-zoom:1\.43/);assert.match(target.innerHTML,/object-position:var\(--portrait-x\) var\(--portrait-y\)/);assert.doesNotMatch(target.innerHTML,/class-placeholder class-wizard/);
 });
 
 test("no uploaded portrait prints the class crest on the first page",()=>{
