@@ -50,7 +50,7 @@ test("Random background generation preserves locked class skills instead of dupl
 });
 
 test("a fixed background conflict fails closed with an actionable class-skill error",()=>{
-  assert.throws(()=>generateCharacter(stateFor("2024","fighter",{background:"soldier",classSelections:{classSkills:["athletics"]}})),/class or College of Lore skill is already granted|different class skill\/background combination/);
+  assert.throws(()=>generateCharacter(stateFor("2024","fighter",{background:"soldier",classSelections:{classSkills:["athletics"]}})),/fixed class or feature skill|different skill\/background combination/);
 });
 
 test("Expertise reservations and fixed class skills share the real class proficiency budget",()=>{
