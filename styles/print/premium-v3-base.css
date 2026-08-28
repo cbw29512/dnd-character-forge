@@ -44,7 +44,8 @@
   .utility-barbarian .ps-rage-tracker small{grid-column:1/-1;font-size:4.35pt;letter-spacing:.018em;color:#6d5846}
   .utility-barbarian .ps-rage-infinite{font:700 11pt Georgia,serif;color:var(--ps-primary)}
 
-  /* Uploaded portraits remain art; class fallback crests stay large enough to read. */
+  /* Uploaded portraits remain art; symbolic class fallbacks own the full frame. */
   .ps-portrait-art.has-image img,.ps-dossier-portrait-art.has-image img{width:100%;height:100%;object-fit:cover}
-  .ps-placeholder-svg{max-width:92%;max-height:92%}
+  .ps-placeholder-svg{max-width:96%;max-height:96%}
+  .ps-portrait-art.class-placeholder .ps-class-crest,.ps-dossier-portrait-art .ps-class-crest{width:96%;height:96%;display:block;margin:auto}
 }

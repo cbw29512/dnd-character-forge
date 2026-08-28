@@ -27,6 +27,9 @@ export function createDefaultSheetCustomization(){
   catch(error){console.error("[sheet-customization] default creation failed",error);throw error;}
 }
 
+// The engine retains the mature preset vocabulary for saved files, tests, and
+// programmatic exports. The player-facing Forge intentionally exposes only
+// printMode; sheet-customizer.js collapses interactive state to the deluxe preset.
 export function normalizeSheetCustomization(input={}){
   try{
     const source=input&&typeof input==="object"?input:{};
