@@ -28,6 +28,19 @@
     text-shadow:none!important;
   }
 
+  /* Pseudo-elements are not matched by the universal element rule above. Class
+     skins use them for corner diamonds, stars, feature markers, and separator
+     ornaments, so they need an explicit monochrome pass as well. */
+  .sheet-print-ink-saver *::before,
+  .sheet-print-ink-saver *::after{
+    color:#111!important;
+    background-image:none!important;
+    border-color:#555!important;
+    outline-color:#666!important;
+    box-shadow:none!important;
+    text-shadow:none!important;
+  }
+
   .sheet-print-ink-saver .ps-frame,
   .sheet-print-ink-saver .ps-identity,
   .sheet-print-ink-saver .ps-top-stats,
