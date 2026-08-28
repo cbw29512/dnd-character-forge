@@ -17,6 +17,7 @@ import { SCHOLAR_SKILLS } from "../rules/wizard-selections.js";
 import { forgeDataFor } from "../data/forge-data.js";
 import { advancementChoicesForState } from "../rules/advancement-feats.js";
 import { ADVANCEMENT_ASI_ID } from "../data/feat-library.js";
+import { sanitizeActiveClassChoiceFields } from "./class-choice-sanitizer.js";
 import { spellPickerConfigForState } from "./spell-picker-config.js";
 
 const DIVINE_ORDERS=[{id:"protector",name:"Protector"},{id:"thaumaturge",name:"Thaumaturge"}];
@@ -54,15 +55,27 @@ export function sanitizeWeaponMasterySelectionsForState(state){
     return fixed;
   }catch(error){console.error("[class-ui] Weapon Mastery state sanitization failed",error);throw error;}
 }
-export function clearIllegalClassSelectionsForLevel(state){
+export function sanitizeClassSelectionsForCurrentState(state){
   try{
-    const fields=classChoiceFieldsForState(state),active=new Set(fields.map(field=>field.key)),indexedLimits=new Map();for(const field of fields)if(field.type==="indexed")indexedLimits.set(field.key,Math.max(indexedLimits.get(field.key)??-1,field.index));
+    state.classSelections=state.classSelections||{};
+    let fields=classChoiceFieldsForState(state),active=new Set(fields.map(field=>field.key));
     for(const key of CLASS_SELECTION_KEYS)if(key!=="favoredEnemyLanguages"&&!active.has(key))delete state.classSelections[key];
     sanitizeWeaponMasterySelectionsForState(state);
-    for(const field of fields)if(field.type==="multi"&&Array.isArray(state.classSelections[field.key])&&state.classSelections[field.key].length>field.max)state.classSelections[field.key]=state.classSelections[field.key].slice(0,field.max);
-    for(const [key,lastIndex] of indexedLimits){if(!Array.isArray(state.classSelections[key]))continue;state.classSelections[key]=state.classSelections[key].slice(0,lastIndex+1);while(state.classSelections[key].length&&state.classSelections[key].at(-1)==null)state.classSelections[key].pop();if(!state.classSelections[key].length)delete state.classSelections[key];}
+    // Rebuild fields after removing choices that are no longer active. Some legal
+    // pools (notably Warlock invocations) depend on another active choice.
+    fields=classChoiceFieldsForState(state);
+    state.classSelections=sanitizeActiveClassChoiceFields(state.classSelections,fields);
+    // A first cleanup can remove a prerequisite. Resolve once more so dependent
+    // choices cannot survive on a legal-option list computed from stale state.
+    fields=classChoiceFieldsForState(state);
+    state.classSelections=sanitizeActiveClassChoiceFields(state.classSelections,fields);
     if(state.constraints.class!=="ranger"||state.ruleset!=="2014"||!(state.classSelections.favoredEnemies||[]).length)delete state.classSelections.favoredEnemyLanguages;else if(Array.isArray(state.classSelections.favoredEnemyLanguages))state.classSelections.favoredEnemyLanguages=state.classSelections.favoredEnemyLanguages.slice(0,state.classSelections.favoredEnemies.length);
-    validateClassChoiceState(state);renderClassOptions(state);
+    return state.classSelections;
+  }catch(error){console.error("[class-ui] class selection sanitization failed",error);throw error;}
+}
+export function clearIllegalClassSelectionsForLevel(state){
+  try{
+    sanitizeClassSelectionsForCurrentState(state);validateClassChoiceState(state);renderClassOptions(state);
   }catch(error){console.error("[class-ui] level cleanup failed",error);state.classSelections={};renderClassOptions(state);}
 }
 export function classChoiceFieldsForState(state){
