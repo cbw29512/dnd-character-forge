@@ -40,25 +40,48 @@ export function canonicalWeaponMasteryId(value,data,candidates=null){
   }catch(error){console.error("[weapon-mastery] canonicalization failed",error);throw error;}
 }
 
-export function resolveWeaponMasteryChoices({ruleset,level,subclassId=null,cls,data,equipment,selections={}}){
+export function sanitizeWeaponMasterySelections({ruleset,level,subclassId=null,cls,data,selections={}}){
   try{
     const count=weaponMasteryCountFor(ruleset,cls?.id,level,subclassId);
     if(!count)return[];
     const pool=weaponMasteryPoolFor(cls,data);
     if(pool.length<count)throw new Error(`${cls?.name||"Class"} requires ${count} Weapon Mastery choices, but only ${pool.length} verified weapons are available.`);
 
-    // UI-created state is strict, but older saves can contain labels, duplicates,
-    // retired weapons, or too many choices after a level/class change. Canonicalize
-    // those values here so illegal persisted state can never survive generation.
+    // Persisted state is an input boundary, not trusted rules state. Old saves can
+    // contain display labels, retired IDs, duplicate choices, or a larger count
+    // from a previous class/level. Keep only canonical legal choices in order.
     const raw=Array.isArray(selections.weaponMasteries)?selections.weaponMasteries:[],fixed=[];
     for(const value of raw){
       const id=canonicalWeaponMasteryId(value,data,pool);
       if(id&&!fixed.includes(id))fixed.push(id);
       if(fixed.length===count)break;
     }
+    return fixed;
+  }catch(error){console.error("[weapon-mastery] selection sanitization failed",error);throw error;}
+}
 
-    // Preserve the Forge's useful default: when slots remain Random, prefer weapons
-    // the generated character actually carries before filling from the legal class pool.
+export function validateWeaponMasteryCharacter(character,data){
+  try{
+    const errors=[],ids=Array.isArray(character?.masteryIds)?character.masteryIds:[],count=weaponMasteryCountFor(character?.ruleset,character?.class?.id,character?.level,character?.subclass?.id),pool=weaponMasteryPoolFor(character?.class,data);
+    if(ids.length!==count)errors.push(`${character?.class?.name||"Class"} should have ${count} Weapon Mastery choice${count===1?"":"s"}.`);
+    const seen=new Set();
+    for(const id of ids){
+      if(seen.has(id))errors.push(`Duplicate Weapon Mastery choice: ${id}.`);else seen.add(id);
+      if(!data?.weapons?.[id])errors.push(`Unknown Weapon Mastery weapon: ${id}.`);
+      else if(!pool.includes(id))errors.push(`${data.weapons[id].name} is outside the verified ${character?.class?.name||"class"} Weapon Mastery pool.`);
+    }
+    return errors;
+  }catch(error){console.error("[weapon-mastery] character validation failed",error);throw error;}
+}
+
+export function resolveWeaponMasteryChoices({ruleset,level,subclassId=null,cls,data,equipment,selections={}}){
+  try{
+    const count=weaponMasteryCountFor(ruleset,cls?.id,level,subclassId);
+    if(!count)return[];
+    const pool=weaponMasteryPoolFor(cls,data),fixed=sanitizeWeaponMasterySelections({ruleset,level,subclassId,cls,data,selections});
+
+    // When slots remain Random, prefer weapons the generated character actually
+    // carries before filling from the legal class pool.
     const equipped=[];
     for(const value of equipment?.weapons||[]){
       const id=canonicalWeaponMasteryId(value,data,pool);
