@@ -48,9 +48,9 @@ export function legacySafeCharacter(character){
 }
 
 /*
- * The Forge is intentionally a one-direction cascade, but its primary
- * actions stay at the top. This lets a first-time visitor leave everything
- * Random and immediately Forge, then Reforge or Print without scrolling.
+ * The landing state keeps Forge inside the launch card so the primary action
+ * is visible immediately. After the first successful render, the same button
+ * moves into a persistent top action bar above the workspace.
  */
 function ensureTopActions(target){
   try{
@@ -63,9 +63,7 @@ function ensureTopActions(target){
       bar.className="forge-action-bar";
       bar.setAttribute("aria-label","Character Forge actions");
       bar.innerHTML=`<div class="forge-action-copy"><span class="section-kicker">READY TO PLAY?</span><strong>Forge, reforge, or print</strong><small>Leave everything Random for a complete legal character, or set only the choices you care about.</small></div><div class="forge-action-buttons"></div>`;
-      const hero=document.querySelector(".hero-copy");
-      (hero||workspace.parentNode).parentNode?.insertBefore?.(bar,hero||workspace);
-      if(!bar.parentNode)workspace.parentNode.insertBefore(bar,workspace);
+      workspace.parentNode.insertBefore(bar,workspace);
     }
 
     const buttons=bar.querySelector(".forge-action-buttons");
