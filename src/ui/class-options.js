@@ -12,7 +12,7 @@ import { FAVORED_ENEMY_TYPES_2014, FAVORED_ENEMY_LANGUAGE_OPTIONS_2014, NATURAL_
 import { RANGER_LANGUAGE_OPTIONS_2024 } from "../rules/ranger-explorer-selections.js";
 import { fighterProgressionFor } from "../rules/fighter.js";
 import { rogueProgressionFor } from "../rules/rogue.js";
-import { weaponMasteryCountFor, weaponMasteryPoolFor } from "../rules/weapon-mastery-selections.js";
+import { sanitizeWeaponMasterySelections, weaponMasteryCountFor, weaponMasteryPoolFor } from "../rules/weapon-mastery-selections.js";
 import { SCHOLAR_SKILLS } from "../rules/wizard-selections.js";
 import { forgeDataFor } from "../data/forge-data.js";
 import { advancementChoicesForState } from "../rules/advancement-feats.js";
@@ -44,10 +44,21 @@ export function bindClassOptions(state,{onChange=()=>{},showToast=()=>{}}={}){
 }
 export function resetClassOptions(state){try{state.classSelections={};renderClassOptions(state);}catch(error){console.error("[class-ui] reset failed",error);throw error;}}
 export function renderClassOptions(state){try{const panel=document.getElementById("classChoicePanel"),fieldsNode=document.getElementById("classChoiceFields"),summary=document.getElementById("classChoiceSummary");if(!panel||!fieldsNode||!summary)throw new Error("Class option UI is incomplete.");const fields=classChoiceFieldsForState(state);panel.hidden=fields.length===0;fieldsNode.innerHTML=fields.map(field=>fieldHtml(field,state.classSelections||{})).join("");summary.textContent=fields.length?summaryText(fields,state.classSelections||{}):"";}catch(error){console.error("[class-ui] render failed",error);throw error;}}
+export function sanitizeWeaponMasterySelectionsForState(state){
+  try{
+    state.classSelections=state.classSelections||{};
+    const data=forgeDataFor(state.ruleset),cls=data.classes.find(item=>item.id===state.constraints.class);
+    if(!cls){delete state.classSelections.weaponMasteries;return[];}
+    const fixed=sanitizeWeaponMasterySelections({ruleset:state.ruleset,level:resolvedLevel(state),subclassId:resolvedSubclassId(state),cls,data,selections:state.classSelections});
+    if(fixed.length)state.classSelections.weaponMasteries=fixed;else delete state.classSelections.weaponMasteries;
+    return fixed;
+  }catch(error){console.error("[class-ui] Weapon Mastery state sanitization failed",error);throw error;}
+}
 export function clearIllegalClassSelectionsForLevel(state){
   try{
     const fields=classChoiceFieldsForState(state),active=new Set(fields.map(field=>field.key)),indexedLimits=new Map();for(const field of fields)if(field.type==="indexed")indexedLimits.set(field.key,Math.max(indexedLimits.get(field.key)??-1,field.index));
     for(const key of CLASS_SELECTION_KEYS)if(key!=="favoredEnemyLanguages"&&!active.has(key))delete state.classSelections[key];
+    sanitizeWeaponMasterySelectionsForState(state);
     for(const field of fields)if(field.type==="multi"&&Array.isArray(state.classSelections[field.key])&&state.classSelections[field.key].length>field.max)state.classSelections[field.key]=state.classSelections[field.key].slice(0,field.max);
     for(const [key,lastIndex] of indexedLimits){if(!Array.isArray(state.classSelections[key]))continue;state.classSelections[key]=state.classSelections[key].slice(0,lastIndex+1);while(state.classSelections[key].length&&state.classSelections[key].at(-1)==null)state.classSelections[key].pop();if(!state.classSelections[key].length)delete state.classSelections[key];}
     if(state.constraints.class!=="ranger"||state.ruleset!=="2014"||!(state.classSelections.favoredEnemies||[]).length)delete state.classSelections.favoredEnemyLanguages;else if(Array.isArray(state.classSelections.favoredEnemyLanguages))state.classSelections.favoredEnemyLanguages=state.classSelections.favoredEnemyLanguages.slice(0,state.classSelections.favoredEnemies.length);
