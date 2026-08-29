@@ -8,8 +8,26 @@ const KNOWN_2014=Object.freeze({1:0,2:2,3:3,4:3,5:4,6:4,7:5,8:5,9:6,10:6,11:7,12
 const PREPARED_2024=Object.freeze({1:2,2:3,3:4,4:5,5:6,6:6,7:7,8:7,9:9,10:9,11:10,12:10,13:11,14:11,15:12,16:12,17:14,18:14,19:15,20:15});
 const MARK_CASTS_2024=Object.freeze({1:2,2:2,3:2,4:2,5:3,6:3,7:3,8:3,9:4,10:4,11:4,12:4,13:5,14:5,15:5,16:5,17:6,18:6,19:6,20:6});
 
-export const FAVORED_ENEMY_TYPES_2014=Object.freeze(["aberrations","beasts","celestials","constructs","dragons","elementals","fey","fiends","giants","monstrosities","oozes","plants","undead"]);
-export const FAVORED_ENEMY_LANGUAGE_OPTIONS_2014=Object.freeze({aberrations:Object.freeze(["Deep Speech"]),beasts:Object.freeze([]),celestials:Object.freeze(["Celestial"]),constructs:Object.freeze([]),dragons:Object.freeze(["Draconic"]),elementals:Object.freeze(["Primordial"]),fey:Object.freeze(["Sylvan"]),fiends:Object.freeze(["Abyssal","Infernal"]),giants:Object.freeze(["Giant"]),monstrosities:Object.freeze([]),oozes:Object.freeze([]),plants:Object.freeze([]),undead:Object.freeze([])});
+export const FAVORED_ENEMY_CREATURE_TYPES_2014=Object.freeze(["aberrations","beasts","celestials","constructs","dragons","elementals","fey","fiends","giants","monstrosities","oozes","plants","undead"]);
+export const FAVORED_ENEMY_HUMANOID_RACES_2014=Object.freeze({
+  humans:Object.freeze({name:"Humans",languages:Object.freeze(["Common"])}),
+  dwarves:Object.freeze({name:"Dwarves",languages:Object.freeze(["Dwarvish"])}),
+  elves:Object.freeze({name:"Elves",languages:Object.freeze(["Elvish"])}),
+  halflings:Object.freeze({name:"Halflings",languages:Object.freeze(["Halfling"])}),
+  goblins:Object.freeze({name:"Goblins",languages:Object.freeze(["Common","Goblin"])}),
+  hobgoblins:Object.freeze({name:"Hobgoblins",languages:Object.freeze(["Common","Goblin"])}),
+  bugbears:Object.freeze({name:"Bugbears",languages:Object.freeze(["Common","Goblin"])}),
+  orcs:Object.freeze({name:"Orcs",languages:Object.freeze(["Common","Orc"])}),
+  gnolls:Object.freeze({name:"Gnolls",languages:Object.freeze(["Gnoll"])}),
+  lizardfolk:Object.freeze({name:"Lizardfolk",languages:Object.freeze(["Draconic"])}),
+  kobolds:Object.freeze({name:"Kobolds",languages:Object.freeze(["Common","Draconic"])})
+});
+const TYPE_LANGUAGES_2014=Object.freeze({aberrations:Object.freeze(["Deep Speech"]),beasts:Object.freeze([]),celestials:Object.freeze(["Celestial"]),constructs:Object.freeze([]),dragons:Object.freeze(["Draconic"]),elementals:Object.freeze(["Primordial"]),fey:Object.freeze(["Sylvan"]),fiends:Object.freeze(["Abyssal","Infernal"]),giants:Object.freeze(["Giant"]),monstrosities:Object.freeze([]),oozes:Object.freeze([]),plants:Object.freeze([]),undead:Object.freeze([])});
+const HUMANOID_PAIR_IDS_2014=buildHumanoidPairIds();
+// Backward-compatible export name: this is the complete legal Favored Enemy choice
+// pool represented by this verified SRD slice, including the RAW two-humanoid-races alternative.
+export const FAVORED_ENEMY_TYPES_2014=Object.freeze([...FAVORED_ENEMY_CREATURE_TYPES_2014,...HUMANOID_PAIR_IDS_2014]);
+export const FAVORED_ENEMY_LANGUAGE_OPTIONS_2014=Object.freeze(Object.fromEntries(FAVORED_ENEMY_TYPES_2014.map(id=>[id,Object.freeze(favoredEnemyLanguagesFor(id))])));
 export const NATURAL_EXPLORER_TERRAINS_2014=Object.freeze(["arctic","coast","desert","forest","grassland","mountain","swamp","underdark"]);
 export const HUNTER_PREY_2014=Object.freeze({"colossus-slayer":"Colossus Slayer","giant-killer":"Giant Killer","horde-breaker":"Horde Breaker"});
 export const HUNTER_DEFENSE_2014=Object.freeze({"escape-the-horde":"Escape the Horde","multiattack-defense":"Multiattack Defense","steel-will":"Steel Will"});
@@ -47,12 +65,19 @@ export function resolveRangerClassSelections(ruleset,level,subclassId,selections
 export function rangerSpellSlots(ruleset,level){try{return Object.freeze({...rangerProgressionFor(ruleset,level).slots});}catch(error){console.error("[ranger] slot lookup failed",error);throw error;}}
 export function rangerMaxSpellLevel(ruleset,level){try{const levels=Object.keys(rangerSpellSlots(ruleset,level)).map(Number);return levels.length?Math.max(...levels):0;}catch(error){console.error("[ranger] max spell level failed",error);throw error;}}
 export function rangerSpellChoiceCount(character){try{const p=rangerProgressionFor(character.ruleset,character.level,character.subclass?.id,abilityMod(character.abilities.wis));return character.ruleset==="2014"?p.known:p.prepared;}catch(error){console.error("[ranger] spell choice count failed",error);throw error;}}
+export function favoredEnemyLabel2014(id){try{if(FAVORED_ENEMY_CREATURE_TYPES_2014.includes(id))return pretty(id);if(HUMANOID_PAIR_IDS_2014.includes(id))return id;throw new Error(`Unknown 2014 Favored Enemy choice: ${id}.`);}catch(error){console.error("[ranger] Favored Enemy label failed",error);throw error;}}
 
 function resolveFavoredEnemyLanguages(favoredEnemies,selected){
   try{
     const fixed=Array.isArray(selected)?selected:[];if(fixed.length>favoredEnemies.length)throw new Error(`Choose at most ${favoredEnemies.length} Favored Enemy languages.`);
-    return favoredEnemies.map((enemy,index)=>{const options=FAVORED_ENEMY_LANGUAGE_OPTIONS_2014[enemy]||[],requested=fixed[index]||null;if(!options.length){if(requested)throw new Error(`${pretty(enemy)} has no verified type-wide Favored Enemy language in this Forge slice.`);return null;}if(requested&&!options.includes(requested))throw new Error(`${requested} is not a verified Favored Enemy language for ${pretty(enemy)}.`);return requested||pick(options);});
+    return favoredEnemies.map((enemy,index)=>{const options=FAVORED_ENEMY_LANGUAGE_OPTIONS_2014[enemy]||[],requested=fixed[index]||null;if(!options.length){if(requested)throw new Error(`${favoredEnemyLabel2014(enemy)} has no verified Favored Enemy language in this Forge slice.`);return null;}if(requested&&!options.includes(requested))throw new Error(`${requested} is not a verified Favored Enemy language for ${favoredEnemyLabel2014(enemy)}.`);return requested||pick(options);});
   }catch(error){console.error("[ranger] Favored Enemy language selection failed",error);throw error;}
+}
+function buildHumanoidPairIds(){const entries=Object.values(FAVORED_ENEMY_HUMANOID_RACES_2014),pairs=[];for(let i=0;i<entries.length;i++)for(let j=i+1;j<entries.length;j++)pairs.push(`Humanoids: ${entries[i].name} & ${entries[j].name}`);return Object.freeze(pairs);}
+function favoredEnemyLanguagesFor(id){
+  if(TYPE_LANGUAGES_2014[id])return[...TYPE_LANGUAGES_2014[id]];
+  const match=String(id).match(/^Humanoids: (.+) & (.+)$/);if(!match)return[];
+  const byName=new Map(Object.values(FAVORED_ENEMY_HUMANOID_RACES_2014).map(entry=>[entry.name,entry]));const first=byName.get(match[1]),second=byName.get(match[2]);if(!first||!second)return[];return[...new Set([...first.languages,...second.languages])];
 }
 function resolveList(selected,available,required,label){try{const fixed=Array.isArray(selected)?selected:[];const duplicates=duplicateValues(fixed);if(duplicates.length)throw new Error(`Duplicate ${label}: ${duplicates.join(", ")}`);const legal=new Set(available),bad=fixed.filter(id=>!legal.has(id));if(bad.length)throw new Error(`Unsupported ${label}: ${bad.join(", ")}`);if(fixed.length>required)throw new Error(`Choose at most ${required} ${label} option${required===1?"":"s"}.`);return[...fixed,...sample(available,required-fixed.length,fixed)];}catch(error){console.error(`[ranger] ${label} selection failed`,error);throw error;}}
 function resolveOne(selected,map,label){try{if(selected!=null&&selected!=="random"&&!map[selected])throw new Error(`Unsupported ${label}: ${selected}.`);return selected&&selected!=="random"?selected:pick(Object.keys(map));}catch(error){console.error(`[ranger] ${label} selection failed`,error);throw error;}}
