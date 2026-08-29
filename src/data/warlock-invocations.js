@@ -23,7 +23,7 @@ const INVOCATIONS_2014=Object.freeze([
   i("mire-the-mind","Mire the Mind",5,"Cast Slow once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
   i("misty-visions","Misty Visions",2,"Cast Silent Image at will without expending a spell slot or material components.",{timing:"At will"}),
   i("one-with-shadows","One with Shadows",5,"In dim light or darkness, use your action to become invisible until you move or take an action or reaction.",{timing:"Action"}),
-  i("otherworldly-leap","Otherworldly Leap",9,"Cast Jump on yourself at will without expending a spell slot.",{timing:"At will"}),
+  i("otherworldly-leap","Otherworldly Leap",9,"Cast Jump on yourself at will without expending a spell slot or material components.",{timing:"At will"}),
   i("repelling-blast","Repelling Blast",2,"When Eldritch Blast hits a creature, push it up to 10 feet away from you in a straight line.",{targetCantrip:"eldritch-blast",timing:"Eldritch Blast hit"}),
   i("sculptor-of-flesh","Sculptor of Flesh",7,"Cast Polymorph once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
   i("sign-of-ill-omen","Sign of Ill Omen",5,"Cast Bestow Curse once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
@@ -57,7 +57,7 @@ const INVOCATIONS_2024=Object.freeze([
   i("one-with-shadows","One with Shadows",5,"While in dim light or darkness, cast Invisibility on yourself without expending a spell slot.",{timing:"At will in dim light/darkness"}),
   i("otherworldly-leap","Otherworldly Leap",2,"Cast Jump on yourself without expending a spell slot.",{timing:"At will"}),
   i("pact-of-the-blade","Pact of the Blade",1,"Conjure or bond with a Simple or Martial melee weapon; you are proficient with it, can use it as a focus, and can use Charisma for its attack and damage rolls.",{timing:"Bonus Action"}),
-  i("pact-of-the-chain","Pact of the Chain",1,"Learn Find Familiar and cast it as a Magic action without expending a spell slot; special familiar forms become available, and you can trade one attack for the familiar's Reaction attack.",{timing:"Magic action"}),
+  i("pact-of-the-chain","Pact of the Chain",1,"Learn Find Familiar and cast it as a Magic action without a spell slot; special familiar forms become available, and you can trade one attack for the familiar's Reaction attack.",{timing:"Magic action"}),
   i("pact-of-the-tome","Pact of the Tome",1,"At the end of a Short or Long Rest, conjure a Book of Shadows containing three cantrips and two level-1 Ritual spells from any class; while the book is on your person, those spells are prepared Warlock spells for you.",{timing:"Short or Long Rest"}),
   i("repelling-blast","Repelling Blast",2,"Choose a known attack-roll Warlock cantrip; when it hits a Large-or-smaller creature, push the target up to 10 feet straight away.",{targetCantrip:"eldritch-blast",repeatable:true,timing:"Cantrip hit"}),
   i("thirsting-blade","Thirsting Blade",5,"Gain Extra Attack for your pact weapon, allowing two attacks when you take the Attack action.",{requiresInvocation:"pact-of-the-blade",timing:"Attack action"}),
@@ -67,9 +67,9 @@ const INVOCATIONS_2024=Object.freeze([
 ]);
 
 const TARGET_POOLS_2024=Object.freeze({
-  "agonizing-blast":Object.freeze(["chill-touch","eldritch-blast","mind-sliver","poison-spray","thunderclap","toll-the-dead","true-strike"]),
-  "eldritch-spear":Object.freeze(["eldritch-blast","mind-sliver","poison-spray","toll-the-dead"]),
-  "repelling-blast":Object.freeze(["chill-touch","eldritch-blast","true-strike"])
+  "agonizing-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"]),
+  "eldritch-spear":Object.freeze(["eldritch-blast","poison-spray"]),
+  "repelling-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"])
 });
 
 export function warlockInvocationsFor(ruleset){try{if(ruleset==="2014")return INVOCATIONS_2014;if(ruleset==="2024")return INVOCATIONS_2024;throw new Error(`Unsupported Warlock invocation ruleset: ${ruleset}.`);}catch(error){console.error("[warlock-invocations] lookup failed",error);throw error;}}
