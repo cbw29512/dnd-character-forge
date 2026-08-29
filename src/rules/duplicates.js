@@ -52,6 +52,7 @@ export function consolidateInventory(items) {
 
 function parseQuantity(value) {
   const text = String(value).trim();
+  if (/^\d+\s+(?:CP|SP|EP|GP|PP)$/i.test(text)) return { quantity:1, name:text };
   const prefix = text.match(/^(\d+)\s+(.+)$/);
   if (prefix) return { quantity:Number(prefix[1]), name:prefix[2].trim() };
   const suffix = text.match(/^(.+?)\s+x(\d+)$/i);
