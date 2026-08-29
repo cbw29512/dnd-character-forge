@@ -4,6 +4,11 @@
   .ps-dossier-portrait,.ps-dossier-title,.ps-dossier-seal,.ps-dossier-story,.ps-dossier-panel{box-sizing:border-box;border:1px solid color-mix(in srgb,var(--ps-frame) 72%,#d5bf97);background:rgba(249,241,222,.84);box-shadow:inset 0 0 .07in rgba(91,66,36,.06)}
   .ps-dossier-portrait{padding:.055in;overflow:hidden}
   .ps-dossier-portrait-art{height:100%;display:grid;place-items:center;align-content:center;gap:.04in;overflow:hidden;border:2px solid var(--ps-accent);background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.16),transparent 30%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary));color:#f8e8c5;box-shadow:inset 0 0 .23in rgba(0,0,0,.42)}
+  /* Built-in class portraits must own a real box in the dossier. The generic
+     color placeholder uses display:contents elsewhere, which can collapse the
+     image's percentage height inside this print grid and leave a blank frame. */
+  .ps-dossier-portrait-art:not(.has-image) .ps-placeholder-illustrated{display:block;width:100%;height:100%;min-width:0;min-height:0}
+  .ps-dossier-portrait-art:not(.has-image) .ps-class-portrait-image{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
   .ps-dossier-portrait-art small{font:700 6.2pt Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase}
   .ps-dossier-title{padding:.13in .16in;display:flex;flex-direction:column;justify-content:center}
   .ps-dossier-title>small{font:700 6.2pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ps-muted)}
