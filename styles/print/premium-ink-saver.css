@@ -90,26 +90,17 @@
   .sheet-print-ink-saver svg [stroke]:not([stroke="none"]){stroke:#333!important}
 
   /* The current class placeholders inherit their motif paint from SVG groups.
-     Apply the neutral paint directly to every inherited descendant as well as the
-     group itself so Chrome cannot anti-alias a thin edge against a class color. */
+     Apply neutral paint directly to the inherited descendants. */
   .sheet-print-ink-saver .ps-class-crest{color:#111!important}
   .sheet-print-ink-saver .ps-class-crest g[fill]:not([fill="none"]),
   .sheet-print-ink-saver .ps-class-crest g[fill]:not([fill="none"]) *{fill:#e5e5e5!important;color:#111!important}
   .sheet-print-ink-saver .ps-class-crest g[stroke]:not([stroke="none"]),
   .sheet-print-ink-saver .ps-class-crest g[stroke]:not([stroke="none"]) *{stroke:#333!important;color:#111!important}
 
-  /* PDF transparency can acquire a slight warm fringe during Chrome/Poppler
-     antialiasing even when the source color is neutral. Replace the decorative
-     SVG opacity ladder with opaque neutral grays in Ink Saver only. */
-  .sheet-print-ink-saver .ps-class-crest [opacity=".035"]{opacity:1!important;fill:#f8f8f8!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".05"]{opacity:1!important;fill:#f4f4f4!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".22"]{opacity:1!important;fill:#d8d8d8!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".55"]{opacity:1!important;stroke:#777!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".38"]{opacity:1!important;stroke:#999!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".18"]{opacity:1!important;stroke:#c8c8c8!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".24"]{opacity:1!important;stroke:#b8b8b8!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".45"]{opacity:1!important;stroke:#888!important}
-  .sheet-print-ink-saver .ps-class-crest [opacity=".32"]{opacity:1!important;stroke:#a4a4a4!important}
+  /* Chrome PDF transparency can acquire a slight warm fringe when Poppler
+     rasterizes it. The low-opacity shield/circle flourishes are decorative, so
+     Ink Saver omits them entirely and keeps the solid class motif vector-sharp. */
+  .sheet-print-ink-saver .ps-class-crest [opacity]{display:none!important}
 
   /* Legacy premium heraldry remains neutral if an older saved export is opened. */
   .sheet-print-ink-saver .ps-premium-class-crest{filter:none!important}
