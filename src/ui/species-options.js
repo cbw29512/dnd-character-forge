@@ -4,7 +4,7 @@ import { DRAGONBORN_ANCESTRIES_2014, DWARF_TOOLS_2014, LANGUAGES_2014 } from "..
 import { RAW_2024 } from "../data/raw-2024.js";
 import { WIZARD_SPELLS_2014, WIZARD_SPELLS_2024 } from "../data/wizard-spells.js";
 import { HUMAN_ORIGIN_FEAT_OPTIONS_2024, SKILLED_PROFICIENCY_OPTIONS_2024 } from "../rules/origin-feats.js";
-import { ARTISAN_TOOLS_2024, MAGIC_INITIATE_LISTS_2024, MUSICAL_INSTRUMENTS_2024 } from "../data/origin-feats-2024.js";
+import { MAGIC_INITIATE_LISTS_2024 } from "../data/origin-feats-2024.js";
 import { magicInitiateCatalog } from "../rules/magic-initiate.js";
 import { renderClassOptions, sanitizeClassSelectionsForCurrentState } from "./class-options.js";
 
@@ -16,7 +16,7 @@ const ABILITY_OPTIONS=ABILITIES.map(id=>({id,name:abilityName(id)}));
 const LANGUAGE_OPTIONS=LANGUAGES_2014.map(name=>({id:name,name}));
 const WIZARD_CANTRIPS=WIZARD_SPELLS_2024.filter(spell=>spell.level===0).map(spell=>({id:spell.id,name:spell.name}));
 const WIZARD_CANTRIPS_2014=WIZARD_SPELLS_2014.filter(spell=>spell.level===0).map(spell=>({id:spell.id,name:spell.name}));
-const HUMAN_DEPENDENT_KEYS=["magicInitiateList","originSpellcastingAbility","originCantrip1","originCantrip2","originLevel1Spell","skilledProficiency1","skilledProficiency2","skilledProficiency3","crafterTool1","crafterTool2","crafterTool3","musicianInstrument1","musicianInstrument2","musicianInstrument3"];
+const HUMAN_DEPENDENT_KEYS=["magicInitiateList","originSpellcastingAbility","originCantrip1","originCantrip2","originLevel1Spell","skilledProficiency1","skilledProficiency2","skilledProficiency3"];
 
 export function bindSpeciesOptions(state){
   try{
@@ -75,7 +75,7 @@ function fieldsFor(ruleset,speciesId,selections,state){
 
 function humanFields(selections,state){
   try{
-    const fields=[{key:"size",label:"Size",options:SIZES},{key:"skill",label:"Skillful proficiency",options:SKILL_OPTIONS},{key:"originFeat",label:"Versatile Origin feat",options:humanOriginFeatOptions(state)}];
+    const fields=[{key:"size",label:"Size",options:SIZES},{key:"skill",label:"Skillful proficiency",options:SKILL_OPTIONS},{key:"originFeat",label:"Versatile Origin feat (SRD)",options:humanOriginFeatOptions(state)}];
     if(selections.originFeat==="magic-initiate"){
       const lists=availableMagicInitiateLists(state).map(id=>({id,name:abilityName(id)}));
       fields.push({key:"magicInitiateList",label:"Magic Initiate spell list",options:lists},{key:"originSpellcastingAbility",label:"Magic Initiate spellcasting ability",options:SPELL_ABILITIES});
@@ -91,8 +91,6 @@ function humanFields(selections,state){
         fields.push({key:`skilledProficiency${index}`,label:`Skilled proficiency ${index}`,options});
       }
     }
-    if(selections.originFeat==="crafter")fields.push(...tripleFields("crafterTool","Crafter artisan tool",ARTISAN_TOOLS_2024,selections));
-    if(selections.originFeat==="musician")fields.push(...tripleFields("musicianInstrument","Musician instrument",MUSICAL_INSTRUMENTS_2024,selections));
     return fields;
   }catch(error){console.error("[species-ui] Human field definition failed",error);throw error;}
 }
@@ -122,7 +120,6 @@ function availableMagicInitiateLists(state){
   const background=RAW_2024.backgrounds.find(item=>item.id===state.constraints.background),used=background?.magicInitiateList;
   return MAGIC_INITIATE_LISTS_2024.filter(list=>list!==used);
 }
-function tripleFields(prefix,label,values,selections){return[1,2,3].map(index=>({key:`${prefix}${index}`,label:`${label} ${index}`,options:values.filter(value=>![1,2,3].filter(n=>n!==index).map(n=>selections[`${prefix}${n}`]).includes(value)).map(value=>({id:value,name:value}))}));}
 function clearHumanOriginDependents(selections){for(const key of HUMAN_DEPENDENT_KEYS)delete selections[key];}
 function repairClassState(state){try{sanitizeClassSelectionsForCurrentState(state);renderClassOptions(state);}catch(error){console.error("[species-ui] class-choice repair failed",error);throw error;}}
 function languageOptions(excluded){return LANGUAGE_OPTIONS.filter(option=>!excluded.includes(option.id));}
