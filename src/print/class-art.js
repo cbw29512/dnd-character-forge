@@ -1,12 +1,10 @@
-import { classPremiumCrest } from "./class-premium-crests.js";
-
 const ART=Object.freeze({
   barbarian:barbarianArt,bard:bardArt,cleric:clericArt,druid:druidArt,fighter:fighterArt,monk:monkArt,paladin:paladinArt,ranger:rangerArt,rogue:rogueArt,sorcerer:sorcererArt,warlock:warlockArt,wizard:wizardArt
 });
 
 export function classPlaceholderArt(classId){
-  try{return classPremiumCrest(classId);}
-  catch(error){console.error("[print-art] premium placeholder build failed",error);return classPremiumCrest("fighter");}
+  try{return (ART[classId]||adventurerArt)();}
+  catch(error){console.error("[print-art] placeholder build failed",error);return fighterArt();}
 }
 
 export function classDecorationArt(classId){
@@ -15,7 +13,7 @@ export function classDecorationArt(classId){
 }
 
 function shell(inner,label="Class crest"){
-  return `<svg class="ps-placeholder-svg ps-class-crest" viewBox="0 0 180 220" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg">
+  return `<svg class="ps-placeholder-svg ps-class-crest" viewBox="0 0 180 220" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
     <g fill="currentColor">
       <path opacity=".035" d="M90 9 160 38v72c0 47-27 82-70 101-43-19-70-54-70-101V38L90 9Z"/>
       <circle opacity=".05" cx="90" cy="99" r="72"/><circle opacity=".035" cx="90" cy="99" r="59"/>
