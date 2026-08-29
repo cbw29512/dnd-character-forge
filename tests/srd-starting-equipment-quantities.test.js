@@ -37,7 +37,7 @@ test("2024 Fighter package B retains the exact SRD weapon/ammunition loadout",()
   assert.equal(quantity(c,"Scimitar"),1);
   assert.equal(quantity(c,"Shortsword"),1);
   assert.equal(quantity(c,"Longbow"),1);
-  assert.equal(quantity(c,"20 Arrows"),1);
+  assert.equal(quantity(c,"Arrows"),20);
   assert.equal(quantity(c,"Quiver"),1);
   assert.equal(quantity(c,"Dungeoneer's Pack"),1);
   assert.equal(quantity(c,"11 GP"),1);
