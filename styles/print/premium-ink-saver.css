@@ -85,14 +85,20 @@
   }
 
   /* Inline SVG artwork can carry literal fill/stroke colors that CSS text color
-     cannot neutralize. Force all decorative SVG paint into a monochrome base,
-     then let the premium crest rules below restore deliberate light/dark values. */
+     cannot neutralize. Force all decorative SVG paint into a monochrome base. */
   .sheet-print-ink-saver svg [fill]:not([fill="none"]){fill:#e5e5e5!important}
   .sheet-print-ink-saver svg [stroke]:not([stroke="none"]){stroke:#333!important}
 
-  /* Premium heraldry has a deliberate line-art monochrome treatment rather than
-     merely printing the color shield as gray mud. The motif-wide fill rule is a
-     defensive backstop so future hard-coded accent colors cannot leak into B&W. */
+  /* The current class placeholders inherit their motif paint from SVG groups.
+     Apply the neutral paint directly to every inherited descendant as well as the
+     group itself so Chrome cannot anti-alias a thin edge against a class color. */
+  .sheet-print-ink-saver .ps-class-crest{color:#111!important}
+  .sheet-print-ink-saver .ps-class-crest g[fill]:not([fill="none"]),
+  .sheet-print-ink-saver .ps-class-crest g[fill]:not([fill="none"]) *{fill:#e5e5e5!important;color:#111!important}
+  .sheet-print-ink-saver .ps-class-crest g[stroke]:not([stroke="none"]),
+  .sheet-print-ink-saver .ps-class-crest g[stroke]:not([stroke="none"]) *{stroke:#333!important;color:#111!important}
+
+  /* Legacy premium heraldry remains neutral if an older saved export is opened. */
   .sheet-print-ink-saver .ps-premium-class-crest{filter:none!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-shadow{filter:none!important}
   .sheet-print-ink-saver .ps-premium-class-crest .crest-field{fill:#fff!important}
