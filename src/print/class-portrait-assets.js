@@ -14,14 +14,18 @@ import wizard from "./class-portraits/wizard.js";
 const PORTRAITS=Object.freeze({barbarian,bard,cleric,druid,fighter,monk,paladin,ranger,rogue,sorcerer,warlock,wizard});
 
 export function classPortraitDataUrl(classId){
-  const id=String(classId||"").trim().toLowerCase();
-  return PORTRAITS[id]||"";
+  try{
+    const id=String(classId||"").trim().toLowerCase();
+    return PORTRAITS[id]||"";
+  }catch(error){console.error("[class-portrait-assets] portrait lookup failed",error);return"";}
 }
 
 export function classPortraitArt(classId){
-  const id=String(classId||"").trim().toLowerCase();
-  const src=PORTRAITS[id];
-  if(!src)return "";
-  const label=`${id.charAt(0).toUpperCase()+id.slice(1)} class portrait placeholder`;
-  return `<img class="ps-class-portrait-image" src="${src}" alt="${label}" decoding="sync">`;
+  try{
+    const id=String(classId||"").trim().toLowerCase();
+    const src=PORTRAITS[id];
+    if(!src)return "";
+    const label=`${id.charAt(0).toUpperCase()+id.slice(1)} class portrait placeholder`;
+    return `<img class="ps-class-portrait-image" src="${src}" alt="${label}" decoding="sync" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block">`;
+  }catch(error){console.error("[class-portrait-assets] portrait render failed",error);return"";}
 }
