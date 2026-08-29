@@ -15,18 +15,14 @@ function humanState(level="1"){
   return state;
 }
 
-test("2024 Human Versatile exposes every Basic Rules Origin feat family",()=>{
-  assert.deepEqual(ORIGIN_FEATS_2024.map(feat=>feat.id),["alert","crafter","healer","lucky","magic-initiate","musician","savage-attacker","skilled","tavern-brawler","tough"]);
+test("2024 Human Versatile exposes every SRD 5.2.1 Origin feat family",()=>{
+  assert.deepEqual(ORIGIN_FEATS_2024.map(feat=>feat.id),["alert","magic-initiate","savage-attacker","skilled"]);
 });
 
-test("2024 Human Versatile honors a fixed Tough choice and applies its HP bonus",()=>{
-  const state=humanState("5");
+test("2024 Human Versatile rejects PHB-only Origin feats in the SRD production slice",()=>{
+  const state=humanState();
   state.speciesSelections.originFeat="tough";
-  const character=generateCharacter(state);
-  assert.ok(character.feats.some(feat=>feat.id==="tough"));
-  assert.equal(character.toughHpBonus,10);
-  assert.equal(character.speciesChoices.originFeat,"tough");
-  assert.equal(character.validation.valid,true);
+  assert.throws(()=>generateCharacter(state),/Unsupported Human Versatile SRD Origin feat/i);
 });
 
 test("2024 Skilled can grant a mixed combination of skills and tools",()=>{
