@@ -4,10 +4,12 @@ import { readFileSync } from "node:fs";
 
 const heroCss=readFileSync(new URL("../styles/hero-experience.css",import.meta.url),"utf8");
 const polishCss=readFileSync(new URL("../styles/forge-polish.css",import.meta.url),"utf8");
+const mobileCss=readFileSync(new URL("../styles/forge-mobile-polish.css",import.meta.url),"utf8");
 const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
 
 test("desktop Forge loads the app-first console layer",()=>{
   assert.match(heroCss,/^@import url\("\.\/forge-polish\.css"\);/);
+  assert.match(heroCss,/@import url\("\.\/forge-mobile-polish\.css"\);/);
   assert.match(polishCss,/max-width:1480px/);
   assert.match(polishCss,/grid-template-columns:minmax\(520px,590px\) minmax\(0,1fr\)/);
   assert.match(polishCss,/grid-template-areas:[\s\S]*?"hero hero"[\s\S]*?"panel result"/);
@@ -25,6 +27,15 @@ test("builder is a dark compact console instead of a parchment form slab",()=>{
   assert.match(polishCss,/\.forge-workspace:not\(:has\(\.character-sheet\)\) \.field-grid\{[\s\S]*?grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
   assert.match(polishCss,/\.forge-panel \.field::before\{display:none!important;content:none!important\}/);
   assert.match(polishCss,/background:#22262c;[\s\S]*?color:#f0ebe2/);
+});
+
+test("tablet and phone share the app-first Forge console instead of reverting to the old form",()=>{
+  assert.match(mobileCss,/@media \(max-width:980px\)/);
+  assert.match(mobileCss,/linear-gradient\(180deg,#1b1e23 0%,#15171b 100%\)/);
+  assert.match(mobileCss,/\.hero-flow\{display:none!important\}/);
+  assert.match(mobileCss,/\.forge-panel \.field::before\{display:none!important;content:none!important\}/);
+  assert.match(mobileCss,/@media \(max-width:680px\)/);
+  assert.match(mobileCss,/\.forge-panel \.launch-cta \.forge-button\{[\s\S]*?width:100%/);
 });
 
 test("secondary presentation settings are progressively disclosed",()=>{
@@ -45,4 +56,5 @@ test("generated result leads with the character before starting-resource detail"
 test("empty state reads as a parchment sheet on the Forge workbench",()=>{
   assert.match(polishCss,/\.empty-sheet\{[\s\S]*?background:linear-gradient\(145deg,#f5efe4,#e8decd\)/);
   assert.match(polishCss,/\.forge-empty-state\{[\s\S]*?border:0;[\s\S]*?background:transparent/);
+  assert.match(mobileCss,/\.empty-sheet\{[\s\S]*?background:linear-gradient\(145deg,#f5efe4,#e8decd\)/);
 });
