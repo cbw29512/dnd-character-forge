@@ -23,7 +23,7 @@ const REFERENCE_PAGES=Object.freeze({
     "species:half-orc:Ability Score Increase":"7","species:half-orc:Darkvision":"7","species:half-orc:Menacing":"7","species:half-orc:Relentless Endurance":"7","species:half-orc:Savage Attacks":"7",
     "species:tiefling:Ability Score Increase":"7","species:tiefling:Darkvision":"7","species:tiefling:Hellish Resistance":"7","species:tiefling:Infernal Legacy":"7",
     "background:Shelter of the Faithful":"61",
-    "style:Defense":"24","style:Archery":"24","style:Great Weapon Fighting":"24",
+    "style:Defense":"24","style:Archery":"24","style:Dueling":"24","style:Great Weapon Fighting":"24","style:Protection":"24","style:Two-Weapon Fighting":"24",
     "feature:Second Wind":"24","feature:Action Surge":"25","feature:Improved Critical":"25","feature:Extra Attack":"25","feature:Indomitable":"25",
     "feature:Remarkable Athlete":"25","feature:Additional Fighting Style":"25","feature:Superior Critical":"25","feature:Survivor":"25",
     "feature:Ability Score Improvement:fighter":"25","feature:Ability Score Improvement:wizard":"53","feature:Ability Score Improvement:cleric":"17","feature:Ability Score Improvement:rogue":"40",
