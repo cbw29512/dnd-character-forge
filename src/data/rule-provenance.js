@@ -45,7 +45,7 @@ const REFERENCE_PAGES=Object.freeze({
     "species:human:Resourceful":"86","species:human:Skillful":"86","species:human:Versatile":"86",
     "species:orc:Adrenaline Rush":"86","species:orc:Darkvision":"86","species:orc:Relentless Endurance":"86",
     "species:tiefling:Darkvision":"86","species:tiefling:Fiendish Legacy":"86","species:tiefling:Otherworldly Presence":"86",
-    "feat:Alert":"87","feat:Crafter":"87","feat:Healer":"87","feat:Lucky":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Druid)":"87","feat:Magic Initiate (Wizard)":"87","feat:Musician":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Tavern Brawler":"87","feat:Tough":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Fate":"88","feat:Boon of Spell Recall":"88","feat:Boon of the Night Spirit":"88",
+    "feat:Alert":"87","feat:Magic Initiate (Cleric)":"87","feat:Magic Initiate (Druid)":"87","feat:Magic Initiate (Wizard)":"87","feat:Savage Attacker":"87","feat:Skilled":"87","feat:Boon of Combat Prowess":"88","feat:Boon of Fate":"88","feat:Boon of Spell Recall":"88","feat:Boon of the Night Spirit":"88",
     "style:Archery":"87","style:Defense":"88","style:Great Weapon Fighting":"88","style:Two-Weapon Fighting":"88",
     "feature:Second Wind":"48","feature:Weapon Mastery":"48","feature:Action Surge":"48","feature:Tactical Mind":"48","feature:Ability Score Improvement":"87","feature:Extra Attack":"48","feature:Tactical Shift":"48",
     "feature:Indomitable":"48","feature:Tactical Master":"48","feature:Two Extra Attacks":"48","feature:Studied Attacks":"48","feature:Epic Boon:fighter":"48","feature:Three Extra Attacks":"48",
