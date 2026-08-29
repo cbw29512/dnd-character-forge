@@ -1,6 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { classPlaceholderArt } from "../src/print/class-art.js";
+import { classPortraitDataUrl } from "../src/print/class-portrait-assets.js";
 
 const CLASSES=["barbarian","bard","cleric","druid","fighter","monk","paladin","ranger","rogue","sorcerer","warlock","wizard"];
 const EXPECTED={
@@ -19,8 +22,14 @@ const EXPECTED={
 };
 
 for(const classId of CLASSES){
-  test(`${classId} print placeholder is crisp class-specific vector art`,()=>{
-    const art=classPlaceholderArt(classId);
+  test(`${classId} fallback carries a premium portrait and crisp ink-saver emblem`,()=>{
+    const art=classPlaceholderArt(classId),portrait=classPortraitDataUrl(classId);
+    assert.match(portrait,/^data:image\/webp;base64,/);
+    assert.ok(portrait.length>1000,`${classId}: portrait data is unexpectedly small`);
+    assert.match(art,/class="ps-placeholder-illustrated"/);
+    assert.match(art,/class="ps-class-portrait-image"/);
+    assert.match(art,/data:image\/webp;base64,/);
+    assert.match(art,/class="ps-placeholder-emblem"/);
     assert.match(art,/class="ps-placeholder-svg ps-class-crest"/);
     assert.match(art,/shape-rendering="geometricPrecision"/);
     assert.match(art,EXPECTED[classId]);
@@ -29,8 +38,24 @@ for(const classId of CLASSES){
   });
 }
 
+test("all class portraits are distinct assets",()=>{
+  const portraits=CLASSES.map(classPortraitDataUrl);
+  assert.equal(new Set(portraits).size,CLASSES.length);
+});
+
+test("print CSS shows illustration in color and emblem in Ink Saver",()=>{
+  const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-ink-saver.css",import.meta.url)),"utf8");
+  assert.match(css,/\.ps-placeholder-illustrated\s*\{display:contents\}/);
+  assert.match(css,/\.ps-placeholder-emblem\s*\{display:none\}/);
+  assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-illustrated\s*\{display:none!important\}/);
+  assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-emblem\s*\{display:grid!important/);
+  assert.match(css,/\.ps-class-portrait-image\s*\{[^}]*object-fit:cover!important/s);
+});
+
 test("unknown class falls back safely without throwing",()=>{
   const art=classPlaceholderArt("unknown-class");
+  assert.equal(classPortraitDataUrl("unknown-class"),"");
   assert.match(art,/ps-placeholder-svg/);
   assert.match(art,/Adventurer crest/);
+  assert.doesNotMatch(art,/ps-class-portrait-image/);
 });

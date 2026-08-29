@@ -1,10 +1,17 @@
+import { classPortraitArt } from "./class-portrait-assets.js";
+
 const ART=Object.freeze({
   barbarian:barbarianArt,bard:bardArt,cleric:clericArt,druid:druidArt,fighter:fighterArt,monk:monkArt,paladin:paladinArt,ranger:rangerArt,rogue:rogueArt,sorcerer:sorcererArt,warlock:warlockArt,wizard:wizardArt
 });
 
 export function classPlaceholderArt(classId){
-  try{return (ART[classId]||adventurerArt)();}
-  catch(error){console.error("[print-art] placeholder build failed",error);return fighterArt();}
+  try{
+    const id=String(classId||"").trim().toLowerCase();
+    const emblem=(ART[id]||adventurerArt)();
+    const portrait=classPortraitArt(id);
+    if(!portrait)return emblem;
+    return `<span class="ps-placeholder-illustrated">${portrait}</span><span class="ps-placeholder-emblem" aria-hidden="true">${emblem}</span>`;
+  }catch(error){console.error("[print-art] placeholder build failed",error);return fighterArt();}
 }
 
 export function classDecorationArt(classId){
