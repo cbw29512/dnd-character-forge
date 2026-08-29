@@ -31,13 +31,19 @@ test("2024 Human Versatile honors a fixed Tough choice and applies its HP bonus"
 
 test("2024 Skilled can grant a mixed combination of skills and tools",()=>{
   const state=humanState();
-  state.speciesSelections={originFeat:"skilled",skill:"perception",skilledProficiency1:"skill:arcana",skilledProficiency2:"tool:Thieves' Tools",skilledProficiency3:"tool:Herbalism Kit"};
+  state.speciesSelections={originFeat:"skilled",skill:"perception",skilledProficiency1:"skill:arcana",skilledProficiency2:"tool:Navigator's Tools",skilledProficiency3:"tool:Herbalism Kit"};
   const character=generateCharacter(state);
   assert.ok(character.feats.some(feat=>feat.id==="skilled"));
   assert.ok(character.skills.includes("arcana"));
-  assert.ok(character.toolProficiencies.includes("Thieves' Tools"));
+  assert.ok(character.toolProficiencies.includes("Navigator's Tools"));
   assert.ok(character.toolProficiencies.includes("Herbalism Kit"));
   assert.equal(character.validation.valid,true);
+});
+
+test("2024 Skilled rejects a proficiency already supplied by the background",()=>{
+  const state=humanState();
+  state.speciesSelections={originFeat:"skilled",skill:"perception",skilledProficiency1:"tool:Thieves' Tools"};
+  assert.throws(()=>generateCharacter(state),/unavailable or duplicated/i);
 });
 
 test("2024 Human Magic Initiate supports Druid and records complete feat semantics",()=>{
