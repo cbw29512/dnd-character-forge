@@ -14,7 +14,7 @@ export function validateBarbarianCharacter(character){
     if(JSON.stringify(actual.brutalStrikeEffects)!==JSON.stringify(expected.brutalStrikeEffects))errors.push("Barbarian Brutal Strike options are incorrect.");
     if(character.masteryIds.length!==expected.masteryCount)errors.push(`Barbarian should have ${expected.masteryCount} Weapon Mastery choices.`);
     if(Boolean(character.initiativeAdvantage)!==Boolean(expected.initiativeAdvantage))errors.push("Barbarian Feral Instinct initiative state is incorrect.");
-    const expectedSpeed=speciesSpeed(character)+expected.speedBonus;if(character.speed!==expectedSpeed)errors.push(`Barbarian Speed should be ${expectedSpeed} ft.`);
+    const expectedSpeed=speciesSpeed(character)+expected.speedBonus+Number(character.advancementSpeedBonus||0);if(character.speed!==expectedSpeed)errors.push(`Barbarian Speed should be ${expectedSpeed} ft.`);
     if(!character.equipment.armor){const expectedAc=10+abilityMod(character.abilities.dex)+abilityMod(character.abilities.con)+(character.equipment.shield?2:0)+(character.homebrewAcBonus||0);if(character.ac!==expectedAc)errors.push(`Barbarian Unarmored Defense AC should be ${expectedAc}.`);}
     validateSubclassFeatures(errors,character);
     if(character.ruleset==="2014")validate2014(errors,character,expected);else if(character.ruleset==="2024")validate2024(errors,character,expected);else errors.push(`Barbarian is not verified for ruleset ${character.ruleset}.`);
