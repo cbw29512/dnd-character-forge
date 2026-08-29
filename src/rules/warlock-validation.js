@@ -2,6 +2,7 @@ import { CHAIN_FAMILIARS_2014, CHAIN_FAMILIARS_2024, PACT_BOONS_2014 } from "../
 import { warlockInvocationById, warlockInvocationsFor } from "../data/warlock-invocations.js";
 import { warlockAlwaysPrepared2024 } from "../data/warlock-spells.js";
 import { warlockPactWeaponId } from "./warlock-combat.js";
+import { originFeatFamilyId } from "./origin-feats.js";
 import { activeMysticArcanumLevels, warlockProgressionFor } from "./warlock.js";
 
 const CORE_KEYS=["cantrips","known","prepared","invocations","slotCount","slotLevel","maxPactSpellLevel","pactBoon","magicalCunning","contactPatron","epicBoon","eldritchMaster","darkOnesBlessing","darkOnesOwnLuck","fiendishResilience","hurlThroughHell","fiendSpells"];
@@ -23,7 +24,7 @@ function validateSelections(errors,character,expected){
     const state=character.warlockSelections;if(!state){errors.push("Warlock selection state is missing.");return;}
     const invocations=state.invocations?.all||[],catalog=new Set(warlockInvocationsFor(character.ruleset).map(item=>item.id));
     if(invocations.length!==expected.invocations)errors.push(`Warlock should have ${expected.invocations} Eldritch Invocations.`);
-    if(new Set(invocations).size!==invocations.length)errors.push("Warlock Eldritch Invocation choices contain duplicates.");
+    const counts=new Map();for(const id of invocations)counts.set(id,(counts.get(id)||0)+1);for(const [id,count] of counts){if(count<=1||!catalog.has(id))continue;const option=warlockInvocationById(character.ruleset,id);if(!option.repeatable)errors.push(`${option.name} is not repeatable but appears ${count} times.`);}
     for(const id of invocations){
       if(!catalog.has(id)){errors.push(`Warlock has unknown Eldritch Invocation ${id}.`);continue;}
       const option=warlockInvocationById(character.ruleset,id);
@@ -31,6 +32,7 @@ function validateSelections(errors,character,expected){
       if(character.ruleset==="2014"&&option.pact&&option.pact!==state.pactBoon?.id)errors.push(`${option.name} does not match the selected Pact Boon.`);
       if(character.ruleset==="2024"&&option.requiresInvocation&&!invocations.includes(option.requiresInvocation))errors.push(`${option.name} is missing prerequisite invocation ${option.requiresInvocation}.`);
     }
+    validateLessons(errors,character,state,invocations);
     if(character.ruleset==="2014"){
       const legalPact=new Set(PACT_BOONS_2014.map(item=>item.id));
       if(character.level>=3&&!legalPact.has(state.pactBoon?.id))errors.push("2014 Warlock is missing a legal Pact Boon.");
@@ -42,6 +44,18 @@ function validateSelections(errors,character,expected){
     const beguiling=character.ruleset==="2014"&&invocations.includes("beguiling-influence");
     for(const skill of ["deception","persuasion"]){if(beguiling&&!character.skills.includes(skill))errors.push(`Beguiling Influence is missing ${skill} proficiency.`);if(!beguiling&&(state.bonusSkills||[]).includes(skill))errors.push(`Warlock has ${skill} invocation proficiency without Beguiling Influence.`);}
   }catch(error){console.error("[warlock-validation] selection validation failed",error);throw error;}
+}
+
+function validateLessons(errors,character,state,invocations){
+  try{
+    const count=character.ruleset==="2024"?invocations.filter(id=>id==="lessons-of-the-first-ones").length:0,grants=state.lessonsOriginFeats||[];
+    if(grants.length!==count)errors.push(`Lessons of the First Ones should grant ${count} Origin feat${count===1?"":"s"}.`);
+    if(!count&&grants.length)return;
+    const families=grants.map(grant=>grant.family||originFeatFamilyId(grant.id));if(new Set(families).size!==families.length)errors.push("Each Lessons of the First Ones choice must grant a different Origin feat.");
+    const warlockFeats=(character.feats||[]).filter(feat=>feat.source==="warlock");
+    for(const grant of grants){const family=grant.family||originFeatFamilyId(grant.id);if(!warlockFeats.some(feat=>originFeatFamilyId(feat)===family))errors.push(`Lessons of the First Ones is missing its ${grant.name||family} feat grant.`);}
+    if(warlockFeats.length!==count)errors.push("Warlock-sourced Origin feat count does not match Lessons of the First Ones selections.");
+  }catch(error){console.error("[warlock-validation] Lessons validation failed",error);throw error;}
 }
 
 function validateSpells(errors,character,expected){
