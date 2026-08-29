@@ -24,7 +24,7 @@ export function deriveCharacter(character,data){
     const weaponAttacks=character.equipment.weapons.map(id=>{
       const weapon=data.weapons[id];if(!weapon)throw new Error(`Unknown equipped weapon: ${id}.`);
       if(character.class.id==="monk")return monkWeaponAttack(character,id,weapon,pb);
-      const styleBonus=["longbow","light-crossbow"].includes(id)?styles.reduce((sum,style)=>sum+(style.rangedAttackBonus||0),0):0,damageStyleBonus=isMeleeWeapon(id)?styles.reduce((sum,style)=>sum+(style.meleeDamageBonus||0),0):0;
+      const styleBonus=["longbow","light-crossbow"].includes(id)?styles.reduce((sum,style)=>sum+(style.rangedAttackBonus||0),0):0,damageStyleBonus=isDuelingWeapon(id)?styles.reduce((sum,style)=>sum+(style.meleeDamageBonus||0),0):0;
       if(character.class.id==="warlock")return warlockWeaponAttack(character,id,weapon,pb,{attackStyleBonus:styleBonus,damageStyleBonus});
       const mod=abilityMod(character.abilities[weapon.ability]);return{...weapon,id,attackBonus:mod+pb+styleBonus,damageBonus:mod+damageStyleBonus};
     });
@@ -39,3 +39,4 @@ export function deriveCharacter(character,data){
   }catch(error){console.error("[derive] character derivation failed",error);throw error;}
 }
 function isMeleeWeapon(id){return !["longbow","shortbow","light-crossbow"].includes(id);}
+function isDuelingWeapon(id){return isMeleeWeapon(id)&&!["greataxe","greatsword"].includes(id);}
