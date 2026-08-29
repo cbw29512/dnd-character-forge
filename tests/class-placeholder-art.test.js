@@ -42,9 +42,9 @@ test("all class portraits are distinct assets",()=>{
   assert.equal(new Set(portraits).size,CLASSES.length);
 });
 
-test("print CSS shows illustration in color and emblem in Ink Saver",()=>{
+test("print CSS fills the color portrait frame and swaps to the emblem in Ink Saver",()=>{
   const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-ink-saver.css",import.meta.url)),"utf8");
-  assert.match(css,/\.ps-placeholder-illustrated\s*\{display:contents\}/);
+  assert.match(css,/\.ps-placeholder-illustrated\s*\{[^}]*display:block[^}]*width:100%[^}]*height:100%/s);
   assert.match(css,/\.ps-placeholder-emblem\s*\{display:none\}/);
   assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-illustrated\s*\{display:none!important\}/);
   assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-emblem\s*\{display:grid!important/);
