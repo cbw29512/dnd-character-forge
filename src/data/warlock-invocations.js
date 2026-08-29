@@ -23,7 +23,7 @@ const INVOCATIONS_2014=Object.freeze([
   i("mire-the-mind","Mire the Mind",5,"Cast Slow once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
   i("misty-visions","Misty Visions",2,"Cast Silent Image at will without expending a spell slot or material components.",{timing:"At will"}),
   i("one-with-shadows","One with Shadows",5,"In dim light or darkness, use your action to become invisible until you move or take an action or reaction.",{timing:"Action"}),
-  i("otherworldly-leap","Otherworldly Leap",9,"Cast Jump on yourself at will without expending a spell slot or material components.",{timing:"At will"}),
+  i("otherworldly-leap","Otherworldly Leap",9,"Cast Jump on yourself at will without expending a spell slot.",{timing:"At will"}),
   i("repelling-blast","Repelling Blast",2,"When Eldritch Blast hits a creature, push it up to 10 feet away from you in a straight line.",{targetCantrip:"eldritch-blast",timing:"Eldritch Blast hit"}),
   i("sculptor-of-flesh","Sculptor of Flesh",7,"Cast Polymorph once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
   i("sign-of-ill-omen","Sign of Ill Omen",5,"Cast Bestow Curse once using a Warlock spell slot; regain this invocation after a Long Rest.",{timing:"Once per Long Rest"}),
@@ -66,7 +66,28 @@ const INVOCATIONS_2024=Object.freeze([
   i("witch-sight","Witch Sight",15,"You have Truesight with a range of 30 feet.",{timing:"Passive"})
 ]);
 
+const TARGET_POOLS_2024=Object.freeze({
+  "agonizing-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"]),
+  "eldritch-spear":Object.freeze(["eldritch-blast","poison-spray"]),
+  "repelling-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"])
+});
+
 export function warlockInvocationsFor(ruleset){try{if(ruleset==="2014")return INVOCATIONS_2014;if(ruleset==="2024")return INVOCATIONS_2024;throw new Error(`Unsupported Warlock invocation ruleset: ${ruleset}.`);}catch(error){console.error("[warlock-invocations] lookup failed",error);throw error;}}
 export function warlockInvocationById(ruleset,id){try{const option=warlockInvocationsFor(ruleset).find(item=>item.id===id);if(!option)throw new Error(`Unknown ${ruleset} Warlock invocation: ${id}.`);return option;}catch(error){console.error("[warlock-invocations] invocation lookup failed",error);throw error;}}
 export function invocationOptionsAtLevel(ruleset,level,{pactBoon=null,selectedIds=[]}={}){try{const selected=new Set(selectedIds);return warlockInvocationsFor(ruleset).filter(option=>option.minLevel<=Number(level)&&(ruleset!=="2014"||!option.pact||option.pact===pactBoon)&&(ruleset!=="2024"||!option.requiresInvocation||selected.has(option.requiresInvocation)));}catch(error){console.error("[warlock-invocations] legal option lookup failed",error);throw error;}}
-export function invocationTargetCantripIds(ruleset,ids=[]){try{return Object.fromEntries(ids.map(id=>warlockInvocationById(ruleset,id)).filter(option=>option.targetCantrip).map(option=>[option.id,option.targetCantrip]));}catch(error){console.error("[warlock-invocations] cantrip target lookup failed",error);throw error;}}
+export function invocationCantripTargetIds(ruleset,id){try{const option=warlockInvocationById(ruleset,id);if(!option.targetCantrip)return Object.freeze([]);if(ruleset==="2014")return Object.freeze([option.targetCantrip]);return TARGET_POOLS_2024[id]||Object.freeze([option.targetCantrip]);}catch(error){console.error("[warlock-invocations] target pool lookup failed",error);throw error;}}
+export function resolveInvocationCantripTargets(ruleset,ids=[],preferences=[]){
+  try{
+    const usedByInvocation=new Map(),records=[];
+    ids.forEach((id,slot)=>{
+      const pool=invocationCantripTargetIds(ruleset,id);if(!pool.length)return;
+      const used=usedByInvocation.get(id)||new Set(),requested=preferences[slot]||null,option=warlockInvocationById(ruleset,id);
+      if(requested&&(!pool.includes(requested)||used.has(requested)))throw new Error(`${option.name} target ${requested} is unavailable or already used by another copy.`);
+      const target=requested||(pool.includes(option.targetCantrip)&&!used.has(option.targetCantrip)?option.targetCantrip:pool.find(cantrip=>!used.has(cantrip)));
+      if(!target)throw new Error(`${option.name} has no different eligible cantrip remaining for repeat copy ${used.size+1}.`);
+      used.add(target);usedByInvocation.set(id,used);records.push(Object.freeze({slot,invocationId:id,targetCantrip:target}));
+    });
+    return Object.freeze(records);
+  }catch(error){console.error("[warlock-invocations] cantrip target resolution failed",error);throw error;}
+}
+export function invocationTargetCantripIds(ruleset,ids=[]){try{return Object.fromEntries([...new Set(ids)].map(id=>warlockInvocationById(ruleset,id)).filter(option=>option.targetCantrip).map(option=>[option.id,option.targetCantrip]));}catch(error){console.error("[warlock-invocations] cantrip target lookup failed",error);throw error;}}
