@@ -1,5 +1,5 @@
 import { CHAIN_FAMILIARS_2014, CHAIN_FAMILIARS_2024, PACT_BOONS_2014 } from "../data/warlock-class.js";
-import { warlockInvocationById, warlockInvocationsFor } from "../data/warlock-invocations.js";
+import { invocationCantripTargetIds, warlockInvocationById, warlockInvocationsFor } from "../data/warlock-invocations.js";
 import { warlockAlwaysPrepared2024 } from "../data/warlock-spells.js";
 import { warlockPactWeaponId } from "./warlock-combat.js";
 import { originFeatFamilyId } from "./origin-feats.js";
@@ -32,7 +32,7 @@ function validateSelections(errors,character,expected){
       if(character.ruleset==="2014"&&option.pact&&option.pact!==state.pactBoon?.id)errors.push(`${option.name} does not match the selected Pact Boon.`);
       if(character.ruleset==="2024"&&option.requiresInvocation&&!invocations.includes(option.requiresInvocation))errors.push(`${option.name} is missing prerequisite invocation ${option.requiresInvocation}.`);
     }
-    validateLessons(errors,character,state,invocations);
+    validateLessons(errors,character,state,invocations);validateInvocationTargets(errors,character,state,invocations);
     if(character.ruleset==="2014"){
       const legalPact=new Set(PACT_BOONS_2014.map(item=>item.id));
       if(character.level>=3&&!legalPact.has(state.pactBoon?.id))errors.push("2014 Warlock is missing a legal Pact Boon.");
@@ -56,6 +56,24 @@ function validateLessons(errors,character,state,invocations){
     for(const grant of grants){const family=grant.family||originFeatFamilyId(grant.id);if(!warlockFeats.some(feat=>originFeatFamilyId(feat)===family))errors.push(`Lessons of the First Ones is missing its ${grant.name||family} feat grant.`);}
     if(warlockFeats.length!==count)errors.push("Warlock-sourced Origin feat count does not match Lessons of the First Ones selections.");
   }catch(error){console.error("[warlock-validation] Lessons validation failed",error);throw error;}
+}
+
+function validateInvocationTargets(errors,character,state,invocations){
+  try{
+    const records=state.invocationCantripTargets||[],expectedSlots=invocations.map((id,slot)=>({id,slot,pool:invocationCantripTargetIds(character.ruleset,id)})).filter(item=>item.pool.length),bySlot=new Map();
+    if(records.length!==expectedSlots.length)errors.push(`Warlock should have ${expectedSlots.length} invocation cantrip target selection${expectedSlots.length===1?"":"s"}.`);
+    const usedByInvocation=new Map(),known=new Set(character.spells?.cantrips?.all||[]);
+    for(const record of records){
+      if(!Number.isInteger(record?.slot)||record.slot<0||record.slot>=invocations.length){errors.push("Warlock invocation cantrip target has an invalid slot.");continue;}
+      if(bySlot.has(record.slot)){errors.push(`Warlock invocation slot ${record.slot+1} has duplicate cantrip target records.`);continue;}bySlot.set(record.slot,record);
+      const invocationId=invocations[record.slot];if(record.invocationId!==invocationId){errors.push(`Warlock invocation target slot ${record.slot+1} does not match ${invocationId}.`);continue;}
+      const pool=invocationCantripTargetIds(character.ruleset,invocationId);if(!pool.includes(record.targetCantrip))errors.push(`${warlockInvocationById(character.ruleset,invocationId).name} has illegal cantrip target ${record.targetCantrip}.`);
+      if(!known.has(record.targetCantrip))errors.push(`${warlockInvocationById(character.ruleset,invocationId).name} target ${record.targetCantrip} is not a known Warlock cantrip.`);
+      const used=usedByInvocation.get(invocationId)||new Set();if(used.has(record.targetCantrip))errors.push(`${warlockInvocationById(character.ruleset,invocationId).name} repeats cantrip target ${record.targetCantrip}.`);used.add(record.targetCantrip);usedByInvocation.set(invocationId,used);
+    }
+    for(const expected of expectedSlots)if(!bySlot.has(expected.slot))errors.push(`${warlockInvocationById(character.ruleset,expected.id).name} in slot ${expected.slot+1} is missing its cantrip target.`);
+    const spellRecords=character.spells?.invocationCantripTargets||[];if(JSON.stringify(spellRecords)!==JSON.stringify(records))errors.push("Warlock spellcasting invocation-target state drifted from class selections.");
+  }catch(error){console.error("[warlock-validation] invocation target validation failed",error);throw error;}
 }
 
 function validateSpells(errors,character,expected){
