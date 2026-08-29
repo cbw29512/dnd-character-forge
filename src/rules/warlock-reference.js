@@ -7,7 +7,7 @@ export function buildWarlockQuickReference(character){
     if(character?.class?.id!=="warlock")throw new Error("Warlock reference builder received another class.");
     const safe={...character,features:[]},items=[...buildCoreQuickReference(safe)];
     for(const name of character.features||[])items.push(entry(character,`feature:${name}`,name,featureReference(character,name),"feature"));
-    for(const id of character.warlockSelections?.invocations?.all||[]){const option=warlockInvocationById(character.ruleset,id);items.push(entry(character,`invocation:${id}`,option.name,{category:"Eldritch Invocation",timing:option.timing,text:option.summary},"invocation"));}
+    for(const id of new Set(character.warlockSelections?.invocations?.all||[])){const option=warlockInvocationById(character.ruleset,id);items.push(entry(character,`invocation:${id}`,option.name,{category:"Eldritch Invocation",timing:option.timing,text:option.summary},"invocation"));}
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate Warlock quick-reference entries detected.");return items;
   }catch(error){console.error("[warlock-reference] build failed",error);throw error;}
 }
