@@ -28,31 +28,31 @@ function forge(ruleset,level,{subclass="random",classSelections={},spellSelectio
   }catch(error){console.error(`[warlock-production-test] forge ${ruleset} level ${level} failed`,error);throw error;}
 }
 
-const OFFICIAL_2024_WARLOCK_SPELLS=Object.freeze({
-  0:["Blade Ward","Chill Touch","Eldritch Blast","Friends","Mage Hand","Mind Sliver","Minor Illusion","Poison Spray","Prestidigitation","Thunderclap","Toll the Dead","True Strike"],
-  1:["Armor of Agathys","Arms of Hadar","Bane","Charm Person","Comprehend Languages","Detect Magic","Expeditious Retreat","Hellish Rebuke","Hex","Illusory Script","Protection from Evil and Good","Speak with Animals","Tasha’s Hideous Laughter","Unseen Servant","Witch Bolt"],
-  2:["Cloud of Daggers","Crown of Madness","Darkness","Enthrall","Hold Person","Invisibility","Mind Spike","Mirror Image","Misty Step","Ray of Enfeeblement","Spider Climb","Suggestion"],
-  3:["Counterspell","Dispel Magic","Fear","Fly","Gaseous Form","Hunger of Hadar","Hypnotic Pattern","Magic Circle","Major Image","Remove Curse","Summon Fey","Summon Undead","Tongues","Vampiric Touch"],
-  4:["Banishment","Blight","Charm Monster","Dimension Door","Hallucinatory Terrain","Summon Aberration"],
-  5:["Contact Other Plane","Dream","Hold Monster","Jallarzi’s Storm of Radiance","Mislead","Planar Binding","Scrying","Synaptic Static","Teleportation Circle"],
-  6:["Arcane Gate","Circle of Death","Create Undead","Eyebite","Summon Fiend","Tasha’s Bubbling Cauldron","True Seeing"],
+const SRD_2024_WARLOCK_SPELLS=Object.freeze({
+  0:["Chill Touch","Eldritch Blast","Mage Hand","Minor Illusion","Poison Spray","Prestidigitation","True Strike"],
+  1:["Bane","Charm Person","Comprehend Languages","Detect Magic","Expeditious Retreat","Hellish Rebuke","Hex","Hideous Laughter","Illusory Script","Protection from Evil and Good","Speak with Animals","Unseen Servant"],
+  2:["Darkness","Enthrall","Hold Person","Invisibility","Mind Spike","Mirror Image","Misty Step","Ray of Enfeeblement","Spider Climb","Suggestion"],
+  3:["Counterspell","Dispel Magic","Fear","Fly","Gaseous Form","Hypnotic Pattern","Magic Circle","Major Image","Remove Curse","Tongues","Vampiric Touch"],
+  4:["Banishment","Blight","Charm Monster","Dimension Door","Hallucinatory Terrain"],
+  5:["Contact Other Plane","Dream","Hold Monster","Mislead","Planar Binding","Scrying","Teleportation Circle"],
+  6:["Circle of Death","Create Undead","Eyebite","True Seeing"],
   7:["Etherealness","Finger of Death","Forcecage","Plane Shift"],
   8:["Befuddlement","Demiplane","Dominate Monster","Glibness","Power Word Stun"],
   9:["Astral Projection","Foresight","Gate","Imprisonment","Power Word Kill","True Polymorph","Weird"]
 });
 
-test("2024 Warlock spell catalog exactly matches the verified Basic Rules list",()=>{
+test("2024 Warlock spell catalog exactly matches SRD 5.2.1 pages 74-75",()=>{
   try{
-    for(const [level,names] of Object.entries(OFFICIAL_2024_WARLOCK_SPELLS))assert.deepEqual(WARLOCK_SPELLS_2024.filter(spell=>spell.level===Number(level)).map(spell=>spell.name),names,`level ${level} Warlock spell list drift`);
-    assert.equal(WARLOCK_SPELLS_2024.length,Object.values(OFFICIAL_2024_WARLOCK_SPELLS).flat().length);
-    assert.equal(WARLOCK_SPELLS_2024.find(spell=>spell.name==="Tasha’s Hideous Laughter")?.id,"hideous-laughter","existing saved spell id should remain stable");
-  }catch(error){console.error("[warlock-production-test] 2024 spell-list oracle failed",error);throw error;}
+    for(const [level,names] of Object.entries(SRD_2024_WARLOCK_SPELLS))assert.deepEqual(WARLOCK_SPELLS_2024.filter(spell=>spell.level===Number(level)).map(spell=>spell.name),names,`level ${level} SRD Warlock spell list drift`);
+    assert.equal(WARLOCK_SPELLS_2024.length,Object.values(SRD_2024_WARLOCK_SPELLS).flat().length);
+    assert.equal(WARLOCK_SPELLS_2024.some(spell=>spell.name==="Summon Undead"),false,"non-SRD spell leaked into the production Warlock list");
+  }catch(error){console.error("[warlock-production-test] 2024 SRD spell-list oracle failed",error);throw error;}
 });
 
-test("2024 repeatable blast invocation target pools enforce their distinct RAW prerequisites",()=>{
-  assert.deepEqual(invocationCantripTargetIds("2024","agonizing-blast"),["chill-touch","eldritch-blast","mind-sliver","poison-spray","thunderclap","toll-the-dead","true-strike"]);
-  assert.deepEqual(invocationCantripTargetIds("2024","eldritch-spear"),["eldritch-blast","mind-sliver","poison-spray","toll-the-dead"]);
-  assert.deepEqual(invocationCantripTargetIds("2024","repelling-blast"),["chill-touch","eldritch-blast","true-strike"]);
+test("2024 repeatable blast invocation target pools enforce SRD cantrip prerequisites",()=>{
+  assert.deepEqual(invocationCantripTargetIds("2024","agonizing-blast"),["chill-touch","eldritch-blast","poison-spray","true-strike"]);
+  assert.deepEqual(invocationCantripTargetIds("2024","eldritch-spear"),["eldritch-blast","poison-spray"]);
+  assert.deepEqual(invocationCantripTargetIds("2024","repelling-blast"),["chill-touch","eldritch-blast","poison-spray","true-strike"]);
 });
 
 test("Warlock Pact Magic progression preserves edition-specific prepared/known state",()=>{
@@ -112,25 +112,25 @@ test("2024 Lessons of the First Ones can repeat and grants a different SRD Origi
   }catch(error){console.error("[warlock-production-test] repeatable Lessons contract failed",error);throw error;}
 });
 
-test("2024 repeated Agonizing Blast stores distinct cantrip targets through validation, restore, and print",()=>{
+test("2024 repeated Agonizing Blast stores distinct SRD cantrip targets through validation, restore, and print",()=>{
   try{
-    const classSelections={eldritchInvocations:["agonizing-blast","agonizing-blast"],warlockInvocationTargets:["eldritch-blast","mind-sliver"]};
-    const character=forge("2024",5,{subclass:"fiend-patron",classSelections,spellSelections:{cantrips:["eldritch-blast","mind-sliver"]}});
+    const classSelections={eldritchInvocations:["agonizing-blast","agonizing-blast"],warlockInvocationTargets:["eldritch-blast","poison-spray"]};
+    const character=forge("2024",5,{subclass:"fiend-patron",classSelections,spellSelections:{cantrips:["eldritch-blast","poison-spray"]}});
     assert.equal(character.validation.valid,true);
-    assert.deepEqual(character.warlockSelections.invocationCantripTargets.slice(0,2),[{slot:0,invocationId:"agonizing-blast",targetCantrip:"eldritch-blast"},{slot:1,invocationId:"agonizing-blast",targetCantrip:"mind-sliver"}]);
-    assert.ok(character.spells.cantrips.all.includes("eldritch-blast"));assert.ok(character.spells.cantrips.all.includes("mind-sliver"));
-    const restored=classSelectionsFromCharacter(character);assert.deepEqual(restored.warlockInvocationTargets.slice(0,2),["eldritch-blast","mind-sliver"]);
-    const refs=buildQuickReference(character).filter(item=>item.id.startsWith("invocation:agonizing-blast"));assert.equal(refs.length,2);assert.ok(refs.some(item=>item.name.includes("Eldritch Blast")));assert.ok(refs.some(item=>item.name.includes("Mind Sliver")));
-    const model=buildWarlockPremiumPrintModel(character),printed=model.spellPage.warlock.invocationCantripTargets.slice(0,2);assert.deepEqual(printed.map(item=>[item.invocationName,item.targetName]),[["Agonizing Blast","Eldritch Blast"],["Agonizing Blast","Mind Sliver"]]);assert.ok(model.quickTurn.some(line=>line.includes("Agonizing Blast → Eldritch Blast")&&line.includes("Agonizing Blast → Mind Sliver")));
+    assert.deepEqual(character.warlockSelections.invocationCantripTargets.slice(0,2),[{slot:0,invocationId:"agonizing-blast",targetCantrip:"eldritch-blast"},{slot:1,invocationId:"agonizing-blast",targetCantrip:"poison-spray"}]);
+    assert.ok(character.spells.cantrips.all.includes("eldritch-blast"));assert.ok(character.spells.cantrips.all.includes("poison-spray"));
+    const restored=classSelectionsFromCharacter(character);assert.deepEqual(restored.warlockInvocationTargets.slice(0,2),["eldritch-blast","poison-spray"]);
+    const refs=buildQuickReference(character).filter(item=>item.id.startsWith("invocation:agonizing-blast"));assert.equal(refs.length,2);assert.ok(refs.some(item=>item.name.includes("Eldritch Blast")));assert.ok(refs.some(item=>item.name.includes("Poison Spray")));
+    const model=buildWarlockPremiumPrintModel(character),printed=model.spellPage.warlock.invocationCantripTargets.slice(0,2);assert.deepEqual(printed.map(item=>[item.invocationName,item.targetName]),[["Agonizing Blast","Eldritch Blast"],["Agonizing Blast","Poison Spray"]]);assert.ok(model.quickTurn.some(line=>line.includes("Agonizing Blast → Eldritch Blast")&&line.includes("Agonizing Blast → Poison Spray")));
   }catch(error){console.error("[warlock-production-test] repeated Agonizing target contract failed",error);throw error;}
 });
 
 test("2024 repeatable blast invocations reject duplicate or ineligible explicit targets",()=>{
   assert.throws(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["agonizing-blast","agonizing-blast"],warlockInvocationTargets:["eldritch-blast","eldritch-blast"]}}),/already used by another copy|different eligible cantrip/i);
-  assert.throws(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["repelling-blast"],warlockInvocationTargets:["poison-spray"]}}),/unavailable|cannot target/i);
+  assert.throws(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["repelling-blast"],warlockInvocationTargets:["mage-hand"]}}),/unavailable|cannot target/i);
   assert.throws(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["eldritch-spear"],warlockInvocationTargets:["true-strike"]}}),/unavailable|cannot target/i);
   assert.doesNotThrow(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["repelling-blast"],warlockInvocationTargets:["true-strike"]},spellSelections:{cantrips:["true-strike"]}}));
-  assert.doesNotThrow(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["eldritch-spear"],warlockInvocationTargets:["toll-the-dead"]},spellSelections:{cantrips:["toll-the-dead"]}}));
+  assert.doesNotThrow(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["eldritch-spear"],warlockInvocationTargets:["poison-spray"]},spellSelections:{cantrips:["poison-spray"]}}));
 });
 
 test("2024 nonrepeatable Eldritch Invocations cannot be selected twice",()=>{
@@ -147,7 +147,7 @@ test("2024 Warlock UI uses invocation slots, preserves repeatables, and filters 
     slots=classChoiceFieldsForState(state).filter(field=>field.key==="eldritchInvocations");
     assert.ok(slots[0].options.some(option=>option.id==="lessons-of-the-first-ones"));assert.ok(slots[1].options.some(option=>option.id==="lessons-of-the-first-ones"));
     state.classSelections={eldritchInvocations:["agonizing-blast","agonizing-blast"],warlockInvocationTargets:["eldritch-blast",null]};
-    const fields=classChoiceFieldsForState(state),targets=fields.filter(field=>field.key==="warlockInvocationTargets");assert.equal(targets.length,2);assert.ok(targets[0].options.some(option=>option.id==="eldritch-blast"));assert.equal(targets[1].options.some(option=>option.id==="eldritch-blast"),false);assert.ok(targets[1].options.some(option=>option.id==="mind-sliver"));
+    const fields=classChoiceFieldsForState(state),targets=fields.filter(field=>field.key==="warlockInvocationTargets");assert.equal(targets.length,2);assert.ok(targets[0].options.some(option=>option.id==="eldritch-blast"));assert.equal(targets[1].options.some(option=>option.id==="eldritch-blast"),false);assert.ok(targets[1].options.some(option=>option.id==="poison-spray"));
   }catch(error){console.error("[warlock-production-test] invocation slot UI contract failed",error);throw error;}
 });
 
