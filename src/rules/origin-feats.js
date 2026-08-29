@@ -10,19 +10,19 @@ export const SKILLED_PROFICIENCY_OPTIONS_2024=Object.freeze([
   ...TOOLS_2024.map(name=>Object.freeze({id:`tool:${name}`,name:`Tool — ${name}`}))
 ]);
 
-export function resolveHumanVersatileOriginFeat({selections={},existingFeats=[],existingMagicInitiates=[],skills=[],tools=[]}={}){
+export function resolveHumanVersatileOriginFeat({selections={},existingFeats=[],existingMagicInitiates=[],skills=[],tools=[],source="species",blockedFamilies=[],contextLabel="Human Versatile"}={}){
   try{
-    const existingFamilies=existingFeats.map(originFeatFamilyId),eligible=ORIGIN_FEATS_2024.filter(feat=>feat.repeatable||!existingFamilies.includes(feat.id));
-    if(!eligible.length)throw new Error("Human Versatile has no legal SRD Origin feat remaining.");
+    const existingFamilies=existingFeats.map(originFeatFamilyId),blocked=new Set(blockedFamilies),eligible=ORIGIN_FEATS_2024.filter(feat=>!blocked.has(feat.id)&&(feat.repeatable||!existingFamilies.includes(feat.id)));
+    if(!eligible.length)throw new Error(`${contextLabel} has no legal SRD Origin feat remaining.`);
     const requested=selections.originFeat;
     const featBase=requested?originFeatById2024(requested):pick(eligible);
-    if(!featBase)throw new Error(`Unsupported Human Versatile SRD Origin feat: ${requested}.`);
-    if(!featBase.repeatable&&existingFamilies.includes(featBase.id))throw new Error(`Human Versatile cannot take non-repeatable Origin feat ${featBase.name} twice.`);
-    const result={feat:Object.freeze({...featBase,source:"species"}),addedSkills:[],addedTools:[],magicInitiate:null,choices:{originFeat:featBase.id},resources:{}};
-    if(featBase.id==="magic-initiate")resolveMagicInitiate(result,selections,existingMagicInitiates);
+    if(!featBase||blocked.has(featBase.id))throw new Error(`Unsupported ${contextLabel} SRD Origin feat: ${requested}.`);
+    if(!featBase.repeatable&&existingFamilies.includes(featBase.id))throw new Error(`${contextLabel} cannot take non-repeatable Origin feat ${featBase.name} twice.`);
+    const result={feat:Object.freeze({...featBase,source}),addedSkills:[],addedTools:[],magicInitiate:null,choices:{originFeat:featBase.id},resources:{}};
+    if(featBase.id==="magic-initiate")resolveMagicInitiate(result,selections,existingMagicInitiates,source);
     if(featBase.id==="skilled")resolveSkilled(result,selections,skills,tools);
     return Object.freeze({...result,addedSkills:Object.freeze(result.addedSkills),addedTools:Object.freeze(result.addedTools),choices:Object.freeze(result.choices),resources:Object.freeze(result.resources)});
-  }catch(error){console.error("[origin-feats] Human Versatile resolution failed",error);throw error;}
+  }catch(error){console.error("[origin-feats] Origin feat resolution failed",error);throw error;}
 }
 
 export function originFeatFamilyId(feat){
@@ -39,14 +39,14 @@ export function originFeatInstanceKey(feat){
   }catch(error){console.error("[origin-feats] instance key failed",error);throw error;}
 }
 
-function resolveMagicInitiate(result,selections,existingMagicInitiates){
+function resolveMagicInitiate(result,selections,existingMagicInitiates,source){
   const usedLists=existingMagicInitiates.map(choice=>choice?.spellList).filter(Boolean),available=MAGIC_INITIATE_LISTS_2024.filter(list=>!usedLists.includes(list));
   if(!available.length)throw new Error("Magic Initiate has no unused spell list remaining.");
   const requested=selections.magicInitiateList;
   if(requested&&!available.includes(requested))throw new Error(`Magic Initiate spell list ${requested} is unavailable or already used.`);
   const list=requested||pick(available),magic=resolveMagicInitiateChoice(list,{spellcastingAbility:selections.originSpellcastingAbility,cantrip1:selections.originCantrip1,cantrip2:selections.originCantrip2,level1Spell:selections.originLevel1Spell});
-  result.magicInitiate=Object.freeze({...magic,source:"species"});
-  result.feat=Object.freeze({id:`magic-initiate-${list}`,name:`Magic Initiate (${magic.spellListName})`,category:"Origin",repeatable:true,spellList:list,source:"species"});
+  result.magicInitiate=Object.freeze({...magic,source});
+  result.feat=Object.freeze({id:`magic-initiate-${list}`,name:`Magic Initiate (${magic.spellListName})`,category:"Origin",repeatable:true,spellList:list,source});
   Object.assign(result.choices,{magicInitiateList:list,originSpellcastingAbility:magic.spellcastingAbility,originCantrip1:magic.cantrips[0],originCantrip2:magic.cantrips[1],originLevel1Spell:magic.level1Spell});
 }
 
