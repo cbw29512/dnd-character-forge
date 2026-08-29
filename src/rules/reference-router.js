@@ -19,7 +19,7 @@ const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
 
 export function buildQuickReference(character){
   try{
-    const advancementFeats=(character?.feats||[]).filter(feat=>feat.advancementFeat),safeCharacter=advancementFeats.length?{...character,feats:(character.feats||[]).filter(feat=>!feat.advancementFeat)}:character;
+    const advancementFeats=(character?.feats||[]).filter(feat=>feat.advancementFeat),baseCharacter=advancementFeats.length?{...character,feats:(character.feats||[]).filter(feat=>!feat.advancementFeat)}:character,safeCharacter=withUniqueReferenceFeatIds(baseCharacter);
     const originalBackground=isForgeOriginalBackground(safeCharacter?.background);let items;
     if(safeCharacter?.class?.id==="barbarian")items=originalBackground?buildBarbarianWithOriginalBackground(safeCharacter):buildBarbarianQuickReference(safeCharacter);
     else if(originalBackground||isForgeOriginalSubclass(safeCharacter?.subclass))items=buildForgeCompatibleQuickReference(safeCharacter);
@@ -28,6 +28,14 @@ export function buildQuickReference(character){
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate routed quick-reference entries detected.");
     return enhanceMagicInitiate(items,character);
   }catch(error){console.error("[reference-router] build failed",error);throw error;}
+}
+
+function withUniqueReferenceFeatIds(character){
+  try{
+    if(!character?.feats?.length)return character;
+    const seen=new Map(),feats=character.feats.map(feat=>{const id=String(feat?.id||""),count=(seen.get(id)||0)+1;seen.set(id,count);return count===1?feat:{...feat,id:`${id}#${count}`};});
+    return{...character,feats};
+  }catch(error){console.error("[reference-router] repeatable feat reference identity failed",error);throw error;}
 }
 
 function buildBarbarianWithOriginalBackground(character){
