@@ -5,7 +5,7 @@ export function classSelectionsFromCharacter(character){
     if(classId==="bard")return removeEmpty({...base,instruments:[...(character.bardSelections?.instruments||[])],loreBonusSkills:[...(character.bardSelections?.loreBonusSkills||[])],expertise:[...(character.bardSelections?.expertise||[])]});
     if(classId==="monk")return removeEmpty({...base,monkTool:character.monkSelections?.tool||null});
     if(classId==="sorcerer")return removeEmpty({...base,metamagic:[...(character.sorcererSelections?.metamagic?.all||[])],draconicAncestry:character.sorcererSelections?.draconic?.ancestry?.id||null,elementalAffinity:character.sorcererSelections?.draconic?.elementalAffinity||null});
-    if(classId==="warlock")return removeEmpty({...base,pactBoon:character.warlockSelections?.pactBoon?.id||null,eldritchInvocations:[...(character.warlockSelections?.invocations?.all||[])]});
+    if(classId==="warlock")return removeEmpty({...base,pactBoon:character.warlockSelections?.pactBoon?.id||null,eldritchInvocations:[...(character.warlockSelections?.invocations?.all||[])],warlockInvocationTargets:warlockInvocationTargetValues(character)});
     if(classId==="druid")return removeEmpty({...base,...structuredClone(character.druidSelections||{})});
     if(classId==="ranger")return removeEmpty({...base,...structuredClone(character.rangerSelections||{}),fightingStyle:character.fightingStyle?.id||null});
     if(classId==="paladin")return removeEmpty({...base,fightingStyle:character.fightingStyle?.id||null});
@@ -15,5 +15,6 @@ export function classSelectionsFromCharacter(character){
     return removeEmpty(base);
   }catch(error){console.error("[class-selection-state] restore failed",error);throw error;}
 }
+function warlockInvocationTargetValues(character){try{const invocations=character?.warlockSelections?.invocations?.all||[],records=character?.warlockSelections?.invocationCantripTargets||[];if(!records.length)return[];const values=Array(invocations.length).fill(null);for(const record of records)if(Number.isInteger(record?.slot)&&record.slot>=0&&record.slot<values.length)values[record.slot]=record.targetCantrip||null;while(values.length&&values.at(-1)==null)values.pop();return values;}catch(error){console.error("[class-selection-state] Warlock invocation target restore failed",error);throw error;}}
 function advancementValues(character){const values=(character?.classAdvancements||[]).map(record=>record?.optionId==="asi"?null:record?.optionId||null);while(values.length&&values.at(-1)==null)values.pop();return values;}
 function removeEmpty(object){return Object.fromEntries(Object.entries(object).filter(([,value])=>Array.isArray(value)?value.length>0:value!==null&&value!==undefined&&value!==""));}
