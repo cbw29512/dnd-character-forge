@@ -5,11 +5,13 @@ import { readFileSync } from "node:fs";
 const heroCss=readFileSync(new URL("../styles/hero-experience.css",import.meta.url),"utf8");
 const polishCss=readFileSync(new URL("../styles/forge-polish.css",import.meta.url),"utf8");
 const mobileCss=readFileSync(new URL("../styles/forge-mobile-polish.css",import.meta.url),"utf8");
+const mobileResultCss=readFileSync(new URL("../styles/forge-mobile-result.css",import.meta.url),"utf8");
 const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
 
 test("desktop Forge loads the app-first console layer",()=>{
   assert.match(heroCss,/^@import url\("\.\/forge-polish\.css"\);/);
   assert.match(heroCss,/@import url\("\.\/forge-mobile-polish\.css"\);/);
+  assert.match(heroCss,/@import url\("\.\/forge-mobile-result\.css"\);/);
   assert.match(polishCss,/max-width:1480px/);
   assert.match(polishCss,/grid-template-columns:minmax\(520px,590px\) minmax\(0,1fr\)/);
   assert.match(polishCss,/grid-template-areas:[\s\S]*?"hero hero"[\s\S]*?"panel result"/);
@@ -36,6 +38,12 @@ test("tablet and phone share the app-first Forge console instead of reverting to
   assert.match(mobileCss,/\.forge-panel \.field::before\{display:none!important;content:none!important\}/);
   assert.match(mobileCss,/@media \(max-width:680px\)/);
   assert.match(mobileCss,/\.forge-panel \.launch-cta \.forge-button\{[\s\S]*?width:100%/);
+});
+
+test("phone generated state shows the forged character before edit controls",()=>{
+  assert.match(mobileResultCss,/@media \(max-width:680px\)/);
+  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet\) \.result-stage\{[\s\S]*?order:1/);
+  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet\) \.forge-panel\{[\s\S]*?order:2/);
 });
 
 test("secondary presentation settings are progressively disclosed",()=>{
