@@ -3,9 +3,18 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
+const components=readFileSync(new URL("../styles/components.css",import.meta.url),"utf8");
 
 test("opening a saved pregen restores its visible Starting Resources summary when saved magic data exists",()=>{
-  assert.match(app,/renderCharacter\(character,document\.getElementById\("result"\)\);if\(character\.startingMagic\)renderStartingMagicSummary\(character\);showTab\("forge"\)/);
+  assert.match(app,/renderCharacter\(character,document\.getElementById\("result"\)\);markPregenSaved\(\);if\(character\.startingMagic\)renderStartingMagicSummary\(character\);showTab\("forge"\)/);
+});
+
+test("saving a pregen gives persistent visible confirmation and friendly duplicate feedback",()=>{
+  assert.match(app,/actionButton\.textContent="Saving…"/);
+  assert.match(app,/button\.textContent="✓ Saved to Pregens"/);
+  assert.match(app,/Already saved to My Pregens\./);
+  assert.match(app,/entry\.presentationUpdated\?/);
+  assert.match(components,/\.action-button\.is-saved\s*\{/);
 });
 
 test("2024 starting-magic guidance states that Low Normal and High share the one official SRD allocation",()=>{
