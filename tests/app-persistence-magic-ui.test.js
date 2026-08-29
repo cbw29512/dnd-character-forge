@@ -13,6 +13,7 @@ test("saving a pregen gives persistent visible confirmation and friendly duplica
   assert.match(app,/actionButton\.textContent="Saving…"/);
   assert.match(app,/button\.textContent="✓ Saved to Pregens"/);
   assert.match(app,/Already saved to My Pregens\./);
+  assert.match(app,/classList\.contains\("is-saved"\)/);
   assert.match(app,/entry\.presentationUpdated\?/);
   assert.match(components,/\.action-button\.is-saved\s*\{/);
 });
