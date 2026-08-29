@@ -1,8 +1,7 @@
 import { SKILLS } from "../schema.js";
-import { ARTISAN_TOOLS_2024, MAGIC_INITIATE_LISTS_2024, MUSICAL_INSTRUMENTS_2024, ORIGIN_FEATS_2024, TOOLS_2024, originFeatById2024 } from "../data/origin-feats-2024.js";
+import { MAGIC_INITIATE_LISTS_2024, ORIGIN_FEATS_2024, TOOLS_2024, originFeatById2024 } from "../data/origin-feats-2024.js";
 import { resolveMagicInitiateChoice } from "./magic-initiate.js";
 import { pick, sample } from "./random.js";
-import { uniqueStrings } from "./duplicates.js";
 
 const SKILL_IDS=Object.freeze(Object.keys(SKILLS));
 export const HUMAN_ORIGIN_FEAT_OPTIONS_2024=ORIGIN_FEATS_2024.map(feat=>Object.freeze({id:feat.id,name:feat.name}));
@@ -11,22 +10,17 @@ export const SKILLED_PROFICIENCY_OPTIONS_2024=Object.freeze([
   ...TOOLS_2024.map(name=>Object.freeze({id:`tool:${name}`,name:`Tool — ${name}`}))
 ]);
 
-export function resolveHumanVersatileOriginFeat({selections={},existingFeats=[],existingMagicInitiates=[],skills=[],tools=[],proficiency=2,level=1}={}){
+export function resolveHumanVersatileOriginFeat({selections={},existingFeats=[],existingMagicInitiates=[],skills=[],tools=[]}={}){
   try{
     const existingFamilies=existingFeats.map(originFeatFamilyId),eligible=ORIGIN_FEATS_2024.filter(feat=>feat.repeatable||!existingFamilies.includes(feat.id));
-    if(!eligible.length)throw new Error("Human Versatile has no legal Origin feat remaining.");
+    if(!eligible.length)throw new Error("Human Versatile has no legal SRD Origin feat remaining.");
     const requested=selections.originFeat;
     const featBase=requested?originFeatById2024(requested):pick(eligible);
-    if(!featBase)throw new Error(`Unsupported Human Versatile Origin feat: ${requested}.`);
+    if(!featBase)throw new Error(`Unsupported Human Versatile SRD Origin feat: ${requested}.`);
     if(!featBase.repeatable&&existingFamilies.includes(featBase.id))throw new Error(`Human Versatile cannot take non-repeatable Origin feat ${featBase.name} twice.`);
     const result={feat:Object.freeze({...featBase,source:"species"}),addedSkills:[],addedTools:[],magicInitiate:null,choices:{originFeat:featBase.id},resources:{}};
     if(featBase.id==="magic-initiate")resolveMagicInitiate(result,selections,existingMagicInitiates);
     if(featBase.id==="skilled")resolveSkilled(result,selections,skills,tools);
-    if(featBase.id==="crafter")resolveToolTriple(result,selections,"crafterTool",ARTISAN_TOOLS_2024,tools,"Crafter");
-    if(featBase.id==="musician")resolveToolTriple(result,selections,"musicianInstrument",MUSICAL_INSTRUMENTS_2024,tools,"Musician");
-    if(featBase.id==="lucky")result.resources.luckPoints=proficiency;
-    if(featBase.id==="tough")result.resources.hitPointBonus=2*Number(level||1);
-    if(featBase.id==="tavern-brawler")result.resources.unarmedStrikeDamage="1d4";
     return Object.freeze({...result,addedSkills:Object.freeze(result.addedSkills),addedTools:Object.freeze(result.addedTools),choices:Object.freeze(result.choices),resources:Object.freeze(result.resources)});
   }catch(error){console.error("[origin-feats] Human Versatile resolution failed",error);throw error;}
 }
@@ -66,17 +60,6 @@ function resolveSkilled(result,selections,skills,tools){
   selected.push(...sample(pool,3-selected.length));
   if(selected.length!==3)throw new Error("Skilled requires exactly three available skill/tool proficiencies.");
   selected.forEach((value,index)=>{result.choices[`skilledProficiency${index+1}`]=value;if(value.startsWith("skill:"))result.addedSkills.push(value.slice(6));else result.addedTools.push(value.slice(5));});
-}
-
-function resolveToolTriple(result,selections,keyPrefix,catalog,tools,label){
-  const existing=new Set(tools),selected=[];
-  for(let index=1;index<=3;index++){
-    const key=`${keyPrefix}${index}`,requested=selections[key];
-    if(requested){if(existing.has(requested)||selected.includes(requested)||!catalog.includes(requested))throw new Error(`${label} proficiency ${requested} is unavailable or duplicated.`);selected.push(requested);}
-  }
-  selected.push(...sample(catalog.filter(value=>!existing.has(value)&&!selected.includes(value)),3-selected.length));
-  if(selected.length!==3)throw new Error(`${label} requires three distinct available proficiencies.`);
-  selected.forEach((value,index)=>{result.choices[`${keyPrefix}${index+1}`]=value;result.addedTools.push(value);});
 }
 
 function prettySkill(value){return String(value).replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());}
