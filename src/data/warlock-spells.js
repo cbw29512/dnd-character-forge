@@ -1,6 +1,7 @@
 const slug=name=>name.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const rows=(level,names,schools={})=>names.map(name=>Object.freeze({id:slug(name),name,level,school:schools[name]||null}));
 const unique=spells=>[...new Map(spells.map(spell=>[spell.id,spell])).values()];
+const stable2024=spells=>spells.map(spell=>spell.name==="Tasha’s Hideous Laughter"?Object.freeze({...spell,id:"hideous-laughter"}):spell);
 
 const WARLOCK_2014=[
   ...rows(0,["Chill Touch","Eldritch Blast","Mage Hand","Minor Illusion","Poison Spray","Prestidigitation","True Strike"]),
@@ -27,7 +28,7 @@ const S2024=Object.freeze({
   Befuddlement:"Enchantment",Demiplane:"Conjuration","Dominate Monster":"Enchantment",Glibness:"Enchantment","Power Word Stun":"Enchantment",
   "Astral Projection":"Necromancy",Foresight:"Divination",Gate:"Conjuration",Imprisonment:"Abjuration","Power Word Kill":"Enchantment","True Polymorph":"Transmutation",Weird:"Illusion"
 });
-const WARLOCK_2024=[
+const WARLOCK_2024=stable2024([
   ...rows(0,["Blade Ward","Chill Touch","Eldritch Blast","Friends","Mage Hand","Mind Sliver","Minor Illusion","Poison Spray","Prestidigitation","Thunderclap","Toll the Dead","True Strike"],S2024),
   ...rows(1,["Armor of Agathys","Arms of Hadar","Bane","Charm Person","Comprehend Languages","Detect Magic","Expeditious Retreat","Hellish Rebuke","Hex","Illusory Script","Protection from Evil and Good","Speak with Animals","Tasha’s Hideous Laughter","Unseen Servant","Witch Bolt"],S2024),
   ...rows(2,["Cloud of Daggers","Crown of Madness","Darkness","Enthrall","Hold Person","Invisibility","Mind Spike","Mirror Image","Misty Step","Ray of Enfeeblement","Spider Climb","Suggestion"],S2024),
@@ -38,7 +39,7 @@ const WARLOCK_2024=[
   ...rows(7,["Etherealness","Finger of Death","Forcecage","Plane Shift"],S2024),
   ...rows(8,["Befuddlement","Demiplane","Dominate Monster","Glibness","Power Word Stun"],S2024),
   ...rows(9,["Astral Projection","Foresight","Gate","Imprisonment","Power Word Kill","True Polymorph","Weird"],S2024)
-];
+]);
 
 const FIEND_2014=[...rows(1,["Burning Hands","Command"]),...rows(2,["Blindness/Deafness","Scorching Ray"]),...rows(3,["Fireball","Stinking Cloud"]),...rows(4,["Fire Shield","Wall of Fire"]),...rows(5,["Flame Strike","Hallow"])];
 const FIEND_2024=Object.freeze([
