@@ -1,18 +1,16 @@
+// SRD 5.2.1, p. 87. Keep this catalog source-safe: Human Versatile may choose
+// an Origin feat, but Character Forge's RAW production slice publishes only SRD content.
 export const ORIGIN_FEATS_2024=Object.freeze([
   Object.freeze({id:"alert",name:"Alert",category:"Origin",repeatable:false}),
-  Object.freeze({id:"crafter",name:"Crafter",category:"Origin",repeatable:false}),
-  Object.freeze({id:"healer",name:"Healer",category:"Origin",repeatable:false}),
-  Object.freeze({id:"lucky",name:"Lucky",category:"Origin",repeatable:false}),
   Object.freeze({id:"magic-initiate",name:"Magic Initiate",category:"Origin",repeatable:true}),
-  Object.freeze({id:"musician",name:"Musician",category:"Origin",repeatable:false}),
   Object.freeze({id:"savage-attacker",name:"Savage Attacker",category:"Origin",repeatable:false}),
-  Object.freeze({id:"skilled",name:"Skilled",category:"Origin",repeatable:true}),
-  Object.freeze({id:"tavern-brawler",name:"Tavern Brawler",category:"Origin",repeatable:false}),
-  Object.freeze({id:"tough",name:"Tough",category:"Origin",repeatable:false})
+  Object.freeze({id:"skilled",name:"Skilled",category:"Origin",repeatable:true})
 ]);
 
 export const MAGIC_INITIATE_LISTS_2024=Object.freeze(["cleric","druid","wizard"]);
 
+// SRD 5.2.1 tool entries, pp. 93-94. Skilled can choose any combination of
+// three skills or tools, so every published tool proficiency must be selectable.
 export const ARTISAN_TOOLS_2024=Object.freeze([
   "Alchemist's Supplies","Brewer's Supplies","Calligrapher's Supplies","Carpenter's Tools","Cartographer's Tools","Cobbler's Tools","Cook's Utensils","Glassblower's Tools","Jeweler's Tools","Leatherworker's Tools","Mason's Tools","Painter's Supplies","Potter's Tools","Smith's Tools","Tinker's Tools","Weaver's Tools","Woodcarver's Tools"
 ]);
