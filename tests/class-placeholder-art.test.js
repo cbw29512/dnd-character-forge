@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { classPlaceholderArt } from "../src/print/class-art.js";
 import { classPortraitDataUrl } from "../src/print/class-portrait-assets.js";
 
@@ -39,6 +41,15 @@ for(const classId of CLASSES){
 test("all class portraits are distinct assets",()=>{
   const portraits=CLASSES.map(classPortraitDataUrl);
   assert.equal(new Set(portraits).size,CLASSES.length);
+});
+
+test("print CSS shows illustration in color and emblem in Ink Saver",()=>{
+  const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-ink-saver.css",import.meta.url)),"utf8");
+  assert.match(css,/\.ps-placeholder-illustrated\s*\{display:contents\}/);
+  assert.match(css,/\.ps-placeholder-emblem\s*\{display:none\}/);
+  assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-illustrated\s*\{display:none!important\}/);
+  assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-emblem\s*\{display:grid!important/);
+  assert.match(css,/\.ps-class-portrait-image\s*\{[^}]*object-fit:cover!important/s);
 });
 
 test("unknown class falls back safely without throwing",()=>{
