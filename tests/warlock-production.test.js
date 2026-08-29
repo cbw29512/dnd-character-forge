@@ -5,6 +5,7 @@ import { CHAIN_FAMILIARS_2024 } from "../src/data/warlock-class.js";
 import { buildWarlockPremiumPrintModel } from "../src/print/warlock-model.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { warlockProgressionFor } from "../src/rules/warlock.js";
+import { classChoiceFieldsForState } from "../src/ui/class-options.js";
 
 function forge(ruleset,level,{subclass="random",classSelections={},spellSelections={}}={}){
   try{
@@ -13,8 +14,6 @@ function forge(ruleset,level,{subclass="random",classSelections={},spellSelectio
     state.constraints.class="warlock";
     state.constraints.level=String(level);
     state.constraints.subclass=subclass;
-    // Keep the 2024 production fixture deterministic so unrelated random
-    // background equipment cannot change the Warlock class's two daggers.
     if(ruleset==="2024"){
       state.constraints.species="human";
       state.constraints.background="soldier";
@@ -68,6 +67,34 @@ test("2024 Pact invocations produce Tome magic, a legal Chain familiar, and a Ch
     assert.equal(pactAttack.ability,"cha");
     assert.equal(pactAttack.attackBonus,character.proficiency+Math.floor((character.abilities.cha-10)/2));
   }catch(error){console.error("[warlock-production-test] 2024 pact invocation contract failed",error);throw error;}
+});
+
+test("2024 Lessons of the First Ones can repeat and grants a different SRD Origin feat each time",()=>{
+  try{
+    const character=forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["lessons-of-the-first-ones","lessons-of-the-first-ones"]}});
+    assert.equal(character.validation.valid,true);
+    assert.equal(character.warlockSelections.invocations.all.filter(id=>id==="lessons-of-the-first-ones").length,2);
+    assert.equal(character.warlockSelections.lessonsOriginFeats.length,2);
+    assert.equal(new Set(character.warlockSelections.lessonsOriginFeats.map(grant=>grant.family)).size,2);
+    assert.equal(character.feats.filter(feat=>feat.source==="warlock").length,2);
+  }catch(error){console.error("[warlock-production-test] repeatable Lessons contract failed",error);throw error;}
+});
+
+test("2024 nonrepeatable Eldritch Invocations cannot be selected twice",()=>{
+  assert.throws(()=>forge("2024",5,{subclass:"fiend-patron",classSelections:{eldritchInvocations:["armor-of-shadows","armor-of-shadows"]}}),/not a repeatable Eldritch Invocation/i);
+});
+
+test("2024 Warlock UI uses invocation slots and preserves repeatable Lessons in multiple slots",()=>{
+  try{
+    const state=createInitialState();state.ruleset="2024";state.constraints.class="warlock";state.constraints.level="5";state.constraints.subclass="fiend-patron";state.constraints.species="human";state.constraints.background="soldier";
+    let slots=classChoiceFieldsForState(state).filter(field=>field.key==="eldritchInvocations");
+    assert.equal(slots.length,warlockProgressionFor("2024",5,"fiend-patron").invocations);
+    assert.ok(slots.every(field=>field.type==="indexed"));
+    state.classSelections.eldritchInvocations=["lessons-of-the-first-ones","lessons-of-the-first-ones"];
+    slots=classChoiceFieldsForState(state).filter(field=>field.key==="eldritchInvocations");
+    assert.ok(slots[0].options.some(option=>option.id==="lessons-of-the-first-ones"));
+    assert.ok(slots[1].options.some(option=>option.id==="lessons-of-the-first-ones"));
+  }catch(error){console.error("[warlock-production-test] invocation slot UI contract failed",error);throw error;}
 });
 
 test("2024 level-20 Fiend Warlock carries Contact Patron, all Mystic Arcana, and its Epic Boon",()=>{
