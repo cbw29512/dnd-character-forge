@@ -48,6 +48,7 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .validation-badge.hb { background:rgba(181,66,75,.16); border:1px solid rgba(208,91,100,.3); color:#f0aeb4; }
 .character-actions { display:flex; gap:8px; margin-top:20px; }
 .action-button { border:1px solid #464b52; background:#262b32; color:#d6d9d7; padding:8px 11px; border-radius:9px; font-size:.72rem; font-weight:800; }
+.action-button.is-saved { border-color:#4f7e67; background:#243b31; color:#bde7cf; }
 .ability-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:24px; }
 .ability-card { padding:11px 8px; text-align:center; border:1px solid #3b4046; border-radius:11px; background:rgba(255,255,255,.035); }
 .ability-card span,.ability-card em { display:block; font-size:.63rem; color:#959b98; font-style:normal; }
