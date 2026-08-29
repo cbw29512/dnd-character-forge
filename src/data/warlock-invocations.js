@@ -43,7 +43,7 @@ const INVOCATIONS_2024=Object.freeze([
   i("devouring-blade","Devouring Blade",12,"Thirsting Blade now gives two extra pact-weapon attacks rather than one.",{requiresInvocation:"thirsting-blade",timing:"Attack action"}),
   i("eldritch-mind","Eldritch Mind",1,"You have Advantage on Constitution saving throws made to maintain Concentration.",{timing:"Concentration save"}),
   i("eldritch-smite","Eldritch Smite",5,"Once per turn when your pact weapon hits, expend a Pact Magic slot for extra Force damage equal to 1d8 plus 1d8 per slot level; a Huge-or-smaller target can also be knocked Prone.",{requiresInvocation:"pact-of-the-blade",timing:"Pact weapon hit"}),
-  i("eldritch-spear","Eldritch Spear",2,"Choose a known damaging Warlock cantrip with at least 10-foot range; increase its range by 30 feet per Warlock level.",{targetCantrip:"eldritch-blast",repeatable:true,timing:"Passive"}),
+  i("eldritch-spear","Eldritch Spear",2,"Choose a known damaging Warlock cantrip with a range of at least 10 feet; increase its range by 30 feet per Warlock level.",{targetCantrip:"eldritch-blast",repeatable:true,timing:"Passive"}),
   i("fiendish-vigor","Fiendish Vigor",2,"Cast False Life on yourself without a spell slot; when cast this way, use the maximum result for its Temporary Hit Points die.",{timing:"At will"}),
   i("gaze-of-two-minds","Gaze of Two Minds",5,"Use a Bonus Action to touch a willing creature and perceive through its senses until the end of your next turn; Bonus Actions can maintain the link, and nearby spellcasting can originate from its space.",{timing:"Bonus Action"}),
   i("gift-of-the-depths","Gift of the Depths",5,"Breathe underwater and gain a Swim Speed equal to your Speed; cast Water Breathing once without a slot per Long Rest.",{timing:"Passive / Long Rest"}),
@@ -57,7 +57,7 @@ const INVOCATIONS_2024=Object.freeze([
   i("one-with-shadows","One with Shadows",5,"While in dim light or darkness, cast Invisibility on yourself without expending a spell slot.",{timing:"At will in dim light/darkness"}),
   i("otherworldly-leap","Otherworldly Leap",2,"Cast Jump on yourself without expending a spell slot.",{timing:"At will"}),
   i("pact-of-the-blade","Pact of the Blade",1,"Conjure or bond with a Simple or Martial melee weapon; you are proficient with it, can use it as a focus, and can use Charisma for its attack and damage rolls.",{timing:"Bonus Action"}),
-  i("pact-of-the-chain","Pact of the Chain",1,"Learn Find Familiar and cast it as a Magic action without a spell slot; special familiar forms become available, and you can trade one attack for the familiar's Reaction attack.",{timing:"Magic action"}),
+  i("pact-of-the-chain","Pact of the Chain",1,"Learn Find Familiar and cast it as a Magic action without expending a spell slot; special familiar forms become available, and you can trade one attack for the familiar's Reaction attack.",{timing:"Magic action"}),
   i("pact-of-the-tome","Pact of the Tome",1,"At the end of a Short or Long Rest, conjure a Book of Shadows containing three cantrips and two level-1 Ritual spells from any class; while the book is on your person, those spells are prepared Warlock spells for you.",{timing:"Short or Long Rest"}),
   i("repelling-blast","Repelling Blast",2,"Choose a known attack-roll Warlock cantrip; when it hits a Large-or-smaller creature, push the target up to 10 feet straight away.",{targetCantrip:"eldritch-blast",repeatable:true,timing:"Cantrip hit"}),
   i("thirsting-blade","Thirsting Blade",5,"Gain Extra Attack for your pact weapon, allowing two attacks when you take the Attack action.",{requiresInvocation:"pact-of-the-blade",timing:"Attack action"}),
@@ -67,20 +67,20 @@ const INVOCATIONS_2024=Object.freeze([
 ]);
 
 const TARGET_POOLS_2024=Object.freeze({
-  "agonizing-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"]),
-  "eldritch-spear":Object.freeze(["eldritch-blast","poison-spray"]),
-  "repelling-blast":Object.freeze(["chill-touch","eldritch-blast","poison-spray","true-strike"])
+  "agonizing-blast":Object.freeze(["chill-touch","eldritch-blast","mind-sliver","poison-spray","thunderclap","toll-the-dead","true-strike"]),
+  "eldritch-spear":Object.freeze(["eldritch-blast","mind-sliver","poison-spray","toll-the-dead"]),
+  "repelling-blast":Object.freeze(["chill-touch","eldritch-blast","true-strike"])
 });
 
 export function warlockInvocationsFor(ruleset){try{if(ruleset==="2014")return INVOCATIONS_2014;if(ruleset==="2024")return INVOCATIONS_2024;throw new Error(`Unsupported Warlock invocation ruleset: ${ruleset}.`);}catch(error){console.error("[warlock-invocations] lookup failed",error);throw error;}}
 export function warlockInvocationById(ruleset,id){try{const option=warlockInvocationsFor(ruleset).find(item=>item.id===id);if(!option)throw new Error(`Unknown ${ruleset} Warlock invocation: ${id}.`);return option;}catch(error){console.error("[warlock-invocations] invocation lookup failed",error);throw error;}}
 export function invocationOptionsAtLevel(ruleset,level,{pactBoon=null,selectedIds=[]}={}){try{const selected=new Set(selectedIds);return warlockInvocationsFor(ruleset).filter(option=>option.minLevel<=Number(level)&&(ruleset!=="2014"||!option.pact||option.pact===pactBoon)&&(ruleset!=="2024"||!option.requiresInvocation||selected.has(option.requiresInvocation)));}catch(error){console.error("[warlock-invocations] legal option lookup failed",error);throw error;}}
 export function invocationCantripTargetIds(ruleset,id){try{const option=warlockInvocationById(ruleset,id);if(!option.targetCantrip)return Object.freeze([]);if(ruleset==="2014")return Object.freeze([option.targetCantrip]);return TARGET_POOLS_2024[id]||Object.freeze([option.targetCantrip]);}catch(error){console.error("[warlock-invocations] target pool lookup failed",error);throw error;}}
-export function resolveInvocationCantripTargets(ruleset,ids=[],preferences=[]){
+export function resolveInvocationCantripTargets(ruleset,ids=[],preferences=[],availableCantrips=null){
   try{
-    const usedByInvocation=new Map(),records=[];
+    const available=availableCantrips?new Set(availableCantrips):null,usedByInvocation=new Map(),records=[];
     ids.forEach((id,slot)=>{
-      const pool=invocationCantripTargetIds(ruleset,id);if(!pool.length)return;
+      let pool=[...invocationCantripTargetIds(ruleset,id)];if(available)pool=pool.filter(cantrip=>available.has(cantrip));if(!pool.length)return;
       const used=usedByInvocation.get(id)||new Set(),requested=preferences[slot]||null,option=warlockInvocationById(ruleset,id);
       if(requested&&(!pool.includes(requested)||used.has(requested)))throw new Error(`${option.name} target ${requested} is unavailable or already used by another copy.`);
       const target=requested||(pool.includes(option.targetCantrip)&&!used.has(option.targetCantrip)?option.targetCantrip:pool.find(cantrip=>!used.has(cantrip)));
