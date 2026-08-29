@@ -1,7 +1,6 @@
 const slug=name=>name.toLowerCase().replace(/[’']/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 const rows=(level,names,schools={})=>names.map(name=>Object.freeze({id:slug(name),name,level,school:schools[name]||null}));
 const unique=spells=>[...new Map(spells.map(spell=>[spell.id,spell])).values()];
-const stable2024=spells=>spells.map(spell=>spell.name==="Tasha’s Hideous Laughter"?Object.freeze({...spell,id:"hideous-laughter"}):spell);
 
 const WARLOCK_2014=[
   ...rows(0,["Chill Touch","Eldritch Blast","Mage Hand","Minor Illusion","Poison Spray","Prestidigitation","True Strike"]),
@@ -17,29 +16,27 @@ const WARLOCK_2014=[
 ];
 
 const S2024=Object.freeze({
-  "Blade Ward":"Abjuration","Chill Touch":"Necromancy","Eldritch Blast":"Evocation",Friends:"Enchantment","Mage Hand":"Conjuration","Mind Sliver":"Enchantment","Minor Illusion":"Illusion","Poison Spray":"Necromancy",Prestidigitation:"Transmutation",Thunderclap:"Evocation","Toll the Dead":"Necromancy","True Strike":"Divination",
-  "Armor of Agathys":"Abjuration","Arms of Hadar":"Conjuration",Bane:"Enchantment","Charm Person":"Enchantment","Comprehend Languages":"Divination","Detect Magic":"Divination","Expeditious Retreat":"Transmutation","Hellish Rebuke":"Evocation",Hex:"Enchantment","Tasha’s Hideous Laughter":"Enchantment","Illusory Script":"Illusion","Protection from Evil and Good":"Abjuration","Speak with Animals":"Divination","Unseen Servant":"Conjuration","Witch Bolt":"Evocation",
-  "Cloud of Daggers":"Conjuration","Crown of Madness":"Enchantment",Darkness:"Evocation",Enthrall:"Enchantment","Hold Person":"Enchantment",Invisibility:"Illusion","Mind Spike":"Divination","Mirror Image":"Illusion","Misty Step":"Conjuration","Ray of Enfeeblement":"Necromancy","Spider Climb":"Transmutation",Suggestion:"Enchantment",
-  Counterspell:"Abjuration","Dispel Magic":"Abjuration",Fear:"Illusion",Fly:"Transmutation","Gaseous Form":"Transmutation","Hunger of Hadar":"Conjuration","Hypnotic Pattern":"Illusion","Magic Circle":"Abjuration","Major Image":"Illusion","Remove Curse":"Abjuration","Summon Fey":"Conjuration","Summon Undead":"Necromancy",Tongues:"Divination","Vampiric Touch":"Necromancy",
-  Banishment:"Abjuration",Blight:"Necromancy","Charm Monster":"Enchantment","Dimension Door":"Conjuration","Hallucinatory Terrain":"Illusion","Summon Aberration":"Conjuration",
-  "Contact Other Plane":"Divination",Dream:"Illusion","Hold Monster":"Enchantment","Jallarzi’s Storm of Radiance":"Evocation",Mislead:"Illusion","Planar Binding":"Abjuration",Scrying:"Divination","Synaptic Static":"Enchantment","Teleportation Circle":"Conjuration",
-  "Arcane Gate":"Conjuration","Circle of Death":"Necromancy","Create Undead":"Necromancy",Eyebite:"Necromancy","Summon Fiend":"Conjuration","Tasha’s Bubbling Cauldron":"Conjuration","True Seeing":"Divination",
-  Etherealness:"Conjuration","Finger of Death":"Necromancy",Forcecage:"Evocation","Plane Shift":"Conjuration",
-  Befuddlement:"Enchantment",Demiplane:"Conjuration","Dominate Monster":"Enchantment",Glibness:"Enchantment","Power Word Stun":"Enchantment",
-  "Astral Projection":"Necromancy",Foresight:"Divination",Gate:"Conjuration",Imprisonment:"Abjuration","Power Word Kill":"Enchantment","True Polymorph":"Transmutation",Weird:"Illusion"
+  "Chill Touch":"Necromancy","Eldritch Blast":"Evocation","Mage Hand":"Conjuration","Minor Illusion":"Illusion","Poison Spray":"Necromancy",Prestidigitation:"Transmutation","True Strike":"Divination",
+  Bane:"Enchantment","Charm Person":"Enchantment","Comprehend Languages":"Divination","Detect Magic":"Divination","Expeditious Retreat":"Transmutation","Hellish Rebuke":"Evocation",Hex:"Enchantment","Hideous Laughter":"Enchantment","Illusory Script":"Illusion","Protection from Evil and Good":"Abjuration","Speak with Animals":"Divination","Unseen Servant":"Conjuration",
+  Darkness:"Evocation",Enthrall:"Enchantment","Hold Person":"Enchantment",Invisibility:"Illusion","Mind Spike":"Divination","Mirror Image":"Illusion","Misty Step":"Conjuration","Ray of Enfeeblement":"Necromancy","Spider Climb":"Transmutation",Suggestion:"Enchantment",
+  Counterspell:"Abjuration","Dispel Magic":"Abjuration",Fear:"Illusion",Fly:"Transmutation","Gaseous Form":"Transmutation","Hypnotic Pattern":"Illusion","Magic Circle":"Abjuration","Major Image":"Illusion","Remove Curse":"Abjuration","Summon Undead":"Necromancy",Tongues:"Divination","Vampiric Touch":"Necromancy",
+  Banishment:"Abjuration",Blight:"Necromancy","Charm Monster":"Enchantment","Dimension Door":"Conjuration","Hallucinatory Terrain":"Illusion",
+  "Contact Other Plane":"Divination",Dream:"Illusion","Hold Monster":"Enchantment",Mislead:"Illusion","Planar Binding":"Abjuration",Scrying:"Divination","Teleportation Circle":"Conjuration",
+  "Circle of Death":"Necromancy","Create Undead":"Necromancy",Eyebite:"Necromancy","True Seeing":"Divination",Etherealness:"Conjuration","Finger of Death":"Necromancy",Forcecage:"Evocation","Plane Shift":"Conjuration",
+  Befuddlement:"Enchantment",Demiplane:"Conjuration","Dominate Monster":"Enchantment",Glibness:"Enchantment","Power Word Stun":"Enchantment","Astral Projection":"Necromancy",Foresight:"Divination",Gate:"Conjuration",Imprisonment:"Abjuration","Power Word Kill":"Enchantment","True Polymorph":"Transmutation",Weird:"Illusion"
 });
-const WARLOCK_2024=stable2024([
-  ...rows(0,["Blade Ward","Chill Touch","Eldritch Blast","Friends","Mage Hand","Mind Sliver","Minor Illusion","Poison Spray","Prestidigitation","Thunderclap","Toll the Dead","True Strike"],S2024),
-  ...rows(1,["Armor of Agathys","Arms of Hadar","Bane","Charm Person","Comprehend Languages","Detect Magic","Expeditious Retreat","Hellish Rebuke","Hex","Illusory Script","Protection from Evil and Good","Speak with Animals","Tasha’s Hideous Laughter","Unseen Servant","Witch Bolt"],S2024),
-  ...rows(2,["Cloud of Daggers","Crown of Madness","Darkness","Enthrall","Hold Person","Invisibility","Mind Spike","Mirror Image","Misty Step","Ray of Enfeeblement","Spider Climb","Suggestion"],S2024),
-  ...rows(3,["Counterspell","Dispel Magic","Fear","Fly","Gaseous Form","Hunger of Hadar","Hypnotic Pattern","Magic Circle","Major Image","Remove Curse","Summon Fey","Summon Undead","Tongues","Vampiric Touch"],S2024),
-  ...rows(4,["Banishment","Blight","Charm Monster","Dimension Door","Hallucinatory Terrain","Summon Aberration"],S2024),
-  ...rows(5,["Contact Other Plane","Dream","Hold Monster","Jallarzi’s Storm of Radiance","Mislead","Planar Binding","Scrying","Synaptic Static","Teleportation Circle"],S2024),
-  ...rows(6,["Arcane Gate","Circle of Death","Create Undead","Eyebite","Summon Fiend","Tasha’s Bubbling Cauldron","True Seeing"],S2024),
+const WARLOCK_2024=[
+  ...rows(0,["Chill Touch","Eldritch Blast","Mage Hand","Minor Illusion","Poison Spray","Prestidigitation","True Strike"],S2024),
+  ...rows(1,["Bane","Charm Person","Comprehend Languages","Detect Magic","Expeditious Retreat","Hellish Rebuke","Hex","Hideous Laughter","Illusory Script","Protection from Evil and Good","Speak with Animals","Unseen Servant"],S2024),
+  ...rows(2,["Darkness","Enthrall","Hold Person","Invisibility","Mind Spike","Mirror Image","Misty Step","Ray of Enfeeblement","Spider Climb","Suggestion"],S2024),
+  ...rows(3,["Counterspell","Dispel Magic","Fear","Fly","Gaseous Form","Hypnotic Pattern","Magic Circle","Major Image","Remove Curse","Summon Undead","Tongues","Vampiric Touch"],S2024),
+  ...rows(4,["Banishment","Blight","Charm Monster","Dimension Door","Hallucinatory Terrain"],S2024),
+  ...rows(5,["Contact Other Plane","Dream","Hold Monster","Mislead","Planar Binding","Scrying","Teleportation Circle"],S2024),
+  ...rows(6,["Circle of Death","Create Undead","Eyebite","True Seeing"],S2024),
   ...rows(7,["Etherealness","Finger of Death","Forcecage","Plane Shift"],S2024),
   ...rows(8,["Befuddlement","Demiplane","Dominate Monster","Glibness","Power Word Stun"],S2024),
   ...rows(9,["Astral Projection","Foresight","Gate","Imprisonment","Power Word Kill","True Polymorph","Weird"],S2024)
-]);
+];
 
 const FIEND_2014=[...rows(1,["Burning Hands","Command"]),...rows(2,["Blindness/Deafness","Scorching Ray"]),...rows(3,["Fireball","Stinking Cloud"]),...rows(4,["Fire Shield","Wall of Fire"]),...rows(5,["Flame Strike","Hallow"])];
 const FIEND_2024=Object.freeze([
