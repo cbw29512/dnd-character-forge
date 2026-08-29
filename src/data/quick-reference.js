@@ -8,7 +8,10 @@ export const REFERENCE_2014={
   style:{
     "Defense":r("Fighting Style","Passive","While wearing armor, gain +1 AC; this bonus is already included above."),
     "Archery":r("Fighting Style","Passive","Gain +2 on attack rolls made with ranged weapons; this is already included in ranged attacks above."),
-    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll.")
+    "Dueling":r("Fighting Style","Passive","While wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls with that weapon; the bonus is already included on qualifying one-handed melee attacks above."),
+    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll."),
+    "Protection":r("Fighting Style","Reaction","While wielding a shield, when a creature you can see attacks a target other than you within 5 feet, use your Reaction to impose Disadvantage on that attack roll."),
+    "Two-Weapon Fighting":r("Fighting Style","Two-weapon fighting","When you make the extra attack granted by fighting with two weapons, add your ability modifier to that extra attack's damage.")
   },
   feature:{
     "Action Surge":r("Fighter","On your turn","Take one additional action. One use; regain it after a Short or Long Rest."),
