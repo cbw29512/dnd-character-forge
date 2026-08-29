@@ -4,29 +4,45 @@ import { readFileSync } from "node:fs";
 
 const heroCss=readFileSync(new URL("../styles/hero-experience.css",import.meta.url),"utf8");
 const polishCss=readFileSync(new URL("../styles/forge-polish.css",import.meta.url),"utf8");
+const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
 
-test("desktop Forge loads the app-first polish layer",()=>{
+test("desktop Forge loads the app-first console layer",()=>{
   assert.match(heroCss,/^@import url\("\.\/forge-polish\.css"\);/);
-  assert.match(polishCss,/max-width:1500px/);
-  assert.match(polishCss,/grid-template-columns:minmax\(610px,1\.05fr\) minmax\(500px,\.95fr\)/);
+  assert.match(polishCss,/max-width:1480px/);
+  assert.match(polishCss,/grid-template-columns:minmax\(520px,590px\) minmax\(0,1fr\)/);
   assert.match(polishCss,/grid-template-areas:[\s\S]*?"hero hero"[\s\S]*?"panel result"/);
 });
 
-test("initial hero is compact and the Forge owns the first screen",()=>{
-  assert.match(polishCss,/\.hero-copy h1\{[\s\S]*?font-size:clamp\(2rem,2\.75vw,2\.8rem\)/);
-  assert.match(polishCss,/\.hero-copy h1 br\{[\s\S]*?display:none/);
-  assert.match(polishCss,/\.hero-flow\{[\s\S]*?display:none/);
-  assert.match(polishCss,/\.launch-cta\{[\s\S]*?border-bottom:1px solid rgba\(89,80,67,\.1\)/);
+test("initial identity strip is compact and the Forge owns the first screen",()=>{
+  assert.match(polishCss,/\.hero-copy h1\{[\s\S]*?font-size:clamp\(1\.8rem,2\.25vw,2\.3rem\)/);
+  assert.match(polishCss,/\.hero-copy h1 br\{display:none\}/);
+  assert.match(polishCss,/\.hero-flow\{display:none\}/);
+  assert.match(polishCss,/Forge console: same visual world as the result/);
 });
 
-test("core choices are compact and preview is visible beside the builder",()=>{
+test("builder is a dark compact console instead of a parchment form slab",()=>{
+  assert.match(polishCss,/linear-gradient\(180deg,#1b1e23 0%,#15171b 100%\)/);
   assert.match(polishCss,/\.forge-workspace:not\(:has\(\.character-sheet\)\) \.field-grid\{[\s\S]*?grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
-  assert.match(polishCss,/\.forge-workspace:not\(:has\(\.character-sheet\)\) \.field small\{[\s\S]*?display:none/);
-  assert.match(polishCss,/\.forge-empty-state\{[\s\S]*?min-height:610px/);
-  assert.match(polishCss,/\.empty-sheet\{[\s\S]*?min-height:395px[\s\S]*?transform:none/);
+  assert.match(polishCss,/\.forge-panel \.field::before\{display:none!important;content:none!important\}/);
+  assert.match(polishCss,/background:#22262c;[\s\S]*?color:#f0ebe2/);
 });
 
-test("secondary support content stays visually subordinate",()=>{
-  assert.match(polishCss,/\.support-card\{[\s\S]*?border-radius:0;[\s\S]*?background:transparent;/);
-  assert.match(polishCss,/\.seo-about\{[\s\S]*?border-radius:0;[\s\S]*?background:transparent;/);
+test("secondary presentation settings are progressively disclosed",()=>{
+  assert.match(app,/groupAdvancedOptions\(\)/);
+  assert.match(app,/details\.id="forgeAdvancedOptions"/);
+  assert.match(app,/Spells, starting magic, portrait, print style, and Homebrew details/);
+  assert.match(app,/\["spellPickerPanel","homebrewPanel","magicControls","portraitPanel","sheetCustomizerPanel"\]/);
+  assert.match(polishCss,/\.forge-panel \.forge-advanced-options>summary/);
+});
+
+test("generated result leads with the character before starting-resource detail",()=>{
+  assert.match(app,/result\.append\(card\)/);
+  assert.doesNotMatch(app,/result\.prepend\(card\)/);
+  assert.match(polishCss,/grid-template-columns:minmax\(300px,330px\) minmax\(0,1fr\)/);
+  assert.match(polishCss,/\.forge-workspace:has\(\.character-sheet\) \.field-grid\{[\s\S]*?grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
+});
+
+test("empty state reads as a parchment sheet on the Forge workbench",()=>{
+  assert.match(polishCss,/\.empty-sheet\{[\s\S]*?background:linear-gradient\(145deg,#f5efe4,#e8decd\)/);
+  assert.match(polishCss,/\.forge-empty-state\{[\s\S]*?border:0;[\s\S]*?background:transparent/);
 });
