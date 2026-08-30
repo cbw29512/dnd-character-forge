@@ -85,10 +85,12 @@ def resolution_for(text: str) -> str:
 
 
 def parse_fields(block: str, title: str, page: int) -> tuple[str, str, str, str, str]:
+    # SRD 5.2.1 itself uses both "Component:" and "Components:" in spell
+    # stat lines. Treat that source-format variation as equivalent.
     patterns = {
         "Casting Time": r"Casting Time:\s*(.*?)(?=\nRange:)",
-        "Range": r"Range:\s*(.*?)(?=\nComponents:)",
-        "Components": r"Components:\s*(.*?)(?=\nDuration:)",
+        "Range": r"Range:\s*(.*?)(?=\nComponents?:)",
+        "Components": r"Components?:\s*(.*?)(?=\nDuration:)",
         "Duration": r"Duration:\s*([^\n]+)",
     }
     values: dict[str, str] = {}
