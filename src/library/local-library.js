@@ -4,12 +4,22 @@ export const PREGEN_ENTRY_SCHEMA_VERSION = 1;
 const PREGEN_KEY = "character-forge:pregen-library:v1";
 const HOMEBREW_KEY = "character-forge:homebrew-library:v1";
 
-function load(key, label) {
+function loadStrict(key,label) {
   try {
-    const raw = localStorage.getItem(key);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch (error) { console.error(`[library] ${label} load failed`, error); return []; }
+    const raw=localStorage.getItem(key);
+    if(!raw)return [];
+    const parsed=JSON.parse(raw);
+    if(!Array.isArray(parsed))throw new Error(`Saved ${label} data is not a library array.`);
+    return parsed;
+  } catch (error) {
+    console.error(`[library] ${label} strict load failed`,error);
+    if(error instanceof SyntaxError)throw new Error(`Saved ${label} data is corrupted and could not be read safely.`);
+    throw error;
+  }
+}
+function load(key, label) {
+  try { return loadStrict(key,label); }
+  catch (error) { console.error(`[library] ${label} load failed`, error); return []; }
 }
 function store(key, items, label) {
   try { localStorage.setItem(key,JSON.stringify(items)); return items; }
@@ -17,6 +27,7 @@ function store(key, items, label) {
 }
 
 export const loadPregens = () => load(PREGEN_KEY,"pregens");
+export const loadPregensStrict = () => loadStrict(PREGEN_KEY,"pregens");
 export const loadHomebrew = () => load(HOMEBREW_KEY,"homebrew");
 export function replacePregens(items){
   try{

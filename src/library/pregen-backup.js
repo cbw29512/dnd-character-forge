@@ -1,4 +1,4 @@
-import { loadPregens, replacePregens, PREGEN_ENTRY_SCHEMA_VERSION } from "./local-library.js";
+import { loadPregensStrict, replacePregens, PREGEN_ENTRY_SCHEMA_VERSION } from "./local-library.js";
 import { verifyPregenEntry } from "./pregen-integrity.js";
 
 export const PREGEN_BACKUP_FORMAT = "character-forge-pregen-backup";
@@ -38,11 +38,12 @@ async function verifyRawEntries(entries,label){
   }catch(error){console.error(`[pregen-backup] ${label} verification failed`,error);throw error;}
 }
 
-export async function createPregenBackup(entries=loadPregens()){
+export async function createPregenBackup(entries=null){
   try{
-    if(!Array.isArray(entries))throw new Error("Saved pregen library is malformed.");
-    if(entries.length>PREGEN_BACKUP_MAX_ENTRIES)throw new Error(`Saved pregen library exceeds the ${PREGEN_BACKUP_MAX_ENTRIES}-entry backup limit.`);
-    const verified=await verifyRawEntries(entries,"export");
+    const source=entries===null?loadPregensStrict():entries;
+    if(!Array.isArray(source))throw new Error("Saved pregen library is malformed.");
+    if(source.length>PREGEN_BACKUP_MAX_ENTRIES)throw new Error(`Saved pregen library exceeds the ${PREGEN_BACKUP_MAX_ENTRIES}-entry backup limit.`);
+    const verified=await verifyRawEntries(source,"export");
     return{
       format:PREGEN_BACKUP_FORMAT,
       schemaVersion:PREGEN_BACKUP_SCHEMA_VERSION,
@@ -53,7 +54,7 @@ export async function createPregenBackup(entries=loadPregens()){
   }catch(error){console.error("[pregen-backup] export build failed",error);throw error;}
 }
 
-export async function exportPregenBackupJson(entries=loadPregens()){
+export async function exportPregenBackupJson(entries=null){
   try{return JSON.stringify(await createPregenBackup(entries),null,2);}
   catch(error){console.error("[pregen-backup] JSON export failed",error);throw error;}
 }
@@ -62,7 +63,7 @@ export async function importPregenBackupJson(text){
   try{
     const backup=parseBackup(text);
     const incoming=await verifyRawEntries(backup.entries,"import");
-    const currentRaw=loadPregens();
+    const currentRaw=loadPregensStrict();
     if(currentRaw.length>PREGEN_BACKUP_MAX_ENTRIES)throw new Error(`Saved pregen library exceeds the ${PREGEN_BACKUP_MAX_ENTRIES}-entry safety limit.`);
     const current=await verifyRawEntries(currentRaw,"existing library");
     const fingerprints=new Set(current.map(entry=>entry.fingerprint));

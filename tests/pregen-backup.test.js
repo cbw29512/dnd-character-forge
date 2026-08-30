@@ -8,6 +8,8 @@ import { loadPregens, replacePregens, savePregen, PREGEN_ENTRY_SCHEMA_VERSION } 
 import { verifyPregenEntry } from "../src/library/pregen-integrity.js";
 import { createPregenBackup, exportPregenBackupJson, importPregenBackupJson, PREGEN_BACKUP_FORMAT, PREGEN_BACKUP_SCHEMA_VERSION } from "../src/library/pregen-backup.js";
 
+const PREGEN_STORAGE_KEY="character-forge:pregen-library:v1";
+
 function memoryStorage(){
   const values=new Map();
   return{
@@ -94,6 +96,15 @@ test("backup import rejects tampered mechanics before changing the local library
   await assert.rejects(()=>importPregenBackupJson(envelope([incoming])),/integrity check failed/i);
   assert.equal(loadPregens().length,1);
   assert.equal(loadPregens()[0].id,"existing");
+});
+
+test("backup operations refuse to overwrite unreadable local pregen data",async()=>{
+  reset();
+  localStorage.setItem(PREGEN_STORAGE_KEY,"{broken-json");
+  const incoming=await entryFor(fighter(6,"Recovery Candidate"),"incoming");
+  await assert.rejects(()=>importPregenBackupJson(envelope([incoming])),/corrupted and could not be read safely/i);
+  await assert.rejects(()=>exportPregenBackupJson(),/corrupted and could not be read safely/i);
+  assert.equal(localStorage.getItem(PREGEN_STORAGE_KEY),"{broken-json");
 });
 
 test("backup import rejects unsupported future entry and backup schemas",async()=>{
