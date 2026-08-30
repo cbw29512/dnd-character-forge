@@ -1,7 +1,5 @@
 import { SPELL_REFERENCE_2024_BY_ID } from "../data/spell-reference-2024.js";
-import { CLERIC_SPELLS_2024 } from "../data/cleric-spells.js";
 
-const CLERIC_LEVEL1_IDS=new Set(CLERIC_SPELLS_2024.filter(spell=>spell.level===1).map(spell=>spell.id));
 export function getSpellReference(ruleset,spellId){
   try{if(ruleset!=="2024")return null;const spell=SPELL_REFERENCE_2024_BY_ID[spellId];if(!spell)throw new Error(`Missing SRD 5.2.1 spell reference for ${spellId}.`);return spell;}
   catch(error){console.error("[spell-reference] lookup failed",error);throw error;}
@@ -24,11 +22,24 @@ export function resolveCantripReference(character,spellId){
 }
 export function characterActiveSpellReferences(character){
   try{
-    if(character.ruleset!=="2024"||!character.spells)return[];
-    const refs=character.spells.cantrips.all.map(id=>({...resolveCantripReference(character,id),preparation:"Cantrip"}));
-    if(character.class.id!=="cleric")return refs;
-    const always=new Set(character.spells.alwaysPrepared||[]),prepared=new Set(character.spells.prepared?.all||[]),active=[...new Set([...always,...prepared])];
-    for(const id of active){if(!CLERIC_LEVEL1_IDS.has(id))continue;const ref=resolveSpellReference(character,id);refs.push({...ref,preparation:always.has(id)?"Always Prepared":"Prepared"});}
+    if(character?.ruleset!=="2024"||!character?.spells)return[];
+    const refs=[],seen=new Set(),spells=character.spells;
+    const add=(id,preparation,{cantrip=false}={})=>{
+      if(!id||seen.has(id))return;
+      const reference=cantrip?resolveCantripReference(character,id):resolveSpellReference(character,id);
+      if(!reference)return;
+      if(cantrip&&reference.level!==0)throw new Error(`${id} is listed as a cantrip but resolves to level ${reference.level}.`);
+      if(!cantrip&&reference.level===0)throw new Error(`${id} is listed as leveled active magic but resolves to a cantrip.`);
+      refs.push({...reference,preparation});seen.add(id);
+    };
+    for(const id of spells.cantrips?.all||[])add(id,"Cantrip",{cantrip:true});
+    for(const id of spells.tome?.cantrips||[])add(id,"Pact Tome Cantrip",{cantrip:true});
+    for(const id of spells.alwaysPrepared||[])add(id,"Always Prepared");
+    for(const id of spells.prepared?.all||[])add(id,"Prepared");
+    for(const id of spells.known?.all||[])add(id,"Known");
+    for(const id of spells.tome?.rituals||[])add(id,"Pact Tome Ritual");
+    for(const id of spells.invocationSpells||[])add(id,"Invocation");
+    for(const id of Object.values(spells.mysticArcanum||{}))add(id,"Mystic Arcanum");
     return refs;
   }catch(error){console.error("[spell-reference] active references failed",error);throw error;}
 }
