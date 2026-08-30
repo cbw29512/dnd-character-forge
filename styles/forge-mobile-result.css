@@ -1,10 +1,10 @@
 /* On phones, the thing the user just created should appear before the editor. */
 @media (max-width:680px){
-  .forge-workspace:has(.character-sheet) .result-stage{
+  .forge-workspace:has(.character-sheet, .party-roster) .result-stage{
     order:1;
     margin-top:0;
   }
-  .forge-workspace:has(.character-sheet) .forge-panel{
+  .forge-workspace:has(.character-sheet, .party-roster) .forge-panel{
     order:2;
   }
 }
