@@ -1,3 +1,6 @@
+import { generateParty, PARTY_COMPOSITIONS } from "../rules/party-forge.js";
+import { savePregen } from "../library/local-library.js";
+
 function ensureHeroStyles(){
   try{
     if(document.querySelector('link[data-hero-experience-style]'))return;
@@ -11,9 +14,127 @@ function ensureHeroStyles(){
   }
 }
 
+function ensurePartyStyles(){
+  try{
+    if(document.querySelector('link[data-party-forge-style]'))return;
+    const link=document.createElement("link");
+    link.rel="stylesheet";
+    link.href="styles/party-forge.css";
+    link.dataset.partyForgeStyle="true";
+    document.head.appendChild(link);
+  }catch(error){
+    console.error("[party-forge] styles failed",error);
+  }
+}
+
+function partyEditionLabel(){
+  const ruleset=document.getElementById("ruleset")?.value||"2024";
+  return ruleset==="2014"?"2014 · SRD 5.1":"2024 · SRD 5.2.1";
+}
+
+function currentMagicMode(){
+  return document.querySelector('input[name="magicMode"]:checked')?.value||"random";
+}
+
+function setPartyStatus(message,isError=false){
+  const status=document.getElementById("partyForgeStatus");
+  if(!status)return;
+  status.textContent=message||"";
+  status.classList.toggle("is-error",Boolean(isError));
+}
+
+function memberSubclassLabel(member){return member.subclass?.name?` · ${member.subclass.name}`:"";}
+function memberRoleLabel(role){return role==="random"?"Random role":role.charAt(0).toUpperCase()+role.slice(1);}
+
+function renderPartyRoster(party){
+  try{
+    const result=document.getElementById("result");
+    if(!result)throw new Error("Party Forge result stage is unavailable.");
+    result.innerHTML="";
+    const roster=document.createElement("section");
+    roster.className="party-roster";
+    roster.setAttribute("aria-label","Generated party roster");
+    roster.innerHTML=`<div class="party-roster-head"><div><p class="section-kicker">PARTY FORGE RESULT</p><h2>${party.size} ready-to-play characters</h2><p>Level ${party.level} · ${partyEditionLabel()} · ${party.composition===PARTY_COMPOSITIONS.BALANCED?"Balanced roles":"Fully random classes"}</p></div><span class="party-roster-proof">✓ ${party.size}/${party.size} RAW validated</span></div><div class="party-member-grid"></div><div class="party-roster-actions"><button id="savePartyPregens" class="party-forge-button" type="button">Save all to My Pregens</button><button id="openPartyPregens" class="party-member-save" type="button">Open My Pregens</button></div><div id="partyRosterStatus" class="party-status" aria-live="polite"></div>`;
+    const grid=roster.querySelector(".party-member-grid");
+    party.members.forEach((member,index)=>{
+      const card=document.createElement("article");
+      card.className="party-member-card";
+      card.innerHTML=`<div class="party-member-top"><div><span class="party-role">${memberRoleLabel(member.partyRole)}</span><h3>${member.name}</h3></div><span class="party-role">#${index+1}</span></div><div class="party-member-meta">Level ${member.level} ${member.class.name}${memberSubclassLabel(member)}<br>${member.species.name} · ${member.background.name}</div><div class="party-member-stats"><div class="party-member-stat"><strong>${member.ac}</strong><span>AC</span></div><div class="party-member-stat"><strong>${member.hp}</strong><span>HP</span></div><div class="party-member-stat"><strong>+${member.proficiency}</strong><span>PB</span></div></div><button class="party-member-save" type="button" data-save-party-member="${index}">Save to My Pregens</button>`;
+      grid.appendChild(card);
+    });
+    result.appendChild(roster);
+    const status=roster.querySelector("#partyRosterStatus");
+    async function saveMember(index,button){
+      const member=party.members[index];
+      if(!member)throw new Error("Party member is unavailable.");
+      try{
+        await savePregen(member);
+      }catch(error){
+        if(!/mechanically identical/i.test(error.message))throw error;
+      }
+      if(button){button.textContent="✓ Saved";button.classList.add("is-saved");button.disabled=true;}
+    }
+    grid.addEventListener("click",async event=>{
+      const button=event.target.closest("[data-save-party-member]");
+      if(!button)return;
+      try{button.disabled=true;button.textContent="Saving…";await saveMember(Number(button.dataset.savePartyMember),button);status.textContent="Saved. Open My Pregens to view, customize, or print the full sheet.";}catch(error){button.disabled=false;button.textContent="Save to My Pregens";status.textContent=error.message;status.classList.add("is-error");}
+    });
+    roster.querySelector("#savePartyPregens").addEventListener("click",async event=>{
+      const button=event.currentTarget;
+      try{
+        button.disabled=true;button.textContent="Saving party…";status.classList.remove("is-error");
+        const memberButtons=[...grid.querySelectorAll("[data-save-party-member]")];
+        for(let index=0;index<party.members.length;index+=1)await saveMember(index,memberButtons[index]);
+        button.textContent="✓ Party saved";
+        status.textContent=`All ${party.size} characters are in My Pregens. Open any member there for the full class sheet and PDF controls.`;
+      }catch(error){button.disabled=false;button.textContent="Save all to My Pregens";status.textContent=error.message;status.classList.add("is-error");}
+    });
+    roster.querySelector("#openPartyPregens").addEventListener("click",()=>document.querySelector('[data-tab="pregens"]')?.click());
+  }catch(error){console.error("[party-forge] roster render failed",error);throw error;}
+}
+
+function ensurePartyForge(){
+  try{
+    ensurePartyStyles();
+    const launch=document.querySelector(".launch-cta");
+    if(!launch||document.getElementById("partyForgePanel"))return;
+    const toggle=document.createElement("button");
+    toggle.id="partyForgeToggle";
+    toggle.className="party-forge-toggle";
+    toggle.type="button";
+    toggle.setAttribute("aria-expanded","false");
+    toggle.setAttribute("aria-controls","partyForgePanel");
+    toggle.textContent="⚔ Forge a Party";
+    launch.appendChild(toggle);
+
+    const panel=document.createElement("section");
+    panel.id="partyForgePanel";
+    panel.className="party-forge-panel";
+    panel.hidden=true;
+    panel.innerHTML='<div class="party-forge-heading"><div><span class="section-kicker">DM PARTY FORGE</span><h3>Build the whole table at once.</h3><p>Every member goes through the same RAW generator and validation path as a normal Forge character.</p></div><span class="party-forge-badge">PARTY MVP</span></div><div class="party-forge-grid"><label>Party size<select id="partySize"><option value="2">2 characters</option><option value="3">3 characters</option><option value="4" selected>4 characters</option><option value="5">5 characters</option><option value="6">6 characters</option></select></label><label>Level<select id="partyLevel"></select></label><label>Composition<select id="partyComposition"><option value="balanced">Balanced roles</option><option value="random">Fully random classes</option></select></label><label>Rules edition<input id="partyRulesetLabel" value="" readonly aria-label="Party rules edition"></label><label class="party-duplicate-option"><input id="partyAllowDuplicates" type="checkbox"><span>Allow duplicate classes</span></label></div><div class="party-forge-actions"><button id="forgePartyButton" class="party-forge-button" type="button">Forge the Party</button><span id="partyForgeStatus" class="party-forge-note" aria-live="polite"></span></div>';
+    launch.insertAdjacentElement("afterend",panel);
+    const level=panel.querySelector("#partyLevel");
+    for(let value=1;value<=20;value+=1){const option=document.createElement("option");option.value=String(value);option.textContent=`Level ${value}`;if(value===5)option.selected=true;level.appendChild(option);}
+    const updateEdition=()=>{panel.querySelector("#partyRulesetLabel").value=partyEditionLabel();};
+    updateEdition();
+    document.getElementById("ruleset")?.addEventListener("change",updateEdition);
+    toggle.addEventListener("click",()=>{panel.hidden=!panel.hidden;toggle.setAttribute("aria-expanded",String(!panel.hidden));toggle.textContent=panel.hidden?"⚔ Forge a Party":"Close Party Forge";if(!panel.hidden)updateEdition();});
+    panel.querySelector("#forgePartyButton").addEventListener("click",event=>{
+      const button=event.currentTarget;
+      try{
+        button.disabled=true;button.textContent="Forging party…";setPartyStatus("Building and validating every member…");
+        const party=generateParty({ruleset:document.getElementById("ruleset")?.value||"2024",level:Number(level.value),size:Number(panel.querySelector("#partySize").value),composition:panel.querySelector("#partyComposition").value,allowDuplicateClasses:panel.querySelector("#partyAllowDuplicates").checked,magicMode:currentMagicMode()});
+        renderPartyRoster(party);
+        setPartyStatus(`✓ ${party.size} RAW-valid characters forged.`);
+      }catch(error){console.error("[party-forge] UI generation failed",error);setPartyStatus(error.message,true);}finally{button.disabled=false;button.textContent="Forge the Party";}
+    });
+  }catch(error){console.error("[party-forge] experience setup failed",error);}
+}
+
 export function createHeroExperience(){
   try{
     ensureHeroStyles();
+    ensurePartyForge();
     const hero=document.querySelector(".hero-copy");
     if(!hero)return;
     // The polished landing page owns its hero messaging. Keep the legacy
