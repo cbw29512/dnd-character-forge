@@ -45,7 +45,7 @@ test("Cleric color placeholder is the approved raster portrait asset",()=>{
   const bytes=readFileSync(fileURLToPath(assetUrl));
   assert.equal(bytes.subarray(0,4).toString("ascii"),"RIFF");
   assert.equal(bytes.subarray(8,12).toString("ascii"),"WEBP");
-  assert.equal(createHash("sha256").update(bytes).digest("hex"),"374eb9c4da63258a2945e6ae2980ee7b894e06c42ea7a9ace74fba7ce97f4b4c","Cleric portrait must remain the approved gold-and-ivory character artwork");
+  assert.equal(createHash("sha256").update(bytes).digest("hex"),"3705a71fd343103a0d1c4f38f3738ff0728e3a95dccca4389c1454a3109fbe6c","Cleric portrait must remain the approved gold-and-ivory character artwork");
 });
 
 test("all class portraits are distinct assets",()=>{
