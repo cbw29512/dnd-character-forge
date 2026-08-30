@@ -1,4 +1,5 @@
 import { loadPregens, removePregen } from "../library/local-library.js";
+import { verifyPregenEntry } from "../library/pregen-integrity.js";
 
 const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
 let callbacks={};
@@ -6,10 +7,10 @@ let callbacks={};
 export function bindPregenLibrary(options={}){
   try{
     callbacks=options;["pregenSearch","pregenRuleset","pregenSource"].forEach(id=>document.getElementById(id)?.addEventListener("input",renderPregenLibrary));
-    document.getElementById("pregenGrid")?.addEventListener("click",event=>{
+    document.getElementById("pregenGrid")?.addEventListener("click",async event=>{
       try{
         const view=event.target.closest("[data-view-pregen]"),remove=event.target.closest("[data-remove-pregen]");
-        if(view){const entry=loadPregens().find(item=>item.id===view.dataset.viewPregen);if(!entry)throw new Error("Saved pregen was not found.");callbacks.onView?.(entry);return;}
+        if(view){const entry=loadPregens().find(item=>item.id===view.dataset.viewPregen);if(!entry)throw new Error("Saved pregen was not found.");const verified=await verifyPregenEntry(entry);await callbacks.onView?.(verified);return;}
         if(remove){removePregen(remove.dataset.removePregen);renderPregenLibrary();callbacks.showToast?.("Pregen removed.");}
       }catch(error){console.error("[library-ui] action failed",error);callbacks.showToast?.(error.message,true);}
     });renderPregenLibrary();
@@ -25,6 +26,6 @@ export function renderPregenLibrary(){
 }
 function card(item){
   try{
-    const raw=item.sourceMode==="RAW";return `<article class="library-card"><div class="library-card-top"><span class="library-badge ${raw?"raw":"hb"}">${raw?"✓ RAW":"HB"}</span><span class="library-level">Level ${item.level}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.speciesName)} ${escapeHtml(item.className)} · ${escapeHtml(item.backgroundName)}</p><div class="library-meta"><span>${escapeHtml(item.ruleset)}</span><span>Fingerprint ${item.fingerprint.slice(0,8)}</span></div><div class="library-actions"><button class="library-open" type="button" data-view-pregen="${item.id}">Open character</button><button class="library-remove" type="button" data-remove-pregen="${item.id}">Remove</button></div></article>`;
+    const raw=item.sourceMode==="RAW",fingerprint=typeof item.fingerprint==="string"&&item.fingerprint?item.fingerprint.slice(0,8):"unverified",id=escapeHtml(item.id);return `<article class="library-card"><div class="library-card-top"><span class="library-badge ${raw?"raw":"hb"}">${raw?"✓ RAW":"HB"}</span><span class="library-level">Level ${item.level}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.speciesName)} ${escapeHtml(item.className)} · ${escapeHtml(item.backgroundName)}</p><div class="library-meta"><span>${escapeHtml(item.ruleset)}</span><span>Fingerprint ${escapeHtml(fingerprint)}</span></div><div class="library-actions"><button class="library-open" type="button" data-view-pregen="${id}">Open character</button><button class="library-remove" type="button" data-remove-pregen="${id}">Remove</button></div></article>`;
   }catch(error){console.error("[library-ui] card failed",error);throw error;}
 }
