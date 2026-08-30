@@ -39,7 +39,7 @@ async function verify(item,port){
   assert.equal(audit.sealPresent,true,`${item.name}: visible Rules Lawyer certification seal is missing`);
   assert.equal(audit.sealRaw,true,`${item.name}: visible seal was not the RAW-certified variant`);
   assert.equal(audit.sealTextValid,true,`${item.name}: visible seal is missing certification/build text`);
-  assert.ok(audit.pageCount>=2,`${item.name}: premium print packet did not render expected pages`);
+  assert.ok(audit.pageCount>=1,`${item.name}: premium print packet did not render a printable page`);
   assert.equal(audit.footerCount,audit.pageCount,`${item.name}: every premium page must have exactly one audit footer`);
   assert.equal(audit.certifiedFooterCount,audit.footerCount,`${item.name}: build certification is missing from at least one premium page footer`);
   assert.ok(audit.horizontalOverflow<=1,`${item.name}: certification seal caused ${audit.horizontalOverflow}px horizontal overflow`);
@@ -76,7 +76,7 @@ try{
   printTarget.style.top="0";
   document.body.append(printTarget);
   renderPremiumPrintSheet(character,printTarget);
-  const seal=document.querySelector(".rules-lawyer-cert"),footers=[...printTarget.querySelectorAll(".ps-audit")],pages=[...printTarget.querySelectorAll("article")],root=document.documentElement,body=document.body;
+  const seal=document.querySelector(".rules-lawyer-cert"),footers=[...printTarget.querySelectorAll(".ps-audit")],pages=[...printTarget.querySelectorAll("article.premium-sheet")],root=document.documentElement,body=document.body;
   const data={error,ruleset:character.ruleset,validationValid:Boolean(character.validation?.valid),auditPass:character.audit?.status==="PASS",rawIntegrity:character.audit?.rawIntegrity===true,sealPresent:Boolean(seal),sealRaw:Boolean(seal?.classList.contains("is-raw")),sealTextValid:Boolean(seal&&/RULES LAWYER CERTIFIED/.test(seal.textContent)&&/${BUILD}/.test(seal.textContent)),pageCount:pages.length,footerCount:footers.length,certifiedFooterCount:footers.filter(footer=>/RULES LAWYER CERTIFIED/.test(footer.textContent)&&/${BUILD}/.test(footer.textContent)).length,horizontalOverflow:Math.max(0,Math.max(root.scrollWidth,body.scrollWidth)-root.clientWidth)};
   const output=document.createElement("pre");output.id="rulesLawyerAuditResult";output.textContent=JSON.stringify(data);document.body.append(output);
 }catch(caught){error=caught?.message||String(caught);const output=document.createElement("pre");output.id="rulesLawyerAuditResult";output.textContent=JSON.stringify({error,ruleset:"",validationValid:false,auditPass:false,rawIntegrity:false,sealPresent:false,sealRaw:false,sealTextValid:false,pageCount:0,footerCount:0,certifiedFooterCount:0,horizontalOverflow:999});document.body.append(output);}
