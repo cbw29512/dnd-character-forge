@@ -48,7 +48,7 @@ jobs:
 
       - name: Commit generated catalog to feature branch
         run: |
-          if git diff --quiet -- src/data/spell-reference-2024-generated.js; then
+          if [ -z "$(git status --porcelain -- src/data/spell-reference-2024-generated.js)" ]; then
             echo 'Generated catalog is already current.'
             exit 0
           fi
