@@ -37,6 +37,15 @@ for(const classId of CLASSES){
   });
 }
 
+test("Cleric color placeholder is the approved raster portrait asset",()=>{
+  const portrait=classPortraitDataUrl("cleric");
+  assert.match(portrait,/cleric\.webp$/i,"Cleric must use the approved raster portrait, not the legacy icon placeholder");
+  const bytes=readFileSync(fileURLToPath(portrait));
+  assert.ok(bytes.length>5000,"Cleric portrait raster is suspiciously small or missing");
+  assert.equal(bytes.subarray(0,4).toString("ascii"),"RIFF");
+  assert.equal(bytes.subarray(8,12).toString("ascii"),"WEBP");
+});
+
 test("all class portraits are distinct assets",()=>{
   const portraits=CLASSES.map(classPortraitDataUrl);
   assert.equal(new Set(portraits).size,CLASSES.length);
