@@ -33,8 +33,26 @@ const CANTRIPS=[
 ];
 
 const CURATED=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
-const byId=new Map(SPELL_REFERENCE_2024_GENERATED.map(spell=>[spell.id,spell]));
-for(const spell of CURATED)byId.set(spell.id,spell);
+const normalizedName=value=>String(value).replace(/’/g,"'");
+const deepFreeze=value=>{
+  if(!value||typeof value!=="object"||Object.isFrozen(value))return value;
+  for(const nested of Object.values(value))deepFreeze(nested);
+  return Object.freeze(value);
+};
+const byId=new Map();
+for(const generated of SPELL_REFERENCE_2024_GENERATED){
+  if(byId.has(generated.id))throw new Error(`duplicate generated 2024 spell reference id: ${generated.id}`);
+  byId.set(generated.id,generated);
+}
+for(const spell of CURATED){
+  const generated=byId.get(spell.id);
+  if(!generated)throw new Error(`curated 2024 spell reference is absent from generated SRD baseline: ${spell.id}`);
+  if(normalizedName(generated.name)!==normalizedName(spell.name))throw new Error(`${spell.id}: curated/generated spell name conflict`);
+  if(generated.level!==spell.level)throw new Error(`${spell.id}: curated/generated spell level conflict`);
+  if(generated.source!==spell.source)throw new Error(`${spell.id}: curated/generated spell source conflict`);
+  if(generated.srdPage!==spell.srdPage)throw new Error(`${spell.id}: curated/generated SRD page conflict`);
+  byId.set(spell.id,spell);
+}
 
-export const SPELL_REFERENCE_2024=Object.freeze([...byId.values()]);
+export const SPELL_REFERENCE_2024=Object.freeze([...byId.values()].map(deepFreeze));
 export const SPELL_REFERENCE_2024_BY_ID=Object.freeze(Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell])));
