@@ -59,10 +59,10 @@ try{
   const params=new URLSearchParams(location.search),ruleset=params.get("ruleset")||"2024";
   const state=createInitialState();
   state.ruleset=ruleset;
-  state.constraints.level="5";
+  state.constraints.level=ruleset==="2014"?"1":"5";
   state.constraints.class="fighter";
   state.constraints.species="human";
-  state.constraints.background="criminal";
+  state.constraints.background=ruleset==="2014"?"acolyte":"criminal";
   state.constraints.name="Certification Sentinel";
   const character=generateCharacter(state);
   const result=document.getElementById("result");
