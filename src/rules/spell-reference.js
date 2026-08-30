@@ -29,7 +29,6 @@ export function characterActiveSpellReferences(character){
       const reference=cantrip?resolveCantripReference(character,id):resolveSpellReference(character,id);
       if(!reference)return;
       if(cantrip&&reference.level!==0)throw new Error(`${id} is listed as a cantrip but resolves to level ${reference.level}.`);
-      if(!cantrip&&reference.level===0)throw new Error(`${id} is listed as leveled active magic but resolves to a cantrip.`);
       refs.push({...reference,preparation});seen.add(id);
     };
     for(const id of spells.cantrips?.all||[])add(id,"Cantrip",{cantrip:true});
