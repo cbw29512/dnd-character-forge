@@ -27,8 +27,11 @@ SCHOOLS = (
     "Transmutation",
 )
 SCHOOL_RE = "(?:" + "|".join(SCHOOLS) + ")"
+# Match only the stable level/school prefix. Some SRD class lists wrap onto a
+# second line, so requiring the closing parenthesis on the header line drops
+# otherwise valid spells.
 SPELL_HEADER_RE = re.compile(
-    rf"^(?:Level ([1-9]) ({SCHOOL_RE})(?: \([^\n]*\))?|({SCHOOL_RE}) Cantrip \([^\n]*\))\s*$",
+    rf"^(?:Level ([1-9]) ({SCHOOL_RE})(?= \(|$)|({SCHOOL_RE}) Cantrip(?= \(|$)).*$",
     re.MULTILINE,
 )
 PAGE_HEADER_RE = re.compile(
