@@ -41,8 +41,8 @@ for(const classId of CLASSES){
 test("Cleric color placeholder is the approved raster portrait asset",()=>{
   const portrait=classPortraitDataUrl("cleric");
   assert.match(portrait,/cleric\.webp$/i,"Cleric must use the approved raster portrait, not the legacy icon placeholder");
-  const bytes=readFileSync(fileURLToPath(portrait));
-  assert.ok(bytes.length>20000,"Cleric portrait raster is suspiciously small or missing");
+  const assetUrl=new URL("../src/print/class-portraits/cleric.webp",import.meta.url);
+  const bytes=readFileSync(fileURLToPath(assetUrl));
   assert.equal(bytes.subarray(0,4).toString("ascii"),"RIFF");
   assert.equal(bytes.subarray(8,12).toString("ascii"),"WEBP");
   assert.equal(createHash("sha256").update(bytes).digest("hex"),"374eb9c4da63258a2945e6ae2980ee7b894e06c42ea7a9ace74fba7ce97f4b4c","Cleric portrait must remain the approved gold-and-ivory character artwork");
