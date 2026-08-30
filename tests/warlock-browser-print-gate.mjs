@@ -50,9 +50,10 @@ function verifyPacket(testCase){
     const text=normalize(pagesText[index]);assert.ok(text.length>500,`${slug}: page ${index+1} is suspiciously sparse (${text.length} chars)`);assert.match(text,new RegExp(`Page\\s+${index+1}\\s*\\/\\s*${pages}`,"i"),`${slug}: page marker missing`);
   }
 
-  const whole=normalize(semanticExtracted),fold=whole.toLowerCase(),tokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,...model.ruleIndex.map(item=>item.name),model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
+  const whole=normalize(semanticExtracted),fold=whole.toLowerCase(),strictTokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
   assert.equal(fold.includes("[object object]"),false,`${slug}: printed PDF exposed an unformatted inventory object`);
-  for(const token of tokens)assert.ok(fold.includes(normalize(token).toLowerCase()),`${slug}: printed PDF lost expected content: ${token}`);
+  for(const token of strictTokens)assert.ok(fold.includes(normalize(token).toLowerCase()),`${slug}: printed PDF lost expected content: ${token}`);
+  for(const item of model.ruleIndex)assert.ok(printedRuleNamePresent(fold,item),`${slug}: printed PDF lost expected sourced rule: ${item.name}`);
   for(const phrase of ["RAW Integrity","Eldritch Pact","Pact Resources","Pact Magic","Eldritch Invocations","Mystic Arcanum"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing Warlock contract text: ${phrase}`);
 
   assert.equal(character.spells.tome.cantrips.length,3,`${slug}: Tome cantrips missing`);
@@ -77,4 +78,12 @@ function characterAt({ruleset,subclass,species,background,classSelections,custom
 }
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function pdfPages(text){const pages=String(text||"").split("\f");while(pages.length&&normalize(pages.at(-1))==="")pages.pop();return pages;}
+function printedRuleNamePresent(fold,item){
+  const name=normalize(item.name).toLowerCase();
+  if(fold.includes(name))return true;
+  const parenthetical=name.match(/^(.*?)(\s+\([^()]+\))$/);
+  if(!parenthetical)return false;
+  const interleaved=normalize(`${parenthetical[1]} ${item.source} ${parenthetical[2]}`).toLowerCase();
+  return fold.includes(interleaved);
+}
 function normalize(value){return String(value||"").replace(/[’‘]/g,"'").replace(/[–—]/g,"-").replace(/\s+/g," ").trim();}
