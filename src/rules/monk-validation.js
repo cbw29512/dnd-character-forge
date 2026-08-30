@@ -22,7 +22,8 @@ export function validateMonkCharacter(character){
 function validateTool(errors,c){
   try{
     const tool=c.monkSelections?.tool;if(!tool)errors.push("Monk tool selection is missing.");else if(!MONK_TOOL_CHOICES.includes(tool))errors.push(`Unsupported Monk tool proficiency: ${tool}.`);else if(!c.toolProficiencies.includes(tool))errors.push(`Monk tool proficiency ${tool} is missing from Tools.`);
-    if(c.ruleset==="2024"&&tool&&!c.equipment.gear.includes(tool))errors.push("2024 Monk starting equipment is missing the chosen tool.");
+    if(c.ruleset==="2024"&&tool&&!c.equipment?.startingGoldOnly&&!c.equipment.gear.includes(tool))errors.push("2024 Monk Package A is missing the chosen tool.");
+    if(c.ruleset==="2024"&&c.equipment?.startingGoldOnly&&tool&&c.equipment.gear.includes(tool))errors.push("2024 Monk starting-gold package cannot include the chosen tool as purchased equipment.");
   }catch(error){console.error("[monk-validation] tool validation failed",error);throw error;}
 }
 
