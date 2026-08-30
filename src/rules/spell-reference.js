@@ -42,5 +42,10 @@ export function characterActiveSpellReferences(character){
     return refs;
   }catch(error){console.error("[spell-reference] active references failed",error);throw error;}
 }
-export function characterCantripReferences(character){try{return characterActiveSpellReferences(character).filter(spell=>spell.level===0);}catch(error){console.error("[spell-reference] character cantrips failed",error);throw error;}}
+export function characterCantripReferences(character){
+  try{
+    if(character?.ruleset!=="2024"||!character?.spells)return[];
+    return (character.spells.cantrips?.all||[]).map(id=>resolveCantripReference(character,id));
+  }catch(error){console.error("[spell-reference] character cantrips failed",error);throw error;}
+}
 const tierDice=level=>level>=17?4:level>=11?3:level>=5?2:1;
