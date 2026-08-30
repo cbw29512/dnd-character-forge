@@ -40,10 +40,10 @@ test("tablet and phone share the app-first Forge console instead of reverting to
   assert.match(mobileCss,/\.forge-panel \.launch-cta \.forge-button\{[\s\S]*?width:100%/);
 });
 
-test("phone generated state shows the forged character before edit controls",()=>{
+test("phone generated state shows single-character and Party Forge results before edit controls",()=>{
   assert.match(mobileResultCss,/@media \(max-width:680px\)/);
-  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet\) \.result-stage\{[\s\S]*?order:1/);
-  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet\) \.forge-panel\{[\s\S]*?order:2/);
+  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet, \.party-roster\) \.result-stage\{[\s\S]*?order:1/);
+  assert.match(mobileResultCss,/\.forge-workspace:has\(\.character-sheet, \.party-roster\) \.forge-panel\{[\s\S]*?order:2/);
 });
 
 test("secondary presentation settings are progressively disclosed",()=>{
