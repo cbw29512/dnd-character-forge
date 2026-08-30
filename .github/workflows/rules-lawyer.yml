@@ -1,0 +1,36 @@
+name: Rules Lawyer certification browser gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rules-lawyer-browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Locate headless Chrome
+        run: |
+          BROWSER="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$BROWSER"
+          echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
+      - name: Verify Rules Lawyer seal and print stamp in Chrome
+        run: node tests/rules-lawyer-browser-gate.mjs
+      - name: Upload Rules Lawyer visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rules-lawyer-browser-review
+          path: tests/.rules-lawyer-browser/*.png
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
