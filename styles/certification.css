@@ -1,0 +1,9 @@
+.rules-lawyer-cert{margin-top:16px;padding:12px 14px;display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:center;border-radius:12px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.12)}
+.rules-lawyer-cert.is-raw{border-color:rgba(95,186,134,.36);background:linear-gradient(135deg,rgba(58,128,89,.18),rgba(255,255,255,.035))}
+.rules-lawyer-cert.is-compatible{border-color:rgba(205,166,93,.3);background:linear-gradient(135deg,rgba(139,105,45,.15),rgba(255,255,255,.035))}
+.rules-lawyer-mark{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.16);font-size:1.05rem}
+.rules-lawyer-copy strong,.rules-lawyer-copy span{display:block}.rules-lawyer-copy strong{color:#f5efe4;font-size:.78rem;letter-spacing:.07em}.rules-lawyer-copy span{margin-top:3px;color:#aeb4b0;font-size:.66rem;line-height:1.35}
+.rules-lawyer-build{color:#aeb4b0;font-size:.59rem;font-weight:900;letter-spacing:.06em;white-space:nowrap;text-align:right}
+.party-roster-proof.rules-lawyer-proof{letter-spacing:.035em}
+@media(max-width:680px){.rules-lawyer-cert{grid-template-columns:auto 1fr}.rules-lawyer-build{grid-column:2;text-align:left;white-space:normal}}
+@media print{.rules-lawyer-cert{break-inside:avoid}}
