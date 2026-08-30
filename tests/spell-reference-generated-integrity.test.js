@@ -21,6 +21,7 @@ test("generated SRD 5.2.1 spell baseline is complete, unique, and provenance-saf
     }
     assert.equal(spell.source,"SRD 5.2.1",`${spell.id}: source drift`);
     assert.ok(Number.isInteger(spell.srdPage)&&spell.srdPage>0,`${spell.id}: invalid SRD page`);
+    // Generated records must never turn incidental prose into invented mechanics.
     assert.equal(
       spell.resolution,
       `See SRD 5.2.1 page ${spell.srdPage} for spell resolution.`,
