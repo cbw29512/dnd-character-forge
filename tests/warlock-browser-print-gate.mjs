@@ -12,7 +12,7 @@ const OUT=path.join(ROOT,"tests/.browser-print");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
 const CASES=[
   {ruleset:"2014",subclass:"fiend",species:"human",background:"acolyte",classSelections:{pactBoon:"tome",eldritchInvocations:["book-of-ancient-secrets","agonizing-blast"]},customization:{style:"ornate",paper:"parchment",ornament:"rich",frame:"filigree",printMode:"premium"}},
-  {ruleset:"2024",subclass:"fiend-patron",species:"human",background:"sage",classSelections:{eldritchInvocations:["pact-of-the-tome","pact-of-the-chain","pact-of-the-blade"]},customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium"}}
+  {ruleset:"2024",subclass:"fiend-patron",species:"human",background:"sage",classSelections:{eldritchInvocations:["pact-of-the-tome","pact-of-the-chain","pact-of-the-blade","lessons-of-the-first-ones"]},customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium"}}
 ];
 
 mkdirSync(OUT,{recursive:true});
@@ -64,7 +64,8 @@ function verifyPacket(testCase){
     assert.ok(character.warlockSelections.familiarForm,`${slug}: Pact familiar missing`);
     assert.ok(character.attacks.some(attack=>attack.pactWeapon&&attack.ability==="cha"),`${slug}: Charisma pact weapon missing`);
     assert.ok(character.spells.alwaysPrepared.includes("contact-other-plane"),`${slug}: Contact Patron spell missing`);
-    for(const phrase of ["Fiend Patron","Magical Cunning","Contact Patron","Pact of the Tome","Pact of the Chain","Pact of the Blade","Boon of Fate"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing 2024 Warlock text: ${phrase}`);
+    assert.ok(model.ruleIndex.some(item=>item.name.startsWith("Lessons of the First Ones")),`${slug}: deterministic long invocation rule missing from print model`);
+    for(const phrase of ["Fiend Patron","Magical Cunning","Contact Patron","Pact of the Tome","Pact of the Chain","Pact of the Blade","Lessons of the First Ones","Boon of Fate"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing 2024 Warlock text: ${phrase}`);
     for(const phrase of ["Otherworldly Patron","Pact Boon: Pact of the Tome"])assert.equal(fold.includes(normalize(phrase).toLowerCase()),false,`${slug}: leaked 2014 Warlock text: ${phrase}`);
   }
   console.log(`[warlock-browser-print] ${slug}: ${pages} Letter pages · ${model.ruleIndex.length} rules · ${model.equipment.length} equipment · ${model.spellPage.entries.length} spells · ${model.presentation.customization.style}/${model.presentation.customization.printMode}`);
