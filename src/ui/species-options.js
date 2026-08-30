@@ -1,7 +1,11 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { DRAGONBORN_ANCESTRIES, ELF_LINEAGES, GNOME_LINEAGES, GOLIATH_ANCESTRIES, TIEFLING_LEGACIES } from "../data/species-2024.js";
 import { DRAGONBORN_ANCESTRIES_2014, DWARF_TOOLS_2014, LANGUAGES_2014 } from "../data/species-2014.js";
+import { RAW_2024 } from "../data/raw-2024.js";
 import { WIZARD_SPELLS_2014, WIZARD_SPELLS_2024 } from "../data/wizard-spells.js";
+import { HUMAN_ORIGIN_FEAT_OPTIONS_2024, SKILLED_PROFICIENCY_OPTIONS_2024 } from "../rules/origin-feats.js";
+import { MAGIC_INITIATE_LISTS_2024 } from "../data/origin-feats-2024.js";
+import { magicInitiateCatalog } from "../rules/magic-initiate.js";
 import { renderClassOptions, sanitizeClassSelectionsForCurrentState } from "./class-options.js";
 
 const SPELL_ABILITIES=[{id:"int",name:"Intelligence"},{id:"wis",name:"Wisdom"},{id:"cha",name:"Charisma"}];
@@ -12,6 +16,7 @@ const ABILITY_OPTIONS=ABILITIES.map(id=>({id,name:abilityName(id)}));
 const LANGUAGE_OPTIONS=LANGUAGES_2014.map(name=>({id:name,name}));
 const WIZARD_CANTRIPS=WIZARD_SPELLS_2024.filter(spell=>spell.level===0).map(spell=>({id:spell.id,name:spell.name}));
 const WIZARD_CANTRIPS_2014=WIZARD_SPELLS_2014.filter(spell=>spell.level===0).map(spell=>({id:spell.id,name:spell.name}));
+const HUMAN_DEPENDENT_KEYS=["magicInitiateList","originSpellcastingAbility","originCantrip1","originCantrip2","originLevel1Spell","skilledProficiency1","skilledProficiency2","skilledProficiency3"];
 
 export function bindSpeciesOptions(state){
   try{
@@ -23,6 +28,8 @@ export function bindSpeciesOptions(state){
         const key=select.dataset.speciesChoice,value=select.value;
         if(value==="random")delete state.speciesSelections[key];else state.speciesSelections[key]=value;
         if(state.ruleset==="2024"&&key==="lineage"&&value!=="high")delete state.speciesSelections.cantrip;
+        if(state.ruleset==="2024"&&key==="originFeat")clearHumanOriginDependents(state.speciesSelections);
+        if(state.ruleset==="2024"&&key==="magicInitiateList")for(const spellKey of ["originCantrip1","originCantrip2","originLevel1Spell"])delete state.speciesSelections[spellKey];
         if(state.ruleset==="2014"&&key==="ability1"&&state.speciesSelections.ability2===value)delete state.speciesSelections.ability2;
         if(state.ruleset==="2014"&&key==="skill1"&&state.speciesSelections.skill2===value)delete state.speciesSelections.skill2;
         repairClassState(state);renderSpeciesOptions(state);
@@ -41,14 +48,14 @@ export function renderSpeciesOptions(state){
   try{
     const panel=document.getElementById("speciesChoicePanel"),fieldsNode=document.getElementById("speciesChoiceFields"),summary=document.getElementById("speciesChoiceSummary");
     if(!panel||!fieldsNode||!summary)throw new Error("Species option UI is incomplete.");
-    const speciesId=state.constraints.species,fields=fieldsFor(state.ruleset,speciesId,state.speciesSelections||{});
+    const speciesId=state.constraints.species,fields=fieldsFor(state.ruleset,speciesId,state.speciesSelections||{},state);
     panel.hidden=fields.length===0;
     fieldsNode.innerHTML=fields.map(field=>fieldHtml(field,state.speciesSelections||{})).join("");
     summary.textContent=fields.length?summaryText(fields,state.speciesSelections||{}):"";
   }catch(error){console.error("[species-ui] render failed",error);throw error;}
 }
 
-function fieldsFor(ruleset,speciesId,selections){
+function fieldsFor(ruleset,speciesId,selections,state){
   try{
     if(!speciesId||speciesId==="random")return[];
     if(ruleset==="2014")return fields2014(speciesId,selections);
@@ -60,11 +67,34 @@ function fieldsFor(ruleset,speciesId,selections){
     }
     if(speciesId==="gnome")return[{key:"lineage",label:"Gnomish lineage",options:Object.values(GNOME_LINEAGES)},{key:"spellcastingAbility",label:"Lineage spell ability",options:SPELL_ABILITIES}];
     if(speciesId==="goliath")return[{key:"giantAncestry",label:"Giant ancestry",options:Object.values(GOLIATH_ANCESTRIES)}];
-    if(speciesId==="human")return[{key:"size",label:"Size",options:SIZES},{key:"skill",label:"Skillful proficiency",options:SKILL_OPTIONS}];
+    if(speciesId==="human")return humanFields(selections,state);
     if(speciesId==="tiefling")return[{key:"size",label:"Size",options:SIZES},{key:"legacy",label:"Fiendish legacy",options:Object.values(TIEFLING_LEGACIES)},{key:"spellcastingAbility",label:"Legacy spell ability",options:SPELL_ABILITIES}];
     return[];
   }catch(error){console.error("[species-ui] field definition failed",error);throw error;}
 }
+
+function humanFields(selections,state){
+  try{
+    const fields=[{key:"size",label:"Size",options:SIZES},{key:"skill",label:"Skillful proficiency",options:SKILL_OPTIONS},{key:"originFeat",label:"Versatile Origin feat (SRD)",options:humanOriginFeatOptions(state)}];
+    if(selections.originFeat==="magic-initiate"){
+      const lists=availableMagicInitiateLists(state).map(id=>({id,name:abilityName(id)}));
+      fields.push({key:"magicInitiateList",label:"Magic Initiate spell list",options:lists},{key:"originSpellcastingAbility",label:"Magic Initiate spellcasting ability",options:SPELL_ABILITIES});
+      if(selections.magicInitiateList&&availableMagicInitiateLists(state).includes(selections.magicInitiateList)){
+        const catalog=magicInitiateCatalog(selections.magicInitiateList),cantrips=catalog.filter(spell=>spell.level===0).map(spell=>({id:spell.id,name:spell.name})),level1=catalog.filter(spell=>spell.level===1).map(spell=>({id:spell.id,name:spell.name}));
+        fields.push({key:"originCantrip1",label:"Magic Initiate first cantrip",options:cantrips},{key:"originCantrip2",label:"Magic Initiate second cantrip",options:cantrips.filter(option=>option.id!==selections.originCantrip1)},{key:"originLevel1Spell",label:"Magic Initiate level-1 spell",options:level1});
+      }
+    }
+    if(selections.originFeat==="skilled"){
+      const excluded=new Set([selections.skill?`skill:${selections.skill}`:null].filter(Boolean));
+      for(let index=1;index<=3;index++){
+        const prior=[1,2,3].filter(n=>n!==index).map(n=>selections[`skilledProficiency${n}`]).filter(Boolean),options=SKILLED_PROFICIENCY_OPTIONS_2024.filter(option=>!excluded.has(option.id)&&!prior.includes(option.id));
+        fields.push({key:`skilledProficiency${index}`,label:`Skilled proficiency ${index}`,options});
+      }
+    }
+    return fields;
+  }catch(error){console.error("[species-ui] Human field definition failed",error);throw error;}
+}
+
 function fields2014(speciesId,selections){
   try{
     if(speciesId==="dwarf")return[{key:"tool",label:"Hill Dwarf tool proficiency",options:DWARF_TOOLS_2014}];
@@ -81,6 +111,16 @@ function fields2014(speciesId,selections){
     return[];
   }catch(error){console.error("[species-ui] 2014 field definition failed",error);throw error;}
 }
+
+function humanOriginFeatOptions(state){
+  const background=RAW_2024.backgrounds.find(item=>item.id===state.constraints.background),blocked=background?.feat&&!String(background.feat).startsWith("magic-initiate-")?background.feat:null;
+  return HUMAN_ORIGIN_FEAT_OPTIONS_2024.filter(option=>option.id!==blocked);
+}
+function availableMagicInitiateLists(state){
+  const background=RAW_2024.backgrounds.find(item=>item.id===state.constraints.background),used=background?.magicInitiateList;
+  return MAGIC_INITIATE_LISTS_2024.filter(list=>list!==used);
+}
+function clearHumanOriginDependents(selections){for(const key of HUMAN_DEPENDENT_KEYS)delete selections[key];}
 function repairClassState(state){try{sanitizeClassSelectionsForCurrentState(state);renderClassOptions(state);}catch(error){console.error("[species-ui] class-choice repair failed",error);throw error;}}
 function languageOptions(excluded){return LANGUAGE_OPTIONS.filter(option=>!excluded.includes(option.id));}
 function fieldHtml(field,selections){
@@ -88,6 +128,6 @@ function fieldHtml(field,selections){
   catch(error){console.error(`[species-ui] ${field.key} field failed`,error);throw error;}
 }
 function summaryText(fields,selections){try{const fixed=fields.filter(field=>selections[field.key]).length;return fixed?`${fixed} species option${fixed===1?"":"s"} fixed · every other species choice stays Random`:`All species choices Random`;}catch(error){console.error("[species-ui] summary failed",error);throw error;}}
-function abilityName(id){return({str:"Strength",dex:"Dexterity",con:"Constitution",int:"Intelligence",wis:"Wisdom",cha:"Charisma"})[id]||id;}
+function abilityName(id){return({str:"Strength",dex:"Dexterity",con:"Constitution",int:"Intelligence",wis:"Wisdom",cha:"Charisma",cleric:"Cleric",druid:"Druid",wizard:"Wizard"})[id]||id;}
 function pretty(value){try{return String(value).replace(/([A-Z])/g," $1").replace(/^./,char=>char.toUpperCase());}catch(error){console.error("[species-ui] label failed",error);throw error;}}
 function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));}

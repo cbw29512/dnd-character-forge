@@ -1,5 +1,6 @@
 import { buildQuickReference as buildCoreQuickReference } from "./reference.js";
 import { warlockInvocationById } from "../data/warlock-invocations.js";
+import { warlockSpellById } from "../data/warlock-spells.js";
 import { warlockReferenceProvenance } from "../data/warlock-provenance.js";
 
 export function buildWarlockQuickReference(character){
@@ -7,7 +8,13 @@ export function buildWarlockQuickReference(character){
     if(character?.class?.id!=="warlock")throw new Error("Warlock reference builder received another class.");
     const safe={...character,features:[]},items=[...buildCoreQuickReference(safe)];
     for(const name of character.features||[])items.push(entry(character,`feature:${name}`,name,featureReference(character,name),"feature"));
-    for(const id of character.warlockSelections?.invocations?.all||[]){const option=warlockInvocationById(character.ruleset,id);items.push(entry(character,`invocation:${id}`,option.name,{category:"Eldritch Invocation",timing:option.timing,text:option.summary},"invocation"));}
+    const invocations=character.warlockSelections?.invocations?.all||[],targets=new Map((character.warlockSelections?.invocationCantripTargets||[]).map(record=>[record.slot,record.targetCantrip])),lessons=[...(character.warlockSelections?.lessonsOriginFeats||[])],seen=new Map();let lessonIndex=0;
+    for(const [slot,id] of invocations.entries()){
+      const option=warlockInvocationById(character.ruleset,id),occurrence=(seen.get(id)||0)+1;seen.set(id,occurrence);const refId=`invocation:${id}${occurrence===1?"":`#${occurrence}`}`;let name=option.name,text=option.summary;
+      const target=targets.get(slot);if(target){const spell=warlockSpellById(character.ruleset,target);name=`${option.name} — ${spell.name}`;text=`${option.summary} Selected cantrip: ${spell.name}.`;}
+      if(id==="lessons-of-the-first-ones"){const grant=lessons[lessonIndex++];if(grant){name=`${option.name} — ${grant.name}`;text=`${option.summary} This copy grants ${grant.name}.`;}}
+      items.push(entry(character,refId,name,{category:"Eldritch Invocation",timing:option.timing,text},"invocation",option.name));
+    }
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate Warlock quick-reference entries detected.");return items;
   }catch(error){console.error("[warlock-reference] build failed",error);throw error;}
 }
@@ -35,5 +42,5 @@ function featureReference(c,name){
 function pactBoonReference(c){
   try{const boon=c.warlockSelections?.pactBoon?.id;if(boon==="chain")return rr("Pact Boon","Familiar","You know Find Familiar as a ritual with additional familiar forms. When you take the Attack action, you can forgo one attack so your familiar can attack with its Reaction.");if(boon==="blade")return rr("Pact Boon","Action / 1-hour ritual","Create a pact weapon in your empty hand or bond a magic weapon by ritual. You are proficient with the pact weapon, and it counts as magical for overcoming resistance and immunity.");if(boon==="tome")return rr("Pact Boon","Book of Shadows","Your Book of Shadows grants three cantrips chosen from any class's spell list; they don't count against Warlock cantrips and count as Warlock spells for you.");throw new Error("2014 Pact Boon selection is missing.");}catch(error){console.error("[warlock-reference] Pact Boon failed",error);throw error;}
 }
-function entry(c,id,name,ref,kind){try{return{id,name,...ref,source:warlockReferenceProvenance(c,kind,name)};}catch(error){console.error(`[warlock-reference] entry ${name} failed`,error);throw error;}}
+function entry(c,id,name,ref,kind,sourceName=name){try{return{id,name,...ref,source:warlockReferenceProvenance(c,kind,sourceName)};}catch(error){console.error(`[warlock-reference] entry ${name} failed`,error);throw error;}}
 function rr(category,timing,text){return Object.freeze({category,timing,text});}

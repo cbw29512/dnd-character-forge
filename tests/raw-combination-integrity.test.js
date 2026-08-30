@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
 import { FORGE_2014, FORGE_2024 } from "../src/data/forge-data.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { originFeatInstanceKey } from "../src/rules/origin-feats.js";
 
 const EDITIONS=Object.freeze([
   Object.freeze({ruleset:"2014",data:FORGE_2014}),
@@ -53,7 +54,7 @@ function assertRawCharacter(character,{ruleset,classId,level,speciesId,backgroun
   assert.deepEqual(duplicates(character.languages),[],`${label}: duplicate languages`);
   assert.deepEqual(duplicates(character.toolProficiencies),[],`${label}: duplicate tools`);
   assert.deepEqual(duplicates(character.masteryIds),[],`${label}: duplicate masteries`);
-  assert.deepEqual(duplicates(character.feats,feat=>feat.id),[],`${label}: duplicate feats`);
+  assert.deepEqual(duplicates(character.feats,originFeatInstanceKey),[],`${label}: duplicate feat instances`);
   assert.ok(character.skills.length>=character.class.skillCount,`${label}: class skill count lost through collisions`);
   for(const expertise of character.expertise)assert.ok(character.skills.includes(expertise)||character.toolProficiencies.includes(expertise),`${label}: illegal Expertise ${expertise}`);
 

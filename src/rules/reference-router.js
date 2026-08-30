@@ -10,6 +10,8 @@ import { buildRangerQuickReference } from "./ranger-reference.js";
 import { isForgeOriginalSubclass, originalSubclassDefinition, originalSubclassFeatureNamesFor, originalSubclassFeatureRecordsFor, originalSubclassSource } from "../data/original-subclasses.js";
 import { isForgeOriginalBackground, originalBackgroundReference } from "../data/original-backgrounds.js";
 import { advancementFeatReference } from "../data/feat-library.js";
+import { REFERENCE_2014 } from "../data/quick-reference.js";
+import { referenceProvenance } from "../data/rule-provenance.js";
 
 const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
   sorcerer:Object.freeze(new Set(["Sorcerous Origin","Sorcerer Subclass"]))
@@ -17,7 +19,7 @@ const ORIGINAL_BASE_REFERENCE_OMISSIONS=Object.freeze({
 
 export function buildQuickReference(character){
   try{
-    const advancementFeats=(character?.feats||[]).filter(feat=>feat.advancementFeat),safeCharacter=advancementFeats.length?{...character,feats:(character.feats||[]).filter(feat=>!feat.advancementFeat)}:character;
+    const advancementFeats=(character?.feats||[]).filter(feat=>feat.advancementFeat),baseCharacter=advancementFeats.length?{...character,feats:(character.feats||[]).filter(feat=>!feat.advancementFeat)}:character,safeCharacter=withUniqueReferenceFeatIds(baseCharacter);
     const originalBackground=isForgeOriginalBackground(safeCharacter?.background);let items;
     if(safeCharacter?.class?.id==="barbarian")items=originalBackground?buildBarbarianWithOriginalBackground(safeCharacter):buildBarbarianQuickReference(safeCharacter);
     else if(originalBackground||isForgeOriginalSubclass(safeCharacter?.subclass))items=buildForgeCompatibleQuickReference(safeCharacter);
@@ -26,6 +28,14 @@ export function buildQuickReference(character){
     const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate routed quick-reference entries detected.");
     return enhanceMagicInitiate(items,character);
   }catch(error){console.error("[reference-router] build failed",error);throw error;}
+}
+
+function withUniqueReferenceFeatIds(character){
+  try{
+    if(!character?.feats?.length)return character;
+    const seen=new Map(),feats=character.feats.map(feat=>{const id=String(feat?.id||""),count=(seen.get(id)||0)+1;seen.set(id,count);return count===1?feat:{...feat,id:`${id}#${count}`};});
+    return{...character,feats};
+  }catch(error){console.error("[reference-router] repeatable feat reference identity failed",error);throw error;}
 }
 
 function buildBarbarianWithOriginalBackground(character){
@@ -67,6 +77,22 @@ function enhanceMagicInitiate(items,character){
   }catch(error){console.error("[reference-router] Magic Initiate reference enhancement failed",error);throw error;}
 }
 
+function build2014FighterQuickReference(character){
+  try{
+    const styles=character.fightingStyles?.length?character.fightingStyles:(character.fightingStyle?[character.fightingStyle]:[]),safe={...character,fightingStyle:null,fightingStyles:[]},items=[...buildCoreQuickReference(safe)];
+    for(const style of styles){const ref=REFERENCE_2014.style?.[style.name]||fighterStyleReference(style);items.push({id:`style:${style.name}`,name:style.name,...ref,source:referenceProvenance(character,"style",style.name)});}
+    const ids=items.map(item=>item.id);if(new Set(ids).size!==ids.length)throw new Error("Duplicate 2014 Fighter quick-reference entries detected.");return items;
+  }catch(error){console.error("[reference-router] 2014 Fighter reference build failed",error);throw error;}
+}
+function fighterStyleReference(style){
+  try{
+    if(style.id==="dueling")return{category:"Fighting Style",timing:"Passive",text:"While wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls with it; the bonus is included in qualifying one-handed melee attack damage on this sheet."};
+    if(style.id==="protection")return{category:"Fighting Style",timing:"Reaction",text:"While wielding a shield, when a creature you can see attacks a target other than you within 5 feet, use your Reaction to impose Disadvantage on that attack roll."};
+    if(style.id==="two-weapon")return{category:"Fighting Style",timing:"Two-weapon fighting",text:"When you make the extra attack granted by fighting with two weapons, add your ability modifier to that extra attack's damage."};
+    throw new Error(`Missing 2014 Fighter Fighting Style reference for ${style.name}.`);
+  }catch(error){console.error("[reference-router] Fighter style reference failed",error);throw error;}
+}
+
 function routeBaseReference(character){
   if(character?.class?.id==="barbarian")return buildBarbarianQuickReference(character);
   if(character?.class?.id==="bard")return buildBardQuickReference(character);
@@ -76,5 +102,6 @@ function routeBaseReference(character){
   if(character?.class?.id==="druid")return buildDruidQuickReference(character);
   if(character?.class?.id==="paladin")return buildPaladinQuickReference(character);
   if(character?.class?.id==="ranger")return buildRangerQuickReference(character);
+  if(character?.class?.id==="fighter"&&character.ruleset==="2014")return build2014FighterQuickReference(character);
   return buildCoreQuickReference(character);
 }

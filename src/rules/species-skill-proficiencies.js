@@ -28,6 +28,15 @@ export function guaranteedSpeciesSkillIds({ruleset,speciesId,selections={}}={}){
       const skill=canonicalSkillId(selections?.[key],ALL_SKILLS);
       if(skill)selected.push(skill);
     }
+    if(ruleset==="2024"&&speciesId==="human"&&selections.originFeat==="skilled"){
+      for(const key of ["skilledProficiency1","skilledProficiency2","skilledProficiency3"]){
+        const value=String(selections?.[key]||"");
+        if(value.startsWith("skill:")){
+          const skill=canonicalSkillId(value.slice(6),ALL_SKILLS);
+          if(skill)selected.push(skill);
+        }
+      }
+    }
     return Object.freeze(uniqueStrings([...inherentSpeciesSkillIds(ruleset,speciesId),...selected]));
   }catch(error){console.error("[species-skill-proficiencies] guaranteed lookup failed",error);throw error;}
 }

@@ -8,7 +8,10 @@ export const REFERENCE_2014={
   style:{
     "Defense":r("Fighting Style","Passive","While wearing armor, gain +1 AC; this bonus is already included above."),
     "Archery":r("Fighting Style","Passive","Gain +2 on attack rolls made with ranged weapons; this is already included in ranged attacks above."),
-    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll.")
+    "Dueling":r("Fighting Style","Passive","While wielding a melee weapon in one hand and no other weapons, gain +2 to damage rolls with that weapon; the bonus is already included on qualifying one-handed melee attacks above."),
+    "Great Weapon Fighting":r("Fighting Style","On damage","When a qualifying two-handed or versatile melee weapon damage die shows 1 or 2, reroll that die once and use the new roll."),
+    "Protection":r("Fighting Style","Reaction","While wielding a shield, when a creature you can see attacks a target other than you within 5 feet, use your Reaction to impose Disadvantage on that attack roll."),
+    "Two-Weapon Fighting":r("Fighting Style","Two-weapon fighting","When you make the extra attack granted by fighting with two weapons, add your ability modifier to that extra attack's damage.")
   },
   feature:{
     "Action Surge":r("Fighter","On your turn","Take one additional action. One use; regain it after a Short or Long Rest."),
@@ -59,9 +62,10 @@ export const REFERENCE_2024={
   feat:{
     "Alert":r("Origin Feat","Initiative","Add your Proficiency Bonus to Initiative; already included above. Immediately after Initiative, you may swap with a willing ally in the same combat if neither of you is Incapacitated."),
     "Magic Initiate (Cleric)":r("Origin Feat","Origin magic","Two selected Cleric cantrips and one selected level-1 Cleric spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Cleric list."),
+    "Magic Initiate (Druid)":r("Origin Feat","Origin magic","Two selected Druid cantrips and one selected level-1 Druid spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Druid list."),
     "Magic Initiate (Wizard)":r("Origin Feat","Origin magic","Two selected Wizard cantrips and one selected level-1 Wizard spell are listed in Origin Magic. The level-1 spell is always prepared, can be cast once without a slot per Long Rest, and can also be cast with spell slots. On gaining a level, one selected feat spell can be replaced with another spell of the same level from the Wizard list."),
     "Savage Attacker":r("Origin Feat","Once per turn","When you hit with a weapon, roll the weapon's damage dice twice and use either roll."),
-    "Skilled":r("Origin Feat","Passive","Three chosen skill proficiencies are already included in Skills."),
+    "Skilled":r("Origin Feat","Passive","Three chosen skill or tool proficiencies are already included in Skills and Tool Proficiencies. This feat is repeatable."),
     "Boon of Combat Prowess":r("Epic Boon","Missed attack","The feat's +1 ability increase and maximum of 30 are already applied. When an attack roll misses, you can turn that miss into a hit; this benefit refreshes at the start of your next turn."),
     "Boon of the Night Spirit":r("Epic Boon","Dim Light or Darkness","The feat's +1 ability increase and maximum of 30 are already applied. As a Bonus Action in Dim Light or Darkness, become Invisible until immediately after you take an action, Bonus Action, or Reaction. In Dim Light or Darkness, you also resist all damage except Psychic and Radiant.")
   },

@@ -1,7 +1,7 @@
 @media print{
   /* Premium/color sheets use the full illustrated class portrait. The alternate
      vector emblem stays in the same fallback node and is revealed only for Ink Saver. */
-  .ps-placeholder-illustrated{display:contents}
+  .ps-placeholder-illustrated{display:block;width:100%;height:100%;min-width:0;min-height:0}
   .ps-placeholder-emblem{display:none}
   .ps-class-portrait-image{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;display:block!important}
   .sheet-print-ink-saver .ps-placeholder-illustrated{display:none!important}

@@ -1,5 +1,6 @@
 import { ABILITIES, SKILLS } from "../schema.js";
 import { bardMagicalSecretsPool } from "../data/bard-magical-secrets.js";
+import { warlockInvocationById } from "../data/warlock-invocations.js";
 import { warlockSpellsFor } from "../data/warlock-spells.js";
 import { abilityMod } from "../rules/math.js";
 import { buildQuickReference } from "../rules/reference-router.js";
@@ -61,7 +62,8 @@ function spellPageModel(character,catalog){
       if(arcanum.has(id))tags.push("X");
       return{id,name:spell.name,level:spell.level,tags:tags.join("")||"K"};
     }).sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name));
-    return{entries,source:`${character.audit.sourceVersion} · Warlock spell list pp.${character.ruleset==="2014"?"110–111":"74–76"} · Pact and invocation magic shown separately`,slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),warlock:{pactSlotLevel:character.spells.pactMagic.slotLevel,pactSlotCount:character.spells.pactMagic.slotCount,invocations:[...(character.warlockSelections?.invocations?.all||[])],tomeCantrips:[...tomeCantrips],tomeRituals:[...tomeRituals],invocationSpells:[...invocation],mysticArcanum:{...(character.spells.mysticArcanum||{})},familiarForm:character.warlockSelections?.familiarForm||null}};
+    const invocationCantripTargets=(character.warlockSelections?.invocationCantripTargets||[]).map(record=>{const spell=byId.get(record.targetCantrip);if(!spell)throw new Error(`Missing invocation target spell ${record.targetCantrip}.`);const invocationOption=warlockInvocationById(character.ruleset,record.invocationId);return{slot:record.slot,invocationId:record.invocationId,invocationName:invocationOption.name,targetCantrip:record.targetCantrip,targetName:spell.name};});
+    return{entries,source:`${character.audit.sourceVersion} · Warlock spell list pp.${character.ruleset==="2014"?"110–111":"74–76"} · Pact and invocation magic shown separately`,slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),warlock:{pactSlotLevel:character.spells.pactMagic.slotLevel,pactSlotCount:character.spells.pactMagic.slotCount,invocations:[...(character.warlockSelections?.invocations?.all||[])],invocationCantripTargets,tomeCantrips:[...tomeCantrips],tomeRituals:[...tomeRituals],invocationSpells:[...invocation],mysticArcanum:{...(character.spells.mysticArcanum||{})},familiarForm:character.warlockSelections?.familiarForm||null}};
   }catch(error){console.error("[warlock-print-model] spell page failed",error);throw error;}
 }
 
@@ -116,6 +118,7 @@ function warlockQuickTurn(character,catalog){
     const names=new Map(catalog.map(spell=>[spell.id,spell.name])),steps=[`Pact Magic: ${character.spells.pactMagic.slotCount} level-${character.spells.pactMagic.slotLevel} slot${character.spells.pactMagic.slotCount===1?"":"s"}; all return after a Short or Long Rest.`];
     if(character.spells.cantrips.all.includes("eldritch-blast"))steps.push("Eldritch Blast is available at will; apply any listed invocation that modifies its attacks or damage.");
     else steps.push("Use an at-will cantrip or weapon when spending a Pact Magic slot is unnecessary.");
+    const targets=character.warlockSelections?.invocationCantripTargets||[];if(targets.length)steps.push(`Cantrip invocations: ${targets.map(record=>`${warlockInvocationById(character.ruleset,record.invocationId).name} → ${names.get(record.targetCantrip)||record.targetCantrip}`).join(" · ")}.`);
     if(character.warlockSelections?.familiarForm)steps.push(`Pact familiar: ${character.warlockSelections.familiarForm}. Check its invocation-enabled actions before ending your turn.`);
     const arcanum=Object.entries(character.spells.mysticArcanum||{});if(arcanum.length)steps.push(`Mystic Arcanum: ${arcanum.map(([level,id])=>`L${level} ${names.get(id)||id}`).join(" · ")}; each is once per Long Rest.`);
     steps.push("Track Concentration and reaction/trigger invocations before passing the turn.");return steps;
