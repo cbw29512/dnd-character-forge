@@ -1,7 +1,7 @@
 export const FORGE_BUILD=Object.freeze({
-  id:"CF-2026.08.29-RLC1",
-  label:"Rules Lawyer Certification v1",
-  version:"2026.08.29.1"
+  id:"CF-2026.08.30-RLC2",
+  label:"Rules Lawyer Certification v2",
+  version:"2026.08.30.2"
 });
 
 export function buildRulesLawyerCertification(character){
@@ -9,8 +9,11 @@ export function buildRulesLawyerCertification(character){
     if(!character?.validation?.valid)throw new Error("Rules Lawyer certification requires a validated character.");
     const audit=character.audit;
     if(!audit||audit.status!=="PASS")throw new Error("Rules Lawyer certification requires a passing Rules Audit.");
-    const rawCertified=audit.sourceMode==="RAW"&&audit.rawIntegrity===true;
-    const forgeOriginal=!rawCertified&&audit.sourceMode==="RAW"&&String(audit.license||"").includes("Character Forge Original");
+    if(audit.sourceMode!==character.sourceMode||audit.ruleset!==character.ruleset)throw new Error("Rules Audit does not match the character source mode and ruleset.");
+    const mechanics=audit.mechanics||[],provenanceComplete=mechanics.length>0&&mechanics.every(item=>Boolean(item?.source?.version&&item?.source?.page));
+    if(!audit.sourceVersion||!provenanceComplete)throw new Error("Rules Lawyer certification requires complete source provenance.");
+    const rawCertified=character.sourceMode==="RAW"&&audit.rawIntegrity===true;
+    const forgeOriginal=!rawCertified&&character.sourceMode==="RAW"&&String(audit.license||"").includes("Character Forge Original");
     const status=rawCertified?"RULES LAWYER CERTIFIED":forgeOriginal?"AUDITED 5E COMPATIBLE":"AUDITED CUSTOM CONTENT";
     return Object.freeze({
       status,
@@ -22,9 +25,9 @@ export function buildRulesLawyerCertification(character){
       sourceVersion:audit.sourceVersion,
       rulesLabel:audit.rulesLabel,
       sourceMode:audit.sourceMode,
-      mechanicCount:(audit.mechanics||[]).length,
+      mechanicCount:mechanics.length,
       checkCount:(audit.checks||[]).length,
-      provenanceComplete:(audit.mechanics||[]).every(item=>Boolean(item?.source?.version&&item?.source?.page))
+      provenanceComplete
     });
   }catch(error){console.error("[certification] build failed",error);throw error;}
 }

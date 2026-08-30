@@ -10,7 +10,7 @@ const execFileAsync=promisify(execFile);
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
 const OUT=path.join(ROOT,"tests/.rules-lawyer-browser");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
-const BUILD="CF-2026.08.29-RLC1";
+const BUILD="CF-2026.08.30-RLC2";
 const CASES=[
   {name:"desktop-2024",width:1440,height:1100,ruleset:"2024"},
   {name:"phone-2024",width:390,height:1000,ruleset:"2024"},

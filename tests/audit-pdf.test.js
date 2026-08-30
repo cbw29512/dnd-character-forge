@@ -24,7 +24,7 @@ test("RAW characters carry a passing SRD rules audit",()=>{
   }catch(error){console.error("[test] RAW rules audit",error);throw error;}
 });
 
-test("Homebrew characters disclose Homebrew in the rules audit",()=>{
+test("Homebrew characters disclose Homebrew in the underlying rules audit",()=>{
   try{
     const state=createInitialState();
     state.sourceMode=SOURCE.HOMEBREW;
@@ -39,14 +39,15 @@ test("Homebrew characters disclose Homebrew in the rules audit",()=>{
   }catch(error){console.error("[test] Homebrew rules audit",error);throw error;}
 });
 
-test("site exposes the rule-audit stylesheet and PDF export action",()=>{
+test("production keeps rule-audit rendering and PDF export without duplicate audit marketing copy",()=>{
   try{
     const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
     const render=readFileSync(new URL("../src/ui/render.js",import.meta.url),"utf8");
     assert.match(html,/styles\/audit\.css/);
-    assert.match(html,/printable rules audit/i);
+    assert.match(html,/content="[^"]*RAW audits[^"]*"/i);
     assert.match(render,/Export PDF \/ Print/);
     assert.match(render,/Rules Audit/);
+    assert.doesNotMatch(html,/printable rules audit/i);
   }catch(error){console.error("[test] audit UI contract",error);throw error;}
 });
 

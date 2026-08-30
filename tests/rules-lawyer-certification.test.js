@@ -42,6 +42,15 @@ test("certification refuses unvalidated or unaudited input",()=>{
   assert.throws(()=>buildRulesLawyerCertification({validation:{valid:true},audit:{status:"FAIL"}}),/passing Rules Audit/);
 });
 
+test("certification fails closed when audit identity or provenance is forged",()=>{
+  const state=createInitialState();state.constraints.class="fighter";
+  const character=generateCharacter(state);
+  const mismatch={...character,audit:{...character.audit,ruleset:character.ruleset==="2024"?"2014":"2024"}};
+  assert.throws(()=>buildRulesLawyerCertification(mismatch),/does not match/);
+  const noProvenance={...character,audit:{...character.audit,mechanics:[]}};
+  assert.throws(()=>buildRulesLawyerCertification(noProvenance),/complete source provenance/);
+});
+
 test("web and PDF surfaces expose certification plus exact Forge build ID",()=>{
   const hero=readFileSync(new URL("../src/ui/hero-experience.js",import.meta.url),"utf8");
   const premium=readFileSync(new URL("../src/ui/premium-print.js",import.meta.url),"utf8");

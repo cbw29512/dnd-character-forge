@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { classPlaceholderArt } from "../src/print/class-art.js";
@@ -36,6 +37,16 @@ for(const classId of CLASSES){
     assert.doesNotMatch(art,/<filter\b|feDropShadow|linearGradient/);
   });
 }
+
+test("Cleric color placeholder is the approved raster portrait asset",()=>{
+  const portrait=classPortraitDataUrl("cleric");
+  assert.match(portrait,/cleric\.webp$/i,"Cleric must use the approved raster portrait, not the legacy icon placeholder");
+  const assetUrl=new URL("../src/print/class-portraits/cleric.webp",import.meta.url);
+  const bytes=readFileSync(fileURLToPath(assetUrl));
+  assert.equal(bytes.subarray(0,4).toString("ascii"),"RIFF");
+  assert.equal(bytes.subarray(8,12).toString("ascii"),"WEBP");
+  assert.equal(createHash("sha256").update(bytes).digest("hex"),"3705a71fd343103a0d1c4f38f3738ff0728e3a95dccca4389c1454a3109fbe6c","Cleric portrait must remain the approved gold-and-ivory character artwork");
+});
 
 test("all class portraits are distinct assets",()=>{
   const portraits=CLASSES.map(classPortraitDataUrl);
