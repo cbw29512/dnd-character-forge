@@ -1,3 +1,4 @@
+import { SPELL_REFERENCE_2024_GENERATED } from "./spell-reference-2024-generated.js";
 import { SPELL_REFERENCE_2024_LEVEL1_CLERIC } from "./spell-reference-2024-level1-cleric.js";
 
 const s=(id,name,school,castingTime,range,components,duration,resolution,effect,srdPage,extra={})=>({id,name,level:0,school,castingTime,range,components,duration,resolution,effect,concentration:false,ritual:false,upcast:null,source:"SRD 5.2.1",srdPage,...extra});
@@ -30,5 +31,10 @@ const CANTRIPS=[
   s("true-strike","True Strike","Divination","Action","Self","S, M","Instantaneous","Weapon attack","Make one attack with the material weapon, using your spellcasting ability for its attack and damage rolls. The damage can be Radiant or the weapon's normal type; higher character levels add Radiant damage.",171,{trueStrikeScaling:true}),
   s("vicious-mockery","Vicious Mockery","Enchantment","Action","60 ft","V","Instantaneous","WIS save","One creature you can see or hear makes a Wisdom saving throw. On a failure it takes Psychic damage and has Disadvantage on the next attack roll it makes before the end of its next turn.",172,{damage:{dice:1,die:6,type:"Psychic",scales:true}})
 ];
-export const SPELL_REFERENCE_2024=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
-export const SPELL_REFERENCE_2024_BY_ID=Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell]));
+
+const CURATED=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
+const byId=new Map(SPELL_REFERENCE_2024_GENERATED.map(spell=>[spell.id,spell]));
+for(const spell of CURATED)byId.set(spell.id,spell);
+
+export const SPELL_REFERENCE_2024=Object.freeze([...byId.values()]);
+export const SPELL_REFERENCE_2024_BY_ID=Object.freeze(Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell])));
