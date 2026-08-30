@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createInitialState } from "../src/state.js";
+import { generateCharacter } from "../src/rules/generator.js";
 import { characterActiveSpellReferences } from "../src/rules/spell-reference.js";
+
+const CASTERS=["wizard","cleric","bard","druid","paladin","ranger","sorcerer","warlock"];
 
 const fixture=overrides=>({
   ruleset:"2024",
@@ -20,6 +24,23 @@ const fixture=overrides=>({
 });
 
 const byId=refs=>new Map(refs.map(ref=>[ref.id,ref]));
+const activeIds=spells=>[...new Set([
+  ...(spells?.cantrips?.all||[]),
+  ...(spells?.tome?.cantrips||[]),
+  ...(spells?.alwaysPrepared||[]),
+  ...(spells?.prepared?.all||[]),
+  ...(spells?.known?.all||[]),
+  ...(spells?.tome?.rituals||[]),
+  ...(spells?.invocationSpells||[]),
+  ...Object.values(spells?.mysticArcanum||{}).filter(Boolean)
+])];
+
+function generatedCaster(classId){
+  const state=createInitialState();
+  state.ruleset="2024";
+  state.constraints={level:"20",species:"human",class:classId,subclass:"random",background:"sage",name:`${classId} active reference audit`};
+  return generateCharacter(state);
+}
 
 test("active 2024 spell references expose every supported active spell bucket with deterministic labels",()=>{
   const character=fixture({
@@ -45,6 +66,16 @@ test("active 2024 spell references expose every supported active spell bucket wi
   assert.equal(lookup.get("detect-magic").preparation,"Invocation");
   assert.equal(lookup.get("delayed-blast-fireball").preparation,"Mystic Arcanum");
   assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,"active references must not duplicate spell ids");
+});
+
+test("every generated 2024 caster exposes exactly its active spell buckets in Spell Reference",()=>{
+  for(const classId of CASTERS){
+    const character=generatedCaster(classId),expected=activeIds(character.spells),refs=characterActiveSpellReferences(character);
+    assert.ok(expected.length>0,`${classId}: expected active magic at level 20`);
+    assert.deepEqual(new Set(refs.map(ref=>ref.id)),new Set(expected),`${classId}: active Spell Reference coverage drift`);
+    assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,`${classId}: duplicate active Spell Reference id`);
+    assert.ok(refs.every(ref=>ref.source==="SRD 5.2.1"),`${classId}: non-SRD reference leaked into active panel`);
+  }
 });
 
 test("Wizard spellbook-only spells are not treated as active references",()=>{
