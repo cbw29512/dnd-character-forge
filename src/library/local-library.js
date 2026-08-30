@@ -1,5 +1,6 @@
 import { fingerprint, homebrewFingerprintPayload, pregenFingerprintPayload } from "./fingerprint.js";
 
+export const PREGEN_ENTRY_SCHEMA_VERSION = 1;
 const PREGEN_KEY = "character-forge:pregen-library:v1";
 const HOMEBREW_KEY = "character-forge:homebrew-library:v1";
 
@@ -17,6 +18,12 @@ function store(key, items, label) {
 
 export const loadPregens = () => load(PREGEN_KEY,"pregens");
 export const loadHomebrew = () => load(HOMEBREW_KEY,"homebrew");
+export function replacePregens(items){
+  try{
+    if(!Array.isArray(items))throw new Error("Pregen library replacement must be an array.");
+    return store(PREGEN_KEY,items,"pregens");
+  }catch(error){console.error("[library] replacePregens failed",error);throw error;}
+}
 
 export async function savePregen(character) {
   try {
@@ -27,11 +34,12 @@ export async function savePregen(character) {
     if(duplicate){
       if(duplicate.name===character.name&&presentationChanged(duplicate.character,character)){
         if(character.presentation)duplicate.character.presentation=structuredClone(character.presentation);else delete duplicate.character.presentation;
+        duplicate.schemaVersion=PREGEN_ENTRY_SCHEMA_VERSION;
         duplicate.updatedAt=new Date().toISOString();store(PREGEN_KEY,items,"pregens");return{...duplicate,presentationUpdated:true};
       }
       throw new Error(`This pregen is mechanically identical to ${duplicate.name}. Open the existing library entry instead.`);
     }
-    const entry = { id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
+    const entry = { schemaVersion:PREGEN_ENTRY_SCHEMA_VERSION, id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
     items.unshift(entry);
     store(PREGEN_KEY,items,"pregens");
     return entry;
