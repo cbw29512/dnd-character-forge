@@ -20,7 +20,7 @@ for(const item of CASES)verifyPacket(item);
 console.log(`[warlock-browser-print] verified ${CASES.length} fixed Warlock premium PDFs in Chrome`);
 
 function verifyPacket(testCase){
-  const character=characterAt(testCase),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),slug=`${testCase.ruleset}-${testCase.species}-warlock`,htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
+  const character=characterAt(testCase),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),slug=`${testCase.ruleset}-${testCase.species}-warlock`,htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),layoutTxtPath=path.join(OUT,`${slug}.txt`),semanticTxtPath=path.join(OUT,`${slug}-semantic.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
   assert.equal(character.validation.valid,true,`${slug}: generated Warlock is invalid`);
   assert.equal(character.audit.status,"PASS",`${slug}: Rules Audit did not pass`);
   assert.equal(character.audit.rawIntegrity,true,`${slug}: RAW integrity failed`);
@@ -41,15 +41,16 @@ function verifyPacket(testCase){
   assert.equal(pages,2,`${slug}: browser PDF is not exactly two pages`);
   assert.match(info,/Page size:\s+612 x 792 pts/i,`${slug}: PDF is not US Letter`);
 
-  execFileSync("pdftotext",["-layout",pdfPath,txtPath]);
+  execFileSync("pdftotext",["-layout",pdfPath,layoutTxtPath]);
+  execFileSync("pdftotext",[pdfPath,semanticTxtPath]);
   execFileSync("pdftoppm",["-png","-r","120",pdfPath,pngPrefix]);
-  const extracted=readFileSync(txtPath,"utf8"),pagesText=pdfPages(extracted);
+  const layoutExtracted=readFileSync(layoutTxtPath,"utf8"),semanticExtracted=readFileSync(semanticTxtPath,"utf8"),pagesText=pdfPages(layoutExtracted);
   assert.equal(pagesText.length,pages,`${slug}: extracted page count mismatch`);
   for(let index=0;index<pagesText.length;index++){
     const text=normalize(pagesText[index]);assert.ok(text.length>500,`${slug}: page ${index+1} is suspiciously sparse (${text.length} chars)`);assert.match(text,new RegExp(`Page\\s+${index+1}\\s*\\/\\s*${pages}`,"i"),`${slug}: page marker missing`);
   }
 
-  const whole=normalize(extracted),fold=whole.toLowerCase(),tokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,...model.ruleIndex.map(item=>item.name),model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
+  const whole=normalize(semanticExtracted),fold=whole.toLowerCase(),tokens=[character.name,...model.attacks.map(item=>item.name),...model.equipment,...model.ruleIndex.map(item=>item.name),model.classUtility.title,...model.spellPage.entries.map(item=>item.name)];
   assert.equal(fold.includes("[object object]"),false,`${slug}: printed PDF exposed an unformatted inventory object`);
   for(const token of tokens)assert.ok(fold.includes(normalize(token).toLowerCase()),`${slug}: printed PDF lost expected content: ${token}`);
   for(const phrase of ["RAW Integrity","Eldritch Pact","Pact Resources","Pact Magic","Eldritch Invocations","Mystic Arcanum"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing Warlock contract text: ${phrase}`);
