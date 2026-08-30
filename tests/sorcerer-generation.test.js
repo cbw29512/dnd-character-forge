@@ -25,7 +25,7 @@ test("2024 Sorcerer generates and validates at every level 1 through 20",()=>{
   try {
     for(let level=1;level<=20;level++){
       const selections=level>=6?{elementalAffinity:"Fire"}:{};const character=generated("2024",level,{classSelections:selections});assert.equal(character.validation.valid,true);assert.equal(character.class.id,"sorcerer");assert.equal(character.subclass?.id||null,level>=3?"draconic-sorcery":null);
-      const draconic=level>=3;assert.equal(character.draconicHpBonus,draconic?level:0);assert.equal(character.hp,averageHp(6,level,abilityMod(character.abilities.con))+character.speciesHpBonus+(draconic?level:0)+character.toughHpBonus);assert.equal(character.ac,draconic?10+abilityMod(character.abilities.dex)+abilityMod(character.abilities.cha):10+abilityMod(character.abilities.dex));
+      const draconic=level>=3,toughHpBonus=character.toughHpBonus||0;assert.equal(character.draconicHpBonus,draconic?level:0);assert.ok(Number.isFinite(character.hp));assert.equal(character.hp,averageHp(6,level,abilityMod(character.abilities.con))+character.speciesHpBonus+(draconic?level:0)+toughHpBonus);assert.equal(character.ac,draconic?10+abilityMod(character.abilities.dex)+abilityMod(character.abilities.cha):10+abilityMod(character.abilities.dex));
       assert.equal(character.spells.prepared.all.length,character.sorcerer.prepared);assert.equal(character.spells.known.all.length,0);assert.equal(character.spells.alwaysPrepared.length,level<3?0:level<5?4:level<7?6:level<9?8:10);if(level>=6)assert.equal(character.sorcererSelections.draconic.elementalAffinity,"Fire");
     }
   } catch (error) { console.error("[sorcerer-generation-test] 2024 level matrix failed",error); throw error; }
