@@ -4,6 +4,7 @@
 The generated file contains the SRD stat-line metadata Character Forge needs and
 short original pointers for effect/upcast text. Existing hand-curated records stay
 authoritative overrides, so their richer quick-reference wording is preserved.
+Generated records deliberately do not infer attack/save resolution from prose.
 """
 
 from __future__ import annotations
@@ -65,23 +66,6 @@ def normalize_page(text: str) -> str:
     text = text.replace("’", "'").replace("–", "-").replace("—", "-").replace("−", "-")
     text = text.replace("\u00a0", " ")
     return text
-
-
-def resolution_for(text: str) -> str:
-    lower = text.lower()
-    if "ranged spell attack" in lower:
-        return "Ranged spell attack"
-    if "melee spell attack" in lower:
-        return "Melee spell attack"
-    if "spell attack" in lower:
-        return "Spell attack"
-    match = re.search(
-        r"\b(strength|dexterity|constitution|intelligence|wisdom|charisma) saving throw\b",
-        lower,
-    )
-    if match:
-        return f"{match.group(1).title()} saving throw"
-    return "Automatic or utility effect; see the official SRD reference"
 
 
 def parse_fields(block: str, title: str, page: int) -> tuple[str, str, str, str, str]:
@@ -193,7 +177,7 @@ def parse(pdf_path: Path) -> list[dict]:
                 "range": range_text,
                 "components": components,
                 "duration": duration,
-                "resolution": resolution_for(description),
+                "resolution": f"See SRD 5.2.1 page {page} for spell resolution.",
                 "effect": f"Official SRD 5.2.1 spell effect; see page {page} for the complete rules text.",
                 "concentration": concentration,
                 "ritual": ritual,
