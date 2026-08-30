@@ -1,20 +1,17 @@
 import { createInitialState, MAGIC_MODES } from "./state.js";
-import { RANDOM, SOURCE } from "./schema.js";
 import { generateCharacter } from "./rules/generator.js";
 import { generateStartingMagic } from "./rules/magic-starting.js";
-import { createAbilityFeat } from "./rules/homebrew.js";
 import { savePregen } from "./library/local-library.js";
 import { renderCharacter } from "./ui/render-safe.js";
 import { exportCharacterPdf } from "./ui/print.js";
 import { populateOptions, populateLevels, populateSubclasses } from "./ui/options.js";
 import { bindSpeciesOptions, renderSpeciesOptions, resetSpeciesOptions } from "./ui/species-options.js";
 import { bindBackgroundOptions, renderBackgroundOptions, resetBackgroundOptions } from "./ui/background-options.js";
-import { bindClassOptions, renderClassOptions, resetClassOptions, clearIllegalClassSelectionsForLevel } from "./ui/class-options.js";
+import { bindClassOptions, renderClassOptions, clearIllegalClassSelectionsForLevel } from "./ui/class-options.js";
 import { classSelectionsFromCharacter } from "./ui/class-selection-state.js";
 import { bindPortraitUpload, renderPortraitUpload, restorePortraitFromCharacter, applyPortraitToCurrent } from "./ui/portrait-upload.js";
 import { bindSheetCustomizer, renderSheetCustomizer, restoreSheetCustomizationFromCharacter, applySheetCustomizationToCurrent } from "./ui/sheet-customizer.js";
 import { bindPregenLibrary, renderPregenLibrary } from "./ui/library.js";
-import { bindHomebrewLibrary, renderHomebrewLibrary } from "./ui/homebrew-library.js";
 import { bindSpellPicker, refreshSpellPicker } from "./ui/spell-picker.js";
 import { emptySpellSelections, spellSelectionsFromCharacter } from "./ui/spell-selection-state.js";
 import { createHeroExperience, createForgeLoadingState, setForgeLoading } from "./ui/hero-experience.js";
@@ -22,26 +19,234 @@ import { validateVisibleForgeSelections } from "./ui/forge-preflight.js";
 import { bindAccessibleTabs, activateAccessibleTab } from "./ui/accessible-tabs.js";
 
 const state=createInitialState(),constraintIds=["level","species","class","subclass","background","name"];
-function boot(){try{populateOptions(state);createWorkflowGuide();createMagicControls();createHeroExperience();createForgeLoadingState();bindConstraints();bindMode();bindAccessibleTabs({onActivate:showTab});bindHomebrew();bindResultActions();bindPregenLibrary({onView:viewSavedPregen,showToast});bindHomebrewLibrary({onUse:useSavedHomebrew,showToast});bindSpeciesOptions(state);bindBackgroundOptions(state);bindClassOptions(state,{onChange:()=>refreshSpellPicker(state),showToast});bindPortraitUpload(state,showToast);bindSheetCustomizer(state,showToast);bindSpellPicker(state,showToast);groupAdvancedOptions();document.getElementById("forgeButton").addEventListener("click",forge);}catch(error){showError(error);}}
-function createWorkflowGuide(){try{const panel=document.querySelector(".forge-panel"),grid=document.querySelector(".field-grid");if(!panel||!grid)return;const guide=document.createElement("div");guide.className="workflow-guide";guide.innerHTML='<div class="workflow-title"><span>THREE EASY MOVES</span><small>Random is the default. Lock only the choices you care about; the Forge fills every remaining supported choice legally.</small></div><div class="workflow-steps"><span>1 Choose rules</span><span>2 Lock favorites</span><span>3 Forge &amp; review</span></div><button id="resetBuildChoices" class="secondary-button workflow-reset" type="button">Reset build choices to Random</button><small class="workflow-reset-note">Keeps rules edition, source mode, active Homebrew, portrait, and sheet style. Your current character stays visible until you Forge again.</small>';panel.insertBefore(guide,grid);const reset=guide.querySelector("#resetBuildChoices");if(!reset)throw new Error("Random reset action is missing.");reset.addEventListener("click",resetBuildChoices);}catch(error){console.error("[app] workflow guide failed",error);throw error;}}
-function resetBuildChoices(){try{state.magicMode=MAGIC_MODES.RANDOM_MAGIC;state.constraints={...state.constraints,level:RANDOM,species:RANDOM,class:RANDOM,subclass:RANDOM,background:RANDOM,name:""};state.speciesSelections={};state.backgroundSelections={};state.classSelections={};state.spellSelections=emptySpells();syncControls();const error=document.getElementById("error");if(error)error.hidden=true;showToast("Build choices reset to Random. Forge again when ready.");}catch(error){console.error("[app] reset build choices failed",error);showToast(error.message,true);}}
-function createMagicControls(){try{const panel=document.querySelector(".forge-panel"),errorAnchor=document.getElementById("error");if(!panel)return;const wrapper=document.createElement("section");wrapper.id="magicControls";wrapper.className="magic-controls";wrapper.innerHTML='<div class="magic-heading"><div><span class="section-kicker">OPTIONAL · STARTING MAGIC</span><strong>Campaign magic level</strong><small>Choose the campaign starting-magic level, or leave Random. Items stay level-appropriate and usable by the class; the Forge does not optimize them.</small></div><span class="magic-badge">OFFICIAL GUIDANCE</span></div><div class="magic-options">'+[['random','Random','Let the Forge choose the campaign magic setting.'],['none','No Magic','No starting magic items.'],['low','Low Magic','Use the low-magic campaign setting.'],['normal','Normal Magic','Use the normal-magic campaign setting.'],['high','High Magic','Use the high-magic campaign setting.']].map(([value,label,help])=>`<label class="magic-option"><input type="radio" name="magicMode" value="${value}"><span><strong>${label}</strong><small>${help}</small></span></label>`).join('')+'</div><small id="magicGuidanceNote" class="magic-guidance"></small></section>';if(errorAnchor?.parentElement===panel)panel.insertBefore(wrapper,errorAnchor);else panel.appendChild(wrapper);wrapper.querySelector(`input[value="${state.magicMode}"]`).checked=true;wrapper.querySelectorAll('input[name="magicMode"]').forEach(input=>input.addEventListener('change',event=>{state.magicMode=event.target.value;}));renderMagicGuidance();}catch(error){console.error("[app] magic controls failed",error);throw error;}}
-function renderMagicGuidance(){try{const node=document.getElementById("magicGuidanceNote");if(!node)return;node.textContent=state.ruleset==="2014"?"2014: Low / Normal / High follow the DMG Starting at Higher Levels guidance and can produce different magic-item allowances. Random selects among No Magic, Low, Normal, and High.":"2024: SRD 5.2.1 has one official Starting Equipment at Higher Levels schedule. Low / Normal / High therefore use the same official item allocation; the selected label records campaign preference. No Magic is the explicit override.";}catch(error){console.error("[app] magic guidance render failed",error);throw error;}}
-function groupAdvancedOptions(){try{const panel=document.querySelector(".forge-panel"),error=document.getElementById("error");if(!panel||!error)throw new Error("Forge advanced-options anchors are missing.");let details=document.getElementById("forgeAdvancedOptions");if(!details){details=document.createElement("details");details.id="forgeAdvancedOptions";details.className="forge-advanced-options";details.innerHTML='<summary><span><strong>More options</strong><small>Spells, starting magic, portrait, print style, and Homebrew details</small></span><span class="advanced-chevron" aria-hidden="true">⌄</span></summary><div class="forge-advanced-body"></div>';panel.insertBefore(details,error);}const body=details.querySelector(".forge-advanced-body");if(!body)throw new Error("Forge advanced-options body is missing.");for(const id of ["spellPickerPanel","homebrewPanel","magicControls","portraitPanel","sheetCustomizerPanel"]){const node=document.getElementById(id);if(node&&node.parentElement!==body)body.appendChild(node);}}catch(error){console.error("[app] advanced options grouping failed",error);throw error;}}
-function bindConstraints(){try{constraintIds.forEach(id=>document.getElementById(id).addEventListener("change",event=>{state.constraints[id]=event.target.value;}));document.getElementById("name").addEventListener("input",event=>{state.constraints.name=event.target.value;});document.getElementById("species").addEventListener("change",()=>resetSpeciesOptions(state));document.getElementById("background").addEventListener("change",()=>{resetBackgroundOptions(state);renderClassOptions(state);});document.getElementById("class").addEventListener("change",()=>{state.constraints.subclass="random";state.classSelections={};populateLevels(state);populateSubclasses(state);renderClassOptions(state);renderSheetCustomizer(state);refreshSpellPicker(state);});document.getElementById("subclass").addEventListener("change",()=>{clearIllegalClassSelectionsForLevel(state);refreshSpellPicker(state);});document.getElementById("level").addEventListener("change",()=>{populateSubclasses(state);clearIllegalClassSelectionsForLevel(state);refreshSpellPicker(state);});document.getElementById("ruleset").addEventListener("change",event=>{state.ruleset=event.target.value;state.constraints.species="random";state.constraints.class="random";state.constraints.subclass="random";state.constraints.background="random";state.speciesSelections={};state.backgroundSelections={};state.classSelections={};state.spellSelections=emptySpells();populateOptions(state);renderSpeciesOptions(state);renderBackgroundOptions(state);renderClassOptions(state);renderSheetCustomizer(state);renderMagicGuidance();});}catch(error){console.error("[app] bindConstraints failed",error);throw error;}}
-function bindMode(){try{document.getElementById("sourceMode").addEventListener("change",event=>{state.sourceMode=event.target.value;document.getElementById("homebrewPanel").hidden=state.sourceMode!==SOURCE.HOMEBREW;});}catch(error){console.error("[app] bindMode failed",error);throw error;}}
-function showTab(name){try{activateAccessibleTab(name);if(name==="pregens")renderPregenLibrary();if(name==="homebrew")renderHomebrewLibrary();}catch(error){console.error("[app] showTab failed",error);throw error;}}
-function bindHomebrew(){try{document.getElementById("addHomebrew").addEventListener("click",()=>{try{const item=createAbilityFeat({name:document.getElementById("hbName").value,ability:document.getElementById("hbAbility").value,amount:document.getElementById("hbAmount").value});if(state.homebrew.some(value=>value.name.trim().toLowerCase()===item.name.trim().toLowerCase()))throw new Error(`Homebrew named "${item.name}" is already active.`);state.homebrew.push(item);renderActiveHomebrew();}catch(error){showError(error);}});}catch(error){console.error("[app] bindHomebrew failed",error);throw error;}}
-function bindResultActions(){try{document.getElementById("result").addEventListener("click",async event=>{const actionButton=event.target.closest("[data-action]");try{const action=actionButton?.dataset.action;if(action==="reroll")forge();if(action==="print")await exportCharacterPdf(state.currentCharacter);if(action==="save"){if(!state.currentCharacter)throw new Error("Forge a character before saving.");actionButton.textContent="Saving…";actionButton.setAttribute("aria-busy","true");const entry=await savePregen(state.currentCharacter);markPregenSaved(actionButton);renderPregenLibrary();showToast(entry.presentationUpdated?`${entry.name} updated in My Pregens.`:`${entry.name} saved to My Pregens.`);}}catch(error){if(actionButton?.dataset.action==="save"){if(/mechanically identical/i.test(error.message)&&actionButton.classList.contains("is-saved")){markPregenSaved(actionButton);showToast("Already saved to My Pregens.");return;}resetPregenSaveButton(actionButton);}showToast(error.message,true);}finally{actionButton?.removeAttribute("aria-busy");}});}catch(error){console.error("[app] bindResultActions failed",error);throw error;}}
-function markPregenSaved(button=document.querySelector('#result [data-action="save"]')){try{if(!button)return;button.textContent="✓ Saved to Pregens";button.classList.add("is-saved");button.setAttribute("aria-label","Saved to Pregens");}catch(error){console.error("[app] pregen save confirmation failed",error);throw error;}}
-function resetPregenSaveButton(button){try{if(!button)return;button.textContent="＋ Save to Pregens";button.classList.remove("is-saved");button.removeAttribute("aria-label");}catch(error){console.error("[app] pregen save reset failed",error);throw error;}}
-function viewSavedPregen(entry){try{const character=structuredClone(entry.character);state.currentCharacter=character;state.sourceMode=character.sourceMode;state.ruleset=character.ruleset;state.magicMode=character.startingMagic?.requestedMode||character.startingMagic?.mode||MAGIC_MODES.RANDOM_MAGIC;state.constraints={level:String(character.level),species:character.species.id,class:character.class.id,subclass:character.subclass?.id||"random",background:character.background.id,name:character.name};state.speciesSelections={...(character.speciesChoices||{})};if(character.ruleset==="2024")state.speciesSelections.size=character.size;state.backgroundSelections=character.ruleset==="2024"?{...(character.backgroundChoices||{})}:{};const restoredClassSelections=classSelectionsFromCharacter(character),restoredSpellSelections=spellSelectionsFromCharacter(character);if(character.class.id==="cleric"){const expected={blessedStrikes:character.blessedStrikes};if((restoredClassSelections.blessedStrikes||null)!==(expected.blessedStrikes||null))throw new Error("Saved Cleric class choices failed reconstruction.");}if(character.class.id==="wizard"&&character.spells){const expected={masteryLevel1:character.spells.spellMastery?.level1||null,signatureSpells:[...(character.spells.signatureSpells||[])]};if((restoredSpellSelections.masteryLevel1||null)!==expected.masteryLevel1||JSON.stringify(restoredSpellSelections.signatureSpells)!==JSON.stringify(expected.signatureSpells))throw new Error("Saved Wizard spell choices failed reconstruction.");}state.classSelections=restoredClassSelections;state.spellSelections=restoredSpellSelections;state.homebrew=structuredClone(character.homebrew||[]);restorePortraitFromCharacter(state,character);restoreSheetCustomizationFromCharacter(state,character);syncControls();renderCharacter(character,document.getElementById("result"));markPregenSaved();if(character.startingMagic)renderStartingMagicSummary(character);showTab("forge");showToast(`${character.name} opened from My Pregens.`);}catch(error){console.error("[app] opening pregen failed",error);showToast(error.message,true);}}
-function useSavedHomebrew(entry){try{if(state.homebrew.some(item=>item.name.trim().toLowerCase()===entry.name.trim().toLowerCase()))throw new Error(`${entry.name} is already active in Forge.`);if(state.ruleset!==entry.ruleset){state.ruleset=entry.ruleset;state.constraints.species="random";state.constraints.class="random";state.constraints.subclass="random";state.constraints.background="random";state.speciesSelections={};state.backgroundSelections={};state.classSelections={};state.spellSelections=emptySpells();}state.sourceMode=SOURCE.HOMEBREW;state.homebrew.push(structuredClone(entry.item));syncControls();showTab("forge");showToast(`${entry.name} is active in ${entry.ruleset} Homebrew mode.`);}catch(error){console.error("[app] using Homebrew failed",error);showToast(error.message,true);}}
-function syncControls(){try{document.getElementById("sourceMode").value=state.sourceMode;document.getElementById("ruleset").value=state.ruleset;populateOptions(state);for(const id of constraintIds){const element=document.getElementById(id);if(element)element.value=state.constraints[id];}const magicInput=document.querySelector(`input[name="magicMode"][value="${state.magicMode}"]`);if(magicInput)magicInput.checked=true;renderSpeciesOptions(state);renderBackgroundOptions(state);renderClassOptions(state);renderPortraitUpload(state);renderSheetCustomizer(state);document.getElementById("homebrewPanel").hidden=state.sourceMode!==SOURCE.HOMEBREW;renderActiveHomebrew();refreshSpellPicker(state);renderMagicGuidance();}catch(error){console.error("[app] syncControls failed",error);throw error;}}
-function renderActiveHomebrew(){const node=document.getElementById("hbList");if(node)node.textContent=state.homebrew.length?`Active: ${state.homebrew.map(value=>value.name).join(", ")}`:"";}
-function forge(){const button=document.getElementById("forgeButton");try{setForgeLoading(true);createForgeLoadingState();button.classList.add("is-forging");document.getElementById("error").hidden=true;validateVisibleForgeSelections(state);state.currentCharacter=generateCharacter(state);state.currentCharacter={...state.currentCharacter,startingMagic:generateStartingMagic({ruleset:state.ruleset,level:state.currentCharacter.level,mode:state.magicMode,classId:state.currentCharacter.class.id})};state.currentCharacter.startingGold=state.currentCharacter.startingMagic.gold;applyPortraitToCurrent(state);applySheetCustomizationToCurrent(state);renderCharacter(state.currentCharacter,document.getElementById("result"));renderStartingMagicSummary(state.currentCharacter);}catch(error){showError(error);}finally{setForgeLoading(false);window.setTimeout(()=>button.classList.remove("is-forging"),160);}}
-function renderStartingMagicSummary(character){try{const result=document.getElementById("result");if(!result)return;result.querySelector(".starting-magic-summary")?.remove();const card=document.createElement("section");card.className="starting-magic-summary";const items=character.startingMagic.items||[];card.innerHTML=`<div><span class="section-kicker">STARTING RESOURCES</span><h3>Equipment &amp; Magic</h3><p><strong>Starting gold:</strong> ${character.startingMagic.gold}</p><p><strong>Magic mode:</strong> ${character.startingMagic.mode}${character.startingMagic.requestedMode===MAGIC_MODES.RANDOM_MAGIC?" · randomized": " · locked"}</p></div><div class="magic-item-list">${items.length?items.map(item=>`<div class="magic-item"><strong>${item.name}</strong><span>${item.rarity}${item.attunement?' · Attunement':''}</span></div>`).join(''):'<div class="magic-item empty">No starting magic items</div>'}</div><small>${character.startingMagic.source}. Items are selected for legality and usability, not optimization.</small>`;result.append(card);}catch(error){console.error("[app] magic summary failed",error);throw error;}}
+
+function boot(){
+  try{
+    populateOptions(state);
+    createMagicControls();
+    createHeroExperience();
+    createForgeLoadingState();
+    bindConstraints();
+    bindAccessibleTabs({onActivate:showTab});
+    bindResultActions();
+    bindPregenLibrary({onView:viewSavedPregen,showToast});
+    bindSpeciesOptions(state);
+    bindBackgroundOptions(state);
+    bindClassOptions(state,{onChange:()=>refreshSpellPicker(state),showToast});
+    bindPortraitUpload(state,showToast);
+    bindSheetCustomizer(state,showToast);
+    bindSpellPicker(state,showToast);
+    groupAdvancedOptions();
+    document.getElementById("forgeButton").addEventListener("click",forge);
+  }catch(error){showError(error);}
+}
+
+function createMagicControls(){
+  try{
+    const panel=document.querySelector(".forge-panel"),errorAnchor=document.getElementById("error");
+    if(!panel)return;
+    const wrapper=document.createElement("section");
+    wrapper.id="magicControls";
+    wrapper.className="magic-controls";
+    wrapper.innerHTML='<div class="magic-heading"><div><span class="section-kicker">OPTIONAL · STARTING MAGIC</span><strong>Campaign magic level</strong><small>Choose the campaign starting-magic level, or leave Random. Items stay level-appropriate and usable by the class; the Forge does not optimize them.</small></div><span class="magic-badge">OFFICIAL GUIDANCE</span></div><div class="magic-options">'+[['random','Random','Let the Forge choose the campaign magic setting.'],['none','No Magic','No starting magic items.'],['low','Low Magic','Use the low-magic campaign setting.'],['normal','Normal Magic','Use the normal-magic campaign setting.'],['high','High Magic','Use the high-magic campaign setting.']].map(([value,label,help])=>`<label class="magic-option"><input type="radio" name="magicMode" value="${value}"><span><strong>${label}</strong><small>${help}</small></span></label>`).join('')+'</div><small id="magicGuidanceNote" class="magic-guidance"></small></section>';
+    if(errorAnchor?.parentElement===panel)panel.insertBefore(wrapper,errorAnchor);else panel.appendChild(wrapper);
+    wrapper.querySelector(`input[value="${state.magicMode}"]`).checked=true;
+    wrapper.querySelectorAll('input[name="magicMode"]').forEach(input=>input.addEventListener('change',event=>{state.magicMode=event.target.value;}));
+    renderMagicGuidance();
+  }catch(error){console.error("[app] magic controls failed",error);throw error;}
+}
+
+function renderMagicGuidance(){
+  try{
+    const node=document.getElementById("magicGuidanceNote");
+    if(!node)return;
+    node.textContent=state.ruleset==="2014"?"2014: Low / Normal / High follow the DMG Starting at Higher Levels guidance and can produce different magic-item allowances. Random selects among No Magic, Low, Normal, and High.":"2024: SRD 5.2.1 has one official Starting Equipment at Higher Levels schedule. Low / Normal / High therefore use the same official item allocation; the selected label records campaign preference. No Magic is the explicit override.";
+  }catch(error){console.error("[app] magic guidance render failed",error);throw error;}
+}
+
+function groupAdvancedOptions(){
+  try{
+    const panel=document.querySelector(".forge-panel"),error=document.getElementById("error");
+    if(!panel||!error)throw new Error("Forge advanced-options anchors are missing.");
+    let details=document.getElementById("forgeAdvancedOptions");
+    if(!details){
+      details=document.createElement("details");
+      details.id="forgeAdvancedOptions";
+      details.className="forge-advanced-options";
+      details.innerHTML='<summary><span><strong>More options</strong><small>Spells, starting magic, portrait, and print style</small></span><span class="advanced-chevron" aria-hidden="true">⌄</span></summary><div class="forge-advanced-body"></div>';
+      panel.insertBefore(details,error);
+    }
+    const body=details.querySelector(".forge-advanced-body");
+    if(!body)throw new Error("Forge advanced-options body is missing.");
+    for(const id of ["spellPickerPanel","magicControls","portraitPanel","sheetCustomizerPanel"]){
+      const node=document.getElementById(id);
+      if(node&&node.parentElement!==body)body.appendChild(node);
+    }
+  }catch(error){console.error("[app] advanced options grouping failed",error);throw error;}
+}
+
+function bindConstraints(){
+  try{
+    constraintIds.forEach(id=>document.getElementById(id).addEventListener("change",event=>{state.constraints[id]=event.target.value;}));
+    document.getElementById("name").addEventListener("input",event=>{state.constraints.name=event.target.value;});
+    document.getElementById("species").addEventListener("change",()=>resetSpeciesOptions(state));
+    document.getElementById("background").addEventListener("change",()=>{resetBackgroundOptions(state);renderClassOptions(state);});
+    document.getElementById("class").addEventListener("change",()=>{state.constraints.subclass="random";state.classSelections={};populateLevels(state);populateSubclasses(state);renderClassOptions(state);renderSheetCustomizer(state);refreshSpellPicker(state);});
+    document.getElementById("subclass").addEventListener("change",()=>{clearIllegalClassSelectionsForLevel(state);refreshSpellPicker(state);});
+    document.getElementById("level").addEventListener("change",()=>{populateSubclasses(state);clearIllegalClassSelectionsForLevel(state);refreshSpellPicker(state);});
+    document.getElementById("ruleset").addEventListener("change",event=>{state.ruleset=event.target.value;state.constraints.species="random";state.constraints.class="random";state.constraints.subclass="random";state.constraints.background="random";state.speciesSelections={};state.backgroundSelections={};state.classSelections={};state.spellSelections=emptySpells();populateOptions(state);renderSpeciesOptions(state);renderBackgroundOptions(state);renderClassOptions(state);renderSheetCustomizer(state);renderMagicGuidance();});
+  }catch(error){console.error("[app] bindConstraints failed",error);throw error;}
+}
+
+function showTab(name){
+  try{
+    activateAccessibleTab(name);
+    if(name==="pregens")renderPregenLibrary();
+  }catch(error){console.error("[app] showTab failed",error);throw error;}
+}
+
+function bindResultActions(){
+  try{
+    document.getElementById("result").addEventListener("click",async event=>{
+      const actionButton=event.target.closest("[data-action]");
+      try{
+        const action=actionButton?.dataset.action;
+        if(action==="reroll")forge();
+        if(action==="print")await exportCharacterPdf(state.currentCharacter);
+        if(action==="save"){
+          if(!state.currentCharacter)throw new Error("Forge a character before saving.");
+          actionButton.textContent="Saving…";
+          actionButton.setAttribute("aria-busy","true");
+          const entry=await savePregen(state.currentCharacter);
+          markPregenSaved(actionButton);
+          renderPregenLibrary();
+          showToast(entry.presentationUpdated?`${entry.name} updated in My Pregens.`:`${entry.name} saved to My Pregens.`);
+        }
+      }catch(error){
+        if(actionButton?.dataset.action==="save"){
+          if(/mechanically identical/i.test(error.message)&&actionButton.classList.contains("is-saved")){markPregenSaved(actionButton);showToast("Already saved to My Pregens.");return;}
+          resetPregenSaveButton(actionButton);
+        }
+        showToast(error.message,true);
+      }finally{actionButton?.removeAttribute("aria-busy");}
+    });
+  }catch(error){console.error("[app] bindResultActions failed",error);throw error;}
+}
+
+function markPregenSaved(button=document.querySelector('#result [data-action="save"]')){
+  try{if(!button)return;button.textContent="✓ Saved to Pregens";button.classList.add("is-saved");button.setAttribute("aria-label","Saved to Pregens");}
+  catch(error){console.error("[app] pregen save confirmation failed",error);throw error;}
+}
+
+function resetPregenSaveButton(button){
+  try{if(!button)return;button.textContent="＋ Save to Pregens";button.classList.remove("is-saved");button.removeAttribute("aria-label");}
+  catch(error){console.error("[app] pregen save reset failed",error);throw error;}
+}
+
+function viewSavedPregen(entry){
+  try{
+    const character=structuredClone(entry.character);
+    if(character.sourceMode!=="RAW")throw new Error("This production Forge opens RAW saved characters only.");
+    state.currentCharacter=character;
+    state.sourceMode="RAW";
+    state.ruleset=character.ruleset;
+    state.magicMode=character.startingMagic?.requestedMode||character.startingMagic?.mode||MAGIC_MODES.RANDOM_MAGIC;
+    state.constraints={level:String(character.level),species:character.species.id,class:character.class.id,subclass:character.subclass?.id||"random",background:character.background.id,name:character.name};
+    state.speciesSelections={...(character.speciesChoices||{})};
+    if(character.ruleset==="2024")state.speciesSelections.size=character.size;
+    state.backgroundSelections=character.ruleset==="2024"?{...(character.backgroundChoices||{})}:{};
+    const restoredClassSelections=classSelectionsFromCharacter(character),restoredSpellSelections=spellSelectionsFromCharacter(character);
+    if(character.class.id==="cleric"){
+      const expected={blessedStrikes:character.blessedStrikes};
+      if((restoredClassSelections.blessedStrikes||null)!==(expected.blessedStrikes||null))throw new Error("Saved Cleric class choices failed reconstruction.");
+    }
+    if(character.class.id==="wizard"&&character.spells){
+      const expected={masteryLevel1:character.spells.spellMastery?.level1||null,signatureSpells:[...(character.spells.signatureSpells||[])]};
+      if((restoredSpellSelections.masteryLevel1||null)!==expected.masteryLevel1||JSON.stringify(restoredSpellSelections.signatureSpells)!==JSON.stringify(expected.signatureSpells))throw new Error("Saved Wizard spell choices failed reconstruction.");
+    }
+    state.classSelections=restoredClassSelections;
+    state.spellSelections=restoredSpellSelections;
+    state.homebrew=[];
+    restorePortraitFromCharacter(state,character);
+    restoreSheetCustomizationFromCharacter(state,character);
+    syncControls();
+    renderCharacter(character,document.getElementById("result"));
+    markPregenSaved();
+    if(character.startingMagic)renderStartingMagicSummary(character);
+    showTab("forge");
+    showToast(`${character.name} opened from My Pregens.`);
+  }catch(error){console.error("[app] opening pregen failed",error);showToast(error.message,true);}
+}
+
+function syncControls(){
+  try{
+    document.getElementById("ruleset").value=state.ruleset;
+    populateOptions(state);
+    for(const id of constraintIds){const element=document.getElementById(id);if(element)element.value=state.constraints[id];}
+    const magicInput=document.querySelector(`input[name="magicMode"][value="${state.magicMode}"]`);
+    if(magicInput)magicInput.checked=true;
+    renderSpeciesOptions(state);
+    renderBackgroundOptions(state);
+    renderClassOptions(state);
+    renderPortraitUpload(state);
+    renderSheetCustomizer(state);
+    refreshSpellPicker(state);
+    renderMagicGuidance();
+  }catch(error){console.error("[app] syncControls failed",error);throw error;}
+}
+
+function forge(){
+  const button=document.getElementById("forgeButton");
+  try{
+    setForgeLoading(true);
+    createForgeLoadingState();
+    button.classList.add("is-forging");
+    document.getElementById("error").hidden=true;
+    validateVisibleForgeSelections(state);
+    state.sourceMode="RAW";
+    state.homebrew=[];
+    state.currentCharacter=generateCharacter(state);
+    state.currentCharacter={...state.currentCharacter,startingMagic:generateStartingMagic({ruleset:state.ruleset,level:state.currentCharacter.level,mode:state.magicMode,classId:state.currentCharacter.class.id})};
+    state.currentCharacter.startingGold=state.currentCharacter.startingMagic.gold;
+    applyPortraitToCurrent(state);
+    applySheetCustomizationToCurrent(state);
+    renderCharacter(state.currentCharacter,document.getElementById("result"));
+    renderStartingMagicSummary(state.currentCharacter);
+  }catch(error){showError(error);}
+  finally{setForgeLoading(false);window.setTimeout(()=>button.classList.remove("is-forging"),160);}
+}
+
+function renderStartingMagicSummary(character){
+  try{
+    const result=document.getElementById("result");
+    if(!result)return;
+    result.querySelector(".starting-magic-summary")?.remove();
+    const card=document.createElement("section");
+    card.className="starting-magic-summary";
+    const items=character.startingMagic.items||[];
+    card.innerHTML=`<div><span class="section-kicker">STARTING RESOURCES</span><h3>Equipment &amp; Magic</h3><p><strong>Starting gold:</strong> ${character.startingMagic.gold}</p><p><strong>Magic mode:</strong> ${character.startingMagic.mode}${character.startingMagic.requestedMode===MAGIC_MODES.RANDOM_MAGIC?" · randomized":" · locked"}</p></div><div class="magic-item-list">${items.length?items.map(item=>`<div class="magic-item"><strong>${item.name}</strong><span>${item.rarity}${item.attunement?' · Attunement':''}</span></div>`).join(''):'<div class="magic-item empty">No starting magic items</div>'}</div><small>${character.startingMagic.source}. Items are selected for legality and usability, not optimization.</small>`;
+    result.append(card);
+  }catch(error){console.error("[app] magic summary failed",error);throw error;}
+}
+
 function emptySpells(){return emptySpellSelections();}
-function showError(error){console.error("[app]",error);const element=document.getElementById("error");element.textContent=error.message;element.hidden=false;}
-function showToast(message,isError=false){try{const toast=document.getElementById("toast");toast.textContent=message;toast.classList.toggle("is-error",isError);toast.hidden=false;window.clearTimeout(showToast.timer);showToast.timer=window.setTimeout(()=>{toast.hidden=true;},3600);}catch(error){console.error("[app] showToast failed",error);}}
+
+function showError(error){
+  console.error("[app]",error);
+  const element=document.getElementById("error");
+  element.textContent=error.message;
+  element.hidden=false;
+}
+
+function showToast(message,isError=false){
+  try{
+    const toast=document.getElementById("toast");
+    toast.textContent=message;
+    toast.classList.toggle("is-error",isError);
+    toast.hidden=false;
+    window.clearTimeout(showToast.timer);
+    showToast.timer=window.setTimeout(()=>{toast.hidden=true;},3600);
+  }catch(error){console.error("[app] showToast failed",error);}
+}
+
 boot();
