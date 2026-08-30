@@ -36,14 +36,18 @@ function sourceLabel(source,className){try{if(!source?.version||!source?.page)th
 function spellSummary(character){
   try{
     const catalog=spellDisplayCatalog(character),names=ids=>(ids||[]).map(id=>requiredSpell(catalog,id).name).join(", "),slots=Object.entries(character.spells.slots).map(([level,count])=>`${level}${level==="1"?"st":level==="2"?"nd":level==="3"?"rd":"th"}: ${count}`).join(" · "),groups=[`<div class="spell-group"><strong>Cantrips</strong><p>${escapeHtml(names(character.spells.cantrips.all))}</p></div>`];
+    if(character.spells.tome?.cantrips?.length)groups.push(spellNameGroup("Pact Tome Cantrips",character.spells.tome.cantrips,catalog));
     if(character.spells.alwaysPrepared?.length)groups.push(spellLevelGroups("Always Prepared",character.spells.alwaysPrepared,catalog));
     if(character.spells.known?.all?.length)groups.push(spellLevelGroups("Known",character.spells.known.all,catalog));
     if(character.spells.prepared?.all?.length)groups.push(spellLevelGroups("Prepared",character.spells.prepared.all,catalog));
+    if(character.spells.tome?.rituals?.length)groups.push(spellLevelGroups("Pact Tome Rituals",character.spells.tome.rituals,catalog));
+    if(character.spells.invocationSpells?.length)groups.push(spellLevelGroups("Invocation Spells",character.spells.invocationSpells,catalog));
     const arcanum=Object.values(character.spells.mysticArcanum||{}).filter(Boolean);if(arcanum.length)groups.push(spellLevelGroups("Mystic Arcanum",arcanum,catalog));
     if(character.spells.spellbook)groups.push(spellbookGroups(character,catalog));
     return `<div class="spell-summary"><div class="spell-stat-row"><div class="spell-stat"><span>Spell Save DC</span><strong>${character.spells.saveDc}</strong></div><div class="spell-stat"><span>Spell Attack</span><strong>${fmt(character.spells.attackBonus)}</strong></div><div class="spell-stat"><span>Slots</span><strong>${escapeHtml(slots)}</strong></div></div>${groups.join("")}</div>`;
   }catch(error){console.error("[ui] spellSummary failed",error);throw error;}
 }
+function spellNameGroup(title,ids,catalog){try{return `<div class="spell-group"><strong>${escapeHtml(title)}</strong><p>${escapeHtml((ids||[]).map(id=>requiredSpell(catalog,id).name).sort().join(", "))}</p></div>`;}catch(error){console.error(`[ui] ${title} list failed`,error);throw error;}}
 function spellbookGroups(character,catalog){try{return spellLevelGroups(`Spellbook · ${character.spells.spellbook.all.length} spells`,character.spells.spellbook.all,catalog);}catch(error){console.error("[ui] spellbookGroups failed",error);throw error;}}
 function spellLevelGroups(title,ids,catalog){
   try{const buckets=new Map();for(const id of ids||[]){const spell=requiredSpell(catalog,id),level=spell.level;if(!buckets.has(level))buckets.set(level,[]);buckets.get(level).push(spell.name);}return `<div class="spell-group spellbook-group"><strong>${escapeHtml(title)}</strong><div class="spellbook-levels">${[...buckets.entries()].sort((a,b)=>a[0]-b[0]).map(([level,names])=>`<div class="spellbook-level"><span>Level ${level}</span><p>${escapeHtml(names.sort().join(", "))}</p></div>`).join("")}</div></div>`;}catch(error){console.error(`[ui] ${title} groups failed`,error);throw error;}
