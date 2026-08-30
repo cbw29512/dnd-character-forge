@@ -7,6 +7,8 @@
  .ps-spell-column b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .ps-spell-column em{font-style:normal;font-size:4.45pt;color:var(--ps-muted);text-align:right}
  .ps-caster-rule-grid{gap:.018in .06in}
+ .ps-caster-rule-grid span{align-items:start;min-width:0}
+ .ps-caster-rule-grid b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.08}
  .ps-caster-rules{padding:.045in .055in}
  .ps-caster-rules .ps-section-title{margin-bottom:.025in}
 }
