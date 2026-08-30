@@ -22,10 +22,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install PDF text extractor
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y poppler-utils
+      - name: Install layout-safe PDF parser
+        run: python3 -m pip install --disable-pip-version-check --no-cache-dir PyMuPDF==1.26.4
 
       - name: Download official SRD 5.2.1
         run: |
@@ -33,7 +31,6 @@ jobs:
             'https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf' \
             --output /tmp/SRD_CC_v5.2.1.pdf
           test -s /tmp/SRD_CC_v5.2.1.pdf
-          pdfinfo /tmp/SRD_CC_v5.2.1.pdf | grep -E '^Pages:[[:space:]]+364$'
 
       - name: Generate static spell-reference catalog
         run: |
