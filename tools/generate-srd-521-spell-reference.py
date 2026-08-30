@@ -177,6 +177,8 @@ def parse(pdf_path: Path) -> list[dict]:
                 "range": range_text,
                 "components": components,
                 "duration": duration,
+                # Fail closed here. A spell can contain attack/save phrases in
+                # secondary clauses that do not describe its primary resolution.
                 "resolution": f"See SRD 5.2.1 page {page} for spell resolution.",
                 "effect": f"Official SRD 5.2.1 spell effect; see page {page} for the complete rules text.",
                 "concentration": concentration,
