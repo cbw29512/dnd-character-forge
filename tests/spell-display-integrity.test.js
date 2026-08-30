@@ -25,6 +25,9 @@ function activeSpellIds(character){
     ...(character.spells?.prepared?.all||[]),
     ...(character.spells?.alwaysPrepared||[]),
     ...(character.spells?.spellbook?.all||[]),
+    ...(character.spells?.tome?.cantrips||[]),
+    ...(character.spells?.tome?.rituals||[]),
+    ...(character.spells?.invocationSpells||[]),
     ...Object.values(character.spells?.mysticArcanum||{}).filter(Boolean)
   ])];
 }
@@ -68,11 +71,26 @@ test("2014 spells-known casters visibly render their Known spells",()=>{
   }catch(error){console.error("[test] known-spell screen rendering failed",error);throw error;}
 });
 
-test("screen spell grouping fails closed instead of defaulting unknown spells to level 1",async()=>{
+test("Warlock display metadata covers cross-list Pact and invocation magic",()=>{
+  try{
+    for(const ruleset of ["2014","2024"]){
+      const character=generatedCaster(ruleset,"warlock"),catalog=spellDisplayCatalog(character);
+      assert.ok(catalog.has("find-familiar"),`${ruleset} Warlock display catalog should cover Pact of the Chain / Tome Find Familiar`);
+      assert.ok(catalog.has("guidance"),`${ruleset} Warlock display catalog should cover cross-list Pact of the Tome cantrips`);
+    }
+  }catch(error){console.error("[test] Warlock bonus-magic display catalog failed",error);throw error;}
+});
+
+test("screen spell grouping fails closed and exposes every class spell bucket",async()=>{
   try{
     const source=await readFile(new URL("../src/ui/render.js",import.meta.url),"utf8");
     assert.match(source,/spellDisplayCatalog\(character\)/);
     assert.match(source,/Missing verified spell display metadata/);
     assert.doesNotMatch(source,/spell\?\.level\s*\|\|\s*1/);
+    assert.match(source,/spellLevelGroups\("Known"/);
+    assert.match(source,/Pact Tome Cantrips/);
+    assert.match(source,/Pact Tome Rituals/);
+    assert.match(source,/Invocation Spells/);
+    assert.match(source,/Mystic Arcanum/);
   }catch(error){console.error("[test] fail-closed spell display contract failed",error);throw error;}
 });
