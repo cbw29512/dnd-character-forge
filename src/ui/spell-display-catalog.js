@@ -37,7 +37,7 @@ export function spellDisplayRecords(character){
       return verifiedUnique(records);
     }
     if(classId==="warlock"){
-      const records=[...warlockSpellsFor(ruleset,{subclassId:character.subclass?.id})];
+      const records=[...bardMagicalSecretsPool(ruleset),...warlockSpellsFor(ruleset,{subclassId:character.subclass?.id,includeFiend:true})];
       if(ruleset==="2024")records.push(...warlockAlwaysPrepared2024(character.level,character.subclass?.id));
       return verifiedUnique(records);
     }
