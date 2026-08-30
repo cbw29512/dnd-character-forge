@@ -1,4 +1,5 @@
 import { generateParty, PARTY_COMPOSITIONS } from "../rules/party-forge.js";
+import { FORGE_BUILD, buildRulesLawyerCertification } from "../rules/certification.js";
 import { savePregen } from "../library/local-library.js";
 
 function ensureHeroStyles(){
@@ -27,6 +28,54 @@ function ensurePartyStyles(){
   }
 }
 
+function ensureCertificationStyles(){
+  try{
+    if(document.querySelector('link[data-rules-lawyer-style]'))return;
+    const link=document.createElement("link");
+    link.rel="stylesheet";
+    link.href="styles/certification.css";
+    link.dataset.rulesLawyerStyle="true";
+    document.head.appendChild(link);
+  }catch(error){
+    console.error("[certification] styles failed",error);
+  }
+}
+
+let certificationObserver=null;
+function applyRulesLawyerCertification(root=document){
+  try{
+    const sheets=[];
+    if(root?.matches?.(".character-sheet"))sheets.push(root);
+    if(root?.querySelectorAll)sheets.push(...root.querySelectorAll(".character-sheet"));
+    for(const sheet of sheets){
+      if(sheet.dataset.rulesLawyerCertification)return;
+      const audit=sheet.querySelector(".rules-audit-card"),pass=/PASS/i.test(sheet.querySelector(".audit-pass")?.textContent||""),sourceMode=sheet.querySelector(".audit-mode b")?.textContent?.trim()||"",auditText=audit?.textContent||"",forgeOriginal=/Character Forge Original/i.test(auditText),homebrew=Boolean(sheet.querySelector(".validation-badge.hb"))||/Homebrew mode is explicit/i.test(auditText),rawCertified=pass&&sourceMode==="RAW"&&!forgeOriginal&&!homebrew;
+      if(!audit||!pass)continue;
+      const sourceVersion=(auditText.match(/SRD\s+\d+(?:\.\d+)+/i)||[])[0]||"Verified SRD",ruleset=(sheet.querySelector(".sheet-footer span:first-child")?.textContent.match(/\b(2014|2024)\b/)||[])[1]||"",citations=audit.querySelectorAll(".audit-cite").length,checks=audit.querySelectorAll(".audit-checks li").length,status=rawCertified?"RULES LAWYER CERTIFIED":forgeOriginal?"AUDITED 5E COMPATIBLE":"AUDITED CUSTOM CONTENT";
+      const seal=document.createElement("section");
+      seal.className=`rules-lawyer-cert ${rawCertified?"is-raw":"is-compatible"}`;
+      seal.setAttribute("aria-label",status);
+      seal.innerHTML=`<div class="rules-lawyer-mark" aria-hidden="true">${rawCertified?"⚖":"✓"}</div><div class="rules-lawyer-copy"><strong>${status}</strong><span>${ruleset?`${ruleset} · `:""}${sourceVersion} · ${citations} sourced mechanics · ${checks} integrity checks</span></div><span class="rules-lawyer-build">BUILD ${FORGE_BUILD.id}</span>`;
+      sheet.querySelector(".character-topline")?.insertAdjacentElement("afterend",seal);
+      sheet.dataset.rulesLawyerCertification=rawCertified?"raw":"compatible";
+    }
+  }catch(error){console.error("[certification] UI seal failed",error);}
+}
+
+function ensureRulesLawyerCertification(){
+  try{
+    ensureCertificationStyles();
+    const result=document.getElementById("result");
+    if(!result)return;
+    applyRulesLawyerCertification(result);
+    if(certificationObserver)return;
+    certificationObserver=new MutationObserver(records=>{
+      for(const record of records)for(const node of record.addedNodes)if(node?.nodeType===1)applyRulesLawyerCertification(node);
+    });
+    certificationObserver.observe(result,{childList:true,subtree:true});
+  }catch(error){console.error("[certification] observer setup failed",error);}
+}
+
 function partyEditionLabel(){
   const ruleset=document.getElementById("ruleset")?.value||"2024";
   return ruleset==="2014"?"2014 · SRD 5.1":"2024 · SRD 5.2.1";
@@ -50,11 +99,12 @@ function renderPartyRoster(party){
   try{
     const result=document.getElementById("result");
     if(!result)throw new Error("Party Forge result stage is unavailable.");
+    const certifications=party.members.map(buildRulesLawyerCertification),rawCertifiedCount=certifications.filter(item=>item.rawCertified).length,proof=rawCertifiedCount===party.size?`⚖ ${party.size}/${party.size} RULES LAWYER CERTIFIED · ${FORGE_BUILD.id}`:`✓ ${party.size}/${party.size} audited · ${rawCertifiedCount} RAW certified · ${FORGE_BUILD.id}`;
     result.innerHTML="";
     const roster=document.createElement("section");
     roster.className="party-roster";
     roster.setAttribute("aria-label","Generated party roster");
-    roster.innerHTML=`<div class="party-roster-head"><div><p class="section-kicker">PARTY FORGE RESULT</p><h2>${party.size} ready-to-play characters</h2><p>Level ${party.level} · ${partyEditionLabel()} · ${party.composition===PARTY_COMPOSITIONS.BALANCED?"Balanced roles":"Fully random classes"}</p></div><span class="party-roster-proof">✓ ${party.size}/${party.size} RAW validated</span></div><div class="party-member-grid"></div><div class="party-roster-actions"><button id="savePartyPregens" class="party-forge-button" type="button">Save all to My Pregens</button><button id="openPartyPregens" class="party-member-save" type="button">Open My Pregens</button></div><div id="partyRosterStatus" class="party-status" aria-live="polite"></div>`;
+    roster.innerHTML=`<div class="party-roster-head"><div><p class="section-kicker">PARTY FORGE RESULT</p><h2>${party.size} ready-to-play characters</h2><p>Level ${party.level} · ${partyEditionLabel()} · ${party.composition===PARTY_COMPOSITIONS.BALANCED?"Balanced roles":"Fully random classes"}</p></div><span class="party-roster-proof rules-lawyer-proof">${proof}</span></div><div class="party-member-grid"></div><div class="party-roster-actions"><button id="savePartyPregens" class="party-forge-button" type="button">Save all to My Pregens</button><button id="openPartyPregens" class="party-member-save" type="button">Open My Pregens</button></div><div id="partyRosterStatus" class="party-status" aria-live="polite"></div>`;
     const grid=roster.querySelector(".party-member-grid");
     party.members.forEach((member,index)=>{
       const card=document.createElement("article");
@@ -126,7 +176,7 @@ function ensurePartyForge(){
         const party=generateParty({ruleset:document.getElementById("ruleset")?.value||"2024",level:Number(level.value),size:Number(panel.querySelector("#partySize").value),composition:panel.querySelector("#partyComposition").value,allowDuplicateClasses:panel.querySelector("#partyAllowDuplicates").checked,magicMode:currentMagicMode()});
         renderPartyRoster(party);
         window.requestAnimationFrame(()=>document.querySelector(".result-stage")?.scrollIntoView({block:"start"}));
-        setPartyStatus(`✓ ${party.size} RAW-valid characters forged.`);
+        setPartyStatus(`✓ ${party.size} audited characters forged.`);
       }catch(error){console.error("[party-forge] UI generation failed",error);setPartyStatus(error.message,true);}finally{button.disabled=false;button.textContent="Forge the Party";}
     });
   }catch(error){console.error("[party-forge] experience setup failed",error);}
@@ -136,6 +186,7 @@ export function createHeroExperience(){
   try{
     ensureHeroStyles();
     ensurePartyForge();
+    ensureRulesLawyerCertification();
     const hero=document.querySelector(".hero-copy");
     if(!hero)return;
     // The polished landing page owns its hero messaging. Keep the legacy
