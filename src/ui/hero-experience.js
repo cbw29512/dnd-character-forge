@@ -125,7 +125,7 @@ function ensurePartyForge(){
         button.disabled=true;button.textContent="Forging party…";setPartyStatus("Building and validating every member…");
         const party=generateParty({ruleset:document.getElementById("ruleset")?.value||"2024",level:Number(level.value),size:Number(panel.querySelector("#partySize").value),composition:panel.querySelector("#partyComposition").value,allowDuplicateClasses:panel.querySelector("#partyAllowDuplicates").checked,magicMode:currentMagicMode()});
         renderPartyRoster(party);
-        document.querySelector(".result-stage")?.scrollIntoView({behavior:"smooth",block:"start"});
+        window.requestAnimationFrame(()=>document.querySelector(".result-stage")?.scrollIntoView({block:"start"}));
         setPartyStatus(`✓ ${party.size} RAW-valid characters forged.`);
       }catch(error){console.error("[party-forge] UI generation failed",error);setPartyStatus(error.message,true);}finally{button.disabled=false;button.textContent="Forge the Party";}
     });
