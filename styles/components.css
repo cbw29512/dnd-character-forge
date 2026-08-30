@@ -22,14 +22,6 @@ select:focus,input:focus { border-color:#b29050; box-shadow:0 0 0 3px rgba(178,1
 .species-choice-field,.background-choice-field { min-width:0; display:grid; gap:5px; color:#554e43; font-size:.68rem; font-weight:800; }
 .species-choice-field select,.background-choice-field select { min-height:40px; font-size:.72rem; }
 .species-choice-panel .choice-summary,.background-choice-panel .choice-summary { margin-top:9px; }
-.homebrew-panel { margin-top:17px; padding:15px; border:1px solid #d8b1b5; background:#fff8f7; border-radius:13px; }
-.homebrew-heading { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-.homebrew-heading strong,.homebrew-heading small { display:block; }
-.homebrew-heading small { color:#8b7777; font-size:.7rem; margin-top:2px; }
-.hb-icon { width:34px; height:34px; display:grid; place-items:center; border-radius:9px; background:#8d3139; color:#fff; font-size:.66rem; font-weight:900; }
-.homebrew-fields { display:grid; grid-template-columns:1.5fr 1fr .65fr; gap:8px; }
-.homebrew-fields .secondary-button { grid-column:1/-1; }
-.homebrew-list { display:block; margin-top:8px; color:#7c5b5e; }
 .secondary-button { min-height:40px; border:1px solid #c7b9aa; border-radius:9px; background:#fff; color:#3e3932; font-weight:800; }
 .forge-button { width:100%; min-height:58px; margin-top:18px; padding:0 18px; display:flex; align-items:center; justify-content:space-between; border:0; border-radius:12px; background:linear-gradient(135deg,#8b2832,#a93d43); color:#fff; font-weight:900; letter-spacing:.045em; box-shadow:0 12px 28px rgba(126,34,43,.25); transition:transform .15s,box-shadow .15s,filter .15s; }
 .forge-button:hover { transform:translateY(-1px); box-shadow:0 16px 34px rgba(126,34,43,.32); filter:brightness(1.05); }
