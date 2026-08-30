@@ -7,6 +7,7 @@ const polishCss=readFileSync(new URL("../styles/forge-polish.css",import.meta.ur
 const mobileCss=readFileSync(new URL("../styles/forge-mobile-polish.css",import.meta.url),"utf8");
 const mobileResultCss=readFileSync(new URL("../styles/forge-mobile-result.css",import.meta.url),"utf8");
 const app=readFileSync(new URL("../src/app.js",import.meta.url),"utf8");
+const index=readFileSync(new URL("../index.html",import.meta.url),"utf8");
 
 test("desktop Forge loads the app-first console layer",()=>{
   assert.match(heroCss,/^@import url\("\.\/forge-polish\.css"\);/);
@@ -49,9 +50,25 @@ test("phone generated state shows single-character and Party Forge results befor
 test("secondary presentation settings are progressively disclosed",()=>{
   assert.match(app,/groupAdvancedOptions\(\)/);
   assert.match(app,/details\.id="forgeAdvancedOptions"/);
-  assert.match(app,/Spells, starting magic, portrait, print style, and Homebrew details/);
-  assert.match(app,/\["spellPickerPanel","homebrewPanel","magicControls","portraitPanel","sheetCustomizerPanel"\]/);
+  assert.match(app,/Spells, starting magic, portrait, and print style/);
+  assert.match(app,/\["spellPickerPanel","magicControls","portraitPanel","sheetCustomizerPanel"\]/);
   assert.match(polishCss,/\.forge-panel \.forge-advanced-options>summary/);
+});
+
+test("production shell stays RAW-only and removes nonessential duplicate surfaces",()=>{
+  assert.match(index,/data-tab="forge"/);
+  assert.match(index,/data-tab="pregens"/);
+  assert.match(index,/Buy Me a Coffee/);
+  assert.doesNotMatch(index,/data-tab="homebrew"/i);
+  assert.doesNotMatch(index,/id="sourceMode"/);
+  assert.doesNotMatch(index,/id="homebrewPanel"/);
+  assert.doesNotMatch(index,/data-view="homebrew"/i);
+  assert.doesNotMatch(index,/Community sharing is next/i);
+  assert.doesNotMatch(index,/class="support-card"/);
+  assert.doesNotMatch(index,/class="seo-about"/);
+  assert.doesNotMatch(app,/createWorkflowGuide/);
+  assert.doesNotMatch(app,/bindHomebrew/);
+  assert.doesNotMatch(app,/bindHomebrewLibrary/);
 });
 
 test("generated result leads with the character before starting-resource detail",()=>{
