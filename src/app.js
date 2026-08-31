@@ -112,7 +112,7 @@ function bindResultActions(){
       try{
         const action=actionButton?.dataset.action;
         if(action==="reroll")forge();
-        if(action==="print")await exportCharacterPdf(state.currentCharacter);
+        if(action==="print")exportCharacterPdf(state.currentCharacter);
         if(action==="save"){
           if(!state.currentCharacter)throw new Error("Forge a character before saving.");
           actionButton.textContent="Saving…";
@@ -196,7 +196,7 @@ function syncControls(){
 }
 
 function forge(){
-  const button=document.getElementById("forgeButton");
+  const button=document.getElementById("forgeButton"),previous=state.currentCharacter?characterFingerprint(state.currentCharacter):null;
   try{
     setForgeLoading(true);
     createForgeLoadingState();
@@ -212,8 +212,18 @@ function forge(){
     applySheetCustomizationToCurrent(state);
     renderCharacter(state.currentCharacter,document.getElementById("result"));
     renderStartingMagicSummary(state.currentCharacter);
+    if(previous!==null){
+      const unchanged=previous===characterFingerprint(state.currentCharacter);
+      showToast(unchanged?"Reforge completed, but your current setup locks this character. Set one or more choices to Random for a different result.":`${state.currentCharacter.name} reforged.`);
+      if(window.matchMedia?.("(max-width: 680px)")?.matches)window.requestAnimationFrame(()=>document.querySelector(".result-stage")?.scrollIntoView({behavior:"smooth",block:"start"}));
+    }
   }catch(error){showError(error);}
   finally{setForgeLoading(false);window.setTimeout(()=>button.classList.remove("is-forging"),160);}
+}
+
+function characterFingerprint(character){
+  try{return JSON.stringify([character?.name,character?.level,character?.ruleset,character?.species?.id,character?.class?.id,character?.subclass?.id||null,character?.background?.id,character?.abilities,character?.attacks,character?.inventory,character?.spells?.cantrips?.all||[],character?.spells?.known?.all||[],character?.spells?.prepared?.all||[]]);}
+  catch(error){console.error("[app] character fingerprint failed",error);return "";}
 }
 
 function renderStartingMagicSummary(character){
