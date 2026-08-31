@@ -9,7 +9,7 @@
     align-items:center;
     column-gap:.15in;
     row-gap:.008in;
-    padding:.025in .08in 0;
+    padding:.02in .08in 0;
   }
   .ps-footer>.ps-license{
     grid-column:1/-1;
@@ -19,9 +19,9 @@
     text-align:center;
     white-space:nowrap;
     color:var(--ps-muted);
-    font:3.75pt/1.05 Arial,sans-serif;
+    font:5pt/1.02 Arial,sans-serif;
     font-weight:400;
-    letter-spacing:0;
+    letter-spacing:-.01em;
     text-transform:none;
   }
   .sheet-print-ink-saver .ps-license{color:#111!important}
