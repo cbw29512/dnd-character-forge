@@ -10,6 +10,9 @@ const fixture=overrides=>({
   ruleset:"2024",
   level:20,
   class:{id:"wizard"},
+  species:{id:"orc"},
+  speciesChoices:{},
+  magicInitiates:[],
   spells:{
     cantrips:{all:[]},
     known:{all:[]},
@@ -38,7 +41,7 @@ const activeIds=spells=>[...new Set([
 function generatedCaster(classId){
   const state=createInitialState();
   state.ruleset="2024";
-  state.constraints={level:"20",species:"human",class:classId,subclass:"random",background:"sage",name:`${classId} active reference audit`};
+  state.constraints={level:"20",species:"orc",class:classId,subclass:"random",background:"soldier",name:`${classId} active reference audit`};
   return generateCharacter(state);
 }
 
@@ -68,7 +71,7 @@ test("active 2024 spell references expose every supported active spell bucket wi
   assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,"active references must not duplicate spell ids");
 });
 
-test("every generated 2024 caster exposes exactly its active spell buckets in Spell Reference",()=>{
+test("every generated 2024 caster exposes exactly its class-active spell buckets when no extra magic source is present",()=>{
   for(const classId of CASTERS){
     const character=generatedCaster(classId),expected=activeIds(character.spells),refs=characterActiveSpellReferences(character);
     assert.ok(expected.length>0,`${classId}: expected active magic at level 20`);
@@ -76,6 +79,34 @@ test("every generated 2024 caster exposes exactly its active spell buckets in Sp
     assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,`${classId}: duplicate active Spell Reference id`);
     assert.ok(refs.every(ref=>ref.source==="SRD 5.2.1"),`${classId}: non-SRD reference leaked into active panel`);
   }
+});
+
+test("species-granted magic resolves for a 2024 noncaster with no class spell state",()=>{
+  const character={ruleset:"2024",level:5,class:{id:"fighter"},species:{id:"tiefling"},speciesChoices:{legacy:"infernal",spellcastingAbility:"cha"},magicInitiates:[],spells:null};
+  const refs=characterActiveSpellReferences(character),lookup=byId(refs);
+  assert.deepEqual(refs.map(ref=>ref.id),["fire-bolt","thaumaturgy","hellish-rebuke","darkness"]);
+  assert.equal(lookup.get("fire-bolt").preparation,"Species Cantrip");
+  assert.equal(lookup.get("hellish-rebuke").preparation,"Species Magic");
+  assert.ok(refs.every(ref=>ref.castingAbility==="cha"));
+  assert.ok(refs.every(ref=>ref.grantSource==="species"));
+});
+
+test("Magic Initiate spells resolve for a 2024 noncaster and preserve grant metadata",()=>{
+  const character={ruleset:"2024",level:4,class:{id:"fighter"},species:{id:"orc"},speciesChoices:{},spells:null,magicInitiates:[{cantrips:["guidance","light"],level1Spell:"bless",spellcastingAbility:"wis",source:"background"}]};
+  const refs=characterActiveSpellReferences(character),lookup=byId(refs);
+  assert.deepEqual(refs.map(ref=>ref.id),["guidance","light","bless"]);
+  assert.equal(lookup.get("guidance").preparation,"Magic Initiate Cantrip");
+  assert.equal(lookup.get("bless").preparation,"Magic Initiate · Always Prepared");
+  assert.ok(refs.every(ref=>ref.castingAbility==="wis"));
+  assert.ok(refs.every(ref=>ref.grantSource==="background"));
+});
+
+test("class-active magic wins duplicate display priority over secondary grant sources",()=>{
+  const character=fixture({cantrips:{all:["guidance"]}});character.magicInitiates=[{cantrips:["guidance"],level1Spell:"bless",spellcastingAbility:"wis",source:"background"}];
+  const refs=characterActiveSpellReferences(character),lookup=byId(refs);
+  assert.equal(refs.filter(ref=>ref.id==="guidance").length,1);
+  assert.equal(lookup.get("guidance").preparation,"Cantrip");
+  assert.equal(lookup.get("bless").preparation,"Magic Initiate · Always Prepared");
 });
 
 test("Wizard spellbook-only spells are not treated as active references",()=>{
