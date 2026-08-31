@@ -8,6 +8,7 @@ let callbacks={};
 export function bindPregenLibrary(options={}){
   try{
     callbacks=options;
+    ensureBackupControls();
     ["pregenSearch","pregenRuleset"].forEach(id=>document.getElementById(id)?.addEventListener("input",renderPregenLibrary));
     document.getElementById("pregenExport")?.addEventListener("click",downloadPregenBackup);
     document.getElementById("pregenImport")?.addEventListener("click",()=>document.getElementById("pregenImportFile")?.click());
@@ -43,6 +44,19 @@ export function renderPregenLibrary(){
     if(!grid)return;
     grid.innerHTML=items.length?items.map(card).join(""):`<div class="library-empty"><span>✦</span><h3>No matching pregens yet</h3><p>Forge a RAW character, then choose <strong>Save to Pregens</strong>. Exact mechanical duplicates are blocked automatically.</p></div>`;
   }catch(error){console.error("[library-ui] render failed",error);throw error;}
+}
+
+function ensureBackupControls(){
+  try{
+    if(document.getElementById("pregenExport"))return;
+    const toolbar=document.querySelector(".library-toolbar");
+    if(!toolbar)return;
+    const actions=document.createElement("div");
+    actions.className="library-backup-actions";
+    actions.setAttribute("aria-label","Pregen backup");
+    actions.innerHTML='<button id="pregenExport" class="secondary-button" type="button">Export backup</button><button id="pregenImport" class="secondary-button" type="button">Import backup</button><input id="pregenImportFile" type="file" accept="application/json,.json" hidden>';
+    toolbar.append(actions);
+  }catch(error){console.error("[library-ui] backup controls failed",error);throw error;}
 }
 
 async function downloadPregenBackup(){
