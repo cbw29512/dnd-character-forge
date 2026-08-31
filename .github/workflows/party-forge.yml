@@ -2,19 +2,8 @@ name: Party Forge browser gate
 
 on:
   pull_request:
-    paths:
-      - 'index.html'
-      - 'src/app.js'
-      - 'src/rules/party-forge.js'
-      - 'src/ui/hero-experience.js'
-      - 'src/ui/accessible-tabs.js'
-      - 'src/ui/render-safe.js'
-      - 'styles/landing.css'
-      - 'styles/responsive.css'
-      - 'styles/party-forge.css'
-      - 'tests/landing-page-contract.test.js'
-      - 'tests/party-forge-browser-gate.mjs'
-      - '.github/workflows/party-forge.yml'
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
