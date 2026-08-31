@@ -1,0 +1,28 @@
+@media print{
+  /* Every standalone PDF page carries a compact visible source/license trail.
+     Keep this inside the existing certified footer row so page counts do not change. */
+  .ps-footer{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto auto;
+    align-content:center;
+    align-items:center;
+    column-gap:.15in;
+    row-gap:.008in;
+    padding:.02in .08in 0;
+  }
+  .ps-footer>.ps-license{
+    grid-column:1/-1;
+    grid-row:2;
+    min-width:0;
+    overflow:hidden;
+    text-align:center;
+    white-space:nowrap;
+    color:var(--ps-muted);
+    font:5pt/1.02 Arial,sans-serif;
+    font-weight:400;
+    letter-spacing:-.01em;
+    text-transform:none;
+  }
+  .sheet-print-ink-saver .ps-license{color:#111!important}
+}
