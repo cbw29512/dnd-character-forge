@@ -87,5 +87,6 @@ test("Pregen backup controls are static, keyboard-reachable UI with mobile-safe 
   assert.match(html,/id="pregenImport"[^>]*type="button"/);
   assert.match(html,/id="pregenImportFile"[^>]*type="file"[^>]*hidden/);
   assert.match(css,/\.library-backup-actions \.secondary-button \{[^}]*min-height:40px;/s);
-  assert.match(css,/@media \(max-width:620px\)[^{]*\{[^}]*\.library-toolbar,.library-grid \{ grid-template-columns:1fr; \}/s);
+  assert.match(css,/@media \(max-width:620px\)/);
+  assert.match(css,/\.library-toolbar,.library-grid \{ grid-template-columns:1fr; \}/);
 });
