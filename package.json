@@ -1,5 +1,6 @@
 {
   "name": "dnd-character-forge",
+  "version": "0.9.0-audit.1",
   "private": true,
   "type": "module",
   "scripts": {
