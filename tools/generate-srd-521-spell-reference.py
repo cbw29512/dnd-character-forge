@@ -10,6 +10,7 @@ Generated records deliberately do not infer attack/save resolution from prose.
 from __future__ import annotations
 
 import bisect
+import hashlib
 import json
 import re
 import sys
@@ -40,6 +41,8 @@ PAGE_HEADER_RE = re.compile(
     re.MULTILINE,
 )
 SOURCE_URL = "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf"
+EXPECTED_SOURCE_SHA256 = "8974902d109d6e63672d7c490bde9ccf052410503d9cfa768237154fbc5e3d87"
+EXPECTED_SOURCE_BYTES = 6031375
 EXPECTED_PDF_PAGES = 364
 EXPECTED_COUNT = 339
 SPELL_PAGE_START = 106  # zero-based PDF page index; printed SRD page 107
@@ -66,6 +69,21 @@ def normalize_page(text: str) -> str:
     text = text.replace("’", "'").replace("–", "-").replace("—", "-").replace("−", "-")
     text = text.replace("\u00a0", " ")
     return text
+
+
+def verify_source(pdf_path: Path) -> None:
+    if not pdf_path.is_file():
+        raise SystemExit(f"SRD source file does not exist: {pdf_path}")
+    size = pdf_path.stat().st_size
+    if size != EXPECTED_SOURCE_BYTES:
+        raise SystemExit(
+            f"SRD PDF is {size} bytes; expected exact official SRD 5.2.1 size {EXPECTED_SOURCE_BYTES}. Refusing unexpected source file."
+        )
+    digest = hashlib.sha256(pdf_path.read_bytes()).hexdigest()
+    if digest != EXPECTED_SOURCE_SHA256:
+        raise SystemExit(
+            f"SRD PDF SHA-256 is {digest}; expected {EXPECTED_SOURCE_SHA256}. Refusing unexpected source file."
+        )
 
 
 def parse_fields(block: str, title: str, page: int) -> tuple[str, str, str, str, str]:
@@ -100,6 +118,7 @@ def parse_fields(block: str, title: str, page: int) -> tuple[str, str, str, str,
 
 
 def parse(pdf_path: Path) -> list[dict]:
+    verify_source(pdf_path)
     doc = fitz.open(pdf_path)
     try:
         if doc.page_count != EXPECTED_PDF_PAGES:
