@@ -25,6 +25,19 @@ export function loadPregens(){
 }
 export const loadHomebrew = () => load(HOMEBREW_KEY,"homebrew");
 
+export function replacePregens(items){
+  try{
+    if(!Array.isArray(items))throw new Error("Pregen library replacement must be an array.");
+    const normalized=[];
+    for(const entry of items){
+      const current=migratePregenEntry(entry);
+      if(!current)throw new Error("Pregen library replacement contains a malformed or unsupported entry.");
+      normalized.push(current);
+    }
+    return store(PREGEN_KEY,normalized,"pregens");
+  }catch(error){console.error("[library] replacePregens failed",error);throw error;}
+}
+
 export async function savePregen(character) {
   try {
     const items = loadPregens();
