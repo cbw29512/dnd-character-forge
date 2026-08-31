@@ -11,4 +11,11 @@
  .ps-caster-rule-grid b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.08}
  .ps-caster-rules{padding:.045in .055in}
  .ps-caster-rules .ps-section-title{margin-bottom:.025in}
+ /* Warlocks trade a large spell-list ledger for Pact resources and a denser active-rule set.
+    Reclaim only Warlock's unused spell-section height so long invocation labels never fall
+    below the fixed two-page clipping boundary. Other caster page geometry is unchanged. */
+ .theme-warlock-eldritch .ps-caster-body{grid-template-rows:5.85in 1.65in minmax(0,1fr)}
+ .theme-warlock-eldritch .ps-caster-rule-grid{gap:.012in .045in}
+ .theme-warlock-eldritch .ps-caster-rule-grid b{font-size:4.1pt;line-height:1.02}
+ .theme-warlock-eldritch .ps-caster-rule-grid small{font-size:3.75pt}
 }
