@@ -73,7 +73,15 @@ function verifyPacket(testCase){
 }
 
 function characterAt({ruleset,subclass,species,background,classSelections,customization}){
-  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;const character=generateCharacter(state);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
+  const originalRandom=Math.random;
+  try{
+    // Keep this print fixture reproducible. 0.30 deliberately exercises the long
+    // 2024 Lessons of the First Ones -> Magic Initiate (Cleric) label that has
+    // previously exposed fixed-two-page clipping while leaving production RNG alone.
+    Math.random=()=>0.30;
+    const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;const character=generateCharacter(state);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
+  }catch(error){console.error("[warlock-browser-print] deterministic fixture generation failed",error);throw error;}
+  finally{Math.random=originalRandom;}
 }
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function pdfPages(text){const pages=String(text||"").split("\f");while(pages.length&&normalize(pages.at(-1))==="")pages.pop();return pages;}
