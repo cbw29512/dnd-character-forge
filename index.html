@@ -91,7 +91,7 @@
 
     <section data-view="pregens" hidden class="library-page">
       <div class="library-hero"><div><p class="section-kicker">MY LIBRARY</p><h2>Saved Pregens</h2><p>Keep ready-to-play RAW characters without duplicate copies.</p></div><span id="pregenCount" class="library-count">0 saved</span></div>
-      <div class="library-toolbar"><label class="library-search">Search<input id="pregenSearch" placeholder="Name, class, species…"></label><label>Rules<select id="pregenRuleset"><option value="all">All editions</option><option value="2024">2024</option><option value="2014">2014</option></select></label></div>
+      <div class="library-toolbar"><label class="library-search">Search<input id="pregenSearch" placeholder="Name, class, species…"></label><label>Rules<select id="pregenRuleset"><option value="all">All editions</option><option value="2024">2024</option><option value="2014">2014</option></select></label><div class="library-backup-actions" aria-label="Pregen backup"><button id="pregenExport" class="secondary-button" type="button">Export backup</button><button id="pregenImport" class="secondary-button" type="button">Import backup</button><input id="pregenImportFile" type="file" accept="application/json,.json" hidden></div></div>
       <div id="pregenGrid" class="library-grid"></div>
     </section>
   </main>
