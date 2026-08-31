@@ -20,6 +20,7 @@ export function renderCharacter(character,target){
     if(!list)throw new Error("Character sheet reference container was not rendered.");
     list.innerHTML=references.map(item=>`<article class="reference-item"><div class="reference-head"><strong>${escapeHtml(item.name)}</strong><span class="reference-tag">${escapeHtml(item.category)}</span></div><p>${escapeHtml(item.text)}</p><div class="reference-foot"><span class="reference-timing">${escapeHtml(item.timing)}</span>${sourceLabel(item.source)}</div></article>`).join("");
     ensureTopActions(target);
+    ensureHomeNavigation();
   }catch(error){
     console.error("[ui] routed character render failed",error);
     throw error;
@@ -99,6 +100,18 @@ function ensureTopActions(target){
 
     const buttons=bar.querySelector(".forge-action-buttons");
     if(!buttons)throw new Error("Forge action button container is missing.");
+
+    let backButton=buttons.querySelector(".forge-action-back");
+    if(!backButton){
+      backButton=document.createElement("button");
+      backButton.type="button";
+      backButton.className="action-button forge-action-back";
+      backButton.textContent="← Back to Forge Setup";
+      backButton.setAttribute("aria-label","Back to Character Forge setup");
+      backButton.addEventListener("click",goToForgeSetup);
+      buttons.prepend(backButton);
+    }
+
     if(forgeButton.parentElement!==buttons)buttons.appendChild(forgeButton);
     forgeButton.classList.add("forge-action-primary");
     forgeButton.setAttribute("aria-label",`${characterLabel(target)?"Reforge":"Forge"} character`);
@@ -126,6 +139,27 @@ function ensureTopActions(target){
     console.error("[ui] top Forge actions failed",error);
     throw error;
   }
+}
+
+function ensureHomeNavigation(){
+  try{
+    const brand=document.querySelector(".brand");
+    if(!brand||brand.dataset.forgeHomeBound==="true")return;
+    brand.dataset.forgeHomeBound="true";
+    brand.addEventListener("click",event=>{
+      event.preventDefault();
+      goToForgeSetup();
+    });
+  }catch(error){console.error("[ui] home navigation failed",error);throw error;}
+}
+
+function goToForgeSetup(){
+  try{
+    document.querySelector('[data-tab="forge"]')?.click();
+    const panel=document.querySelector(".forge-panel");
+    panel?.scrollIntoView({behavior:"smooth",block:"start"});
+    window.setTimeout(()=>document.getElementById("ruleset")?.focus({preventScroll:true}),0);
+  }catch(error){console.error("[ui] return to Forge setup failed",error);throw error;}
 }
 
 function characterLabel(target){
