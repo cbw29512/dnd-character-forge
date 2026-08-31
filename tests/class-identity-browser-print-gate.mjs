@@ -15,7 +15,7 @@ for(const classId of CLASSES){
   catch(error){const message=error instanceof Error?error.message:String(error);failures.push(`${classId}: ${message}`);console.error(`[class-identity-browser-print] ${classId} failed: ${message}`);}
 }
 if(failures.length){throw new Error(`[class-identity-browser-print] ${failures.length} class portrait/packet failure(s):\n${failures.join("\n")}`);}
-console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
+console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, page-one geometry, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
 
 function verifyClass(classId){
   const character=characterAt(classId),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),expected=model.profile.caster?3:2,slug=`v3-2024-${classId}`,htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),sheetPng=path.join(OUT,`${slug}-sheet`),dossierPng=path.join(OUT,`${slug}-dossier`),sheetProbe=path.join(OUT,`${slug}-sheet-probe`),dossierProbe=path.join(OUT,`${slug}-dossier-probe`),id=escapeRegex(classId);
@@ -27,13 +27,33 @@ function verifyClass(classId){
   assert.match(decodedDom,/data-portrait-visual="yes"/,`${classId}: Chrome rendered a visually blank, flat, or partial portrait image`);
   execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,pathToFileURL(htmlPath).href],{stdio:"pipe"});
   const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"}),pages=Number(info.match(/^Pages:\s+(\d+)/m)?.[1]||0);assert.equal(pages,expected,`${classId}: Chrome page count mismatch`);assert.match(info,/Page size:\s+612 x 792 pts/i,`${classId}: PDF not US Letter`);
+  const bbox=execFileSync("pdftotext",["-f","1","-l","1","-bbox-layout",pdfPath,"-"],{encoding:"utf8"});assertPrintGeometry(bbox,classId,model);
   execFileSync("pdftotext",["-layout",pdfPath,txtPath]);const text=normalize(readFileSync(txtPath,"utf8"));assert.ok(text.includes(character.name),`${classId}: name missing`);assert.ok(text.includes(character.class.name),`${classId}: class missing`);assert.match(text,/Deluxe Character Dossier/i,`${classId}: dossier heading missing`);assert.ok(text.includes("Generated narrative flavor"),`${classId}: narrative disclaimer missing`);assert.ok(text.toLowerCase().includes("raw integrity"),`${classId}: RAW marker missing`);assert.match(text,new RegExp(`Page ${expected}\\s*\\/\\s*${expected}`,"i"),`${classId}: final page marker missing`);
   execFileSync("pdftoppm",["-png","-r","110","-f","1","-singlefile",pdfPath,sheetPng]);execFileSync("pdftoppm",["-png","-r","110","-f",String(expected),"-singlefile",pdfPath,dossierPng]);
   execFileSync("pdftoppm",["-r","55","-f","1","-singlefile","-x","35","-y","35","-W","78","-H","72",pdfPath,sheetProbe]);assertPrintedPortrait(`${sheetProbe}.ppm`,classId,"first-page portrait");
   execFileSync("pdftoppm",["-r","55","-f",String(expected),"-singlefile","-x","34","-y","30","-W","70","-H","86",pdfPath,dossierProbe]);assertPrintedPortrait(`${dossierProbe}.ppm`,classId,"Deluxe dossier portrait");
-  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · decoded and visibly printed class portraits`);
+  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · page-one geometry clear · decoded and visibly printed class portraits`);
 }
 
+function assertPrintGeometry(xml,classId,model){
+  const lines=bboxLines(xml),footer=lines.find(line=>/RULES\s+LAWYER\s+CERTIFIED/i.test(line.text));
+  assert.ok(footer,`${classId}: certification footer line missing from page 1`);
+  const motto=normalize(model.motto).toLowerCase(),className=normalize(model.identity.className).toLowerCase();
+  const overlaps=lines.filter(line=>line.yMax>footer.yMin+.25&&!allowedFooterLine(line.text,motto,className));
+  assert.equal(overlaps.length,0,`${classId}: page-one content overlaps certification/footer area: ${overlaps.slice(0,4).map(line=>`"${line.text}" @ ${line.yMin.toFixed(1)}-${line.yMax.toFixed(1)}`).join(", ")}`);
+  const quickTitle=lines.find(line=>/^QUICK TURN$/i.test(line.text)),rulesTitle=lines.find(line=>/^RULES INDEX$/i.test(line.text));
+  if(quickTitle&&rulesTitle){
+    const quickSteps=lines.filter(line=>line.yMin>quickTitle.yMin+.25&&line.xMin>=150&&line.xMax<=410&&/^\d+\./.test(line.text));
+    if(quickSteps.length){const quickBottom=Math.max(...quickSteps.map(line=>line.yMax));assert.ok(rulesTitle.yMin>quickBottom+1,`${classId}: Rules Index overlaps Quick Turn (${rulesTitle.yMin.toFixed(1)} <= ${quickBottom.toFixed(1)})`);}
+  }
+}
+function bboxLines(xml){
+  const lines=[],pattern=/<line\b[^>]*xMin="([^"]+)" yMin="([^"]+)" xMax="([^"]+)" yMax="([^"]+)"[^>]*>([\s\S]*?)<\/line>/g;
+  for(const match of xml.matchAll(pattern)){const words=[...match[5].matchAll(/<word\b[^>]*>([\s\S]*?)<\/word>/g)].map(word=>decodeXml(word[1]));const text=normalize(words.join(" "));if(text)lines.push({xMin:Number(match[1]),yMin:Number(match[2]),xMax:Number(match[3]),yMax:Number(match[4]),text});}
+  return lines;
+}
+function allowedFooterLine(value,motto,className){const text=normalize(value),lower=text.toLowerCase(),withoutOrnaments=normalize(text.replace(/[◆✦✓⚖·]/gu," ")).toLowerCase();return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||lower===motto||withoutOrnaments===className||/^[◆✦✓⚖·\s]+$/u.test(text);}
+function decodeXml(value){return String(value||"").replace(/&apos;/g,"'").replace(/&quot;/g,'"').replace(/&gt;/g,">").replace(/&lt;/g,"<").replace(/&amp;/g,"&");}
 function assertPrintedPortrait(ppmPath,classId,label){
   const data=readFileSync(ppmPath),header=data.subarray(0,64).toString("ascii"),match=header.match(/^P6\s+(\d+)\s+(\d+)\s+255\s/);assert.ok(match,`${classId}: ${label} probe is not a readable PPM`);const headerLength=match[0].length,width=Number(match[1]),height=Number(match[2]),pixels=data.subarray(headerLength,headerLength+width*height*3);assert.equal(pixels.length,width*height*3,`${classId}: ${label} probe is truncated`);let sum=0,sumSq=0,dark=0,count=0;for(let i=0;i<pixels.length;i+=3){const luminance=.2126*pixels[i]+.7152*pixels[i+1]+.0722*pixels[i+2];sum+=luminance;sumSq+=luminance*luminance;if(luminance<190)dark++;count++;}const mean=sum/count,variance=Math.max(0,sumSq/count-mean*mean),spread=Math.sqrt(variance),darkRatio=dark/count;assert.ok(spread>18&&darkRatio>.035,`${classId}: printed ${label} frame is blank or visually empty (spread ${spread.toFixed(1)}, dark ${(darkRatio*100).toFixed(1)}%)`);
 }
