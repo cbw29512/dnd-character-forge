@@ -6,6 +6,7 @@ export const PRODUCT_INFO=Object.freeze({
 
 export function renderProductInfo(){
   try{
+    if(typeof document==="undefined")return;
     const footer=document.querySelector(".site-footer");
     if(!footer)return;
     let node=document.getElementById("productBuildInfo");
@@ -20,3 +21,13 @@ export function renderProductInfo(){
     document.documentElement.dataset.buildChannel=PRODUCT_INFO.channel;
   }catch(error){console.error("[product-info] render failed",error);throw error;}
 }
+
+function bootProductInfo(){
+  try{
+    if(typeof document==="undefined")return;
+    if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",renderProductInfo,{once:true});
+    else renderProductInfo();
+  }catch(error){console.error("[product-info] boot failed",error);throw error;}
+}
+
+bootProductInfo();
