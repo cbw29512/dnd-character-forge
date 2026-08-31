@@ -1,0 +1,40 @@
+name: Bootstrap SRD 5.1 spell reference
+
+on:
+  push:
+    branches: [feat/full-2014-spell-reference-20260830]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: feat/full-2014-spell-reference-20260830
+      - name: Use Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned generator dependency
+        run: python -m pip install --disable-pip-version-check -r tools/requirements-srd.txt
+      - name: Download official CC SRD 5.1 PDF
+        run: curl --fail --location --retry 3 --output /tmp/SRD_CC_v5.1.pdf https://media.wizards.com/2023/downloads/dnd/SRD_CC_v5.1.pdf
+      - name: Generate 2014 spell reference catalog
+        run: python tools/generate-srd-51-spell-reference.py /tmp/SRD_CC_v5.1.pdf src/data/spell-reference-2014-generated.js
+      - name: Commit generated catalog to audit branch
+        shell: bash
+        run: |
+          git add src/data/spell-reference-2014-generated.js
+          if git diff --cached --quiet; then
+            echo 'Generated catalog is already current.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'generated: add SRD 5.1 spell references'
+          git push origin HEAD:feat/full-2014-spell-reference-20260830
