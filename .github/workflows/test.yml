@@ -59,6 +59,8 @@ jobs:
           echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
       - name: Verify responsive Forge UI in Chrome
         run: node tests/browser-ui-gate.mjs
+      - name: Verify phone Reforge and Print actions in Chrome
+        run: node tests/mobile-action-browser-gate.mjs
       - name: Verify live accessibility contract in Chrome
         run: node tests/accessibility-browser-gate.mjs
       - name: Verify pregen backup lifecycle in Chrome
