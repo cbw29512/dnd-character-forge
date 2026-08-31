@@ -1,6 +1,6 @@
 export function classSelectionsFromCharacter(character){
   try{
-    const classId=character?.class?.id,base={classSkills:[...(character?.classSkillChoices||[])],weaponMasteries:[...(character?.masteryIds||[])],advancements:advancementValues(character)};
+    const classId=character?.class?.id,base={classSkills:[...(character?.classSkillChoices||[])],weaponMasteries:[...(character?.masteryIds||[])],advancements:advancementValues(character),equipmentPackage:character?.ruleset==="2024"?character?.equipment?.id||null:null};
     if(classId==="cleric")return removeEmpty({...base,divineOrder:character.divineOrder,blessedStrikes:character.blessedStrikes});
     if(classId==="bard")return removeEmpty({...base,instruments:[...(character.bardSelections?.instruments||[])],loreBonusSkills:[...(character.bardSelections?.loreBonusSkills||[])],expertise:[...(character.bardSelections?.expertise||[])]});
     if(classId==="monk")return removeEmpty({...base,monkTool:character.monkSelections?.tool||null});
