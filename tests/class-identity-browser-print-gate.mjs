@@ -15,12 +15,12 @@ for(const classId of CLASSES){
   catch(error){const message=error instanceof Error?error.message:String(error);failures.push(`${classId}: ${message}`);console.error(`[class-identity-browser-print] ${classId} failed: ${message}`);}
 }
 if(failures.length){throw new Error(`[class-identity-browser-print] ${failures.length} class portrait/packet failure(s):\n${failures.join("\n")}`);}
-console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, page-one geometry, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
+console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, page-one geometry, standalone attribution placement, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
 
 function verifyClass(classId){
   const character=characterAt(classId),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),expected=model.profile.caster?3:2,slug=`v3-2024-${classId}`,htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),sheetPng=path.join(OUT,`${slug}-sheet`),dossierPng=path.join(OUT,`${slug}-dossier`),sheetProbe=path.join(OUT,`${slug}-sheet-probe`),dossierProbe=path.join(OUT,`${slug}-dossier-probe`),id=escapeRegex(classId);
   assert.equal(character.validation.valid,true,`${classId}: generated character invalid`);assert.equal(character.audit.status,"PASS",`${classId}: audit failed`);assert.equal(character.audit.rawIntegrity,true,`${classId}: RAW integrity failed`);assert.equal(model.presentation.customization.packetMode,"deluxe",`${classId}: deluxe state missing`);assert.equal(model.packet.totalPages,expected,`${classId}: wrong deluxe page count`);assert.ok(model.dossier,`${classId}: dossier missing`);assert.match(target.innerHTML,new RegExp(`theme-${escapeRegex(model.theme.id)}`));assert.match(target.innerHTML,/ps-class-ornaments/);assert.match(target.innerHTML,/ps-dossier-page/);
-  assert.match(target.innerHTML,/ps-placeholder-illustrated/,`${classId}: illustrated placeholder wrapper missing`);assert.match(target.innerHTML,/ps-class-portrait-image/,`${classId}: illustrated portrait image missing`);assert.match(target.innerHTML,/ps-class-portrait-image[^>]+src="[^"]+"/,`${classId}: portrait source missing`);assert.match(target.innerHTML,/ps-placeholder-emblem/,`${classId}: ink-saver emblem wrapper missing`);assert.match(target.innerHTML,/ps-placeholder-svg ps-class-crest/,`${classId}: crisp vector emblem missing`);assert.match(target.innerHTML,/shape-rendering="geometricPrecision"/,`${classId}: geometric precision hint missing`);assert.doesNotMatch(target.innerHTML,/ps-premium-class-crest|<filter\b|feDropShadow|linearGradient/,`${classId}: legacy filtered crest leaked into packet`);assert.match(target.innerHTML,new RegExp(`class-placeholder class-${id}[\\s\\S]*?ps-class-portrait-image`),`${classId}: first-page illustrated portrait missing`);assert.match(target.innerHTML,new RegExp(`ps-dossier-portrait-art class-${id}[\\s\\S]*?ps-class-portrait-image`),`${classId}: dossier illustrated portrait missing`);
+  assert.match(target.innerHTML,/ps-placeholder-illustrated/,`${classId}: illustrated placeholder wrapper missing`);assert.match(target.innerHTML,/ps-class-portrait-image/,`${classId}: illustrated portrait image missing`);assert.match(target.innerHTML,/ps-class-portrait-image[^>]+src="[^"]+"/,`${classId}: portrait source missing`);assert.match(target.innerHTML,/ps-placeholder-emblem/,`${classId}: ink-saver emblem wrapper missing`);assert.match(target.innerHTML,/ps-placeholder-svg ps-class-crest/,`${classId}: crisp vector emblem missing`);assert.doesNotMatch(target.innerHTML,/ps-premium-class-crest|<filter\b|feDropShadow|linearGradient/,`${classId}: legacy filtered crest leaked into packet`);assert.match(target.innerHTML,new RegExp(`class-placeholder class-${id}[\\s\\S]*?ps-class-portrait-image`),`${classId}: first-page illustrated portrait missing`);assert.match(target.innerHTML,new RegExp(`ps-dossier-portrait-art class-${id}[\\s\\S]*?ps-class-portrait-image`),`${classId}: dossier illustrated portrait missing`);
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
   const decodedDom=execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--dump-dom",pathToFileURL(htmlPath).href],{encoding:"utf8",stdio:["ignore","pipe","pipe"]});
   assert.match(decodedDom,/data-portrait-decoded="yes"/,`${classId}: Chrome could not decode one or more printed portrait images`);
@@ -32,12 +32,15 @@ function verifyClass(classId){
   execFileSync("pdftoppm",["-png","-r","110","-f","1","-singlefile",pdfPath,sheetPng]);execFileSync("pdftoppm",["-png","-r","110","-f",String(expected),"-singlefile",pdfPath,dossierPng]);
   execFileSync("pdftoppm",["-r","55","-f","1","-singlefile","-x","35","-y","35","-W","78","-H","72",pdfPath,sheetProbe]);assertPrintedPortrait(`${sheetProbe}.ppm`,classId,"first-page portrait");
   execFileSync("pdftoppm",["-r","55","-f",String(expected),"-singlefile","-x","34","-y","30","-W","70","-H","86",pdfPath,dossierProbe]);assertPrintedPortrait(`${dossierProbe}.ppm`,classId,"Deluxe dossier portrait");
-  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · page-one geometry clear · decoded and visibly printed class portraits`);
+  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · page-one geometry and attribution clear · decoded and visibly printed class portraits`);
 }
 
 function assertPrintGeometry(xml,classId,model){
-  const lines=bboxLines(xml),footer=lines.find(line=>/RULES\s+LAWYER\s+CERTIFIED/i.test(line.text));
+  const lines=bboxLines(xml),footer=lines.find(line=>/RULES\s+LAWYER\s+CERTIFIED/i.test(line.text)),attribution=lines.find(line=>isAttributionLine(line.text));
   assert.ok(footer,`${classId}: certification footer line missing from page 1`);
+  assert.ok(attribution,`${classId}: standalone SRD/CC attribution line missing from page 1`);
+  assert.ok(attribution.yMin>=footer.yMin-.25,`${classId}: attribution escaped above certification/footer row (${attribution.yMin.toFixed(1)} < ${footer.yMin.toFixed(1)})`);
+  assert.ok(attribution.yMax<760,`${classId}: attribution clipped too low on Letter page (${attribution.yMax.toFixed(1)})`);
   const motto=normalize(model.motto).toLowerCase(),className=normalize(model.identity.className).toLowerCase();
   const overlaps=lines.filter(line=>line.yMax>footer.yMin+.25&&!allowedFooterLine(line.text,motto,className));
   assert.equal(overlaps.length,0,`${classId}: page-one content overlaps certification/footer area: ${overlaps.slice(0,4).map(line=>`"${line.text}" @ ${line.yMin.toFixed(1)}-${line.yMax.toFixed(1)}`).join(", ")}`);
@@ -52,9 +55,10 @@ function bboxLines(xml){
   for(const match of xml.matchAll(pattern)){const words=[...match[5].matchAll(/<word\b[^>]*>([\s\S]*?)<\/word>/g)].map(word=>decodeXml(word[1]));const text=normalize(words.join(" "));if(text)lines.push({xMin:Number(match[1]),yMin:Number(match[2]),xMax:Number(match[3]),yMax:Number(match[4]),text});}
   return lines;
 }
+function isAttributionLine(value){return /Contains\s+SRD\s+5\.(?:1|2\.1)\s+material.*Wizards of the Coast LLC.*CC BY 4\.0/i.test(normalize(value));}
 function allowedFooterLine(value,motto,className){
   const text=normalize(value),lower=text.toLowerCase(),compact=lower.replace(/\s+/g,""),classCompact=className.replace(/\s+/g,""),symbolOnly=!/[\p{L}\p{N}]/u.test(text);
-  return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||lower===motto||compact===classCompact||symbolOnly;
+  return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||isAttributionLine(text)||lower===motto||compact===classCompact||symbolOnly;
 }
 function decodeXml(value){return String(value||"").replace(/&apos;/g,"'").replace(/&gt;/g,">").replace(/&lt;/g,"<").replace(/&amp;/g,"&");}
 function assertPrintedPortrait(ppmPath,classId,label){
