@@ -10,19 +10,27 @@
   .sheet-ornament-balanced .ps-ornament{opacity:.09;width:.4in;height:.3in}
   .sheet-ornament-minimal .ps-class-ornaments,.sheet-print-ink-saver .ps-class-ornaments{display:none}
 
-  /* A stronger physical-sheet hierarchy without destabilizing fixed Letter output. */
+  /* Keep Deluxe typography comfortably readable while respecting the fixed
+     Letter-page capacity. This layer loads after the compact profile rules,
+     so it must not re-expand dense Quick Turn and feature blocks into the footer. */
   .sheet-packet-deluxe .ps-skill{font-size:6.55pt;line-height:1.12}
   .sheet-packet-deluxe .ps-attack-row{font-size:7.05pt}
   .sheet-packet-deluxe .ps-attack-row span{font-size:6.25pt}
-  .sheet-packet-deluxe .ps-list{font-size:6.75pt;line-height:1.34}
-  .sheet-packet-deluxe .ps-feature-list strong{font-size:7.15pt}
-  .sheet-packet-deluxe .ps-feature-list p{font-size:5.95pt;line-height:1.24}
-  .sheet-packet-deluxe .ps-feat p,.sheet-packet-deluxe .ps-spells p,.sheet-packet-deluxe .ps-proficiencies p{font-size:6.3pt}
-  .sheet-packet-deluxe .ps-quick-list{font-size:6.45pt;line-height:1.33}
+  .sheet-packet-deluxe .ps-list{font-size:6.45pt;line-height:1.28}
+  .sheet-packet-deluxe .ps-feature-list strong{font-size:6.55pt}
+  .sheet-packet-deluxe .ps-feature-list p{font-size:5.5pt;line-height:1.16}
+  .sheet-packet-deluxe .ps-feat p,.sheet-packet-deluxe .ps-spells p,.sheet-packet-deluxe .ps-proficiencies p{font-size:6pt}
+  .sheet-packet-deluxe .ps-quick-list{font-size:5.7pt;line-height:1.2}
+  .sheet-packet-deluxe .ps-quick-list li+li{margin-top:.02in}
+  .sheet-packet-deluxe .ps-quick .ps-panel-body{padding-top:.035in;padding-bottom:.035in}
   .sheet-packet-deluxe .ps-utility-stats small{font-size:4.55pt}
   .sheet-packet-deluxe .ps-utility-stats b{font-size:7.3pt}
   .sheet-packet-deluxe .ps-magic-items strong{font-size:5.45pt}
   .sheet-packet-deluxe .ps-identity dd{font-size:7.7pt}
+
+  /* Fighter's page-one Rules Index is unusually broad. Use horizontal room
+     for five compact columns rather than adding a final row into the footer. */
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page.theme-fighter-steel .ps-rule-index>div{grid-template-columns:repeat(5,minmax(0,1fr));gap:.012in .045in}
 
   .premium-sheet:not(.sheet-style-minimal) .ps-top{position:relative;padding-bottom:.035in}
   .premium-sheet:not(.sheet-style-minimal) .ps-top:after{content:"";position:absolute;left:.04in;right:.04in;bottom:0;border-bottom:1px solid color-mix(in srgb,var(--ps-accent) 72%,transparent)}
