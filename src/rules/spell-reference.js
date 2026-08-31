@@ -1,18 +1,32 @@
-import { SPELL_REFERENCE_2024_BY_ID } from "../data/spell-reference-2024.js";
-import { CLERIC_SPELLS_2024 } from "../data/cleric-spells.js";
+import { SPELL_REFERENCE_2014, SPELL_REFERENCE_2014_BY_ID } from "../data/spell-reference-2014.js";
+import { SPELL_REFERENCE_2024, SPELL_REFERENCE_2024_BY_ID } from "../data/spell-reference-2024.js";
+import { speciesMagic } from "./species.js";
 
-const CLERIC_LEVEL1_IDS=new Set(CLERIC_SPELLS_2024.filter(spell=>spell.level===1).map(spell=>spell.id));
+const CATALOG_BY_RULESET=Object.freeze({"2014":SPELL_REFERENCE_2014,"2024":SPELL_REFERENCE_2024});
+const LOOKUP_BY_RULESET=Object.freeze({"2014":SPELL_REFERENCE_2014_BY_ID,"2024":SPELL_REFERENCE_2024_BY_ID});
+const SOURCE_BY_RULESET=Object.freeze({"2014":"SRD 5.1","2024":"SRD 5.2.1"});
+const normalizeSpellName=value=>String(value||"").replace(/’/g,"'").replace(/\s+\(\d+(?:st|nd|rd|th)-level\)\s*$/i,"").trim().toLowerCase();
+const ID_BY_NAME=Object.freeze(Object.fromEntries(Object.entries(CATALOG_BY_RULESET).map(([ruleset,catalog])=>[ruleset,Object.freeze(Object.fromEntries(catalog.map(spell=>[normalizeSpellName(spell.name),spell.id]))) ])));
+
 export function getSpellReference(ruleset,spellId){
-  try{if(ruleset!=="2024")return null;const spell=SPELL_REFERENCE_2024_BY_ID[spellId];if(!spell)throw new Error(`Missing SRD 5.2.1 spell reference for ${spellId}.`);return spell;}
-  catch(error){console.error("[spell-reference] lookup failed",error);throw error;}
+  try{
+    const lookup=LOOKUP_BY_RULESET[ruleset];
+    if(!lookup)return null;
+    const spell=lookup[spellId];
+    if(!spell)throw new Error(`Missing ${SOURCE_BY_RULESET[ruleset]} spell reference for ${spellId}.`);
+    return spell;
+  }catch(error){console.error("[spell-reference] lookup failed",error);throw error;}
 }
+
 export function resolveSpellReference(character,spellId){
   try{const base=getSpellReference(character.ruleset,spellId);if(!base)return null;if(base.level!==0)return{...base,currentEffect:null};return resolveCantripReference(character,spellId);}
   catch(error){console.error("[spell-reference] resolution failed",error);throw error;}
 }
+
 export function resolveCantripReference(character,spellId){
   try{
     const base=getSpellReference(character.ruleset,spellId);if(!base)return null;if(base.level!==0)throw new Error(`${base.name} is not a cantrip.`);const current={...base};
+    if(character.ruleset!=="2024"){current.currentEffect=null;return current;}
     if(base.beamScaling){const beams=tierDice(character.level);current.currentEffect=`${beams} beam${beams===1?"":"s"}; each beam makes a separate ranged spell attack for 1d${base.damage.die} ${base.damage.type} damage and can target the same or different targets`;}
     else if(base.shillelaghScaling){const die=character.level>=17?"2d6":character.level>=11?"d12":character.level>=5?"d10":"d8";current.currentEffect=`Held Club or Quarterstaff uses your spellcasting ability; weapon damage die ${die}, dealing Force or its normal damage type`;}
     else if(base.damage?.scales){const dice=tierDice(character.level);current.currentEffect=`${dice}d${base.damage.die} ${base.damage.type} damage`;}
@@ -22,15 +36,55 @@ export function resolveCantripReference(character,spellId){
   }
   catch(error){console.error("[spell-reference] cantrip resolution failed",error);throw error;}
 }
+
 export function characterActiveSpellReferences(character){
   try{
-    if(character.ruleset!=="2024"||!character.spells)return[];
-    const refs=character.spells.cantrips.all.map(id=>({...resolveCantripReference(character,id),preparation:"Cantrip"}));
-    if(character.class.id!=="cleric")return refs;
-    const always=new Set(character.spells.alwaysPrepared||[]),prepared=new Set(character.spells.prepared?.all||[]),active=[...new Set([...always,...prepared])];
-    for(const id of active){if(!CLERIC_LEVEL1_IDS.has(id))continue;const ref=resolveSpellReference(character,id);refs.push({...ref,preparation:always.has(id)?"Always Prepared":"Prepared"});}
+    const ruleset=character?.ruleset;if(!LOOKUP_BY_RULESET[ruleset])return[];
+    const refs=[],seen=new Set(),spells=character.spells||{};
+    const add=(id,preparation,{cantrip=false,castingAbility=null,grantSource=null,grantLabel=null}={})=>{
+      if(!id||seen.has(id))return;
+      const reference=cantrip?resolveCantripReference(character,id):resolveSpellReference(character,id);
+      if(!reference)return;
+      if(cantrip&&reference.level!==0)throw new Error(`${id} is listed as a cantrip but resolves to level ${reference.level}.`);
+      refs.push({...reference,preparation,castingAbility,grantSource,grantLabel});seen.add(id);
+    };
+    const addName=(name,preparation,options={})=>{
+      if(!name)return;
+      const id=ID_BY_NAME[ruleset]?.[normalizeSpellName(name)];
+      if(!id)throw new Error(`Missing ${SOURCE_BY_RULESET[ruleset]} spell reference for granted spell ${name}.`);
+      add(id,preparation,{...options,grantLabel:name});
+    };
+
+    for(const id of spells.cantrips?.all||[])add(id,"Cantrip",{cantrip:true,grantSource:"class"});
+    for(const id of spells.tome?.cantrips||[])add(id,"Pact Tome Cantrip",{cantrip:true,grantSource:"warlock"});
+    for(const id of spells.alwaysPrepared||[])add(id,"Always Prepared",{grantSource:"class"});
+    for(const id of spells.prepared?.all||[])add(id,"Prepared",{grantSource:"class"});
+    for(const id of spells.known?.all||[])add(id,"Known",{grantSource:"class"});
+    for(const id of spells.tome?.rituals||[])add(id,"Pact Tome Ritual",{grantSource:"warlock"});
+    for(const id of spells.invocationSpells||[])add(id,"Invocation",{grantSource:"warlock"});
+    for(const id of Object.values(spells.mysticArcanum||{}))add(id,"Mystic Arcanum",{grantSource:"warlock"});
+
+    const innate=speciesMagic(character);
+    if(innate){
+      for(const name of innate.cantrips||[])addName(name,"Species Cantrip",{cantrip:true,castingAbility:innate.ability,grantSource:"species"});
+      for(const name of innate.spells||[])addName(name,"Species Magic",{castingAbility:innate.ability,grantSource:"species"});
+    }
+
+    const initiates=character.magicInitiates?.length?character.magicInitiates:(character.magicInitiate?[character.magicInitiate]:[]);
+    for(const magic of initiates){
+      const source=magic.source||"feat",ability=magic.spellcastingAbility||null;
+      for(const id of magic.cantrips||[])add(id,"Magic Initiate Cantrip",{cantrip:true,castingAbility:ability,grantSource:source});
+      if(magic.level1Spell)add(magic.level1Spell,"Magic Initiate · Always Prepared",{castingAbility:ability,grantSource:source});
+    }
     return refs;
   }catch(error){console.error("[spell-reference] active references failed",error);throw error;}
 }
-export function characterCantripReferences(character){try{return characterActiveSpellReferences(character).filter(spell=>spell.level===0);}catch(error){console.error("[spell-reference] character cantrips failed",error);throw error;}}
+
+export function characterCantripReferences(character){
+  try{
+    if(!LOOKUP_BY_RULESET[character?.ruleset]||!character?.spells)return[];
+    return (character.spells.cantrips?.all||[]).map(id=>resolveCantripReference(character,id));
+  }catch(error){console.error("[spell-reference] character cantrips failed",error);throw error;}
+}
+
 const tierDice=level=>level>=17?4:level>=11?3:level>=5?2:1;

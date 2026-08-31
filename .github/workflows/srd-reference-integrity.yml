@@ -1,0 +1,50 @@
+name: SRD spell-reference integrity
+
+on:
+  pull_request:
+    paths:
+      - 'src/data/spell-reference-2014-generated.js'
+      - 'src/data/spell-reference-2024-generated.js'
+      - 'tools/generate-srd-51-spell-reference.py'
+      - 'tools/generate-srd-521-spell-reference.py'
+      - 'tools/requirements-srd.txt'
+      - '.github/workflows/srd-reference-integrity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install pinned generator dependency
+        run: python -m pip install --disable-pip-version-check -r tools/requirements-srd.txt
+      - name: Download exact official SRD PDFs
+        run: |
+          curl --fail --location --retry 3 --output /tmp/SRD_CC_v5.1.pdf https://media.wizards.com/2023/downloads/dnd/SRD_CC_v5.1.pdf
+          curl --fail --location --retry 3 --output /tmp/SRD_CC_v5.2.1.pdf https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf
+      - name: Regenerate both spell reference catalogs
+        run: |
+          python tools/generate-srd-51-spell-reference.py /tmp/SRD_CC_v5.1.pdf /tmp/spell-reference-2014-generated.js
+          python tools/generate-srd-521-spell-reference.py /tmp/SRD_CC_v5.2.1.pdf /tmp/spell-reference-2024-generated.js
+      - name: Require byte-identical checked-in catalogs
+        run: |
+          status=0
+          if ! cmp -s /tmp/spell-reference-2014-generated.js src/data/spell-reference-2014-generated.js; then
+            echo 'Generated SRD 5.1 catalog differs from the checked-in catalog.' >&2
+            diff -u src/data/spell-reference-2014-generated.js /tmp/spell-reference-2014-generated.js | head -200 || true
+            status=1
+          fi
+          if ! cmp -s /tmp/spell-reference-2024-generated.js src/data/spell-reference-2024-generated.js; then
+            echo 'Generated SRD 5.2.1 catalog differs from the checked-in catalog.' >&2
+            diff -u src/data/spell-reference-2024-generated.js /tmp/spell-reference-2024-generated.js | head -200 || true
+            status=1
+          fi
+          exit "$status"

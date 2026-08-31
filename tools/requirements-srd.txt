@@ -1,0 +1,2 @@
+# Reproducible environment for tools/generate-srd-521-spell-reference.py
+PyMuPDF==1.26.4

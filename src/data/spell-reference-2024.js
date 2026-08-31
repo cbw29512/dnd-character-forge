@@ -1,3 +1,4 @@
+import { SPELL_REFERENCE_2024_GENERATED } from "./spell-reference-2024-generated.js";
 import { SPELL_REFERENCE_2024_LEVEL1_CLERIC } from "./spell-reference-2024-level1-cleric.js";
 
 const s=(id,name,school,castingTime,range,components,duration,resolution,effect,srdPage,extra={})=>({id,name,level:0,school,castingTime,range,components,duration,resolution,effect,concentration:false,ritual:false,upcast:null,source:"SRD 5.2.1",srdPage,...extra});
@@ -28,7 +29,30 @@ const CANTRIPS=[
   s("starry-wisp","Starry Wisp","Evocation","Action","60 ft","V, S","Instantaneous","Ranged spell attack","Launch a mote of light at one creature or object. On a hit, it takes Radiant damage and until the end of your next turn emits Dim Light in a 10-foot radius and cannot benefit from the Invisible condition.",165,{damage:{dice:1,die:8,type:"Radiant",scales:true}}),
   s("thaumaturgy","Thaumaturgy","Transmutation","Action","30 ft","V","Up to 1 min","Utility","Create a minor wonder: alter your eyes, boom your voice and gain Advantage on Intimidation, manipulate nearby flames, open or slam an unlocked door/window, create a phantom sound, or cause harmless tremors. Up to three 1-minute effects can coexist.",169),
   s("true-strike","True Strike","Divination","Action","Self","S, M","Instantaneous","Weapon attack","Make one attack with the material weapon, using your spellcasting ability for its attack and damage rolls. The damage can be Radiant or the weapon's normal type; higher character levels add Radiant damage.",171,{trueStrikeScaling:true}),
-  s("vicious-mockery","Vicious Mockery","Enchantment","Action","60 ft","V","Instantaneous","WIS save","One creature you can see or hear makes a Wisdom saving throw. On a failure it takes Psychic damage and has Disadvantage on the next attack roll it makes before the end of its next turn.",172,{damage:{dice:1,die:6,type:"Psychic",scales:true}})
+  s("vicious-mockery","Vicious Mockery","Enchantment","Action","60 ft","V","Instantaneous","WIS save","One creature you can see or hear makes a Wisdom saving throw. On a failure it takes Psychic damage and has Disadvantage on the next attack roll it makes before the end of its next turn.",171,{damage:{dice:1,die:6,type:"Psychic",scales:true}})
 ];
-export const SPELL_REFERENCE_2024=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
-export const SPELL_REFERENCE_2024_BY_ID=Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell]));
+
+const CURATED=[...CANTRIPS,...SPELL_REFERENCE_2024_LEVEL1_CLERIC];
+const normalizedName=value=>String(value).replace(/’/g,"'");
+const deepFreeze=value=>{
+  if(!value||typeof value!=="object"||Object.isFrozen(value))return value;
+  for(const nested of Object.values(value))deepFreeze(nested);
+  return Object.freeze(value);
+};
+const byId=new Map();
+for(const generated of SPELL_REFERENCE_2024_GENERATED){
+  if(byId.has(generated.id))throw new Error(`duplicate generated 2024 spell reference id: ${generated.id}`);
+  byId.set(generated.id,generated);
+}
+for(const spell of CURATED){
+  const generated=byId.get(spell.id);
+  if(!generated)throw new Error(`curated 2024 spell reference is absent from generated SRD baseline: ${spell.id}`);
+  if(normalizedName(generated.name)!==normalizedName(spell.name))throw new Error(`${spell.id}: curated/generated spell name conflict`);
+  if(generated.level!==spell.level)throw new Error(`${spell.id}: curated/generated spell level conflict`);
+  if(generated.source!==spell.source)throw new Error(`${spell.id}: curated/generated spell source conflict`);
+  if(generated.srdPage!==spell.srdPage)throw new Error(`${spell.id}: curated/generated SRD page conflict`);
+  byId.set(spell.id,spell);
+}
+
+export const SPELL_REFERENCE_2024=Object.freeze([...byId.values()].map(deepFreeze));
+export const SPELL_REFERENCE_2024_BY_ID=Object.freeze(Object.fromEntries(SPELL_REFERENCE_2024.map(spell=>[spell.id,spell])));
