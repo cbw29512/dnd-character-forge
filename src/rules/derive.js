@@ -7,7 +7,7 @@ import { validateMonkCharacter } from "./monk-validation.js";
 import { validateClassAdvancements } from "./advancement-feats.js";
 import { validateWeaponMasteryCharacter } from "./weapon-mastery-selections.js";
 import { sorcererArmorClass, sorcererDraconicHpBonus } from "./sorcerer-combat.js";
-import { warlockWeaponAttack } from "./warlock-combat.js";
+import { warlockPactWeaponId, warlockWeaponAttack } from "./warlock-combat.js";
 import { isForgeOriginalSubclass, originalSubclassFeaturesFor } from "../data/original-subclasses.js";
 import { originFeatInstanceKey } from "./origin-feats.js";
 import { canUseDuelingOneHanded, isRangedWeaponId } from "./weapon-properties.js";
@@ -32,7 +32,14 @@ export function deriveCharacter(character,data){
       if(character.class.id==="warlock")return warlockWeaponAttack(character,id,weapon,pb,{attackStyleBonus:styleBonus,damageStyleBonus});
       const mod=abilityMod(character.abilities[weapon.ability]);return{...weapon,id,attackBonus:mod+pb+styleBonus,damageBonus:mod+damageStyleBonus};
     });
-    const attacks=character.class.id==="monk"?[...weaponAttacks,monkUnarmedAttack(character,pb)]:weaponAttacks;
+    let attacks=character.class.id==="monk"?[...weaponAttacks,monkUnarmedAttack(character,pb)]:[...weaponAttacks];
+    if(character.class.id==="warlock"&&character.ruleset==="2024"){
+      const pactWeaponId=warlockPactWeaponId(character);
+      if(pactWeaponId&&!weaponAttacks.some(attack=>attack.id===pactWeaponId)){
+        const pactWeapon=data.weapons[pactWeaponId];if(!pactWeapon)throw new Error(`Unknown conjured pact weapon: ${pactWeaponId}.`);
+        attacks.push(warlockWeaponAttack(character,pactWeaponId,pactWeapon,pb));
+      }
+    }
     const focusLabel=character.class.id==="druid"?"Druidic Focus":"Arcane Focus",attackInventory=weaponAttacks.map(attack=>character.equipment.focus===attack.id?`${focusLabel} (${attack.name})`:attack.name),inventory=consolidateInventory([...attackInventory,...character.equipment.gear,...(character.backgroundEquipment||character.background.equipment||[])]),saveProficiencies=character.class.id==="monk"&&character.monk?.allSaveProficiency?[...ABILITIES]:uniqueStrings(character.saves);
     const originalFeatures=character.class.id!=="barbarian"&&isForgeOriginalSubclass(character.subclass)?originalSubclassFeaturesFor(character.ruleset,character.class.id,character.level,character.subclass.id):[];
     const next={...character,skills:effectiveSkills,expertise:uniqueStrings(character.expertise),saves:saveProficiencies,languages:uniqueStrings(character.languages),toolProficiencies:uniqueStrings(character.toolProficiencies||[]),feats:uniqueBy(character.feats,originFeatInstanceKey),homebrew:uniqueBy(character.homebrew,item=>item.id),features:uniqueStrings([...(character.features||[]),...originalFeatures]),ac,hp,speciesHpBonus:speciesBonusHp,draconicHpBonus,initiative:dex+alert,initiativeAdvantage:Boolean(character.barbarian?.initiativeAdvantage||character.fighter?.initiativeAdvantage),speed:speciesSpeed(character)+(character.barbarian?.speedBonus||0)+(character.ranger?.speedBonus||0)+monkSpeedBonus(character)+Number(character.advancementSpeedBonus||0),attacks:uniqueBy(attacks,attack=>attack.name),saveBonuses,skillBonuses,passivePerception:10+skillBonuses.perception,masteryIds:[...(character.masteryIds||[])],inventory};
