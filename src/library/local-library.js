@@ -1,4 +1,5 @@
 import { fingerprint, homebrewFingerprintPayload, pregenFingerprintPayload } from "./fingerprint.js";
+import { PREGEN_SCHEMA_VERSION, migratePregenEntry } from "./pregen-schema.js";
 
 const PREGEN_KEY = "character-forge:pregen-library:v1";
 const HOMEBREW_KEY = "character-forge:homebrew-library:v1";
@@ -15,23 +16,33 @@ function store(key, items, label) {
   catch (error) { console.error(`[library] ${label} store failed`, error); throw error; }
 }
 
-export const loadPregens = () => load(PREGEN_KEY,"pregens");
+export function loadPregens(){
+  try{
+    const raw=load(PREGEN_KEY,"pregens"),migrated=[];
+    for(const entry of raw){
+      const current=migratePregenEntry(entry);
+      if(current)migrated.push(current);
+      else console.warn("[library] quarantined malformed or unsupported pregen entry");
+    }
+    return migrated;
+  }catch(error){console.error("[library] pregen migration failed",error);return[];}
+}
 export const loadHomebrew = () => load(HOMEBREW_KEY,"homebrew");
 
 export async function savePregen(character) {
   try {
     const items = loadPregens();
     const contentFingerprint = await fingerprint(pregenFingerprintPayload(character));
-    for(const item of items){if(!item.character)continue;item.fingerprint=await fingerprint(pregenFingerprintPayload(item.character));}
+    for(const item of items){if(!item.character)continue;item.fingerprint=await fingerprint(pregenFingerprintPayload(item.character));item.schemaVersion=PREGEN_SCHEMA_VERSION;}
     const duplicate = items.find(item=>item.fingerprint===contentFingerprint);
     if(duplicate){
       if(duplicate.name===character.name&&presentationChanged(duplicate.character,character)){
         if(character.presentation)duplicate.character.presentation=structuredClone(character.presentation);else delete duplicate.character.presentation;
-        duplicate.updatedAt=new Date().toISOString();store(PREGEN_KEY,items,"pregens");return{...duplicate,presentationUpdated:true};
+        duplicate.schemaVersion=PREGEN_SCHEMA_VERSION;duplicate.updatedAt=new Date().toISOString();store(PREGEN_KEY,items,"pregens");return{...duplicate,presentationUpdated:true};
       }
       throw new Error(`This pregen is mechanically identical to ${duplicate.name}. Open the existing library entry instead.`);
     }
-    const entry = { id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
+    const entry = { schemaVersion:PREGEN_SCHEMA_VERSION, id:crypto.randomUUID(), fingerprint:contentFingerprint, name:character.name, createdAt:new Date().toISOString(), ruleset:character.ruleset, sourceMode:character.sourceMode, level:character.level, className:character.class?.name||"Unknown", speciesName:character.species?.name||"Unknown", backgroundName:character.background?.name||"Unknown", character };
     items.unshift(entry);
     store(PREGEN_KEY,items,"pregens");
     return entry;
