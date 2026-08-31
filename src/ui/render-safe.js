@@ -1,5 +1,6 @@
 import { renderCharacter as renderBaseCharacter } from "./render.js";
 import { buildQuickReference } from "../rules/reference-router.js";
+import { characterActiveSpellReferences } from "../rules/spell-reference.js";
 
 /**
  * Render the character sheet using the class-aware quick-reference router.
@@ -14,6 +15,7 @@ export function renderCharacter(character,target){
     const references=buildQuickReference(character);
     const safeCharacter=legacySafeCharacter(character);
     renderBaseCharacter(safeCharacter,target);
+    ensure2014SpellReference(character,target);
     const list=target.querySelector(".reference-list");
     if(!list)throw new Error("Character sheet reference container was not rendered.");
     list.innerHTML=references.map(item=>`<article class="reference-item"><div class="reference-head"><strong>${escapeHtml(item.name)}</strong><span class="reference-tag">${escapeHtml(item.category)}</span></div><p>${escapeHtml(item.text)}</p><div class="reference-foot"><span class="reference-timing">${escapeHtml(item.timing)}</span>${sourceLabel(item.source)}</div></article>`).join("");
@@ -43,6 +45,35 @@ export function legacySafeCharacter(character){
     };
   }catch(error){
     console.error("[ui] legacy-safe character build failed",error);
+    throw error;
+  }
+}
+
+function ensure2014SpellReference(character,target){
+  try{
+    if(character?.ruleset!=="2014")return;
+    const refs=characterActiveSpellReferences(character);
+    if(!refs.length)return;
+    const grid=target.querySelector(".detail-grid");
+    if(!grid)throw new Error("Character sheet detail grid was not rendered.");
+    if(grid.querySelector('[data-spell-reference-edition="2014"]'))return;
+    const card=document.createElement("section");
+    card.className="detail-card span-2";
+    card.dataset.spellReferenceEdition="2014";
+    card.innerHTML=`<h3>Spell Reference</h3><div class="spell-reference-grid">${refs.map(spell=>spellReferenceCard(spell)).join("")}</div>`;
+    const spellcasting=[...grid.querySelectorAll(".detail-card")].find(item=>item.querySelector("h3")?.textContent?.trim()==="Spellcasting");
+    if(spellcasting)spellcasting.insertAdjacentElement("afterend",card);else grid.appendChild(card);
+  }catch(error){
+    console.error("[ui] 2014 spell reference render failed",error);
+    throw error;
+  }
+}
+
+function spellReferenceCard(spell){
+  try{
+    return `<article class="spell-reference-card"><div class="spell-reference-head"><div><strong>${escapeHtml(spell.name)}</strong><span>${spell.level===0?"Cantrip":`Level ${spell.level}`} · ${escapeHtml(spell.school)} · ${escapeHtml(spell.preparation)}</span></div><span>${escapeHtml(spell.castingTime)}</span></div><div class="spell-reference-meta"><span>${escapeHtml(spell.range)}</span><span>${escapeHtml(spell.duration)}</span><span>${escapeHtml(spell.components)}</span><span>${escapeHtml(spell.resolution)}</span></div>${spell.currentEffect?`<b>${escapeHtml(spell.currentEffect)}</b>`:""}<p>${escapeHtml(spell.effect)}</p>${spell.upcast?`<p class="spell-upcast"><strong>Higher slot:</strong> ${escapeHtml(spell.upcast)}</p>`:""}<div class="spell-reference-foot"><div>${spell.ritual?`<em>Ritual</em>`:""}${spell.concentration?`<em>Concentration</em>`:""}</div><small>${escapeHtml(spell.source)} · p.${spell.srdPage}</small></div></article>`;
+  }catch(error){
+    console.error("[ui] 2014 spell reference card failed",error);
     throw error;
   }
 }

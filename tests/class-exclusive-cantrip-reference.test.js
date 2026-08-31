@@ -24,7 +24,7 @@ test("Bard and Druid exclusive attack cantrips preserve SRD metadata and damage 
     const produce=getSpellReference("2024","produce-flame"),starry=getSpellReference("2024","starry-wisp"),mockery=getSpellReference("2024","vicious-mockery"),druidcraft=getSpellReference("2024","druidcraft");
     assert.equal(produce.castingTime,"Bonus Action");assert.equal(produce.duration,"10 minutes");assert.equal(produce.attackRange,"60 ft");assert.equal(produce.srdPage,156);assert.match(resolveCantripReference(character(17),"produce-flame").currentEffect,/4d8 Fire/);
     assert.equal(starry.range,"60 ft");assert.equal(starry.srdPage,165);assert.match(starry.effect,/Invisible condition/);assert.match(resolveCantripReference(character(11),"starry-wisp").currentEffect,/3d8 Radiant/);
-    assert.equal(mockery.components,"V");assert.equal(mockery.resolution,"WIS save");assert.equal(mockery.srdPage,172);assert.match(mockery.effect,/Disadvantage/);assert.match(resolveCantripReference(character(5),"vicious-mockery").currentEffect,/2d6 Psychic/);
+    assert.equal(mockery.components,"V");assert.equal(mockery.resolution,"WIS save");assert.equal(mockery.srdPage,171);assert.match(mockery.effect,/Disadvantage/);assert.match(resolveCantripReference(character(5),"vicious-mockery").currentEffect,/2d6 Psychic/);
     assert.equal(druidcraft.srdPage,126);assert.equal(druidcraft.resolution,"Utility");assert.match(druidcraft.effect,/weather prediction/);assert.match(druidcraft.effect,/campfire/);
   }catch(error){console.error("[class-exclusive-cantrip-test] Bard/Druid cantrips failed",error);throw error;}
 });
