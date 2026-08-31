@@ -8,6 +8,7 @@ import { renderCharacter } from "../src/ui/render.js";
 import { legacySafeCharacter } from "../src/ui/render-safe.js";
 
 const CASTERS=["wizard","cleric","bard","druid","paladin","ranger","sorcerer","warlock"];
+const escapeRenderedText=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
 
 function generatedCaster(ruleset,classId,level="20"){
   try{
@@ -66,7 +67,7 @@ test("2014 spells-known casters visibly render their Known spells",()=>{
       renderCharacter(legacySafeCharacter(character),target);
       assert.match(target.innerHTML,/<strong>Known<\/strong>/,`2014 ${classId} screen sheet should expose its known spells`);
       const catalog=spellDisplayCatalog(character),knownName=catalog.get(character.spells.known.all[0])?.name;
-      assert.ok(knownName&&target.innerHTML.includes(knownName),`2014 ${classId} screen sheet should name a known spell`);
+      assert.ok(knownName&&target.innerHTML.includes(escapeRenderedText(knownName)),`2014 ${classId} screen sheet should name a known spell`);
     }
   }catch(error){console.error("[test] known-spell screen rendering failed",error);throw error;}
 });
