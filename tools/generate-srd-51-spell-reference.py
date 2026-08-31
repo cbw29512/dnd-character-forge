@@ -15,7 +15,7 @@ import fitz  # PyMuPDF
 SCHOOLS=("abjuration","conjuration","divination","enchantment","evocation","illusion","necromancy","transmutation")
 SCHOOL_RE="(?:"+"|".join(SCHOOLS)+")"
 SPELL_HEADER_RE=re.compile(rf"^(?:(1st|2nd|3rd|[4-9]th)[^\n]*?level\s+({SCHOOL_RE})|({SCHOOL_RE})\s+cantrip)(?:\s+\(ritual\))?\s*$",re.IGNORECASE|re.MULTILINE)
-DURATION_RE=re.compile(r"Duration\s*:\s*((?:Concentration,\s*)?(?:up to\s+)?(?:\d+\s+(?:round|minute|hour|day)s?|Instantaneous|Until dispelled(?: or triggered)?|Special|Permanent))",re.IGNORECASE)
+DURATION_RE=re.compile(r"Duration\s*:\s*((?:Concentration,?\s*)?(?:up to\s+)?(?:\d+\s+(?:round|minute|hour|day)s?|Instantaneous|Until dispelled(?: or triggered)?|Special|Permanent))",re.IGNORECASE)
 SOURCE_URL="https://media.wizards.com/2023/downloads/dnd/SRD_CC_v5.1.pdf"
 EXPECTED_PDF_PAGES=403
 EXPECTED_COUNT=319
