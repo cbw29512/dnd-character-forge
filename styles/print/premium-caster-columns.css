@@ -11,4 +11,16 @@
  .ps-caster-rule-grid b{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;line-height:1.08}
  .ps-caster-rules{padding:.045in .055in}
  .ps-caster-rules .ps-section-title{margin-bottom:.025in}
+
+ /*
+  * Max-level Warlocks can carry 48 sourced rules, including long invocation
+  * labels such as Lessons of the First Ones — Magic Initiate (...). The
+  * generic 1.25in rules row clipped wrapped labels because the caster panels
+  * intentionally hide overflow. Rebalance only the Warlock page: its compact
+  * Pact/spell presentation can spare vertical room without adding a third page.
+  */
+ .theme-warlock-eldritch .ps-caster-body{grid-template-rows:6.05in 1.45in minmax(0,1fr)}
+ .theme-warlock-eldritch .ps-caster-rule-grid{gap:.01in .045in}
+ .theme-warlock-eldritch .ps-caster-rule-grid b{font-size:4.25pt;line-height:1.03}
+ .theme-warlock-eldritch .ps-caster-rule-grid small{font-size:3.85pt}
 }
