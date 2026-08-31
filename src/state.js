@@ -1,3 +1,4 @@
+import "./product-info.js";
 import { RANDOM, SOURCE } from "./schema.js";
 import { createDefaultSheetCustomization } from "./print/customization.js";
 
