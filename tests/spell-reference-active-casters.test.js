@@ -1,10 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
+import { SPELL_REFERENCE_2024 } from "../src/data/spell-reference-2024.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { speciesMagic } from "../src/rules/species.js";
 import { characterActiveSpellReferences } from "../src/rules/spell-reference.js";
 
 const CASTERS=["wizard","cleric","bard","druid","paladin","ranger","sorcerer","warlock"];
+const normalizeName=value=>String(value||"").replace(/’/g,"'").trim().toLowerCase();
+const ID_BY_NAME=new Map(SPELL_REFERENCE_2024.map(spell=>[normalizeName(spell.name),spell.id]));
 
 const fixture=overrides=>({
   ruleset:"2024",
@@ -27,7 +31,7 @@ const fixture=overrides=>({
 });
 
 const byId=refs=>new Map(refs.map(ref=>[ref.id,ref]));
-const activeIds=spells=>[...new Set([
+const classActiveIds=spells=>[...new Set([
   ...(spells?.cantrips?.all||[]),
   ...(spells?.tome?.cantrips||[]),
   ...(spells?.alwaysPrepared||[]),
@@ -43,6 +47,22 @@ function generatedCaster(classId){
   state.ruleset="2024";
   state.constraints={level:"20",species:"orc",class:classId,subclass:"random",background:"soldier",name:`${classId} active reference audit`};
   return generateCharacter(state);
+}
+
+function expectedActiveMagicIds(character){
+  const expected=new Set(classActiveIds(character.spells));
+  const innate=speciesMagic(character);
+  for(const name of [...(innate?.cantrips||[]),...(innate?.spells||[])]){
+    const id=ID_BY_NAME.get(normalizeName(name));
+    assert.ok(id,`${character.class.id}: species-granted spell ${name} lacks an SRD reference id`);
+    expected.add(id);
+  }
+  const initiates=character.magicInitiates?.length?character.magicInitiates:(character.magicInitiate?[character.magicInitiate]:[]);
+  for(const magic of initiates){
+    for(const id of magic.cantrips||[])expected.add(id);
+    if(magic.level1Spell)expected.add(magic.level1Spell);
+  }
+  return expected;
 }
 
 test("active 2024 spell references expose every supported active spell bucket with deterministic labels",()=>{
@@ -71,13 +91,14 @@ test("active 2024 spell references expose every supported active spell bucket wi
   assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,"active references must not duplicate spell ids");
 });
 
-test("every generated 2024 caster exposes exactly its class-active spell buckets when no extra magic source is present",()=>{
+test("every generated 2024 caster exposes exactly all active class, species, and Magic Initiate sources",()=>{
   for(const classId of CASTERS){
-    const character=generatedCaster(classId),expected=activeIds(character.spells),refs=characterActiveSpellReferences(character);
-    assert.ok(expected.length>0,`${classId}: expected active magic at level 20`);
-    assert.deepEqual(new Set(refs.map(ref=>ref.id)),new Set(expected),`${classId}: active Spell Reference coverage drift`);
-    assert.equal(new Set(refs.map(ref=>ref.id)).size,refs.length,`${classId}: duplicate active Spell Reference id`);
+    const character=generatedCaster(classId),expected=expectedActiveMagicIds(character),refs=characterActiveSpellReferences(character),actual=new Set(refs.map(ref=>ref.id));
+    assert.ok(expected.size>0,`${classId}: expected active magic at level 20`);
+    assert.deepEqual(actual,expected,`${classId}: active Spell Reference coverage drift`);
+    assert.equal(actual.size,refs.length,`${classId}: duplicate active Spell Reference id`);
     assert.ok(refs.every(ref=>ref.source==="SRD 5.2.1"),`${classId}: non-SRD reference leaked into active panel`);
+    for(const ref of refs)assert.ok(expected.has(ref.id),`${classId}: unexplained active Spell Reference ${ref.id}`);
   }
 });
 
