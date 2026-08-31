@@ -1,23 +1,23 @@
 @media print{
  .premium-sheet{background:radial-gradient(circle at 18% 12%,rgba(255,255,255,.55),transparent 24%),repeating-linear-gradient(0deg,rgba(62,45,27,.025) 0 1px,transparent 1px 4px),var(--ps-paper);page-break-inside:avoid;break-inside:avoid}
- .ps-page-one.profile-caster-two-page{break-after:page;page-break-after:always}
- .ps-main-columns{display:grid;grid-template-columns:1.48in minmax(0,1fr) 2.05in;gap:.08in;min-height:0;height:100%}
+ .ps-page-one.profile-caster-two-page,.ps-page-one.profile-caster-deluxe-three-page{break-after:page;page-break-after:always}
+ .ps-main-columns{display:grid;grid-template-columns:1.48in minmax(0,1fr) 2.05in;gap:.08in;min-height:0}
  .ps-body{display:grid;grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:.055in;min-height:0}
- .profile-caster-two-page .ps-body{grid-template-rows:1fr}
- .profile-martial-one-page .ps-frame{grid-template-rows:1.72in 1fr .27in;gap:.055in}
- .profile-martial-one-page .ps-top{grid-template-columns:1.55in minmax(0,1fr) 2.3in;gap:.07in}
- .profile-martial-one-page .ps-column{gap:.045in}
- .profile-martial-one-page .ps-panel-body{padding:.04in .055in}
- .profile-martial-one-page .ps-feature-list{gap:.02in}
- .profile-martial-one-page .ps-feature-list article:nth-child(n+1){display:block}
- .profile-martial-one-page .ps-feature-list p{font-size:5.35pt;line-height:1.14;-webkit-line-clamp:2}
- .profile-martial-one-page .ps-feature-list strong{font-size:6.35pt}
- .profile-martial-one-page .ps-feature-list small{font-size:4.65pt}
- .profile-martial-one-page .ps-list{font-size:5.9pt;line-height:1.23}
- .profile-martial-one-page .ps-quick-list{font-size:5.7pt;line-height:1.23}
- .profile-caster-two-page .ps-feature-list article:nth-child(n+1){display:block}
- .profile-caster-two-page .ps-feature-list p{font-size:5.3pt;line-height:1.16;-webkit-line-clamp:2}
- .profile-caster-two-page .ps-spells p{font-size:5.5pt;line-height:1.16;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ .profile-caster-two-page .ps-body,.profile-caster-deluxe-three-page .ps-body{grid-template-rows:1fr}
+ .profile-martial-one-page .ps-frame,.profile-martial-deluxe-two-page .ps-frame{grid-template-rows:1.72in 1fr .27in;gap:.055in}
+ .profile-martial-one-page .ps-top,.profile-martial-deluxe-two-page .ps-top{grid-template-columns:1.55in minmax(0,1fr) 2.3in;gap:.07in}
+ .profile-martial-one-page .ps-column,.profile-martial-deluxe-two-page .ps-column{gap:.045in}
+ .profile-martial-one-page .ps-panel-body,.profile-martial-deluxe-two-page .ps-panel-body{padding:.04in .055in}
+ .profile-martial-one-page .ps-feature-list,.profile-martial-deluxe-two-page .ps-feature-list{gap:.02in}
+ .profile-martial-one-page .ps-feature-list article:nth-child(n+1),.profile-martial-deluxe-two-page .ps-feature-list article:nth-child(n+1){display:block}
+ .profile-martial-one-page .ps-feature-list p,.profile-martial-deluxe-two-page .ps-feature-list p{font-size:5.35pt;line-height:1.14;-webkit-line-clamp:2}
+ .profile-martial-one-page .ps-feature-list strong,.profile-martial-deluxe-two-page .ps-feature-list strong{font-size:6.35pt}
+ .profile-martial-one-page .ps-feature-list small,.profile-martial-deluxe-two-page .ps-feature-list small{font-size:4.65pt}
+ .profile-martial-one-page .ps-list,.profile-martial-deluxe-two-page .ps-list{font-size:5.9pt;line-height:1.23}
+ .profile-martial-one-page .ps-quick-list,.profile-martial-deluxe-two-page .ps-quick-list{font-size:5.7pt;line-height:1.23}
+ .profile-caster-two-page .ps-feature-list article:nth-child(n+1),.profile-caster-deluxe-three-page .ps-feature-list article:nth-child(n+1){display:block}
+ .profile-caster-two-page .ps-feature-list p,.profile-caster-deluxe-three-page .ps-feature-list p{font-size:5.3pt;line-height:1.16;-webkit-line-clamp:2}
+ .profile-caster-two-page .ps-spells p,.profile-caster-deluxe-three-page .ps-spells p{font-size:5.5pt;line-height:1.16;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
  .ps-rule-index{border:1px solid color-mix(in srgb,var(--ps-frame) 70%,#d5bf97);background:rgba(249,241,222,.86);padding:.035in .055in;min-height:0}
  .ps-rule-index h2{margin:0 0 .025in;text-align:center;font-size:6pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ps-dark)}
  .ps-rule-index>div{display:grid;grid-template-columns:repeat(4,1fr);gap:.018in .055in}
