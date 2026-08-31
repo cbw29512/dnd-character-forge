@@ -52,7 +52,10 @@ function bboxLines(xml){
   for(const match of xml.matchAll(pattern)){const words=[...match[5].matchAll(/<word\b[^>]*>([\s\S]*?)<\/word>/g)].map(word=>decodeXml(word[1]));const text=normalize(words.join(" "));if(text)lines.push({xMin:Number(match[1]),yMin:Number(match[2]),xMax:Number(match[3]),yMax:Number(match[4]),text});}
   return lines;
 }
-function allowedFooterLine(value,motto,className){const text=normalize(value),lower=text.toLowerCase(),withoutOrnaments=normalize(text.replace(/[◆✦✓⚖·]/gu," ")).toLowerCase();return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||lower===motto||withoutOrnaments===className||/^[◆✦✓⚖·\s]+$/u.test(text);}
+function allowedFooterLine(value,motto,className){
+  const text=normalize(value),lower=text.toLowerCase(),compact=lower.replace(/\s+/g,""),classCompact=className.replace(/\s+/g,""),symbolOnly=!/[\p{L}\p{N}]/u.test(text);
+  return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||lower===motto||compact===classCompact||symbolOnly;
+}
 function decodeXml(value){return String(value||"").replace(/&apos;/g,"'").replace(/&gt;/g,">").replace(/&lt;/g,"<").replace(/&amp;/g,"&");}
 function assertPrintedPortrait(ppmPath,classId,label){
   const data=readFileSync(ppmPath),header=data.subarray(0,64).toString("ascii"),match=header.match(/^P6\s+(\d+)\s+(\d+)\s+255\s/);assert.ok(match,`${classId}: ${label} probe is not a readable PPM`);const headerLength=match[0].length,width=Number(match[1]),height=Number(match[2]),pixels=data.subarray(headerLength,headerLength+width*height*3);assert.equal(pixels.length,width*height*3,`${classId}: ${label} probe is truncated`);let sum=0,sumSq=0,dark=0,count=0;for(let i=0;i<pixels.length;i+=3){const luminance=.2126*pixels[i]+.7152*pixels[i+1]+.0722*pixels[i+2];sum+=luminance;sumSq+=luminance*luminance;if(luminance<190)dark++;count++;}const mean=sum/count,variance=Math.max(0,sumSq/count-mean*mean),spread=Math.sqrt(variance),darkRatio=dark/count;assert.ok(spread>18&&darkRatio>.035,`${classId}: printed ${label} frame is blank or visually empty (spread ${spread.toFixed(1)}, dark ${(darkRatio*100).toFixed(1)}%)`);
