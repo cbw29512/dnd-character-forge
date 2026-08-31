@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { inflateSync } from "node:zlib";
 import test from "node:test";
 
@@ -51,16 +51,19 @@ function inspectPng(path,expectedWidth,expectedHeight){
   assert.equal(inflated.length,expectedHeight*(scanlineBytes+1),`${path} pixel stream must fully decode`);
 }
 
-test("public PNG assets fully decode at their advertised dimensions",()=>{
-  inspectPng("assets/character-forge-social.png",1200,630);
-  inspectPng("assets/character-forge-social-v2.png",1200,630);
+test("public install PNG assets fully decode at their advertised dimensions",()=>{
   inspectPng("assets/icon-192.png",192,192);
   inspectPng("assets/icon-512.png",512,512);
 });
 
+test("obsolete social PNG fallbacks are removed",()=>{
+  assert.equal(existsSync(new URL("../assets/character-forge-social.png",import.meta.url)),false);
+  assert.equal(existsSync(new URL("../assets/character-forge-social-v2.png",import.meta.url)),false);
+});
+
 test("social metadata uses the cache-busted Discord-safe preview",()=>{
   const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
-  assert.match(html,/property="og:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v2\.png"/);
-  assert.match(html,/property="og:image:type" content="image\/png"/);
-  assert.match(html,/name="twitter:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v2\.png"/);
+  assert.match(html,/property="og:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v3\.jpg"/);
+  assert.match(html,/property="og:image:type" content="image\/jpeg"/);
+  assert.match(html,/name="twitter:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v3\.jpg"/);
 });
