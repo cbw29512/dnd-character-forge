@@ -12,8 +12,8 @@ const DMG_2024={
   high:{"1-1":{gold:"normal starting equipment",items:{}},"2-4":{gold:"normal starting equipment",items:{common:1}},"5-10":{gold:"500 gp + 1d10 × 25 gp",items:{common:1,uncommon:1}},"11-16":{gold:"5,000 gp + 1d10 × 250 gp",items:{common:2,uncommon:3,rare:1}},"17-20":{gold:"20,000 gp + 1d10 × 250 gp",items:{common:2,uncommon:4,rare:3,veryRare:1}}}
 };
 
-const GENERAL_ELIGIBILITY=Object.freeze({classIds:null,requiresClassWeapon:false});
-const WEAPON_ELIGIBILITY=Object.freeze({classIds:null,requiresClassWeapon:true});
+const GENERAL_ELIGIBILITY=Object.freeze({classIds:null,excludedClassIds:[],requiresClassWeapon:false});
+const WEAPON_ELIGIBILITY=Object.freeze({classIds:null,excludedClassIds:["wizard"],requiresClassWeapon:true});
 export const STARTING_MAGIC_ITEM_CATALOG=Object.freeze([
   {id:"potion-of-healing",name:"Potion of Healing",rarity:"common",kind:"potion",attunement:false,eligibility:GENERAL_ELIGIBILITY},
   {id:"potion-of-climbing",name:"Potion of Climbing",rarity:"common",kind:"potion",attunement:false,eligibility:GENERAL_ELIGIBILITY},
@@ -44,10 +44,12 @@ function verifiedClassWeapon(ruleset,classId){
 export function magicItemEligibleForClass({ruleset,classId,item,usedIds=[]}){
   try{
     if(!item||typeof item!=="object")throw new Error("Magic-item eligibility requires an item record.");
-    forgeDataFor(ruleset).classes.find(value=>value.id===classId)||(()=>{throw new Error(`Unknown ${ruleset} class ${classId}.`);})();
+    const cls=forgeDataFor(ruleset).classes.find(value=>value.id===classId);
+    if(!cls)throw new Error(`Unknown ${ruleset} class ${classId}.`);
     if(usedIds.includes(item.id))return false;
-    const allowedClasses=item.eligibility?.classIds;
+    const allowedClasses=item.eligibility?.classIds,excludedClasses=item.eligibility?.excludedClassIds||[];
     if(Array.isArray(allowedClasses)&&!allowedClasses.includes(classId))return false;
+    if(excludedClasses.includes(classId))return false;
     if(item.eligibility?.requiresClassWeapon&&!verifiedClassWeapon(ruleset,classId))return false;
     return true;
   }catch(error){console.error("[magic] item eligibility check failed",error);throw error;}
