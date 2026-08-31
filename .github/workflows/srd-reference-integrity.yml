@@ -1,6 +1,16 @@
 name: SRD spell-reference integrity
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/data/spell-reference-2014-generated.js'
+      - 'src/data/spell-reference-2024-generated.js'
+      - 'tools/generate-srd-51-spell-reference.py'
+      - 'tools/generate-srd-521-spell-reference.py'
+      - 'tools/requirements-srd.txt'
+      - '.github/workflows/srd-reference-integrity.yml'
   pull_request:
     paths:
       - 'src/data/spell-reference-2014-generated.js'
