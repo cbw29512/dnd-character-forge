@@ -1,0 +1,23 @@
+name: Temporary SRD source fingerprint
+
+on:
+  push:
+    branches:
+      - feat/full-2024-spell-reference-20260830
+    paths:
+      - '.github/workflows/srd-source-fingerprint.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  fingerprint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download official SRD 5.2.1 PDF
+        run: curl --fail --location --retry 3 --output /tmp/SRD_CC_v5.2.1.pdf https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf
+      - name: Print SHA-256 and size
+        run: |
+          sha256sum /tmp/SRD_CC_v5.2.1.pdf
+          stat --printf='bytes=%s\n' /tmp/SRD_CC_v5.2.1.pdf
+          pdfinfo /tmp/SRD_CC_v5.2.1.pdf | grep '^Pages:'
