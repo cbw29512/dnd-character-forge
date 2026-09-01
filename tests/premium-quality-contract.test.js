@@ -34,12 +34,15 @@ test("screen readability layer loads after the visual landing layer",()=>{
   }catch(error){console.error("[test] screen readability contract",error);throw error;}
 });
 
-test("premium print readability overrides load last and raise dense text",()=>{
+test("premium print readability raises useful text without crowding certification footer",()=>{
   try{
     assert.ok(printLoadOrder.indexOf('premium-readability.css')>printLoadOrder.indexOf('premium-attribution.css'));
     assert.match(printReadability,/\.ps-feature-list p\{font-size:5\.9pt/);
     assert.match(printReadability,/\.ps-quick-list\{font-size:6\.1pt/);
-    assert.match(printReadability,/\.ps-footer>\.ps-license\{font-size:5\.5pt/);
+    assert.match(printReadability,/\.profile-martial-one-page \.ps-frame,[\s\S]*\.profile-martial-deluxe-two-page \.ps-frame\{grid-template-rows:1\.72in 1fr \.31in\}/);
+    assert.match(printReadability,/\.ps-footer\{font-size:6pt;line-height:1\.02;row-gap:\.006in;padding:\.018in \.08in 0\}/);
+    assert.match(printReadability,/\.ps-audit\{font-size:5\.4pt;line-height:1\.02\}/);
+    assert.match(printReadability,/\.ps-footer>\.ps-license\{font-size:5pt;line-height:1\.02;letter-spacing:-\.01em\}/);
     assert.match(printReadability,/\.ps-dossier-story p\{font-size:8\.5pt/);
     assert.match(printReadability,/\.ps-reference-card p\{font-size:6\.9pt/);
     assert.match(printReadability,/\.ps-audit-checks ol\{font-size:6\.8pt/);
