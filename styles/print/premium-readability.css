@@ -1,0 +1,85 @@
+@media print{
+  /* Readability is a product requirement, not leftover space. These overrides
+     load last and selectively raise dense proof/reference text while retaining
+     the certified fixed Letter-page profiles. */
+  .ps-stat span,.ps-track span,.ps-save-row span{font-size:5.8pt;line-height:1.08}
+  .ps-death small{font-size:6.2pt;line-height:1.12}
+  .ps-ability i>span{font-size:5.8pt}
+  .ps-ability>span{font-size:7.2pt}
+  .ps-ability small{font-size:6pt;line-height:1.15}
+  .ps-identity>small,.ps-identity dt{font-size:6.3pt}
+  .ps-identity dd{font-size:7.8pt;line-height:1.18}
+  .ps-portrait-caption{font-size:6.8pt;line-height:1.15}
+
+  .ps-list{font-size:6.5pt;line-height:1.28}
+  .ps-skill{font-size:6.45pt;line-height:1.16}
+  .ps-skill small{font-size:5.7pt}
+  .ps-attack-head{font-size:5.8pt;line-height:1.1}
+  .ps-attack-row{font-size:6.9pt;line-height:1.16}
+  .ps-attack-row span{font-size:6.2pt}
+  .ps-feature-list strong{font-size:6.7pt;line-height:1.12}
+  .ps-feature-list p{font-size:5.9pt;line-height:1.18}
+  .ps-feature-list small,.ps-source{font-size:5.6pt;line-height:1.12}
+  .ps-feat p,.ps-spells p,.ps-proficiencies p{font-size:6.35pt;line-height:1.24}
+  .ps-spell-stats span{font-size:5.7pt;line-height:1.12}
+  .ps-spellbook{font-size:5.8pt;line-height:1.15}
+  .ps-quick-list{font-size:6.1pt;line-height:1.25}
+  .ps-empty{font-size:6.2pt;line-height:1.2}
+  .ps-footer{font-size:6.15pt;line-height:1.08}
+  .ps-audit{font-size:5.75pt;line-height:1.06}
+  .ps-footer>.ps-license{font-size:5.5pt;line-height:1.08;letter-spacing:0}
+
+  .profile-martial-one-page .ps-feature-list p,
+  .profile-martial-deluxe-two-page .ps-feature-list p,
+  .profile-caster-two-page .ps-feature-list p,
+  .profile-caster-deluxe-three-page .ps-feature-list p{font-size:5.8pt;line-height:1.16}
+  .profile-martial-one-page .ps-feature-list small,
+  .profile-martial-deluxe-two-page .ps-feature-list small{font-size:5.35pt}
+  .profile-martial-one-page .ps-list,
+  .profile-martial-deluxe-two-page .ps-list{font-size:6.15pt;line-height:1.22}
+  .profile-martial-one-page .ps-quick-list,
+  .profile-martial-deluxe-two-page .ps-quick-list{font-size:6pt;line-height:1.22}
+  .profile-caster-two-page .ps-spells p,
+  .profile-caster-deluxe-three-page .ps-spells p{font-size:5.9pt;line-height:1.16}
+
+  .ps-rule-index h2{font-size:6.3pt}
+  .ps-rule-index b{font-size:5pt;line-height:1.08}
+  .ps-rule-index small{font-size:4.7pt;line-height:1.08}
+  .ps-caster-header small{font-size:6.3pt}
+  .ps-caster-header p{font-size:7.4pt;line-height:1.2}
+  .ps-caster-stats span{font-size:5.6pt;line-height:1.1}
+  .ps-section-title span,.ps-spell-key{font-size:5.6pt;line-height:1.14}
+  .ps-spell-ledger>span{font-size:5.8pt;line-height:1.08}
+  .ps-spell-ledger em{font-size:5pt}
+  .ps-caster-rule-grid b{font-size:5.05pt;line-height:1.08}
+  .ps-caster-rule-grid small{font-size:4.7pt;line-height:1.08}
+  .ps-audit-identity small,.ps-audit-identity em{font-size:4.8pt;line-height:1.08}
+  .ps-audit-identity b{font-size:5.7pt;line-height:1.1}
+  .ps-caster-audit ul{font-size:4.9pt;line-height:1.18}
+
+  .ps-dossier-story p{font-size:8.5pt;line-height:1.42;text-align:left}
+  .ps-dossier-chronicle small{font-size:5.8pt;line-height:1.12}
+  .ps-dossier-panel>div{font-size:7pt;line-height:1.32}
+  .ps-dossier-traits dt{font-size:6.1pt;line-height:1.15}
+  .ps-dossier-traits dd{font-size:6.8pt;line-height:1.3}
+  .ps-dossier-tags{font-size:6.5pt;line-height:1.32}
+  .ps-dossier-roleplay blockquote{font-size:7.6pt;line-height:1.3}
+  .ps-dossier-roleplay p{font-size:6.8pt;line-height:1.34}
+  .ps-dossier-hooks li{font-size:6.7pt;line-height:1.32}
+
+  .ps-appendix-intro,.ps-appendix-note{font-size:7pt;line-height:1.38}
+  .ps-reference-card header span{font-size:5.8pt}
+  .ps-reference-card p{font-size:6.9pt;line-height:1.4}
+  .ps-reference-card footer{font-size:5.8pt;line-height:1.15}
+  .ps-spell-appendix-head span{font-size:5.8pt}
+  .ps-spell-entry>span{font-size:5.8pt}
+  .ps-spell-entry>small{font-size:5.7pt;line-height:1.12}
+  .ps-audit-summary span{font-size:5.8pt}
+  .ps-audit-source p{font-size:6.8pt;line-height:1.38}
+  .ps-audit-url{font-size:5.7pt!important;line-height:1.28!important}
+  .ps-audit-mechanics article span{font-size:5.8pt}
+  .ps-audit-mechanics article strong{font-size:7pt;line-height:1.2}
+  .ps-audit-mechanics article small{font-size:5.7pt;line-height:1.15}
+  .ps-audit-checks ol{font-size:6.8pt;line-height:1.42}
+  .ps-appendix-footer{font-size:5.8pt;line-height:1.08}
+}
