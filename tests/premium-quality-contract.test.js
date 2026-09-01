@@ -6,6 +6,7 @@ const index=readFileSync("index.html","utf8");
 const screenReadability=readFileSync("styles/readability.css","utf8");
 const printReadability=readFileSync("styles/print/premium-readability.css","utf8");
 const printLoadOrder=readFileSync("styles/print/premium-sorcerer.css","utf8");
+const printPageOne=readFileSync("src/ui/print-page-one.js","utf8");
 const copyGuard=readFileSync("src/ui/premium-copy-guard.js","utf8");
 const library=readFileSync("src/ui/library.js","utf8");
 const finalizer=readFileSync("src/rules/finalize-character.js","utf8");
@@ -47,6 +48,14 @@ test("premium print readability raises useful text without crowding certificatio
     assert.match(printReadability,/\.ps-reference-card p\{font-size:6\.9pt/);
     assert.match(printReadability,/\.ps-audit-checks ol\{font-size:6\.8pt/);
   }catch(error){console.error("[test] print readability contract",error);throw error;}
+});
+
+test("compact rules index preserves rule names while abbreviating original provenance",()=>{
+  try{
+    assert.match(printPageOne,/function compactRuleSource\(source\)/);
+    assert.match(printPageOne,/\^Character Forge Original\\b\/i\.test\(value\)\?"Forge Original":value/);
+    assert.match(printPageOne,/esc\(compactRuleSource\(item\.source\)\)/);
+  }catch(error){console.error("[test] rules index provenance contract",error);throw error;}
 });
 
 test("rendered compatible-content copy guard is idempotent and presentation-only",()=>{
