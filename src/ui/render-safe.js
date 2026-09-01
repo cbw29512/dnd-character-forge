@@ -36,11 +36,17 @@ export function legacySafeCharacter(character){
     const preserveLegacyFightingStyles=character?.class?.id==="fighter";
     return{
       ...character,
+      // The legacy renderer still interpolates these identity labels directly
+      // into innerHTML. Escape them here even though saved-character reopening
+      // also restores canonical catalog objects; this keeps the render boundary
+      // safe if another caller ever supplies a non-canonical character object.
+      class:character.class?{...character.class,name:escapeHtml(character.class.name)}:character.class,
+      subclass:character.subclass?{...character.subclass,name:escapeHtml(character.subclass.name)}:character.subclass,
+      background:character.background?{...character.background,name:escapeHtml(character.background.name),feature:null}:character.background,
       features:[],
       feats:[],
       masteryIds:[],
       speciesTraits:[],
-      background:{...character.background,feature:null},
       fightingStyle:preserveLegacyFightingStyles?character.fightingStyle:null,
       fightingStyles:preserveLegacyFightingStyles?character.fightingStyles:[]
     };
