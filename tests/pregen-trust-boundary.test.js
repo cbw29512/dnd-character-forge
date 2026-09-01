@@ -7,6 +7,7 @@ import { deriveCharacter } from "../src/rules/derive.js";
 import { forgeDataFor } from "../src/data/forge-data.js";
 import { fingerprint, pregenFingerprintPayload } from "../src/library/fingerprint.js";
 import { verifyPregenEntry } from "../src/library/pregen-integrity.js";
+import { legacySafeCharacter } from "../src/ui/render-safe.js";
 
 function fighter2024(){
   const state=createInitialState();
@@ -35,6 +36,36 @@ test("saved pregen rejects mechanical tampering without a matching fingerprint",
   entry.character=structuredClone(character);
   entry.character.abilities.str+=1;
   await assert.rejects(()=>verifyPregenEntry(entry),/integrity check failed/i);
+});
+
+test("saved pregen restores catalog objects before derivation",async()=>{
+  const character=fighter2024(),entry=await entryFor(character),expectedHp=character.hp;
+  entry.character=structuredClone(character);
+  entry.character.class={...entry.character.class,name:'<img src=x onerror="globalThis.pwned=true">',hitDie:100};
+  entry.character.species={...entry.character.species,name:"Hostile Species",speed:999};
+  entry.character.background={...entry.character.background,name:"<script>globalThis.pwned=true</script>",skills:[]};
+  if(entry.character.subclass)entry.character.subclass={...entry.character.subclass,name:"<svg onload=globalThis.pwned=true>"};
+
+  const verified=await verifyPregenEntry(entry);
+  assert.equal(verified.character.class.name,"Fighter");
+  assert.equal(verified.character.class.hitDie,10);
+  assert.equal(verified.character.species.name,"Human");
+  assert.equal(verified.character.background.name,"Criminal");
+  if(verified.character.subclass)assert.doesNotMatch(verified.character.subclass.name,/[<>]/);
+  assert.equal(verified.character.hp,expectedHp);
+});
+
+test("legacy render adapter escapes identity labels independently of catalog restoration",()=>{
+  const character=structuredClone(fighter2024());
+  character.class.name="<img src=x onerror=alert(1)>";
+  character.background.name="<script>alert(1)</script>";
+  if(character.subclass)character.subclass.name="<svg onload=alert(1)>";
+  const safe=legacySafeCharacter(character);
+  assert.doesNotMatch(safe.class.name,/<img/i);
+  assert.match(safe.class.name,/&lt;img/i);
+  assert.doesNotMatch(safe.background.name,/<script/i);
+  assert.match(safe.background.name,/&lt;script/i);
+  if(safe.subclass)assert.doesNotMatch(safe.subclass.name,/<svg/i);
 });
 
 test("recomputed fingerprint cannot bypass the SRD Origin-feat boundary",async()=>{
