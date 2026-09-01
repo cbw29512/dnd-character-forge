@@ -4,19 +4,23 @@ import test from "node:test";
 
 const SOCIAL_IMAGE="assets/character-forge-social-v4.jpg";
 
+function readUint16BE(bytes,offset){
+  return (bytes[offset]<<8)|bytes[offset+1];
+}
+
 function jpegDimensions(bytes){
   assert.equal(bytes[0],0xff,"JPEG must start with SOI marker");
   assert.equal(bytes[1],0xd8,"JPEG must start with SOI marker");
-  assert.equal(bytes.at(-2),0xff,"JPEG must end with EOI marker");
-  assert.equal(bytes.at(-1),0xd9,"JPEG must end with EOI marker");
+  assert.equal(bytes[bytes.length-2],0xff,"JPEG must end with EOI marker");
+  assert.equal(bytes[bytes.length-1],0xd9,"JPEG must end with EOI marker");
   let offset=2;
   while(offset<bytes.length-9){
     if(bytes[offset]!==0xff){offset+=1;continue;}
     const marker=bytes[offset+1];
     if(marker===0xd8||marker===0xd9){offset+=2;continue;}
-    const length=bytes.readUInt16BE(offset+2);
+    const length=readUint16BE(bytes,offset+2);
     if(marker>=0xc0&&marker<=0xc3){
-      return {height:bytes.readUInt16BE(offset+5),width:bytes.readUInt16BE(offset+7)};
+      return {height:readUint16BE(bytes,offset+5),width:readUint16BE(bytes,offset+7)};
     }
     offset+=2+length;
   }
