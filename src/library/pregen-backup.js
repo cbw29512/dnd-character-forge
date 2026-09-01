@@ -4,6 +4,7 @@ import { verifyPregenEntry } from "./pregen-integrity.js";
 export const PREGEN_BACKUP_FORMAT="character-forge-pregen-backup";
 export const PREGEN_BACKUP_VERSION=1;
 export const MAX_PREGEN_BACKUP_ENTRIES=500;
+export const MAX_PREGEN_BACKUP_BYTES=5*1024*1024;
 
 export async function exportPregenBackup(){
   try{
@@ -23,6 +24,7 @@ export async function exportPregenBackup(){
 export async function importPregenBackup(text){
   try{
     if(typeof text!=="string"||!text.trim())throw new Error("Choose a Character Forge Pregen backup JSON file.");
+    if(new TextEncoder().encode(text).byteLength>MAX_PREGEN_BACKUP_BYTES)throw new Error(`Pregen backup files must be ${formatByteLimit(MAX_PREGEN_BACKUP_BYTES)} or smaller.`);
     const backup=JSON.parse(text);
     assertBackupEnvelope(backup);
 
@@ -62,4 +64,9 @@ function assertBackupEnvelope(backup){
     if(!Array.isArray(backup.pregens))throw new Error("Backup is missing its Pregen list.");
     if(backup.pregens.length>MAX_PREGEN_BACKUP_ENTRIES)throw new Error(`Pregen backups support at most ${MAX_PREGEN_BACKUP_ENTRIES} entries.`);
   }catch(error){console.error("[pregen-backup] envelope validation failed",error);throw error;}
+}
+
+function formatByteLimit(bytes){
+  try{return `${Math.floor(bytes/(1024*1024))} MB`;}
+  catch(error){console.error("[pregen-backup] byte limit formatting failed",error);throw error;}
 }
