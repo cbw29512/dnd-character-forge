@@ -73,9 +73,11 @@ jobs:
               -H 'Cache-Control: no-cache' \
               "${BASE_URL}?smoke=${GITHUB_SHA}" -o "${index_file}"; then
               # The class list is populated by src/app.js at runtime, so the
-              # static HTML contract must verify the class control itself—not
-              # a JavaScript-injected class name such as "Warlock".
-              if grep -Fq '<title>D&D 5e Character Forge | RAW 2014 & 2024 Pregen Generator</title>' "${index_file}" \
+              # static HTML contract verifies the class control itself. Keep
+              # source/provenance claims here aligned with customer-facing copy.
+              if grep -Fq '<title>D&D 5e Character Forge | Rules-Validated Pregen Generator</title>' "${index_file}" \
+                && grep -Fq '2014 or 2024 SRD foundations' "${index_file}" \
+                && grep -Fq 'Forge Original options' "${index_file}" \
                 && grep -Fq 'Rules edition' "${index_file}" \
                 && grep -Fq 'id="class"' "${index_file}"; then
                 site_ready=1
@@ -95,9 +97,12 @@ jobs:
 
           for asset in \
             src/app.js \
+            src/ui/premium-copy-guard.js \
             styles/base.css \
+            styles/readability.css \
             styles/print/premium-caster-columns.css \
             styles/print/premium-dossier.css \
+            styles/print/premium-readability.css \
             src/ui/print-dossier.js \
             site.webmanifest; do
             echo "[production-smoke] checking ${asset}"
@@ -107,4 +112,4 @@ jobs:
               "${BASE_URL}${asset}?smoke=${GITHUB_SHA}" -o /dev/null
           done
 
-          echo "[production-smoke] exact Pages Actions run, live Forge contract, and critical Print V3 assets are healthy."
+          echo "[production-smoke] exact Pages Actions run, live source-accurate Forge contract, and critical premium assets are healthy."
