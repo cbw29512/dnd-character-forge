@@ -20,7 +20,7 @@ function meta(name,attribute="name"){
 function pngDimensions(path){
   const bytes=fs.readFileSync(path);
   assert.deepEqual([...bytes.subarray(0,8)],[137,80,78,71,13,10,26,10],`${path} must have the PNG signature`);
-  assert.equal(bytes.subarray(-12,-8).toString("ascii"),"IEND",`${path} must end with an IEND chunk`);
+  assert.equal(bytes.subarray(-8,-4).toString("ascii"),"IEND",`${path} must end with an IEND chunk`);
   return {width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)};
 }
 
