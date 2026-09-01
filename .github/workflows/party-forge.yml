@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   party-forge-browser:
@@ -15,8 +15,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref_name }}
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -28,61 +26,6 @@ jobs:
           echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
       - name: Verify Party Forge in Chrome
         run: node tests/party-forge-browser-gate.mjs
-      - name: Materialize repaired Discord banner
-        if: github.event_name == 'pull_request' && github.head_ref == 'fix/approved-discord-banner-20260831'
-        env:
-          TARGET_BRANCH: ${{ github.head_ref }}
-        run: |
-          python3 -m pip install --quiet pillow
-          python3 - <<'PY'
-          from pathlib import Path
-          from PIL import Image
-
-          source=Path("tests/.party-forge-browser/approved-banner-upscale.png")
-          target=Path("assets/character-forge-social-v4.jpg")
-          if not source.exists():
-              raise SystemExit("recovery artifact missing")
-          with Image.open(source) as image:
-              if image.size != (1200,630):
-                  raise SystemExit(f"unexpected recovery dimensions: {image.size}")
-              image.convert("RGB").save(target,"JPEG",quality=94,optimize=True,progressive=False,subsampling=0)
-          raw=target.read_bytes()
-          if raw[:2] != b"\xff\xd8" or raw[-2:] != b"\xff\xd9":
-              raise SystemExit("repaired JPEG markers are invalid")
-          with Image.open(target) as image:
-              if image.size != (1200,630):
-                  raise SystemExit(f"unexpected JPEG dimensions: {image.size}")
-
-          index=Path("index.html")
-          text=index.read_text()
-          text=text.replace("Generate complete, rules-validated D&D 5e pregens for 2014 or 2024 SRD rules, levels 1–20, with printable sheets and RAW audits.","Generate complete, rules-validated D&D 5e pregenerated characters for 2014 or 2024 SRD rules, levels 1–20, with printable sheets and RAW audits.")
-          text=text.replace('<meta property="og:image:width" content="400">','<meta property="og:image:width" content="1200">')
-          text=text.replace('<meta property="og:image:height" content="210">','<meta property="og:image:height" content="630">')
-          index.write_text(text)
-
-          seo=Path("tests/seo-production.test.js")
-          text=seo.read_text()
-          text=text.replace('assert.equal(meta("og:image:width","property"),"400");','assert.equal(meta("og:image:width","property"),"1200");')
-          text=text.replace('assert.equal(meta("og:image:height","property"),"210");','assert.equal(meta("og:image:height","property"),"630");')
-          text=text.replace('assert.deepEqual(jpegDimensions(SOCIAL_IMAGE),{width:400,height:210});','assert.deepEqual(jpegDimensions(SOCIAL_IMAGE),{width:1200,height:630});')
-          seo.write_text(text)
-
-          static=Path("tests/static-image-integrity.test.js")
-          text=static.read_text()
-          text=text.replace('assert.deepEqual(jpegDimensions(image),{width:400,height:210});','assert.deepEqual(jpegDimensions(image),{width:1200,height:630});')
-          text=text.replace('assert.match(html,/property="og:image:width" content="400"/);','assert.match(html,/property="og:image:width" content="1200"/);')
-          text=text.replace('assert.match(html,/property="og:image:height" content="210"/);','assert.match(html,/property="og:image:height" content="630"/);')
-          static.write_text(text)
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/character-forge-social-v4.jpg index.html tests/seo-production.test.js tests/static-image-integrity.test.js
-          if git diff --cached --quiet; then
-            echo "Banner already materialized; nothing to commit."
-          else
-            git commit -m "Fix: materialize valid 1200x630 Discord banner"
-            git push origin HEAD:"$TARGET_BRANCH"
-          fi
       - name: Upload Party Forge visual review
         if: always()
         uses: actions/upload-artifact@v4
