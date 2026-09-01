@@ -25,19 +25,22 @@ function pngDimensions(path){
   assert.equal(bytes.subarray(1,4).toString("ascii"),"PNG",`${path} must be a PNG`);
   return {width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)};
 }
+function readUint16BE(bytes,offset){
+  return (bytes[offset]<<8)|bytes[offset+1];
+}
 function jpegDimensions(path){
   const bytes=fs.readFileSync(path);
   assert.equal(bytes[0],0xff,`${path} must start with JPEG SOI`);
   assert.equal(bytes[1],0xd8,`${path} must start with JPEG SOI`);
-  assert.equal(bytes.at(-2),0xff,`${path} must end with JPEG EOI`);
-  assert.equal(bytes.at(-1),0xd9,`${path} must end with JPEG EOI`);
+  assert.equal(bytes[bytes.length-2],0xff,`${path} must end with JPEG EOI`);
+  assert.equal(bytes[bytes.length-1],0xd9,`${path} must end with JPEG EOI`);
   let offset=2;
   while(offset<bytes.length-9){
     if(bytes[offset]!==0xff){offset+=1;continue;}
     const marker=bytes[offset+1];
     if(marker===0xd8||marker===0xd9){offset+=2;continue;}
-    const length=bytes.readUInt16BE(offset+2);
-    if(marker>=0xc0&&marker<=0xc3){return {height:bytes.readUInt16BE(offset+5),width:bytes.readUInt16BE(offset+7)};}
+    const length=readUint16BE(bytes,offset+2);
+    if(marker>=0xc0&&marker<=0xc3){return {height:readUint16BE(bytes,offset+5),width:readUint16BE(bytes,offset+7)};}
     offset+=2+length;
   }
   throw new Error(`${path} JPEG dimensions not found`);
