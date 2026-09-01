@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 
 const CANONICAL="https://cbw29512.github.io/dnd-character-forge/";
-const SOCIAL_IMAGE="assets/character-forge-social-v3.jpg";
+const SOCIAL_IMAGE="assets/icon-512.png";
 const index=fs.readFileSync("index.html","utf8");
 
 function meta(name,attribute="name"){
@@ -25,28 +25,6 @@ function pngDimensions(path){
   assert.equal(bytes.subarray(1,4).toString("ascii"),"PNG",`${path} must be a PNG`);
   return {width:bytes.readUInt32BE(16),height:bytes.readUInt32BE(20)};
 }
-function jpegDimensions(path){
-  const bytes=fs.readFileSync(path);
-  assert.equal(bytes[0],0xff,`${path} must start with a JPEG SOI marker`);
-  assert.equal(bytes[1],0xd8,`${path} must start with a JPEG SOI marker`);
-  assert.equal(bytes.at(-2),0xff,`${path} must end with a JPEG EOI marker`);
-  assert.equal(bytes.at(-1),0xd9,`${path} must end with a JPEG EOI marker`);
-  let offset=2;
-  while(offset+9<bytes.length){
-    if(bytes[offset]!==0xff){offset+=1;continue;}
-    while(offset<bytes.length&&bytes[offset]===0xff)offset+=1;
-    const marker=bytes[offset++];
-    if(marker===0xd8||marker===0xd9||(marker>=0xd0&&marker<=0xd7)||marker===0x01)continue;
-    if(offset+1>=bytes.length)break;
-    const length=bytes.readUInt16BE(offset);
-    if(length<2||offset+length>bytes.length)break;
-    if([0xc0,0xc1,0xc2,0xc3,0xc5,0xc6,0xc7,0xc9,0xca,0xcb,0xcd,0xce,0xcf].includes(marker)){
-      return {width:bytes.readUInt16BE(offset+5),height:bytes.readUInt16BE(offset+3)};
-    }
-    offset+=length;
-  }
-  assert.fail(`${path} must contain a JPEG frame with dimensions`);
-}
 
 test("production SEO metadata is complete and internally consistent",()=>{
   try{
@@ -65,10 +43,10 @@ test("production SEO metadata is complete and internally consistent",()=>{
     assert.equal(meta("og:title","property"),title);
     assert.equal(meta("og:description","property"),description);
     assert.equal(meta("og:image","property"),`${CANONICAL}${SOCIAL_IMAGE}`);
-    assert.equal(meta("og:image:type","property"),"image/jpeg");
-    assert.equal(meta("og:image:width","property"),"1200");
-    assert.equal(meta("og:image:height","property"),"630");
-    assert.equal(meta("twitter:card"),"summary_large_image");
+    assert.equal(meta("og:image:type","property"),"image/png");
+    assert.equal(meta("og:image:width","property"),"512");
+    assert.equal(meta("og:image:height","property"),"512");
+    assert.equal(meta("twitter:card"),"summary");
     assert.equal(meta("twitter:title"),title);
     assert.equal(meta("twitter:description"),description);
     assert.equal(meta("twitter:image"),`${CANONICAL}${SOCIAL_IMAGE}`);
@@ -128,7 +106,7 @@ test("crawl discovery files point at the canonical production URL",()=>{
 test("social and install icons have production dimensions",()=>{
   try{
     assert.ok(fs.existsSync(SOCIAL_IMAGE),"social image must exist as a public asset");
-    assert.deepEqual(jpegDimensions(SOCIAL_IMAGE),{width:1200,height:630});
+    assert.deepEqual(pngDimensions(SOCIAL_IMAGE),{width:512,height:512});
     assert.deepEqual(pngDimensions("assets/icon-192.png"),{width:192,height:192});
     assert.deepEqual(pngDimensions("assets/icon-512.png"),{width:512,height:512});
     assert.ok(fs.statSync("assets/favicon.svg").size>200);
