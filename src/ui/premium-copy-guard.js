@@ -1,17 +1,18 @@
 function applyPremiumCopyGuard(){
   try{
     const actionCopy=document.querySelector(".forge-action-copy small");
-    if(actionCopy&&/complete legal character/i.test(actionCopy.textContent||""))actionCopy.textContent="Leave everything Random for a complete rules-validated character, or set only the choices you care about.";
+    const actionText="Leave everything Random for a complete rules-validated character, or set only the choices you care about.";
+    if(actionCopy&&/complete legal character/i.test(actionCopy.textContent||"")&&actionCopy.textContent!==actionText)actionCopy.textContent=actionText;
 
     const result=document.getElementById("result"),audit=result?.querySelector(".rules-audit");
     if(!result||!audit)return;
     const compatible=/Character Forge Original/i.test(audit.textContent||"");
     if(!compatible)return;
 
-    const badge=result.querySelector(".validation-badge");
-    if(badge)badge.textContent="✓ VERIFIED · 5E COMPATIBLE";
+    const badge=result.querySelector(".validation-badge"),badgeText="✓ VERIFIED · 5E COMPATIBLE";
+    if(badge&&badge.textContent!==badgeText)badge.textContent=badgeText;
     const footer=result.querySelector(".sheet-footer span:first-child");
-    if(footer)footer.textContent=(footer.textContent||"").replace(/\bRAW\b/g,"5E COMPATIBLE");
+    if(footer&&/\bRAW\b/.test(footer.textContent||""))footer.textContent=(footer.textContent||"").replace(/\bRAW\b/g,"5E COMPATIBLE");
   }catch(error){console.error("[premium-copy-guard] render failed",error);}
 }
 
