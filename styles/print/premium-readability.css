@@ -25,9 +25,15 @@
   .ps-spellbook{font-size:5.8pt;line-height:1.15}
   .ps-quick-list{font-size:6.1pt;line-height:1.25}
   .ps-empty{font-size:6.2pt;line-height:1.2}
-  .ps-footer{font-size:6.15pt;line-height:1.08}
-  .ps-audit{font-size:5.75pt;line-height:1.06}
-  .ps-footer>.ps-license{font-size:5.5pt;line-height:1.08;letter-spacing:0}
+
+  /* The footer is a fixed two-row provenance block. Keep the legal/source line
+     at its proven readable baseline and give one-page martial sheets enough
+     vertical room so certification text never collides with attribution. */
+  .profile-martial-one-page .ps-frame,
+  .profile-martial-deluxe-two-page .ps-frame{grid-template-rows:1.72in 1fr .31in}
+  .ps-footer{font-size:6pt;line-height:1.02;row-gap:.006in;padding:.018in .08in 0}
+  .ps-audit{font-size:5.4pt;line-height:1.02}
+  .ps-footer>.ps-license{font-size:5pt;line-height:1.02;letter-spacing:-.01em}
 
   .profile-martial-one-page .ps-feature-list p,
   .profile-martial-deluxe-two-page .ps-feature-list p,
