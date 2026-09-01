@@ -1,5 +1,5 @@
 import { loadPregens, removePregen } from "../library/local-library.js";
-import { exportPregenBackup, importPregenBackup } from "../library/pregen-backup.js";
+import { exportPregenBackup, importPregenBackup, MAX_PREGEN_BACKUP_BYTES } from "../library/pregen-backup.js";
 import { verifyPregenEntry } from "../library/pregen-integrity.js";
 
 const escapeHtml=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -65,6 +65,7 @@ async function restorePregenBackup(event){
   try{
     const input=event.currentTarget,file=input?.files?.[0];
     if(!file)return;
+    if(file.size>MAX_PREGEN_BACKUP_BYTES)throw new Error(`Pregen backup files must be ${Math.floor(MAX_PREGEN_BACKUP_BYTES/(1024*1024))} MB or smaller.`);
     const result=await importPregenBackup(await file.text());
     renderPregenLibrary();
     const skipped=result.skipped?` ${result.skipped} duplicate${result.skipped===1?"":"s"} skipped.`:"";
