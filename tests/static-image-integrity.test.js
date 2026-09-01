@@ -30,7 +30,7 @@ function jpegDimensions(bytes){
 test("Discord social preview uses the approved Character Forge banner",()=>{
   const image=readFileSync(new URL(`../${SOCIAL_IMAGE}`,import.meta.url));
   assert.ok(image.length>10000,"social preview banner should be a real rendered JPEG");
-  assert.deepEqual(jpegDimensions(image),{width:400,height:210});
+  assert.deepEqual(jpegDimensions(image),{width:1200,height:630});
 });
 
 test("broken legacy social previews stay out of production",()=>{
@@ -42,8 +42,8 @@ test("social metadata uses the cache-busted Discord banner",()=>{
   const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
   assert.match(html,/property="og:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v4\.jpg"/);
   assert.match(html,/property="og:image:type" content="image\/jpeg"/);
-  assert.match(html,/property="og:image:width" content="400"/);
-  assert.match(html,/property="og:image:height" content="210"/);
+  assert.match(html,/property="og:image:width" content="1200"/);
+  assert.match(html,/property="og:image:height" content="630"/);
   assert.match(html,/name="twitter:card" content="summary_large_image"/);
   assert.match(html,/name="twitter:image" content="https:\/\/cbw29512\.github\.io\/dnd-character-forge\/assets\/character-forge-social-v4\.jpg"/);
 });
