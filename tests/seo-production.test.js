@@ -75,16 +75,20 @@ test("production SEO metadata is complete and internally consistent",()=>{
   }catch(error){console.error("[test] production SEO metadata",error);throw error;}
 });
 
-test("production shell keeps essential RAW trust copy without duplicate SEO surfaces",()=>{
+test("production shell keeps source-accurate trust copy without duplicate SEO surfaces",()=>{
   try{
     assert.equal((index.match(/<h1\b/gi)||[]).length,1,"page should expose exactly one H1");
-    assert.match(index,/complete[s]? a legal 2014 or 2024 SRD character/i);
+    assert.match(index,/supported SRD content and clearly labeled Forge Original options/i);
     assert.match(index,/12 classes · levels 1–20 · supported SRD content/i);
-    assert.match(index,/RAW accuracy-first/i);
+    assert.match(index,/Rules accuracy-first/i);
+    assert.match(index,/Random uses SRD/i);
+    assert.doesNotMatch(index,/>RAW only</i);
+    assert.doesNotMatch(index,/>RAW choices</i);
+    assert.doesNotMatch(index,/complete[s]? a legal 2014 or 2024 SRD character/i);
     assert.doesNotMatch(index,/id="structured-data"/i);
     assert.doesNotMatch(index,/"@type"\s*:\s*"FAQPage"/i);
     assert.doesNotMatch(index,/class="seo-about"/i);
-  }catch(error){console.error("[test] lean RAW trust surface",error);throw error;}
+  }catch(error){console.error("[test] lean source trust surface",error);throw error;}
 });
 
 test("CSP protects the static application without obsolete inline-script allowances",()=>{
@@ -133,10 +137,10 @@ test("social and install icons have production dimensions",()=>{
   }catch(error){console.error("[test] production icon contract",error);throw error;}
 });
 
-test("homepage trust copy reflects the verified class engine without a class-name wall",()=>{
+test("homepage trust copy reflects the verified rules engine without a class-name wall",()=>{
   try{
     assert.match(index,/12 classes · levels 1–20 · supported SRD content/i);
-    assert.match(index,/verified SRD classes, species, backgrounds, subclasses, and rules implemented for each edition/i);
+    assert.match(index,/verified SRD classes, species, backgrounds, subclasses, and rules implemented for each edition, plus clearly labeled Character Forge Original options/i);
     assert.match(index,/Unsupported content stays unavailable rather than being guessed\./i);
     assert.doesNotMatch(index,/Warlock stays unavailable/i);
     assert.doesNotMatch(index,/Fix Divine Order or Blessed Strikes only when you care/);

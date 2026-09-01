@@ -5,6 +5,7 @@ import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { deriveCharacter } from "../src/rules/derive.js";
 import { forgeDataFor } from "../src/data/forge-data.js";
+import { generateStartingMagic } from "../src/rules/magic-starting.js";
 import { fingerprint, pregenFingerprintPayload } from "../src/library/fingerprint.js";
 import { verifyPregenEntry } from "../src/library/pregen-integrity.js";
 import { legacySafeCharacter } from "../src/ui/render-safe.js";
@@ -53,6 +54,42 @@ test("saved pregen restores catalog objects before derivation",async()=>{
   assert.equal(verified.character.background.name,"Criminal");
   if(verified.character.subclass)assert.doesNotMatch(verified.character.subclass.name,/[<>]/);
   assert.equal(verified.character.hp,expectedHp);
+});
+
+test("saved pregen restores trusted starting-magic display data before rendering",async()=>{
+  const character=fighter2024();
+  character.startingMagic=generateStartingMagic({ruleset:character.ruleset,level:character.level,mode:"normal",classId:character.class.id});
+  character.startingGold=character.startingMagic.gold;
+  const expected=structuredClone(character.startingMagic),entry=await entryFor(character);
+  assert.ok(expected.items.length>0,"fixture must include a starting magic item");
+
+  entry.character=structuredClone(character);
+  entry.character.startingMagic.items[0].name='<img src=x onerror="globalThis.pwned=true">';
+  entry.character.startingMagic.items[0].source="Hostile item source";
+  entry.character.startingMagic.source="<script>globalThis.pwned=true</script>";
+
+  const verified=await verifyPregenEntry(entry);
+  assert.equal(verified.character.startingMagic.items[0].name,expected.items[0].name);
+  assert.equal(verified.character.startingMagic.items[0].id,expected.items[0].id);
+  assert.equal(verified.character.startingMagic.source,"2024 Starting Equipment at Higher Levels");
+  assert.doesNotMatch(verified.character.startingMagic.items[0].name,/[<>]/);
+  assert.doesNotMatch(verified.character.startingMagic.source,/[<>]/);
+});
+
+test("saved random starting-magic request preserves its trusted resolved label",async()=>{
+  const character=fighter2024();
+  character.startingMagic=generateStartingMagic({ruleset:character.ruleset,level:character.level,mode:"normal",classId:character.class.id});
+  character.startingMagic.requestedMode="random";
+  character.startingMagic.source="Random campaign magic — resolved to normal";
+  character.startingGold=character.startingMagic.gold;
+  const entry=await entryFor(character);
+  entry.character=structuredClone(character);
+  entry.character.startingMagic.source="<svg onload=alert(1)>";
+
+  const verified=await verifyPregenEntry(entry);
+  assert.equal(verified.character.startingMagic.requestedMode,"random");
+  assert.equal(verified.character.startingMagic.mode,"normal");
+  assert.equal(verified.character.startingMagic.source,"Random campaign magic — resolved to normal");
 });
 
 test("legacy render adapter escapes identity labels independently of catalog restoration",()=>{

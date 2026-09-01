@@ -9,6 +9,9 @@ import { validateDruidCharacter } from "./druid-validation.js";
 import { validatePaladinCharacter } from "./paladin-validation.js";
 import { validateRangerCharacter } from "./ranger-validation.js";
 import { buildRulesAudit } from "./audit-router.js";
+import { generateStartingMagic } from "./magic-starting.js";
+
+const SAVED_MAGIC_MODES=new Set(["none","low","normal","high"]);
 
 export function finalizeExistingCharacter(input){
   try{
@@ -21,7 +24,8 @@ export function finalizeExistingCharacter(input){
     // the embedded catalog objects are not authoritative. Rehydrate those
     // objects from the current Forge catalog before any derivation or rendering
     // so edited labels or mechanical fields cannot cross the trust boundary.
-    const character=restoreCatalogObjects(saved,data);
+    const catalogRestored=restoreCatalogObjects(saved,data);
+    const character=restoreStartingMagic(catalogRestored);
     const derived=deriveCharacter(character,data);
     const baseValidation=validateCharacter(derived,derived.sourceMode),extraErrors=classSpecificErrors(derived);
     const validation=Object.freeze({valid:baseValidation.errors.length+extraErrors.length===0,errors:Object.freeze([...baseValidation.errors,...extraErrors])});
@@ -43,6 +47,33 @@ function restoreCatalogObjects(character,data){
     }
     return{...character,class:cls,species,background,subclass};
   }catch(error){console.error("[finalize-character] catalog restoration failed",error);throw error;}
+}
+
+function restoreStartingMagic(character){
+  try{
+    const saved=character.startingMagic;
+    if(!saved)return character;
+    const resolvedMode=saved.mode,requestedMode=saved.requestedMode??resolvedMode;
+    if(!SAVED_MAGIC_MODES.has(resolvedMode))throw new Error(`Saved starting-magic mode is unavailable: ${String(resolvedMode||"unknown")}.`);
+    if(requestedMode!=="random"&&requestedMode!==resolvedMode)throw new Error("Saved starting-magic request no longer matches its resolved campaign mode.");
+
+    // Regenerate the resource package from trusted rules/catalog data. The
+    // fingerprint protects gold and item identity, but presentation fields such
+    // as item names and source labels are intentionally not authoritative.
+    const canonical=generateStartingMagic({ruleset:character.ruleset,level:character.level,mode:resolvedMode,classId:character.class.id});
+    if(resourceSignature(saved)!==resourceSignature(canonical))throw new Error("Saved starting resources no longer match the current verified starting-magic catalog.");
+    const source=requestedMode==="random"?`Random campaign magic — resolved to ${resolvedMode}`:canonical.source;
+    return{...character,startingMagic:{...canonical,requestedMode,source},startingGold:canonical.gold};
+  }catch(error){console.error("[finalize-character] starting magic restoration failed",error);throw error;}
+}
+
+function resourceSignature(magic){
+  try{
+    return JSON.stringify({
+      gold:magic?.gold??null,
+      items:(magic?.items||[]).map(item=>({id:item.id||item.name,rarity:item.rarity||null,attunement:Boolean(item.attunement)}))
+    });
+  }catch(error){console.error("[finalize-character] starting resource signature failed",error);throw error;}
 }
 
 function requireCatalogEntry(entries,id,label){

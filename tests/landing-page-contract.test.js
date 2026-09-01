@@ -16,11 +16,24 @@ test("landing page puts the actual Forge in the launch experience",()=>{
     assert.match(html,/class="forge-panel"/);
     assert.match(html,/class="launch-cta"/);
     assert.match(html,/Want a character immediately\?/);
-    assert.match(html,/Leave every choice Random and Forge will build a complete legal character\./);
-    assert.match(html,/class="random-note">RAW only</);
+    assert.match(html,/Leave every choice Random and Forge will build a complete rules-validated character\./);
+    assert.match(html,/class="random-note">Random uses SRD</);
     assert.equal((html.match(/id="forgeButton"/g)||[]).length,1,"Forge button must remain unique");
     assert.ok(html.indexOf('id="forgeButton"')<html.indexOf('class="field-grid"'),"Forge action should appear before the long choice list");
   }catch(error){console.error("[test] landing launch contract",error);throw error;}
+});
+
+test("landing trust language separates SRD content from Forge Original content",()=>{
+  try{
+    assert.match(html,/supported SRD content and clearly labeled Forge Original options/i);
+    assert.match(html,/plus clearly labeled Character Forge Original options/i);
+    assert.match(html,/Random uses SRD/);
+    assert.match(html,/Rules accuracy-first/);
+    assert.match(html,/Rules validated/);
+    assert.doesNotMatch(html,/>RAW only</i);
+    assert.doesNotMatch(html,/>RAW choices</i);
+    assert.doesNotMatch(html,/complete[s]? a legal 2014 or 2024 SRD character/i);
+  }catch(error){console.error("[test] landing source accuracy contract",error);throw error;}
 });
 
 test("landing remains a deliberate pre-generation state until the user Forges",()=>{
@@ -28,6 +41,7 @@ test("landing remains a deliberate pre-generation state until the user Forges",(
     assert.match(html,/class="forge-empty-state"/);
     assert.match(html,/YOUR HERO AWAITS/);
     assert.match(html,/Choose what matters\.<br>We handle the rules\./);
+    assert.match(html,/Invalid or unsupported combinations are rejected before display/);
     const boot=app.match(/function boot\(\)\{[\s\S]*?\n\}\n\nfunction createMagicControls/)?.[0]||"";
     assert.match(boot,/addEventListener\("click",forge\)/);
     assert.doesNotMatch(boot,/;forge\(\);/,"boot must not replace the landing state with an automatic random character");

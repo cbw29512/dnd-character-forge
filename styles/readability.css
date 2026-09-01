@@ -1,0 +1,49 @@
+/* Premium readability floor for customer-facing screen text.
+   Keep dense labels compact, but never rely on tiny type to make the UI fit. */
+.header-proof,
+.random-note,
+.trust-row span,
+.field,
+.field small,
+.field-break small,
+.choice-summary,
+.coverage-note,
+.magic-guidance,
+.library-meta,
+.library-badge,
+.result-label span,
+.site-footer,
+.affiliation-note,
+.license-notice,
+.product-build-info{
+  line-height:1.45;
+}
+
+.field small,
+.field-break small,
+.choice-summary,
+.magic-guidance,
+.coverage-note p,
+.library-meta,
+.result-label span,
+.affiliation-note,
+.license-notice p,
+.product-build-info{
+  font-size:max(.75rem,12px);
+}
+
+.random-note,
+.trust-row span,
+.library-badge{
+  font-size:max(.75rem,12px);
+}
+
+@media (max-width:680px){
+  .brand small{font-size:.72rem}
+  .trust-row span{font-size:.75rem;line-height:1.3}
+  .field{font-size:.78rem}
+  .field small,.field-break small{font-size:.75rem;line-height:1.4}
+  .workflow-steps span{font-size:.72rem;line-height:1.3}
+  .panel-intro,.choice-summary,.magic-guidance,.coverage-note,.library-meta{font-size:.76rem;line-height:1.45}
+  .section-kicker{font-size:.72rem;line-height:1.25}
+}

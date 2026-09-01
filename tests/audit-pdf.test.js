@@ -39,12 +39,13 @@ test("Homebrew characters disclose Homebrew in the underlying rules audit",()=>{
   }catch(error){console.error("[test] Homebrew rules audit",error);throw error;}
 });
 
-test("production keeps rule-audit rendering and PDF export without duplicate audit marketing copy",()=>{
+test("production keeps rule-audit rendering and PDF export without overclaiming metadata",()=>{
   try{
     const html=readFileSync(new URL("../index.html",import.meta.url),"utf8");
     const render=readFileSync(new URL("../src/ui/render.js",import.meta.url),"utf8");
     assert.match(html,/styles\/audit\.css/);
-    assert.match(html,/content="[^"]*RAW audits[^"]*"/i);
+    assert.match(html,/content="[^"]*rules-validated D&D 5e characters[^"]*Forge Original options[^"]*"/i);
+    assert.doesNotMatch(html,/content="[^"]*RAW audits[^"]*"/i);
     assert.match(render,/Export PDF \/ Print/);
     assert.match(render,/Rules Audit/);
     assert.doesNotMatch(html,/printable rules audit/i);
