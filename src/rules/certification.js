@@ -1,7 +1,7 @@
 export const FORGE_BUILD=Object.freeze({
-  id:"CF-2026.08.30-RLC2",
+  id:"CF-2026.09.03-RLC2",
   label:"Rules Lawyer Certification v2",
-  version:"2026.08.30.2"
+  version:"2026.09.03.2"
 });
 
 export function buildRulesLawyerCertification(character){
