@@ -24,6 +24,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Syntax-check Party Forge print path
+        run: node --check src/rules/party-forge.js && node --check src/ui/print.js && node --check tests/party-print-browser-gate.mjs
       - name: Verify Party Forge RAW contract
         run: node --test tests/party-forge.test.js
       - name: Locate headless Chrome
