@@ -1,6 +1,8 @@
 import { createInitialState, MAGIC_MODES } from "../state.js";
 import { SOURCE } from "../schema.js";
 import { FORGE_2014, FORGE_2024 } from "../data/forge-data.js";
+import { isForgeOriginalBackground } from "../data/original-backgrounds.js";
+import { buildRulesLawyerCertification } from "./certification.js";
 import { generateCharacter } from "./generator.js";
 import { generateStartingMagic } from "./magic-starting.js";
 import { pick } from "./random.js";
@@ -28,6 +30,12 @@ const ROLE_POOLS=Object.freeze({
 const FALLBACK_NAMES=Object.freeze(["Aster Vale","Bram Stone","Cira Dawn","Dain Rowan","Elara Reed","Fen Ash","Galen Hart","Iris Thorn","Jora Flint","Kestrel Moon","Lyra Voss","Marek Grey"]);
 
 function dataFor(ruleset){return ruleset==="2014"?FORGE_2014:FORGE_2024;}
+
+function rawBackgroundsFor(data){
+  const backgrounds=(data?.backgrounds||[]).filter(background=>!isForgeOriginalBackground(background));
+  if(!backgrounds.length)throw new Error("Party Forge could not find a verified RAW background pool.");
+  return backgrounds;
+}
 
 function validatePartyRequest({ruleset,level,size,composition}){
   if(!["2014","2024"].includes(ruleset))throw new Error("Party Forge supports the 2014 and 2024 verified SRD rulesets only.");
@@ -68,7 +76,7 @@ function uniquePartyName(character,index,usedNames){
 export function generateParty({ruleset="2024",level=1,size=4,composition=PARTY_COMPOSITIONS.BALANCED,allowDuplicateClasses=false,magicMode=MAGIC_MODES.RANDOM_MAGIC}={}){
   try{
     validatePartyRequest({ruleset,level,size,composition});
-    const data=dataFor(ruleset),classIds=data.classes.map(cls=>cls.id);
+    const data=dataFor(ruleset),classIds=data.classes.map(cls=>cls.id),rawBackgrounds=rawBackgroundsFor(data);
     const selections=composition===PARTY_COMPOSITIONS.BALANCED?chooseBalancedClasses(classIds,size,allowDuplicateClasses):chooseRandomClasses(classIds,size,allowDuplicateClasses);
     const usedNames=new Set();
     const members=selections.map(({classId,role},index)=>{
@@ -76,9 +84,11 @@ export function generateParty({ruleset="2024",level=1,size=4,composition=PARTY_C
       state.sourceMode=SOURCE.RAW;
       state.ruleset=ruleset;
       state.magicMode=magicMode;
-      state.constraints={...state.constraints,level:String(level),class:classId};
+      state.constraints={...state.constraints,level:String(level),class:classId,background:pick(rawBackgrounds).id};
       let character=generateCharacter(state);
       if(!character.validation?.valid)throw new Error(`Party member ${index+1} failed RAW validation.`);
+      const certification=buildRulesLawyerCertification(character);
+      if(!certification.rawCertified)throw new Error(`Party member ${index+1} failed Rules Lawyer certification.`);
       character={...character,startingMagic:generateStartingMagic({ruleset,level:character.level,mode:magicMode,classId:character.class.id})};
       character.startingGold=character.startingMagic.gold;
       character=uniquePartyName(character,index,usedNames);
