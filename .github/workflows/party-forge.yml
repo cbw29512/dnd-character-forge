@@ -33,12 +33,16 @@ jobs:
           echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
       - name: Verify Party Forge in Chrome
         run: node tests/party-forge-browser-gate.mjs
+      - name: Verify direct Party Forge print in Chrome
+        run: node tests/party-print-browser-gate.mjs
       - name: Upload Party Forge visual review
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: party-forge-browser-review
-          path: tests/.party-forge-browser/*.png
+          path: |
+            tests/.party-forge-browser/*.png
+            tests/.party-print-browser/*.png
           if-no-files-found: warn
           include-hidden-files: true
           retention-days: 7
