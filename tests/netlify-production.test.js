@@ -74,7 +74,7 @@ test("production 404 is explicit and safe",()=>{
 test("production smoke workflow delegates to syntax-checkable host-aware script",()=>{
   const workflow=read(".github/workflows/production-smoke.yml");
   const script=read("scripts/production-smoke.sh");
-  assert.match(workflow,/actions\/checkout@v4/);
+  assert.match(workflow,/actions\/checkout@v7/);
   assert.match(workflow,/vars\.NETLIFY_PRODUCTION_URL/);
   assert.match(workflow,/bash scripts\/production-smoke\.sh/);
   assert.match(script,/build-info\.json/);
