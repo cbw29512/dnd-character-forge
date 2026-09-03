@@ -1,0 +1,28 @@
+name: Visible Random diversity certification
+
+on:
+  push:
+    branches: [cert/random-visible-diversity-20260903]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visible-random-diversity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diversity-cert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax-check Random diversity paths
+        run: node --check src/rules/random.js && node --check tests/random-visible-diversity.test.js && node --check tests/random-names.test.js
+      - name: Verify Random diversity and existing generator contracts
+        run: node --test tests/random-visible-diversity.test.js tests/random-names.test.js tests/random-v2.test.js tests/party-forge.test.js
