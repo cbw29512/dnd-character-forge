@@ -31,17 +31,17 @@ function verify(testCase){
     assert.ok(character.feats.some(feat=>feat.id===testCase.featId&&feat.advancementFeat),`${slug}: selected advancement feat missing from character`);
     assert.equal(model.packet.totalPages,1,`${slug}: Fighter feat packet must remain one page`);
     assert.equal(model.feat?.name,testCase.featName,`${slug}: feat block lost advancement feat`);
-    assertPhrase(model.feat?.source,testCase.source,`${slug}: feat block source is wrong`);
-    if(testCase.page)assertPhrase(model.feat?.source,`p.${testCase.page}`,`${slug}: feat source page is wrong`);
-    if(testCase.section){assertPhrase(model.feat?.source,testCase.section,`${slug}: feat source section is wrong`);assert.equal(normalize(model.feat?.source).toLowerCase().includes(`p.${testCase.section.toLowerCase()}`),false,`${slug}: named source section was incorrectly formatted as a page`);}
+    assertPhrase(model.feat?.source,testCase.source,`${slug}: feat model source is wrong`);
+    if(testCase.page)assertPhrase(model.feat?.source,`p.${testCase.page}`,`${slug}: feat model source page is wrong`);
+    if(testCase.section){assertPhrase(model.feat?.source,testCase.section,`${slug}: feat model source section is wrong`);assert.equal(normalize(model.feat?.source).toLowerCase().includes(`p.${testCase.section.toLowerCase()}`),false,`${slug}: named source section was incorrectly formatted as a page`);}
     if(testCase.speed){assert.equal(character.speed,testCase.speed,`${slug}: feat Speed effect is wrong`);assert.equal(model.stats.speed,`${testCase.speed} ft`,`${slug}: print model lost feat Speed effect`);}
     if(testCase.tool)assert.ok(character.toolProficiencies.includes(testCase.tool),`${slug}: feat-granted tool proficiency missing`);
 
     const renderedHtml=normalizeHtml(target.innerHTML);
     assert.ok(renderedHtml.includes(testCase.featName.toLowerCase()),`${slug}: rendered sheet lost feat name`);
-    assertPhrase(renderedHtml,testCase.source,`${slug}: rendered sheet lost feat source`);
-    if(testCase.section){assertPhrase(renderedHtml,testCase.section,`${slug}: rendered sheet lost named source section`);assert.equal(renderedHtml.includes(`p.${testCase.section.toLowerCase()}`),false,`${slug}: rendered sheet shows fake page prefix for named source section`);}
-    if(testCase.raw){assert.ok(renderedHtml.includes("raw integrity"),`${slug}: RAW integrity footer missing`);assert.equal(renderedHtml.includes("compatible content"),false,`${slug}: RAW feat was mislabeled compatible`);}else{assert.ok(renderedHtml.includes("5e compatible"),`${slug}: compatible label missing`);assert.ok(renderedHtml.includes("compatible content"),`${slug}: compatible footer missing`);assert.equal(renderedHtml.includes("raw integrity"),false,`${slug}: Forge Original feat falsely claims RAW integrity`);}
+    if(testCase.page)assert.equal(renderedHtml.includes(`p.${testCase.page}`),false,`${slug}: player sheet leaked feat page locator`);
+    if(testCase.section)assert.equal(renderedHtml.includes(testCase.section.toLowerCase()),false,`${slug}: player sheet leaked internal source section`);
+    if(testCase.raw){assert.ok(renderedHtml.includes("raw integrity"),`${slug}: RAW integrity footer missing`);assert.equal(renderedHtml.includes("compatible content"),false,`${slug}: RAW feat was mislabeled compatible`);}else{assert.ok(renderedHtml.includes("5e compatible"),`${slug}: compatible label missing`);assert.ok(renderedHtml.includes("character forge original"),`${slug}: Forge Original label missing`);assert.ok(renderedHtml.includes("compatible content"),`${slug}: compatible footer missing`);assert.equal(renderedHtml.includes("raw integrity"),false,`${slug}: Forge Original feat falsely claims RAW integrity`);}
 
     const htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),rawTxtPath=path.join(OUT,`${slug}-raw.txt`),pngPrefix=path.join(OUT,`${slug}-page`);
     writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
@@ -50,11 +50,12 @@ function verify(testCase){
     execFileSync("pdftotext",["-layout",pdfPath,txtPath]);execFileSync("pdftotext",["-raw",pdfPath,rawTxtPath]);execFileSync("pdftoppm",["-png","-r","96",pdfPath,pngPrefix]);
     const layout=normalize(readFileSync(txtPath,"utf8")),raw=normalize(readFileSync(rawTxtPath,"utf8")),fold=`${layout} ${raw}`.toLowerCase();
     assert.ok(layout.length>500,`${slug}: rendered PDF is suspiciously sparse (${layout.length} chars)`);
-    assertPhrase(fold,testCase.featName,`${slug}: PDF lost feat name`);assertPhrase(fold,testCase.source,`${slug}: PDF lost feat source`);
-    if(testCase.section){assertPhrase(fold,testCase.section,`${slug}: PDF lost named source section`);assert.equal(fold.includes(`p.${testCase.section.toLowerCase()}`),false,`${slug}: PDF shows fake page prefix for named source section`);}
+    assertPhrase(fold,testCase.featName,`${slug}: PDF lost feat name`);
+    if(testCase.page)assert.equal(fold.includes(`p.${testCase.page}`),false,`${slug}: PDF leaked feat page locator`);
+    if(testCase.section)assert.equal(fold.includes(testCase.section.toLowerCase()),false,`${slug}: PDF leaked internal source section`);
     if(testCase.raw){assertPhrase(fold,"RAW integrity",`${slug}: PDF lost RAW integrity`);assert.equal(fold.includes("compatible content"),false,`${slug}: PDF mislabeled RAW feat compatible`);}else{assertPhrase(fold,"Compatible content",`${slug}: PDF lost compatible-content footer`);assertPhrase(fold,"Character Forge Original",`${slug}: PDF lost original provenance`);assert.equal(fold.includes("raw integrity"),false,`${slug}: PDF falsely claims RAW integrity`);}
     if(testCase.speed)assertPhrase(fold,`${testCase.speed} ft`,`${slug}: PDF lost feat Speed effect`);if(testCase.tool)assertPhrase(fold,testCase.tool,`${slug}: PDF lost feat-granted tool`);
-    console.log(`[feat-browser] ${slug}: 1 Letter page · ${testCase.raw?"RAW":"compatible"} feat provenance visible`);
+    console.log(`[feat-browser] ${slug}: 1 Letter page · ${testCase.raw?"RAW":"compatible"} feat provenance retained in model with clean player print`);
   }catch(error){console.error(`[feat-browser] failed ${testCase.ruleset} ${testCase.featId}`,error);throw error;}
 }
 
