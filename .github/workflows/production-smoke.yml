@@ -18,49 +18,77 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 6
     steps:
-      - name: Verify exact Pages deployment and live Character Forge
+      - name: Verify exact production deployment and live Character Forge
         shell: bash
         env:
-          BASE_URL: https://cbw29512.github.io/dnd-character-forge/
+          NETLIFY_PRODUCTION_URL: ${{ vars.NETLIFY_PRODUCTION_URL }}
+          FALLBACK_PAGES_URL: https://cbw29512.github.io/dnd-character-forge/
           GH_TOKEN: ${{ github.token }}
         run: |
           set -Eeuo pipefail
           trap 'echo "::error::Production smoke failed at line ${LINENO}."' ERR
 
-          runs_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=50"
-          runs_file="$(mktemp)"
           index_file="$(mktemp)"
+          headers_file="$(mktemp)"
           deployment_ready=0
 
-          for attempt in $(seq 1 24); do
-            echo "[production-smoke] Pages Actions attempt ${attempt}/24 for ${GITHUB_SHA}"
-            if curl --fail --silent --show-error --location \
-              --connect-timeout 10 --max-time 20 \
-              -H 'Accept: application/vnd.github+json' \
-              -H 'X-GitHub-Api-Version: 2026-03-10' \
-              -H "Authorization: Bearer ${GH_TOKEN}" \
-              "${runs_api}" -o "${runs_file}"; then
-              read -r pages_status pages_conclusion < <(
-                python3 -c 'import json,sys; p=json.load(open(sys.argv[1], encoding="utf-8")); m=[r for r in p.get("workflow_runs",[]) if r.get("name")=="pages build and deployment" and r.get("head_sha")==sys.argv[2]]; r=max(m,key=lambda x:x.get("run_number",0)) if m else {}; print(r.get("status","missing"), r.get("conclusion") or "missing")' "${runs_file}" "${GITHUB_SHA}"
-              )
+          if [[ -n "${NETLIFY_PRODUCTION_URL}" ]]; then
+            BASE_URL="${NETLIFY_PRODUCTION_URL%/}/"
+            DEPLOY_MODE="netlify"
+          else
+            BASE_URL="${FALLBACK_PAGES_URL}"
+            DEPLOY_MODE="pages"
+          fi
 
-              echo "[production-smoke] exact Pages Actions status=${pages_status} conclusion=${pages_conclusion}"
-              if [[ "${pages_status}" == "completed" && "${pages_conclusion}" == "success" ]]; then
-                deployment_ready=1
-                break
+          echo "[production-smoke] mode=${DEPLOY_MODE} base=${BASE_URL} sha=${GITHUB_SHA}"
+
+          if [[ "${DEPLOY_MODE}" == "pages" ]]; then
+            runs_api="https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/runs?head_sha=${GITHUB_SHA}&per_page=50"
+            runs_file="$(mktemp)"
+            for attempt in $(seq 1 24); do
+              echo "[production-smoke] Pages Actions attempt ${attempt}/24 for ${GITHUB_SHA}"
+              if curl --fail --silent --show-error --location \
+                --connect-timeout 10 --max-time 20 \
+                -H 'Accept: application/vnd.github+json' \
+                -H 'X-GitHub-Api-Version: 2026-03-10' \
+                -H "Authorization: Bearer ${GH_TOKEN}" \
+                "${runs_api}" -o "${runs_file}"; then
+                read -r pages_status pages_conclusion < <(
+                  python3 -c 'import json,sys; p=json.load(open(sys.argv[1], encoding="utf-8")); m=[r for r in p.get("workflow_runs",[]) if r.get("name")=="pages build and deployment" and r.get("head_sha")==sys.argv[2]]; r=max(m,key=lambda x:x.get("run_number",0)) if m else {}; print(r.get("status","missing"), r.get("conclusion") or "missing")' "${runs_file}" "${GITHUB_SHA}"
+                )
+                echo "[production-smoke] exact Pages status=${pages_status} conclusion=${pages_conclusion}"
+                if [[ "${pages_status}" == "completed" && "${pages_conclusion}" == "success" ]]; then
+                  deployment_ready=1
+                  break
+                fi
+                if [[ "${pages_status}" == "completed" && "${pages_conclusion}" != "success" ]]; then
+                  echo "::error::Exact Pages workflow completed with ${pages_conclusion}."
+                  exit 1
+                fi
               fi
-              if [[ "${pages_status}" == "completed" && "${pages_conclusion}" != "success" ]]; then
-                echo "::error::Exact Pages workflow completed with ${pages_conclusion}."
-                exit 1
+              sleep 10
+            done
+          else
+            build_info="$(mktemp)"
+            for attempt in $(seq 1 24); do
+              echo "[production-smoke] Netlify exact-build attempt ${attempt}/24"
+              if curl --fail --silent --show-error --location \
+                --connect-timeout 10 --max-time 20 \
+                -H 'Cache-Control: no-cache' \
+                "${BASE_URL}build-info.json?smoke=${GITHUB_SHA}" -o "${build_info}"; then
+                deployed_sha="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("commit",""))' "${build_info}")"
+                echo "[production-smoke] Netlify reports commit=${deployed_sha}"
+                if [[ "${deployed_sha}" == "${GITHUB_SHA}" ]]; then
+                  deployment_ready=1
+                  break
+                fi
               fi
-            else
-              echo "[production-smoke] exact Pages Actions run is not available yet."
-            fi
-            sleep 10
-          done
+              sleep 10
+            done
+          fi
 
           if [[ "${deployment_ready}" -ne 1 ]]; then
-            echo "::error::No successful Pages workflow completed for exact SHA ${GITHUB_SHA}."
+            echo "::error::No successful ${DEPLOY_MODE} deployment reached exact SHA ${GITHUB_SHA}."
             exit 1
           fi
 
@@ -72,9 +100,6 @@ jobs:
               --connect-timeout 10 --max-time 20 \
               -H 'Cache-Control: no-cache' \
               "${BASE_URL}?smoke=${GITHUB_SHA}" -o "${index_file}"; then
-              # The class list is populated by src/app.js at runtime, so the
-              # static HTML contract verifies the class control itself. Keep
-              # source/provenance claims here aligned with customer-facing copy.
               if grep -Fq '<title>D&D 5e Character Forge | Rules-Validated Pregen Generator</title>' "${index_file}" \
                 && grep -Fq '2014 or 2024 SRD foundations' "${index_file}" \
                 && grep -Fq 'Forge Original options' "${index_file}" \
@@ -83,9 +108,7 @@ jobs:
                 site_ready=1
                 break
               fi
-              echo "[production-smoke] public response does not match the expected Forge contract yet."
-            else
-              echo "[production-smoke] public site is not responding successfully yet."
+              echo "[production-smoke] response does not match the expected Forge contract yet."
             fi
             sleep 10
           done
@@ -104,7 +127,8 @@ jobs:
             styles/print/premium-dossier.css \
             styles/print/premium-readability.css \
             src/ui/print-dossier.js \
-            site.webmanifest; do
+            site.webmanifest \
+            share/; do
             echo "[production-smoke] checking ${asset}"
             curl --fail --silent --show-error --location \
               --connect-timeout 10 --max-time 20 \
@@ -112,4 +136,21 @@ jobs:
               "${BASE_URL}${asset}?smoke=${GITHUB_SHA}" -o /dev/null
           done
 
-          echo "[production-smoke] exact Pages Actions run, live source-accurate Forge contract, and critical premium assets are healthy."
+          if [[ "${DEPLOY_MODE}" == "netlify" ]]; then
+            curl --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              -D "${headers_file}" -o /dev/null "${BASE_URL}"
+            grep -Eiq '^x-content-type-options:[[:space:]]*nosniff' "${headers_file}"
+            grep -Eiq '^referrer-policy:[[:space:]]*strict-origin-when-cross-origin' "${headers_file}"
+            grep -Eiq '^content-security-policy:.*script-src .self.' "${headers_file}"
+
+            not_found_body="$(mktemp)"
+            not_found_code="$(curl --silent --show-error --location \
+              --connect-timeout 10 --max-time 20 \
+              -o "${not_found_body}" -w '%{http_code}' \
+              "${BASE_URL}missing-${GITHUB_SHA}")"
+            [[ "${not_found_code}" == "404" ]]
+            grep -Fq 'That page isn’t in the Forge.' "${not_found_body}"
+          fi
+
+          echo "[production-smoke] exact ${DEPLOY_MODE} deployment, live Forge contract, routes, and critical assets are healthy."
