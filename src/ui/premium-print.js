@@ -30,7 +30,9 @@ export function renderPremiumPrintSheet(character,target){
       .replace(/<span class="ps-audit">/g,`<span class="ps-audit">${certification} · `)
       .replace(/<\/footer>/g,`<span class="ps-license">${attribution}</span></footer>`);
     const forgeOriginal=!model.audit.rawIntegrity&&String(model.audit.license||"").includes("Character Forge Original");
-    target.innerHTML=forgeOriginal?packet.replace(/ · RAW · /g," · 5E Compatible · ").replace(/RAW integrity/g,"Character Forge Original · Compatible content"):packet;
+    target.innerHTML=forgeOriginal
+      ?packet.replace(/ · RAW · /g," · 5E Compatible · ").replace(/RAW integrity|Compatible content/g,"Character Forge Original · Compatible content").replace(/Custom content/g,"Character Forge Original · Custom content")
+      :packet;
     return model;
   }catch(error){
     console.error("[premium-print] render failed",error);
