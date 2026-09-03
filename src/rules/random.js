@@ -39,13 +39,13 @@ export function pick(items) {
 
     pickSerial += 1;
     const category = categoryFor(eligible);
-    const recent = category === "background" ? recentFor(category) : [];
+    const recent = remembersCategory(category) ? recentFor(category) : [];
     const fresh = recent.length && eligible.length > 1 ? eligible.filter(item => !recent.includes(choiceKey(item))) : eligible;
     const pool = fresh.length ? fresh : eligible;
     const selected = category === "background" ? pickBackground(pool) : pool[Math.floor(Math.random() * pool.length)];
 
     updateContext(category, selected);
-    if (category === "background") remember(category, selected, eligible.length);
+    if (remembersCategory(category)) remember(category, selected, eligible.length);
     return selected;
   } catch (error) { console.error("[random] pick failed", error); throw error; }
 }
@@ -133,6 +133,7 @@ function remember(category,item,eligibleCount){
   }catch(error){console.error("[random] recent-choice update failed",error);}
 }
 function recentFor(category){return recentByCategory.get(category)||[];}
+function remembersCategory(category){return category==="class"||category==="species"||category==="background"||String(category||"").startsWith("subclass:");}
 function choiceKey(item){return typeof item==="object"&&item!==null?String(item.id||item.name||JSON.stringify(item)):String(item);}
 function isLegacyGeneratorNamePool(items){return items.length===LEGACY_GENERATOR_NAME_POOL.size&&items.every(item=>typeof item==="string"&&LEGACY_GENERATOR_NAME_POOL.has(item));}
 function pickFreshNamePart(pool,recent){
