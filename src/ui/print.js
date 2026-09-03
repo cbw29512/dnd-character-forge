@@ -1,5 +1,6 @@
 import { getLastGeneratedParty } from "../rules/party-forge.js";
 import { renderPremiumPrintSheet } from "./premium-print.js";
+import { renderPartyQuickReference } from "./party-print-summary.js";
 
 function safeTitle(value){
   try{return String(value||"Character").replace(/[\\/:*?"<>|]+/g," ").replace(/\s+/g," ").trim();}
@@ -13,7 +14,7 @@ function printRoot(){
   }catch(error){console.error("[print] premium root failed",error);throw error;}
 }
 
-function exportValidatedPackets(characters,title){
+function exportValidatedPackets(characters,title,{summaryHtml=""}={}){
   const originalTitle=document.title,root=printRoot();
   let cleaned=false,cleanupTimer=null;
   const cleanup=()=>{
@@ -26,6 +27,7 @@ function exportValidatedPackets(characters,title){
   try{
     root.innerHTML="";
     document.title=safeTitle(title);
+    if(summaryHtml)root.insertAdjacentHTML("beforeend",summaryHtml);
     characters.forEach((character,index)=>{
       const stage=document.createElement("div");
       renderPremiumPrintSheet(character,stage);
@@ -72,7 +74,7 @@ export function exportPartyPdf(characters,{title=""}={}){
     if(!members.length)throw new Error("Forge a party before printing it.");
     if(members.some(character=>!character?.validation?.valid))throw new Error("Only fully validated parties can be printed.");
     const first=members[0],resolvedTitle=title||`Character Forge Party - ${members.length} Characters - Level ${first.level} - ${first.ruleset}`;
-    exportValidatedPackets(members,resolvedTitle);
+    exportValidatedPackets(members,resolvedTitle,{summaryHtml:renderPartyQuickReference(members)});
   }catch(error){console.error("[print] party PDF export failed",error);throw error;}
 }
 
@@ -107,9 +109,9 @@ function decoratePartyRoster(roster){
       try{
         const party=getLastGeneratedParty();
         if(!party?.members?.length)throw new Error("Forge a party before printing it.");
-        partyPrintStatus(roster,"Opening the print dialog for the full party…");
+        partyPrintStatus(roster,"Opening the print dialog with a DM quick reference and the full party…");
         exportPartyPdf(party.members,{title:`Character Forge Party - Level ${party.level} - ${party.ruleset}`});
-        partyPrintStatus(roster,`Print dialog opened for all ${party.size} validated character packets.`);
+        partyPrintStatus(roster,`Print dialog opened with the DM quick reference plus all ${party.size} validated character packets.`);
       }catch(error){partyPrintStatus(roster,error.message,true);}
     });
     actions.prepend(button);
