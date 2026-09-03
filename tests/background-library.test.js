@@ -58,10 +58,16 @@ test("every 2024 original background generates legal Origin-feat, tool, equipmen
   }
 });
 
-test("default Random generation remains SRD-only for backgrounds",()=>{
-  for(const ruleset of ["2014","2024"]){for(let index=0;index<160;index++){
-    const state=createInitialState();state.ruleset=ruleset;state.constraints.level="5";state.constraints.species=ruleset==="2014"?"human":"dwarf";state.constraints.class="fighter";state.constraints.subclass="champion";state.constraints.background="random";const character=generateCharacter(state);assert.equal(isForgeOriginalBackground(character.background),false,`${ruleset} Random selected ${character.background.id}`);assert.equal(character.audit.rawIntegrity,true,`${ruleset} SRD-only Random lost RAW integrity`);
-  }}
+test("Forge Random background catalogs include labeled originals without mutating source records",()=>{
+  for(const [ruleset,data,sources] of [
+    ["2014",FORGE_2014,FORGE_ORIGINAL_BACKGROUNDS_2014],
+    ["2024",FORGE_2024,FORGE_ORIGINAL_BACKGROUNDS_2024]
+  ]){
+    const originals=data.backgrounds.filter(isForgeOriginalBackground);
+    assert.equal(originals.length,sources.length,`${ruleset}: original Random pool count`);
+    assert.ok(originals.every(item=>item.randomEligible===false&&item.randomEligibleInForge===true),`${ruleset}: Forge Random eligibility missing`);
+    assert.ok(sources.every(item=>item.randomEligible===false),`${ruleset}: source records were mutated`);
+  }
 });
 
 test("original background and original subclass can coexist without source leakage",()=>{

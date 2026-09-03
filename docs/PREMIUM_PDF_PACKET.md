@@ -1,63 +1,65 @@
-# Premium PDF Export Contract
+# Premium PDF Export Contract — Print V4
 
-Character Forge PDF export is a fixed-format product, not an unbounded rules dump. The output must be fast to use at the table, visually class-specific, and still preserve enough source proof to defend the generated character.
+Character Forge PDF export is a player-facing table product. Mechanical validation and source provenance remain mandatory inside the rules engine and website, but the printed sheet should read like a familiar 5e character sheet rather than a rules-audit report.
 
 ## Hard page profiles
 
 - **Martial / non-caster:** exactly **1 US Letter page**.
 - **Caster:** exactly **2 US Letter pages**.
+- Deluxe dossier pages remain controlled by the existing packet profile.
 - No sparse spill pages are allowed.
-- A layout that cannot satisfy its profile is a quality-gate failure, not permission to append another nearly empty page.
 
 ## Page 1 — premium table sheet
 
-Page 1 is the primary character sheet. It contains identity, class-specific portrait area, abilities, defenses, attacks, skills, key features, primary resources, feat state, proficiencies, equipment, and Quick Turn guidance.
+Page 1 keeps the familiar 5e anchors: identity and portrait, abilities, saving throws, skills, passive Perception, AC, initiative, speed, HP, hit dice, death saves, attacks, class resources, equipment, proficiencies/languages, feats, features, and Quick Turn guidance.
 
-For martials, Page 1 also carries a compact sourced Rules Index containing every active `buildQuickReference()` rule name and its verified SRD page locator.
+The player sheet shows **active rule names and usable rule text only**. SRD page locators, source-version labels, and audit mechanics remain available in the website/model layer and are not repeated beside every printed feature.
 
-For casters, Page 1 contains the table-use spellcasting summary while the complete generated spell loadout is reserved for Page 2.
+## Page 2 — caster spell sheet
 
-## Page 2 — caster spell and proof sheet
-
-Caster Page 2 is deliberately designed rather than appended automatically. It contains:
+Caster Page 2 is a play surface, not a proof report. It contains:
 
 - every generated spell exactly once;
-- spell level and generated preparation-state markers;
-- spellcasting ability, save DC, attack bonus, and slot table;
-- every active sourced rule name + SRD locator;
-- complete Rules Audit identity mechanics and validation checks.
+- spell level and preparation/known markers;
+- spellcasting ability, save DC, attack bonus, and slot tracking;
+- class-specific spell support;
+- active rule names without page/source locator clutter.
 
-Character Forge does not invent individual spell-text page citations where the verified structured spell-reference layer does not yet contain them.
+The internal Rules Audit remains required before export and is not deleted from the character model.
 
 ## Class visual identity
 
-Each class receives its own print skin instead of a generic recolor. Current theme families include Fighter steel/crimson, Rogue shadow/teal, Cleric ivory/gold, Wizard arcane blue, and a Barbarian-ready blood/bone/iron primal skin. Additional classes receive their own theme IDs as their verified rules slices are added.
+Every class keeps its own original portrait, crest, geometry, and palette. Print V4 strengthens class color while retaining neutral writing surfaces and ink-saver support.
 
-If the player provides no portrait, the sheet renders original built-in class placeholder artwork. If a local portrait is uploaded, that image replaces the placeholder while remaining presentation-only and outside the mechanical fingerprint.
+A player should be able to distinguish the class from the portrait, crest, border geometry, and color treatment without needing to read the class name.
 
-## Content compression rules
+## Source and licensing boundary
 
-Fixed page count may change presentation density, but it must not change character mechanics.
+- Full provenance remains in the validated character/audit data and website reference surfaces.
+- The player PDF does not print per-feature source/page locators.
+- Required SRD/Creative Commons attribution remains as a small legal footer.
+- Forge Original content remains clearly labeled as compatible original content.
 
-- Important feature text on Page 1 may be shortened for quick play.
-- Every active sourced rule name remains present in the packet Rules Index.
-- Every generated caster spell remains present on Page 2.
-- Table-critical class requirements such as Rogue Cunning Strike costs/requirements remain visible in the class-resource block.
-- Complete mechanical validation still occurs before the export renderer runs.
+## Random-generation quality
+
+Random generation is not blind uniform selection. The Forge may use verified SRD and clearly labeled Forge Original options, with:
+
+- class-aware background affinity;
+- recent-background suppression to prevent streaks;
+- legality filters before weighting;
+- proper Fisher–Yates sampling for multi-choice pools.
+
+Explicit user choices always override Random behavior.
 
 ## Quality gate
 
-A print change is production-ready only when the normal regression suite and real Chrome print gate both pass on the exact PR head.
+A Print V4 change is production-ready only when:
 
-The browser gate physically verifies:
-
-1. Fighter/Rogue-style martial packets print as exactly 1 Letter page;
-2. Wizard/Cleric-style caster packets print as exactly 2 Letter pages;
-3. every physical page has meaningful content rather than a sparse spill;
-4. every active sourced rule name survives PDF printing;
-5. every generated caster spell survives PDF printing;
-6. RAW integrity and page-number markers survive PDF printing;
-7. representative 2014/2024 edition-specific mechanics remain present or absent as required;
-8. generated PDFs and PNG previews are retained as CI artifacts for visual inspection before merge.
-
-The final decision is therefore both mechanical and visual: green text/content checks are necessary, but the generated page previews must also look like a finished Character Forge product.
+1. the normal Node regression suite passes;
+2. JavaScript syntax checks pass;
+3. real Chrome/PDF page-count gates pass;
+4. every required active rule name and generated spell survives printing;
+5. source/page locator clutter is absent from player sheets;
+6. all 12 class identities remain visually distinct;
+7. ink-saver output stays mechanically identical and readable;
+8. generated PDF/PNG artifacts show no clipping, overlap, or sparse spill pages.

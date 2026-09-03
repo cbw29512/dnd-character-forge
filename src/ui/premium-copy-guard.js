@@ -4,6 +4,9 @@ function applyPremiumCopyGuard(){
     const actionText="Leave everything Random for a complete rules-validated character, or set only the choices you care about.";
     if(actionCopy&&/complete legal character/i.test(actionCopy.textContent||"")&&actionCopy.textContent!==actionText)actionCopy.textContent=actionText;
 
+    const randomNote=document.querySelector(".random-note"),randomText="Random uses verified options";
+    if(randomNote&&randomNote.textContent!==randomText)randomNote.textContent=randomText;
+
     const result=document.getElementById("result"),audit=result?.querySelector(".rules-audit");
     if(!result||!audit)return;
     const compatible=/Character Forge Original/i.test(audit.textContent||"");

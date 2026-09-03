@@ -2,7 +2,7 @@ name: Character Forge tests
 
 on:
   push:
-    branches: [main]
+    branches: [main, fix/random-print-v4-20260902]
   pull_request:
 
 permissions:

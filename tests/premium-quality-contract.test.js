@@ -7,6 +7,7 @@ const screenReadability=readFileSync("styles/readability.css","utf8");
 const printReadability=readFileSync("styles/print/premium-readability.css","utf8");
 const printLoadOrder=readFileSync("styles/print/premium-sorcerer.css","utf8");
 const printPageOne=readFileSync("src/ui/print-page-one.js","utf8");
+const printPageTwo=readFileSync("src/ui/print-page-two.js","utf8");
 const copyGuard=readFileSync("src/ui/premium-copy-guard.js","utf8");
 const library=readFileSync("src/ui/library.js","utf8");
 const finalizer=readFileSync("src/rules/finalize-character.js","utf8");
@@ -22,6 +23,7 @@ test("customer-facing source claims distinguish SRD from compatible original con
     assert.match(library,/✓ 5E COMPATIBLE/);
     assert.match(library,/✓ SRD \/ RAW/);
     assert.match(copyGuard,/✓ VERIFIED · 5E COMPATIBLE/);
+    assert.match(copyGuard,/Random uses verified options/);
   }catch(error){console.error("[test] premium source accuracy contract",error);throw error;}
 });
 
@@ -50,12 +52,14 @@ test("premium print readability raises useful text without crowding certificatio
   }catch(error){console.error("[test] print readability contract",error);throw error;}
 });
 
-test("compact rules index preserves rule names while abbreviating original provenance",()=>{
+test("player print keeps active rule names but removes source/page provenance from the visible rules lists",()=>{
   try{
-    assert.match(printPageOne,/function compactRuleSource\(source\)/);
-    assert.match(printPageOne,/\^Character Forge Original\\b\/i\.test\(value\)\?"Forge Original":value/);
-    assert.match(printPageOne,/esc\(compactRuleSource\(item\.source\)\)/);
-  }catch(error){console.error("[test] rules index provenance contract",error);throw error;}
+    assert.match(printPageOne,/Active Rules/);
+    assert.match(printPageOne,/m\.ruleIndex\.map\(item=>`<span><b>\$\{esc\(item\.name\)\}<\/b><\/span>`/);
+    assert.doesNotMatch(printPageOne,/compactRuleSource|item\.source/);
+    assert.match(printPageTwo,/Active Rules/);
+    assert.doesNotMatch(printPageTwo,/auditSection\(|item\.source|s\.source/);
+  }catch(error){console.error("[test] player print provenance contract",error);throw error;}
 });
 
 test("rendered compatible-content copy guard is idempotent and presentation-only",()=>{

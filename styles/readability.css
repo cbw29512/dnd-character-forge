@@ -47,3 +47,52 @@
   .panel-intro,.choice-summary,.magic-guidance,.coverage-note,.library-meta{font-size:.76rem;line-height:1.45}
   .section-kicker{font-size:.72rem;line-height:1.25}
 }
+
+/* Print V4: player-facing sheets stay rules-complete but stop reading like
+   a source-audit report. Provenance remains in the website/model layer. */
+@media print{
+  .premium-sheet .ps-source,
+  .premium-sheet .ps-magic-source,
+  .premium-sheet .ps-rule-index small,
+  .premium-sheet .ps-caster-rule-grid small,
+  .premium-sheet .ps-audit-identity em{
+    display:none!important;
+  }
+
+  .premium-sheet:not(.sheet-print-ink-saver).theme-barbarian-rage{--ps-primary:#b52d20;--ps-dark:#32140f;--ps-accent:#d29a4a;--ps-frame:#672619;--ps-glow:rgba(181,45,32,.34)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-bard-legend{--ps-primary:#ad3f69;--ps-dark:#49172c;--ps-accent:#d4a14b;--ps-frame:#7c2d4d;--ps-glow:rgba(173,63,105,.30)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-cleric-sanctum{--ps-primary:#b78500;--ps-dark:#473400;--ps-accent:#dfb92f;--ps-frame:#795b00;--ps-glow:rgba(183,133,0,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-druid-wild{--ps-primary:#4f7d2c;--ps-dark:#1f3514;--ps-accent:#b48a39;--ps-frame:#34591d;--ps-glow:rgba(79,125,44,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-fighter-steel{--ps-primary:#a62323;--ps-dark:#24262b;--ps-accent:#c8933f;--ps-frame:#551c1d;--ps-glow:rgba(166,35,35,.31)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-monk-focus{--ps-primary:#9a5f27;--ps-dark:#33251c;--ps-accent:#c69145;--ps-frame:#68401f;--ps-glow:rgba(154,95,39,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-paladin-oath{--ps-primary:#9c6b08;--ps-dark:#372b12;--ps-accent:#e0bd49;--ps-frame:#6f4e0d;--ps-glow:rgba(156,107,8,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-ranger-warden{--ps-primary:#35713b;--ps-dark:#17351f;--ps-accent:#a58d39;--ps-frame:#24522c;--ps-glow:rgba(53,113,59,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-rogue-shadow{--ps-primary:#14727a;--ps-dark:#0c2b30;--ps-accent:#6eaa9d;--ps-frame:#154c52;--ps-glow:rgba(20,114,122,.28)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-sorcerer-aether{--ps-primary:#8446ae;--ps-dark:#321747;--ps-accent:#cf8d45;--ps-frame:#5d2d7b;--ps-glow:rgba(132,70,174,.30)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-warlock-eldritch{--ps-primary:#68429a;--ps-dark:#211431;--ps-accent:#ad8e4d;--ps-frame:#452e65;--ps-glow:rgba(104,66,154,.30)}
+  .premium-sheet:not(.sheet-print-ink-saver).theme-wizard-arcane{--ps-primary:#2e61ad;--ps-dark:#142b50;--ps-accent:#c8933f;--ps-frame:#23467a;--ps-glow:rgba(46,97,173,.30)}
+
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-panel h2{
+    background:linear-gradient(90deg,var(--ps-primary),color-mix(in srgb,var(--ps-primary) 72%,var(--ps-dark)));
+    color:#fff;
+    border-color:var(--ps-primary);
+    text-shadow:0 1px 0 rgba(0,0,0,.16);
+  }
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-stat,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-passive,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-track{
+    border-color:color-mix(in srgb,var(--ps-primary) 68%,var(--ps-frame));
+  }
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-portrait-art{
+    box-shadow:0 0 0 2px var(--ps-primary),0 0 0 4px color-mix(in srgb,var(--ps-accent) 58%,#fff);
+  }
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-rule-index,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-caster-rules{
+    border-color:color-mix(in srgb,var(--ps-primary) 64%,var(--ps-frame));
+  }
+  .premium-sheet .ps-license{
+    font-size:4.5pt!important;
+    line-height:1.08!important;
+    opacity:.72;
+  }
+}

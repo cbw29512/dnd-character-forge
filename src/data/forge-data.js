@@ -29,7 +29,9 @@ function extend(raw,classExtensions,subclassExtensions,backgroundExtensions,weap
     for(const extension of subclassExtensions){if(raw.subclasses.some(item=>item.id===extension.id&&item.classId===extension.classId))throw new Error(`Base ${raw.ruleset} RAW catalog already contains subclass ${extension.id}; remove the extension instead of duplicating it.`);}
     for(const extension of backgroundExtensions){if(raw.backgrounds.some(item=>item.id===extension.id))throw new Error(`Base ${raw.ruleset} RAW catalog already contains background ${extension.id}; remove the extension instead of duplicating it.`);}
     for(const weaponId of Object.keys(weaponAdditions||{}))if(raw.weapons[weaponId])throw new Error(`Base ${raw.ruleset} RAW catalog already contains weapon ${weaponId}; remove the extension instead of duplicating it.`);
-    return Object.freeze({...raw,backgrounds:Object.freeze([...raw.backgrounds,...backgroundExtensions]),classes:Object.freeze([...raw.classes,...classExtensions]),subclasses:Object.freeze([...raw.subclasses,...subclassExtensions]),weapons:Object.freeze({...raw.weapons,...weaponAdditions})});
+    const baseBackgrounds=raw.backgrounds.map(background=>Object.freeze({...background,randomCategory:"background"}));
+    const expandedBackgrounds=backgroundExtensions.map(background=>Object.freeze({...background,randomEligibleInForge:true,randomCategory:"background"}));
+    return Object.freeze({...raw,backgrounds:Object.freeze([...baseBackgrounds,...expandedBackgrounds]),classes:Object.freeze([...raw.classes,...classExtensions]),subclasses:Object.freeze([...raw.subclasses,...subclassExtensions]),weapons:Object.freeze({...raw.weapons,...weaponAdditions})});
   }catch(error){console.error(`[forge-data] ${raw?.ruleset||"unknown"} extension failed`,error);throw error;}
 }
 function add2024StartingGoldPackages(data){
