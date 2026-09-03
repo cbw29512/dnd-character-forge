@@ -4,7 +4,7 @@ import { isForgeOriginalBackground } from "../data/original-backgrounds.js";
 const dataFor=state=>state.ruleset==="2014"?FORGE_2014:FORGE_2024;
 
 export function populateOptions(state){
-  try{const data=dataFor(state);fill("species",data.species);fill("class",data.classes);fill("background",data.backgrounds);populateLevels(state);populateSubclasses(state);}
+  try{const data=dataFor(state);fill("species",data.species);fill("class",data.classes);fill("background",data.backgrounds);populateLevels(state);populateSubclasses(state);renderRandomBackgroundCoverage(state);}
   catch(error){console.error("[ui] populateOptions failed",error);throw error;}
 }
 export function populateLevels(state){
