@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const fixedCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-fixed.css",import.meta.url)),"utf8");
 const deluxeCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-v3-base.css",import.meta.url)),"utf8");
+const readabilityCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-readability.css",import.meta.url)),"utf8");
 
 test("Deluxe print profiles inherit compact page-one layout rules",()=>{
   assert.match(fixedCss,/\.profile-martial-deluxe-two-page \.ps-frame/);
@@ -30,4 +31,12 @@ test("Late Deluxe hierarchy keeps dense Quick Turn and feature type within Lette
   assert.match(feature,/font-size\s*:\s*5\.5pt/);
   assert.match(feature,/line-height\s*:\s*1\.16/);
   assert.match(deluxeCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page\.theme-fighter-steel \.ps-rule-index>div\{grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+});
+
+test("Late readability layer reserves Deluxe page-one footer clearance",()=>{
+  assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page \.ps-frame\{[\s\S]*?grid-template-rows:1\.66in minmax\(0,1fr\) \.31in/);
+  assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-caster-deluxe-three-page \.ps-frame\{[\s\S]*?grid-template-rows:1\.68in minmax\(0,1fr\) \.34in/);
+  assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-caster-deluxe-three-page \.ps-top\{[\s\S]*?grid-template-columns:1\.54in minmax\(0,1fr\) 2\.28in/);
+  assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page \.ps-rule-index>div\{grid-template-columns:repeat\(7,minmax\(0,1fr\)\)/);
+  assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page\.theme-monk-focus \.ps-rule-index>div\{grid-template-columns:repeat\(8,minmax\(0,1fr\)\)/);
 });
