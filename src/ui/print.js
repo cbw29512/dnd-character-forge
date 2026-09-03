@@ -113,6 +113,11 @@ function decoratePartyRoster(roster){
       }catch(error){partyPrintStatus(roster,error.message,true);}
     });
     actions.prepend(button);
+    const grid=roster.querySelector(".party-member-grid"),status=roster.querySelector("#partyRosterStatus");
+    if(grid){
+      roster.insertBefore(actions,grid);
+      if(status)roster.insertBefore(status,grid);
+    }
     roster.dataset.partyPrintReady="true";
   }catch(error){console.error("[print] Party Forge print action failed",error);}
 }
