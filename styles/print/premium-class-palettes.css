@@ -8,6 +8,23 @@
     --ps-glow:var(--class-glow);
   }
 
+  /* Put the existing class crest where the player sheet has the most useful
+     breathing room: the large center equipment/writing field. This is the
+     same verified class art used elsewhere on the sheet, not a second asset.
+     Minimal and Ink Saver keep their existing no-watermark behavior. */
+  .ps-page-one.premium-sheet:not(.sheet-print-ink-saver):not(.sheet-style-minimal) .ps-class-watermark{
+    left:2.72in;
+    right:auto;
+    top:4.35in;
+    bottom:auto;
+    width:2.18in;
+    height:2.66in;
+    opacity:.034;
+    color:var(--ps-primary);
+    transform:none!important;
+    filter:none;
+  }
+
   /* Decorative class ribbons/rails may be widely tracked, but semantic panel titles must remain searchable/selectable PDF text. */
   .premium-sheet:not(.sheet-style-minimal) .ps-panel h2 span{letter-spacing:normal!important}
 }
