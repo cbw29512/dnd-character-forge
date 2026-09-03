@@ -18,9 +18,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Syntax-check JavaScript
@@ -36,7 +36,7 @@ jobs:
           exit $status
       - name: Upload regression diagnostics on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: regression-diagnostics
           path: ${{ runner.temp }}/regression-diagnostics/test-output.log
@@ -49,9 +49,9 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
       - name: Ensure PDF inspection tools
@@ -99,7 +99,7 @@ jobs:
         run: node tests/class-signature-ink-saver-browser-gate.mjs
       - name: Upload responsive UI review
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: responsive-ui-review
           path: |
@@ -110,7 +110,7 @@ jobs:
           retention-days: 7
       - name: Upload premium print visual review
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: premium-print-review
           path: |
