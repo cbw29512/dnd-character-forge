@@ -3,7 +3,7 @@ name: Party Forge browser gate
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, cert/party-print-20260903]
   workflow_dispatch:
 
 permissions:
