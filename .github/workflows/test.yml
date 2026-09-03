@@ -93,6 +93,8 @@ jobs:
         run: node tests/sorcerer-browser-print-gate.mjs
       - name: Verify Warlock premium PDFs in Chrome
         run: node tests/warlock-browser-print-gate.mjs
+      - name: Verify print body/footer boundaries
+        run: node tests/print-footer-boundary-browser-gate.mjs
       - name: Verify all 12 deluxe class identities in Chrome
         run: node tests/class-identity-browser-print-gate.mjs
       - name: Verify black-and-white class identities in Chrome
