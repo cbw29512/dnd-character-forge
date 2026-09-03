@@ -33,6 +33,12 @@ test("Late Deluxe hierarchy keeps dense Quick Turn and feature type within Lette
   assert.match(deluxeCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page\.theme-fighter-steel \.ps-rule-index>div\{grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
 });
 
+test("Late readability layer reserves max-level Monk Table footer clearance",()=>{
+  assert.match(readabilityCss,/\.sheet-packet-table\.theme-monk-focus\.profile-martial-one-page \.ps-frame\{[\s\S]*?grid-template-rows:1\.60in minmax\(0,1fr\) \.31in/);
+  assert.match(readabilityCss,/\.sheet-packet-table\.theme-monk-focus\.profile-martial-one-page \.ps-skill\{[\s\S]*?font-size:6\.05pt;line-height:1\.06/);
+  assert.match(readabilityCss,/\.sheet-packet-table\.theme-monk-focus\.profile-martial-one-page \.ps-rule-index>div\{grid-template-columns:repeat\(8,minmax\(0,1fr\)\)/);
+});
+
 test("Late readability layer reserves Deluxe page-one footer clearance",()=>{
   assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page \.ps-frame\{[\s\S]*?grid-template-rows:1\.66in minmax\(0,1fr\) \.31in/);
   assert.match(readabilityCss,/\.sheet-packet-deluxe\.profile-caster-deluxe-three-page \.ps-frame\{[\s\S]*?grid-template-rows:1\.68in minmax\(0,1fr\) \.34in/);
