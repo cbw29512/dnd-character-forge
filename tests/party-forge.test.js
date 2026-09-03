@@ -1,23 +1,34 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { FORGE_2014, FORGE_2024 } from "../src/data/forge-data.js";
+import { isForgeOriginalBackground } from "../src/data/original-backgrounds.js";
+import { buildRulesLawyerCertification } from "../src/rules/certification.js";
 import { generateParty, PARTY_COMPOSITIONS } from "../src/rules/party-forge.js";
 
 const FRONTLINE=new Set(["barbarian","fighter","paladin","monk"]);
 const EXPERT=new Set(["rogue","ranger","bard"]);
 const DIVINE=new Set(["cleric","druid","paladin","ranger"]);
 const ARCANE=new Set(["wizard","sorcerer","warlock","bard"]);
+const DATA=Object.freeze({"2014":FORGE_2014,"2024":FORGE_2024});
+
+function assertRawParty(party,ruleset,level){
+  assert.ok(party.members.every(member=>member.ruleset===ruleset));
+  assert.ok(party.members.every(member=>member.level===level));
+  assert.ok(party.members.every(member=>member.sourceMode==="RAW"));
+  assert.ok(party.members.every(member=>member.validation?.valid===true));
+  assert.ok(party.members.every(member=>member.audit?.rawIntegrity===true));
+  assert.ok(party.members.every(member=>buildRulesLawyerCertification(member).rawCertified===true));
+  assert.ok(party.members.every(member=>!isForgeOriginalBackground(member.background)),"Party Forge must never mix Forge Original backgrounds into a RAW-certified party");
+}
 
 for(const ruleset of ["2014","2024"]){
-  test(`${ruleset} balanced Party Forge produces four distinct RAW-valid characters`,()=>{
+  test(`${ruleset} balanced Party Forge produces four distinct RAW-certified characters`,()=>{
     const party=generateParty({ruleset,level:5,size:4,composition:PARTY_COMPOSITIONS.BALANCED,allowDuplicateClasses:false,magicMode:"normal"});
     assert.equal(party.members.length,4);
     assert.equal(new Set(party.members.map(member=>member.id)).size,4);
     assert.equal(new Set(party.members.map(member=>member.name)).size,4);
     assert.equal(new Set(party.members.map(member=>member.class.id)).size,4);
-    assert.ok(party.members.every(member=>member.ruleset===ruleset));
-    assert.ok(party.members.every(member=>member.level===5));
-    assert.ok(party.members.every(member=>member.sourceMode==="RAW"));
-    assert.ok(party.members.every(member=>member.validation?.valid===true));
+    assertRawParty(party,ruleset,5);
     assert.ok(party.members.every(member=>member.startingMagic));
     const ids=party.members.map(member=>member.class.id);
     assert.ok(ids.some(id=>FRONTLINE.has(id)),"balanced party should include a frontline class");
@@ -26,11 +37,19 @@ for(const ruleset of ["2014","2024"]){
     assert.ok(ids.some(id=>ARCANE.has(id)),"balanced party should include an arcane-capable class");
   });
 
-  test(`${ruleset} random Party Forge honors the no-duplicate-class rule`,()=>{
+  test(`${ruleset} random Party Forge honors the no-duplicate-class rule and RAW boundary`,()=>{
     const party=generateParty({ruleset,level:1,size:6,composition:PARTY_COMPOSITIONS.RANDOM,allowDuplicateClasses:false});
     assert.equal(party.members.length,6);
     assert.equal(new Set(party.members.map(member=>member.class.id)).size,6);
-    assert.ok(party.members.every(member=>member.validation?.valid===true));
+    assertRawParty(party,ruleset,1);
+  });
+
+  test(`${ruleset} Party Forge keeps Forge Original backgrounds out across repeated mixed-level parties`,()=>{
+    assert.ok(DATA[ruleset].backgrounds.some(isForgeOriginalBackground),`${ruleset} normal Forge should retain Forge Original background choices`);
+    for(const level of [1,5,12,20]){
+      const party=generateParty({ruleset,level,size:4,composition:PARTY_COMPOSITIONS.BALANCED,allowDuplicateClasses:false});
+      assertRawParty(party,ruleset,level);
+    }
   });
 }
 
