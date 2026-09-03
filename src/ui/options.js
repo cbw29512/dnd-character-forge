@@ -1,4 +1,5 @@
 import { FORGE_2014, FORGE_2024 } from "../data/forge-data.js";
+import { isForgeOriginalBackground } from "../data/original-backgrounds.js";
 
 const dataFor=state=>state.ruleset==="2014"?FORGE_2014:FORGE_2024;
 
@@ -24,7 +25,20 @@ export function populateSubclasses(state){
     if(items.length===0||![...element.options].some(option=>option.value===state.constraints.subclass)){state.constraints.subclass="random";element.value="random";}
   }catch(error){console.error("[ui] populateSubclasses failed",error);throw error;}
 }
+export function randomBackgroundCoverageMessage(state){
+  try{
+    const verified=dataFor(state).backgrounds.filter(background=>!isForgeOriginalBackground(background)&&background.randomEligible!==false),names=verified.map(background=>background.name);
+    if(!verified.length)return `${state.ruleset} SRD Random has no verified background options in this catalog. Choose a listed background instead.`;
+    if(verified.length===1)return `${state.ruleset} SRD Random background has 1 verified option here: ${names[0]}. For more variety, choose a background labeled Forge Original; it stays clearly marked as original.`;
+    return `${state.ruleset} SRD Random background rotates across ${verified.length} verified options: ${formatNames(names)}. Forge Original backgrounds stay opt-in.`;
+  }catch(error){console.error("[ui] Random background coverage failed",error);throw error;}
+}
+export function renderRandomBackgroundCoverage(state){
+  try{const node=document.getElementById("randomBackgroundCoverage");if(node)node.textContent=randomBackgroundCoverageMessage(state);}
+  catch(error){console.error("[ui] Random background coverage render failed",error);throw error;}
+}
 function fill(id,items){
   try{const el=document.getElementById(id),current=el.value;el.innerHTML=`<option value="random">Random</option>${items.map(i=>`<option value="${i.id}">${i.displayName||i.name}</option>`).join("")}`;el.value=[...el.options].some(option=>option.value===current)?current:"random";}
   catch(error){console.error(`[ui] fill ${id} failed`,error);throw error;}
 }
+function formatNames(names){if(names.length<2)return names[0]||"";if(names.length===2)return `${names[0]} and ${names[1]}`;return `${names.slice(0,-1).join(", ")}, and ${names.at(-1)}`;}
