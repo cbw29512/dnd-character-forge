@@ -5,6 +5,7 @@ import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createInitialState } from "../src/state.js";
 import { generateCharacter } from "../src/rules/generator.js";
+import { originFeatFamilyId, resolveHumanVersatileOriginFeat } from "../src/rules/origin-feats.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
@@ -12,7 +13,7 @@ const OUT=path.join(ROOT,"tests/.browser-print");
 const CHROME=process.env.CHROME_BIN||"google-chrome";
 const CASES=[
   {ruleset:"2014",subclass:"fiend",species:"human",background:"acolyte",classSelections:{pactBoon:"tome",eldritchInvocations:["book-of-ancient-secrets","agonizing-blast"]},customization:{style:"ornate",paper:"parchment",ornament:"rich",frame:"filigree",printMode:"premium"}},
-  {ruleset:"2024",subclass:"fiend-patron",species:"human",background:"sage",classSelections:{eldritchInvocations:["pact-of-the-tome","pact-of-the-chain","pact-of-the-blade","lessons-of-the-first-ones"]},customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium"}}
+  {ruleset:"2024",subclass:"fiend-patron",species:"human",background:"sage",classSelections:{eldritchInvocations:["pact-of-the-tome","pact-of-the-chain","pact-of-the-blade","lessons-of-the-first-ones"]},customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium"},forceLessonsClericMagic:true}
 ];
 
 mkdirSync(OUT,{recursive:true});
@@ -34,6 +35,7 @@ function verifyPacket(testCase){
   assert.ok(model.equipment.every(item=>typeof item==="string"&&item.trim()),`${slug}: every printable equipment entry must be a non-empty string`);
   assert.equal(model.equipment.some(item=>item.includes("[object Object]")),false,`${slug}: Warlock print model contains an unformatted inventory object`);
   for(const [key,value] of Object.entries(testCase.customization))assert.equal(model.presentation.customization[key],value,`${slug}: customization ${key}`);
+  if(testCase.forceLessonsClericMagic)assert.ok(model.spellPage.entries.some(item=>item.name==="Purify Food and Drink"),`${slug}: max-content Lessons fixture did not reach Purify Food and Drink`);
 
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
   execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,pathToFileURL(htmlPath).href],{stdio:"pipe"});
@@ -67,13 +69,24 @@ function verifyPacket(testCase){
     assert.ok(character.spells.alwaysPrepared.includes("contact-other-plane"),`${slug}: Contact Patron spell missing`);
     assert.ok(model.ruleIndex.some(item=>item.name.startsWith("Lessons of the First Ones")),`${slug}: deterministic long invocation rule missing from print model`);
     for(const phrase of ["Fiend Patron","Magical Cunning","Contact Patron","Pact of the Tome","Pact of the Chain","Pact of the Blade","Lessons of the First Ones","Boon of Fate"])assert.ok(fold.includes(normalize(phrase).toLowerCase()),`${slug}: missing 2024 Warlock text: ${phrase}`);
+    if(testCase.forceLessonsClericMagic)assert.ok(fold.includes("purify food and drink"),`${slug}: max-content Lessons spell was clipped from the PDF`);
     for(const phrase of ["Otherworldly Patron","Pact Boon: Pact of the Tome"])assert.equal(fold.includes(normalize(phrase).toLowerCase()),false,`${slug}: leaked 2014 Warlock text: ${phrase}`);
   }
   console.log(`[warlock-browser-print] ${slug}: ${pages} Letter pages · ${model.ruleIndex.length} rules · ${model.equipment.length} equipment · ${model.spellPage.entries.length} spells · ${model.presentation.customization.style}/${model.presentation.customization.printMode}`);
 }
 
-function characterAt({ruleset,subclass,species,background,classSelections,customization}){
-  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;const character=generateCharacter(state);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
+function characterAt({ruleset,subclass,species,background,classSelections,customization,forceLessonsClericMagic=false}){
+  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;const character=generateCharacter(state);if(forceLessonsClericMagic)forceClericLessonsGrant(character);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
+}
+function forceClericLessonsGrant(character){
+  const existingFeats=(character.feats||[]).filter(feat=>feat?.source!=="warlock"),existingMagic=(character.magicInitiates||[]).filter(choice=>choice?.source!=="warlock"),resolved=resolveHumanVersatileOriginFeat({
+    selections:{originFeat:"magic-initiate",magicInitiateList:"cleric",originSpellcastingAbility:"cha",originCantrip1:"guidance",originCantrip2:"thaumaturgy",originLevel1Spell:"purify-food-and-drink"},
+    existingFeats,existingMagicInitiates:existingMagic,skills:character.skills||[],tools:character.toolProficiencies||[],source:"warlock",contextLabel:"Lessons of the First Ones"
+  });
+  assert.ok(resolved.magicInitiate,"2024 Warlock max-content fixture failed to resolve Magic Initiate (Cleric)");
+  character.feats=[...existingFeats,resolved.feat];
+  character.magicInitiates=[...existingMagic,resolved.magicInitiate];
+  character.warlockSelections={...(character.warlockSelections||{}),lessonsOriginFeats:[{id:resolved.feat.id,family:originFeatFamilyId(resolved.feat),name:resolved.feat.name}]};
 }
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function pdfPages(text){const pages=String(text||"").split("\f");while(pages.length&&normalize(pages.at(-1))==="")pages.pop();return pages;}
