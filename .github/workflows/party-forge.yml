@@ -3,7 +3,7 @@ name: Party Forge browser gate
 on:
   pull_request:
   push:
-    branches: [main, cert/party-forge-raw-boundary-20260903]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
