@@ -89,6 +89,34 @@
   .ps-audit-checks ol{font-size:6.8pt;line-height:1.42}
   .ps-appendix-footer{font-size:5.8pt;line-height:1.08}
 
+  /* Max-level 2024 Monk is the densest one-page martial Table profile. Its
+     complete Active Rules row must sit above, not inside, the certification
+     footer. Reclaim space from repeated skills/features and the header rather
+     than deleting or abbreviating gameplay rules. */
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-frame{
+    grid-template-rows:1.60in minmax(0,1fr) .31in;
+    gap:.03in;
+  }
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-top{
+    grid-template-columns:1.48in minmax(0,1fr) 2.26in;
+    gap:.055in;
+  }
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-main-columns{gap:.05in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-column{gap:.028in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-panel-body{padding:.03in .045in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-skill{font-size:6.05pt;line-height:1.06;padding:.006in .01in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-skill small{font-size:5.2pt}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-feature-list{gap:.012in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-feature-list strong{font-size:6.2pt;line-height:1.06}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-feature-list p{font-size:5.25pt;line-height:1.08}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-feature-list small{font-size:4.8pt;line-height:1.04}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-proficiencies p{font-size:5.75pt;line-height:1.1}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-rule-index{padding:.006in .025in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-rule-index h2{margin-bottom:.002in;font-size:5.05pt;line-height:1}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-rule-index>div{grid-template-columns:repeat(8,minmax(0,1fr));gap:.002in .018in}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-rule-index span{line-height:.96}
+  .sheet-packet-table.theme-monk-focus.profile-martial-one-page .ps-rule-index b{font-size:3.7pt;line-height:.96}
+
   /* Deluxe page-one capacity guard. The dossier already owns the extra page;
      page one must keep every gameplay panel above the fixed two-row footer.
      These overrides are deliberately Deluxe-only so Table packets keep their
