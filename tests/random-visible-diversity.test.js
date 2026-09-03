@@ -45,15 +45,14 @@ test("subclass history is isolated per class",()=>withConstantRandom(()=>{
   assert.equal(pick(cleric).id,"light");
 }));
 
-test("four consecutive fully Random 2024 pregens vary class, species, and SRD background",()=>{
+test("four consecutive fully Random 2024 pregens vary class, species, and SRD background",()=>withConstantRandom(()=>{
   resetRandomHistory();
   const characters=Array.from({length:4},()=>generateCharacter(randomState()));
   assert.equal(characters.every(character=>character.validation.valid),true);
   assert.equal(new Set(characters.map(character=>character.class.id)).size,4,"classes repeated too quickly");
   assert.equal(new Set(characters.map(character=>character.species.id)).size,4,"species repeated too quickly");
   assert.equal(new Set(characters.map(character=>character.background.id)).size,4,"backgrounds repeated before the strict SRD pool was exhausted");
-  resetRandomHistory();
-});
+}));
 
 test("explicit visible selections remain authoritative",()=>{
   resetRandomHistory();
