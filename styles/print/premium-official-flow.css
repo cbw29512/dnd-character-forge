@@ -80,8 +80,8 @@
   .ps-paladin-spell-support>p{margin:.035in 0 0;padding-top:.025in;border-top:1px dotted rgba(65,49,31,.28);font:italic 4.35pt/1.15 Georgia,serif;color:var(--ps-muted)}
   .ps-ranger-spell-support>p{margin:.06in 0 0;padding-top:.045in;border-top:1px dotted rgba(65,49,31,.28);font:italic 4.8pt/1.2 Georgia,serif;color:var(--ps-muted)}
 
-  /* Warlock spell pages need table-facing Pact resources beside the normal 0-9 record. */
-  .theme-warlock-eldritch .ps-spell-level-grid{height:3.32in}
+  /* Warlock spell pages need table-facing Pact resources beside the normal 0-9 record. Max-content 2024 Warlocks can add an Origin-feat spell package, so use the page's existing lower whitespace instead of shrinking spell text. */
+  .theme-warlock-eldritch .ps-spell-level-grid{height:3.48in}
   .theme-warlock-eldritch .ps-spell-level-column{gap:.025in}
   .theme-warlock-eldritch .ps-spell-level>header{min-height:.215in}
   .theme-warlock-eldritch .ps-spell-entry{min-height:.116in;font-size:4.75pt}
