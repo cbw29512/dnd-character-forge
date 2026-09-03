@@ -29,13 +29,14 @@
   .theme-monk-focus .ps-feature-list article{border-left-color:color-mix(in srgb,var(--ps-primary) 78%,var(--ps-accent))}
   .theme-monk-focus .ps-saving-throws .proficient{background:linear-gradient(90deg,rgba(122,89,44,.075),transparent)}
 
-  /* A max-level Monk has one of the broadest martial reference sets. Keep the
-     complete Active Rules index above the fixed certification footer instead
-     of allowing a seventh row to collide with it. */
-  .theme-monk-focus.profile-martial-one-page .ps-rule-index{padding:.025in .045in}
-  .theme-monk-focus.profile-martial-one-page .ps-rule-index h2{margin-bottom:.015in;font-size:5.6pt}
-  .theme-monk-focus.profile-martial-one-page .ps-rule-index>div{grid-template-columns:repeat(6,minmax(0,1fr));gap:.01in .035in}
-  .theme-monk-focus.profile-martial-one-page .ps-rule-index b{font-size:4pt;line-height:1.02}
+  /* Max-level 2024 Monk has a wider active-rule surface than 2014 Monk. Use
+     horizontal room instead of allowing the final rule rows to enter the
+     fixed certification footer. No rules are removed or hidden. */
+  .theme-monk-focus.profile-martial-one-page .ps-rule-index{padding:.012in .03in}
+  .theme-monk-focus.profile-martial-one-page .ps-rule-index h2{margin-bottom:.005in;font-size:5.25pt;line-height:1}
+  .theme-monk-focus.profile-martial-one-page .ps-rule-index>div{grid-template-columns:repeat(8,minmax(0,1fr));gap:.004in .025in}
+  .theme-monk-focus.profile-martial-one-page .ps-rule-index span{line-height:.98}
+  .theme-monk-focus.profile-martial-one-page .ps-rule-index b{font-size:3.75pt;line-height:.98}
 
   /* Ink-saver must remain truly economical regardless of class ornament. */
   .theme-monk-focus.sheet-print-ink-saver .ps-frame,
