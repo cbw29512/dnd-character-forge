@@ -88,4 +88,43 @@
   .ps-audit-mechanics article small{font-size:5.7pt;line-height:1.15}
   .ps-audit-checks ol{font-size:6.8pt;line-height:1.42}
   .ps-appendix-footer{font-size:5.8pt;line-height:1.08}
+
+  /* Deluxe page-one capacity guard. The dossier already owns the extra page;
+     page one must keep every gameplay panel above the fixed two-row footer.
+     These overrides are deliberately Deluxe-only so Table packets keep their
+     established typography and geometry. */
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-frame{
+    grid-template-rows:1.66in minmax(0,1fr) .31in;
+    gap:.04in;
+  }
+  .sheet-packet-deluxe.profile-caster-deluxe-three-page .ps-frame{
+    grid-template-rows:1.68in minmax(0,1fr) .34in;
+    gap:.04in;
+  }
+  .sheet-packet-deluxe.profile-caster-deluxe-three-page .ps-top{
+    grid-template-columns:1.54in minmax(0,1fr) 2.28in;
+    gap:.06in;
+  }
+  .sheet-packet-deluxe .ps-main-columns{gap:.06in}
+  .sheet-packet-deluxe .ps-column{gap:.035in}
+  .sheet-packet-deluxe .ps-panel-body{padding:.035in .05in}
+  .sheet-packet-deluxe .ps-feature-list{gap:.018in}
+  .sheet-packet-deluxe .ps-feature-list strong{font-size:6.35pt;line-height:1.08}
+  .sheet-packet-deluxe .ps-feature-list p{font-size:5.5pt;line-height:1.12}
+  .sheet-packet-deluxe .ps-feature-list small{font-size:4.9pt;line-height:1.06}
+  .sheet-packet-deluxe .ps-feat p,
+  .sheet-packet-deluxe .ps-spells p,
+  .sheet-packet-deluxe .ps-proficiencies p{font-size:5.8pt;line-height:1.16}
+  .sheet-packet-deluxe .ps-quick-list{font-size:5.5pt;line-height:1.14}
+  .sheet-packet-deluxe .ps-quick-list li+li{margin-top:.008in}
+  .sheet-packet-deluxe .ps-quick .ps-panel-body{padding-top:.025in;padding-bottom:.025in}
+
+  /* Deluxe martials can carry thirty-plus active rules. Use horizontal room
+     rather than letting the final reference row enter the footer. */
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-rule-index{padding:.018in .035in}
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-rule-index h2{margin-bottom:.008in;font-size:5.55pt;line-height:1}
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-rule-index>div{grid-template-columns:repeat(7,minmax(0,1fr));gap:.006in .03in}
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-rule-index span{line-height:1}
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page .ps-rule-index b{font-size:4.05pt;line-height:1}
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page.theme-monk-focus .ps-rule-index>div{grid-template-columns:repeat(8,minmax(0,1fr))}
 }
