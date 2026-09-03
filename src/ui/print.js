@@ -1,3 +1,4 @@
+import { getLastGeneratedParty } from "../rules/party-forge.js";
 import { renderPremiumPrintSheet } from "./premium-print.js";
 
 function safeTitle(value){
@@ -11,7 +12,8 @@ function printRoot(){
     return root;
   }catch(error){console.error("[print] premium root failed",error);throw error;}
 }
-export function exportCharacterPdf(character){
+
+function exportValidatedPackets(characters,title){
   const originalTitle=document.title,root=printRoot();
   let cleaned=false,cleanupTimer=null;
   const cleanup=()=>{
@@ -22,11 +24,19 @@ export function exportCharacterPdf(character){
     catch(error){console.error("[print] export cleanup failed",error);}
   };
   try{
-    if(!character)throw new Error("Forge a character before exporting a PDF.");
-    if(!character.validation?.valid)throw new Error("Only validated characters can be exported.");
-    const subclass=character.subclass?.name?` - ${character.subclass.name}`:"";
-    document.title=safeTitle(`${character.name} - Level ${character.level} ${character.class.name}${subclass} - Character Forge`);
-    renderPremiumPrintSheet(character,root);
+    root.innerHTML="";
+    document.title=safeTitle(title);
+    characters.forEach((character,index)=>{
+      const stage=document.createElement("div");
+      renderPremiumPrintSheet(character,stage);
+      const firstPage=stage.firstElementChild;
+      if(index>0&&firstPage){
+        firstPage.style.breakBefore="page";
+        firstPage.style.pageBreakBefore="always";
+        firstPage.dataset.partyPrintStart="true";
+      }
+      while(stage.firstChild)root.appendChild(stage.firstChild);
+    });
     root.setAttribute("aria-hidden","false");
     document.body.classList.add("premium-print-active");
 
@@ -46,10 +56,91 @@ export function exportCharacterPdf(character){
     throw error;
   }
 }
+
+export function exportCharacterPdf(character){
+  try{
+    if(!character)throw new Error("Forge a character before exporting a PDF.");
+    if(!character.validation?.valid)throw new Error("Only validated characters can be exported.");
+    const subclass=character.subclass?.name?` - ${character.subclass.name}`:"";
+    exportValidatedPackets([character],`${character.name} - Level ${character.level} ${character.class.name}${subclass} - Character Forge`);
+  }catch(error){console.error("[print] character PDF export failed",error);throw error;}
+}
+
+export function exportPartyPdf(characters,{title=""}={}){
+  try{
+    const members=Array.isArray(characters)?characters:[];
+    if(!members.length)throw new Error("Forge a party before printing it.");
+    if(members.some(character=>!character?.validation?.valid))throw new Error("Only fully validated parties can be printed.");
+    const first=members[0],resolvedTitle=title||`Character Forge Party - ${members.length} Characters - Level ${first.level} - ${first.ruleset}`;
+    exportValidatedPackets(members,resolvedTitle);
+  }catch(error){console.error("[print] party PDF export failed",error);throw error;}
+}
+
 function primePrintImages(root){
   try{
     for(const image of root.querySelectorAll("img")){
       if(typeof image.decode==="function")image.decode().catch(()=>{});
     }
   }catch(error){console.warn("[print] image priming failed; continuing with browser print",error);}
+}
+
+function partyPrintStatus(roster,message,isError=false){
+  const status=roster.querySelector("#partyRosterStatus");
+  if(!status)return;
+  status.textContent=message;
+  status.classList.toggle("is-error",Boolean(isError));
+}
+
+function decoratePartyRoster(roster){
+  try{
+    if(!roster||roster.dataset.partyPrintReady==="true")return;
+    const actions=roster.querySelector(".party-roster-actions");
+    if(!actions)return;
+    const save=actions.querySelector("#savePartyPregens");
+    if(save){save.classList.remove("party-forge-button");save.classList.add("party-member-save");}
+    const button=document.createElement("button");
+    button.id="printParty";
+    button.className="party-forge-button";
+    button.type="button";
+    button.textContent="Print the Party";
+    button.addEventListener("click",()=>{
+      try{
+        const party=getLastGeneratedParty();
+        if(!party?.members?.length)throw new Error("Forge a party before printing it.");
+        partyPrintStatus(roster,"Opening the print dialog for the full party…");
+        exportPartyPdf(party.members,{title:`Character Forge Party - Level ${party.level} - ${party.ruleset}`});
+        partyPrintStatus(roster,`Print dialog opened for all ${party.size} validated character packets.`);
+      }catch(error){partyPrintStatus(roster,error.message,true);}
+    });
+    actions.prepend(button);
+    roster.dataset.partyPrintReady="true";
+  }catch(error){console.error("[print] Party Forge print action failed",error);}
+}
+
+function scanPartyRosters(root=document){
+  try{
+    const rosters=[];
+    if(root?.matches?.(".party-roster"))rosters.push(root);
+    if(root?.querySelectorAll)rosters.push(...root.querySelectorAll(".party-roster"));
+    for(const roster of rosters)decoratePartyRoster(roster);
+  }catch(error){console.error("[print] Party Forge roster scan failed",error);}
+}
+
+let partyPrintObserver=null;
+function startPartyPrintObserver(){
+  try{
+    const result=document.getElementById("result");
+    if(!result)return;
+    scanPartyRosters(result);
+    if(partyPrintObserver||typeof MutationObserver==="undefined")return;
+    partyPrintObserver=new MutationObserver(records=>{
+      for(const record of records)for(const node of record.addedNodes)if(node?.nodeType===1)scanPartyRosters(node);
+    });
+    partyPrintObserver.observe(result,{childList:true,subtree:true});
+  }catch(error){console.error("[print] Party Forge print observer failed",error);}
+}
+
+if(typeof document!=="undefined"){
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",startPartyPrintObserver,{once:true});
+  else startPartyPrintObserver();
 }
