@@ -1,7 +1,8 @@
-import { buildPremiumPrintModel } from "../print/model.js";
 import { FORGE_BUILD, buildRulesLawyerCertification } from "../rules/certification.js";
+import { speciesChoiceLabel } from "../rules/species.js";
 
 const esc=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+const fmt=value=>Number(value)>=0?`+${Number(value)}`:`${Number(value)}`;
 const roleLabel=value=>String(value||"party").replace(/-/g," ").replace(/\b\w/g,char=>char.toUpperCase());
 
 export function buildPartyQuickReference(characters){
@@ -13,19 +14,19 @@ export function buildPartyQuickReference(characters){
     if(rulesets.size!==1)throw new Error("Party quick reference cannot mix rules editions.");
     const levels=new Set(members.map(character=>character.level));
     const rows=members.map(character=>{
-      const model=buildPremiumPrintModel(character),certification=buildRulesLawyerCertification(character),attack=model.attacks[0]||null,spell=model.spellcasting||null;
+      const certification=buildRulesLawyerCertification(character),attack=character.attacks?.[0]||null,spell=character.spells||null;
       return Object.freeze({
-        name:model.identity.name,
+        name:character.name,
         role:roleLabel(character.partyRole),
-        build:[`Level ${model.identity.level}`,model.identity.className,model.identity.subclassName].filter(Boolean).join(" · "),
-        origin:`${model.identity.species} · ${model.identity.background}`,
-        ac:model.stats.ac,
-        hp:model.stats.hp,
-        initiative:model.stats.initiative,
-        speed:model.stats.speed,
-        passivePerception:model.stats.passivePerception,
-        attack:attack?`${attack.name} ${attack.toHit} · ${attack.damage}`:"No weapon attack",
-        spell:spell?`Spell DC ${spell.saveDc} · Spell attack ${spell.attackBonus}`:null,
+        build:[`Level ${character.level}`,character.class?.name,character.subclass?.name].filter(Boolean).join(" · "),
+        origin:`${speciesChoiceLabel(character)} · ${character.background?.name||"Background"}`,
+        ac:character.ac,
+        hp:character.hp,
+        initiative:fmt(character.initiative),
+        speed:`${character.speed} ft`,
+        passivePerception:character.passivePerception,
+        attack:attack?`${attack.name} ${fmt(attack.attackBonus)} · ${attack.damage}${fmt(attack.damageBonus||0)} ${attack.type}`:"No weapon attack",
+        spell:spell&&Number.isFinite(spell.saveDc)&&Number.isFinite(spell.attackBonus)?`Spell DC ${spell.saveDc} · Spell attack ${fmt(spell.attackBonus)}`:null,
         rawCertified:Boolean(certification.rawCertified)
       });
     });
