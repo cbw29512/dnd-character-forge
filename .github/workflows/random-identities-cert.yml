@@ -1,0 +1,41 @@
+name: Random identity certification
+
+on:
+  push:
+    branches: [cert/random-identities-v3-20260903]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: random-identities-cert-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  identity-cert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Syntax-check identity and dossier paths
+        run: node --check src/data/original-names.js && node --check src/rules/random.js && node --check src/print/dossier-flavor.js && node --check src/print/dossier-narratives.js && node --check src/print/dossier.js && node --check tests/random-names.test.js && node --check tests/dossier-diversity.test.js
+      - name: Verify identity, dossier, and existing print contracts
+        run: node --test tests/random-names.test.js tests/dossier-diversity.test.js tests/production-print-v3.test.js tests/background-library.test.js
+      - name: Ensure PDF inspection tools
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftotext >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y poppler-utils
+          fi
+      - name: Locate headless Chrome
+        run: |
+          BROWSER="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$BROWSER"
+          echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
+      - name: Verify all 12 Deluxe class dossiers remain print-safe
+        run: node tests/class-identity-browser-print-gate.mjs
