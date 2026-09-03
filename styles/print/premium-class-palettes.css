@@ -11,7 +11,9 @@
   /* Put the existing class crest where the player sheet has the most useful
      breathing room: the large center equipment/writing field. This is the
      same verified class art used elsewhere on the sheet, not a second asset.
-     Minimal and Ink Saver keep their existing no-watermark behavior. */
+     It sits just above the parchment panels at very low opacity so the crest
+     remains visible without competing with equipment text. Minimal and Ink
+     Saver keep their existing no-watermark behavior. */
   .ps-page-one.premium-sheet:not(.sheet-print-ink-saver):not(.sheet-style-minimal) .ps-class-watermark{
     left:2.72in;
     right:auto;
@@ -23,6 +25,7 @@
     color:var(--ps-primary);
     transform:none!important;
     filter:none;
+    z-index:3!important;
   }
 
   /* Decorative class ribbons/rails may be widely tracked, but semantic panel titles must remain searchable/selectable PDF text. */
