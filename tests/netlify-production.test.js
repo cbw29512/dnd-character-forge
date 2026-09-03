@@ -31,20 +31,23 @@ test("Netlify build rewrites production host without mutating source files",()=>
     const builtShare=read("_site/share/index.html");
     const builtRobots=read("_site/robots.txt");
     const builtSitemap=read("_site/sitemap.xml");
+    const built404=read("_site/404.html");
     const sourceIndex=read("index.html");
+    const source404=read("404.html");
 
     assert.doesNotMatch(builtIndex,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
     assert.match(builtIndex,new RegExp(NETLIFY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
     assert.match(builtShare,new RegExp(NETLIFY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
     assert.match(builtRobots,/Sitemap: https:\/\/character-forge-test\.netlify\.app\/sitemap\.xml/);
     assert.match(builtSitemap,/<loc>https:\/\/character-forge-test\.netlify\.app\/<\/loc>/);
+    assert.match(built404,/href="https:\/\/character-forge-test\.netlify\.app\/"/);
     assert.match(sourceIndex,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")),"source must remain valid for GitHub Pages during cutover");
+    assert.match(source404,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")),"source 404 must remain valid during Pages fallback");
 
     const buildInfo=JSON.parse(read("_site/build-info.json"));
     assert.equal(buildInfo.commit,"deadbeef");
     assert.equal(buildInfo.branch,"main");
     assert.equal(buildInfo.siteUrl,NETLIFY_URL);
-    assert.ok(fs.existsSync("_site/404.html"));
     assert.ok(fs.existsSync("_site/_headers"));
   }finally{
     fs.rmSync("_site",{recursive:true,force:true});
@@ -65,6 +68,7 @@ test("production 404 is explicit and safe",()=>{
   assert.match(page,/<meta name="robots" content="noindex,nofollow">/);
   assert.match(page,/That page isn’t in the Forge\./);
   assert.match(page,/Return to Character Forge/);
+  assert.match(page,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
 });
 
 test("production smoke can switch from Pages to Netlify exact-SHA verification",()=>{
