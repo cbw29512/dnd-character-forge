@@ -1,7 +1,19 @@
+import { FORGE_FAMILY_NAMES, FORGE_GIVEN_NAMES } from "../data/original-names.js";
+
 const RECENT_LIMIT=4;
+const NAME_RECENT_LIMIT=8;
 const recentByCategory=new Map();
+const recentGivenNames=[];
+const recentFamilyNames=[];
 let pickSerial=0;
 let classContext=null;
+
+// The generator historically owns this small local array. Recognizing it here
+// keeps old callers compatible while moving actual Random identity generation
+// onto the large Forge Original composable pool.
+const LEGACY_GENERATOR_NAME_POOL=Object.freeze(new Set([
+  "Aric Vale","Mira Stone","Tavian Reed","Selene Hart","Bren Ashford","Kael Rowan"
+]));
 
 const BACKGROUND_AFFINITY=Object.freeze({
   barbarian:Object.freeze(["soldier","pit-fighter","caravan-guard","monster-hunter","wilderness-guide"]),
@@ -21,6 +33,7 @@ const BACKGROUND_AFFINITY=Object.freeze({
 export function pick(items) {
   try {
     if (!Array.isArray(items) || items.length === 0) throw new Error("Cannot pick from an empty list");
+    if(isLegacyGeneratorNamePool(items))return randomCharacterName();
     const eligible = items.filter(item => item?.randomEligibleInForge === true || item?.randomEligible !== false);
     if (eligible.length === 0) throw new Error("Cannot pick from a list with no Random-eligible choices");
 
@@ -35,6 +48,14 @@ export function pick(items) {
     if (category === "background") remember(category, selected, eligible.length);
     return selected;
   } catch (error) { console.error("[random] pick failed", error); throw error; }
+}
+
+export function randomCharacterName(){
+  try{
+    const given=pickFreshNamePart(FORGE_GIVEN_NAMES,recentGivenNames),family=pickFreshNamePart(FORGE_FAMILY_NAMES,recentFamilyNames);
+    rememberNamePart(recentGivenNames,given);rememberNamePart(recentFamilyNames,family);
+    return `${given} ${family}`;
+  }catch(error){console.error("[random] character name failed",error);throw error;}
 }
 
 export function sample(items, count, excluded = []) {
@@ -57,7 +78,7 @@ export function roll4d6DropLowest() {
 }
 
 export function resetRandomHistory(){
-  try{recentByCategory.clear();classContext=null;pickSerial=0;}
+  try{recentByCategory.clear();recentGivenNames.length=0;recentFamilyNames.length=0;classContext=null;pickSerial=0;}
   catch(error){console.error("[random] history reset failed",error);throw error;}
 }
 
@@ -113,3 +134,11 @@ function remember(category,item,eligibleCount){
 }
 function recentFor(category){return recentByCategory.get(category)||[];}
 function choiceKey(item){return typeof item==="object"&&item!==null?String(item.id||item.name||JSON.stringify(item)):String(item);}
+function isLegacyGeneratorNamePool(items){return items.length===LEGACY_GENERATOR_NAME_POOL.size&&items.every(item=>typeof item==="string"&&LEGACY_GENERATOR_NAME_POOL.has(item));}
+function pickFreshNamePart(pool,recent){
+  const fresh=recent.length&&pool.length>recent.length?pool.filter(value=>!recent.includes(value)):pool;
+  return fresh[Math.floor(Math.random()*fresh.length)];
+}
+function rememberNamePart(recent,value){
+  const without=recent.filter(item=>item!==value);without.unshift(value);recent.splice(0,recent.length,...without.slice(0,Math.min(NAME_RECENT_LIMIT,without.length)));
+}
