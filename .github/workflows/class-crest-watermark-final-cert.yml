@@ -1,0 +1,48 @@
+name: Final class crest visual certification
+
+on:
+  push:
+    branches: [cert/class-crest-watermarks-final-20260903]
+
+permissions:
+  contents: read
+
+jobs:
+  crest-final:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify crest and print contracts
+        run: node --test tests/class-crest-watermark.test.js tests/deluxe-class-signature.test.js tests/premium-print.test.js
+      - name: Ensure PDF inspection tools
+        run: |
+          if ! command -v pdfinfo >/dev/null || ! command -v pdftotext >/dev/null || ! command -v pdftoppm >/dev/null; then
+            sudo apt-get update
+            sudo apt-get install -y poppler-utils
+          fi
+      - name: Locate headless Chrome
+        run: |
+          BROWSER="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          test -n "$BROWSER"
+          echo "CHROME_BIN=$BROWSER" >> "$GITHUB_ENV"
+      - name: Render all 12 Deluxe class sheets
+        run: node tests/class-identity-browser-print-gate.mjs
+      - name: Verify Ink Saver
+        run: node tests/class-signature-ink-saver-browser-gate.mjs
+      - name: Upload final crest visual review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: class-crest-watermark-final-review
+          path: |
+            tests/.browser-print/*.png
+            tests/.browser-print/*.pdf
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
