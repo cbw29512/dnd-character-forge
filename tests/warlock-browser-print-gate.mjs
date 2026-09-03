@@ -15,6 +15,13 @@ const CASES=[
   {ruleset:"2014",subclass:"fiend",species:"human",background:"acolyte",classSelections:{pactBoon:"tome",eldritchInvocations:["book-of-ancient-secrets","agonizing-blast"]},customization:{style:"ornate",paper:"parchment",ornament:"rich",frame:"filigree",printMode:"premium"}},
   {ruleset:"2024",subclass:"fiend-patron",species:"human",background:"sage",classSelections:{eldritchInvocations:["pact-of-the-tome","pact-of-the-chain","pact-of-the-blade","lessons-of-the-first-ones"]},customization:{style:"ornate",paper:"ivory",ornament:"rich",frame:"class",printMode:"premium"},forceLessonsClericMagic:true}
 ];
+const MAX_CONTENT_2024=Object.freeze({
+  backgroundSelections:Object.freeze({spellcastingAbility:"int",cantrip1:"fire-bolt",cantrip2:"mage-hand",level1Spell:"shield"}),
+  spellSelections:Object.freeze({
+    prepared:Object.freeze(["bane","charm-person","expeditious-retreat","illusory-script","darkness","invisibility","ray-of-enfeeblement","spider-climb","hypnotic-pattern","remove-curse","charm-monster","dream","planar-binding","scrying","teleportation-circle"]),
+    arcanum6:Object.freeze(["create-undead"]),arcanum7:Object.freeze(["finger-of-death"]),arcanum8:Object.freeze(["demiplane"]),arcanum9:Object.freeze(["gate"])
+  })
+});
 
 mkdirSync(OUT,{recursive:true});
 for(const item of CASES)verifyPacket(item);
@@ -35,7 +42,11 @@ function verifyPacket(testCase){
   assert.ok(model.equipment.every(item=>typeof item==="string"&&item.trim()),`${slug}: every printable equipment entry must be a non-empty string`);
   assert.equal(model.equipment.some(item=>item.includes("[object Object]")),false,`${slug}: Warlock print model contains an unformatted inventory object`);
   for(const [key,value] of Object.entries(testCase.customization))assert.equal(model.presentation.customization[key],value,`${slug}: customization ${key}`);
-  if(testCase.forceLessonsClericMagic)assert.ok(model.spellPage.entries.some(item=>item.name==="Purify Food and Drink"),`${slug}: max-content Lessons fixture did not reach Purify Food and Drink`);
+  if(testCase.forceLessonsClericMagic){
+    assert.ok(model.spellPage.entries.some(item=>item.name==="Purify Food and Drink"),`${slug}: max-content Lessons fixture did not reach Purify Food and Drink`);
+    const lowLevel=model.spellPage.entries.filter(item=>item.level<=1);
+    assert.ok(lowLevel.length>=22,`${slug}: deterministic max-content fixture produced only ${lowLevel.length} level-0/1 spell rows`);
+  }
 
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
   execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,pathToFileURL(htmlPath).href],{stdio:"pipe"});
@@ -76,7 +87,12 @@ function verifyPacket(testCase){
 }
 
 function characterAt({ruleset,subclass,species,background,classSelections,customization,forceLessonsClericMagic=false}){
-  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;const character=generateCharacter(state);if(forceLessonsClericMagic)forceClericLessonsGrant(character);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
+  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="warlock";state.constraints.subclass=subclass;state.constraints.species=species;state.constraints.background=background;state.classSelections=classSelections;
+  if(forceLessonsClericMagic){state.backgroundSelections={...MAX_CONTENT_2024.backgroundSelections};state.spellSelections={prepared:[...MAX_CONTENT_2024.spellSelections.prepared],arcanum6:[...MAX_CONTENT_2024.spellSelections.arcanum6],arcanum7:[...MAX_CONTENT_2024.spellSelections.arcanum7],arcanum8:[...MAX_CONTENT_2024.spellSelections.arcanum8],arcanum9:[...MAX_CONTENT_2024.spellSelections.arcanum9]};}
+  const originalRandom=Math.random;let character;
+  try{if(forceLessonsClericMagic)Math.random=()=>0;character=generateCharacter(state);}
+  finally{Math.random=originalRandom;}
+  if(forceLessonsClericMagic)forceClericLessonsGrant(character);character.presentation={...(character.presentation||{}),sheetCustomization:customization};return character;
 }
 function forceClericLessonsGrant(character){
   const existingFeats=(character.feats||[]).filter(feat=>feat?.source!=="warlock"),existingMagic=(character.magicInitiates||[]).filter(choice=>choice?.source!=="warlock"),resolved=resolveHumanVersatileOriginFeat({

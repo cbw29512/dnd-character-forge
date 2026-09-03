@@ -1,0 +1,57 @@
+@media print{
+  /*
+   * Table packets are the compact, at-the-table export. Max-level 2024 casters
+   * can legitimately fill every page-one panel, so reclaim geometry from the
+   * oversized header and inter-panel spacing before allowing body text to enter
+   * the fixed certification/license footer. Keep the established text sizes.
+   * Warlock already owns a separately certified dense layout and is excluded.
+   */
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
+    grid-template-rows:1.66in minmax(0,1fr) .34in;
+    gap:.04in;
+  }
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-top{
+    grid-template-columns:1.54in minmax(0,1fr) 2.28in;
+    gap:.06in;
+  }
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-main-columns{gap:.06in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-column{gap:.035in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-panel-body{padding:.035in .05in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-feature-list{gap:.018in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-quick-list li+li{margin-top:.018in}
+
+  /*
+   * Fighter and Rogue can carry the densest one-page Active Rules indexes.
+   * Preserve the four-column scan width and return only that index to its
+   * original compact proof size; the rest of the sheet keeps readability-v2
+   * typography. The smaller header supplies the remaining footer safety margin.
+   */
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-frame,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-frame{
+    grid-template-rows:1.64in minmax(0,1fr) .31in;
+    gap:.04in;
+  }
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-rule-index,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-rule-index{
+    padding:.012in .035in;
+  }
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-rule-index h2,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-rule-index h2{
+    margin:0 0 .004in;
+    font-size:5.7pt;
+    line-height:1;
+  }
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-rule-index>div,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-rule-index>div{
+    gap:0 .045in;
+  }
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-rule-index span,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-rule-index span{
+    line-height:1;
+  }
+  .sheet-packet-table.profile-martial-one-page.theme-fighter-steel .ps-rule-index b,
+  .sheet-packet-table.profile-martial-one-page.theme-rogue-shadow .ps-rule-index b{
+    font-size:4.35pt;
+    line-height:1;
+  }
+}
