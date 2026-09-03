@@ -6,7 +6,7 @@ import { MASTERY_REFERENCE } from "../src/data/quick-reference.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { buildQuickReference, masteryEntries } from "../src/rules/reference.js";
 
-function make(ruleset,classId,level){const state=createInitialState();state.ruleset=ruleset;state.constraints.class=classId;state.constraints.level=String(level);return generateCharacter(state);}
+function make(ruleset,classId,level){const state=createInitialState();state.ruleset=ruleset;state.constraints.class=classId;state.constraints.level=String(level);state.constraints.background=ruleset==="2014"?"acolyte":"criminal";return generateCharacter(state);}
 test("every active feature in the verified slice builds a complete quick reference",()=>{
   try{for(const ruleset of ["2014","2024"])for(const classId of ["fighter","wizard","cleric"])for(let level=1;level<=5;level++){const c=make(ruleset,classId,level),refs=buildQuickReference(c);assert.ok(refs.length>0);assert.equal(new Set(refs.map(item=>item.id)).size,refs.length);for(const item of refs){assert.ok(item.name);assert.ok(item.category);assert.ok(item.timing);assert.ok(item.text.length>=20);}}}
   catch(error){console.error("[test] complete quick reference",error);throw error;}
