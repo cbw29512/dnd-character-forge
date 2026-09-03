@@ -20,7 +20,7 @@ test("all 12 classes provide distinct SVG crest art for the player-sheet waterma
   assert.equal(crests.size,12,"Every class must retain distinct crest art.");
 });
 
-test("page-one crest is centered in the equipment writing field without changing layout",()=>{
+test("page-one crest is centered and visibly layered in the equipment writing field without changing layout",()=>{
   assert.match(PALETTES,/\.ps-page-one\.premium-sheet:not\(\.sheet-print-ink-saver\):not\(\.sheet-style-minimal\) \.ps-class-watermark\s*\{/);
   assert.match(PALETTES,/left:2\.72in/);
   assert.match(PALETTES,/top:4\.35in/);
@@ -28,6 +28,7 @@ test("page-one crest is centered in the equipment writing field without changing
   assert.match(PALETTES,/height:2\.66in/);
   assert.match(PALETTES,/opacity:\.034/);
   assert.match(PALETTES,/transform:none!important/);
+  assert.match(PALETTES,/z-index:3!important/);
   assert.match(GORGEOUS,/\.ps-class-watermark\{position:absolute;z-index:0!important/);
 });
 
