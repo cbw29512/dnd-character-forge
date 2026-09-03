@@ -3,7 +3,7 @@ name: Party Forge browser gate
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, cert/party-quick-reference-v2-20260903]
   workflow_dispatch:
 
 permissions:
@@ -37,6 +37,8 @@ jobs:
         run: node tests/party-forge-browser-gate.mjs
       - name: Verify direct Party Forge print in Chrome
         run: node tests/party-print-browser-gate.mjs
+      - name: Verify existing single-character mobile Print/Reforge path
+        run: node tests/mobile-action-browser-gate.mjs
       - name: Upload Party Forge visual review
         if: always()
         uses: actions/upload-artifact@v4
