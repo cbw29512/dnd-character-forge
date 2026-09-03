@@ -5,6 +5,7 @@ import { warlockSpellsFor } from "../data/warlock-spells.js";
 import { abilityMod } from "../rules/math.js";
 import { buildQuickReference } from "../rules/reference-router.js";
 import { speciesChoiceLabel } from "../rules/species.js";
+import { characterActiveSpellReferences } from "../rules/spell-reference.js";
 import { normalizeSheetCustomization, sheetCustomizationClasses, sheetCustomizationStyle } from "./customization.js";
 import { compactFeatureCards, compactRuleIndex, exportProfileFor } from "./profile.js";
 import { selectPrintTheme } from "./theme.js";
@@ -47,8 +48,8 @@ export function buildWarlockPremiumPrintModel(character){
 
 function spellPageModel(character,catalog){
   try{
-    const byId=new Map(catalog.map(spell=>[spell.id,spell])),cantrips=new Set(character.spells.cantrips?.all||[]),known=new Set(character.spells.known?.all||[]),prepared=new Set(character.spells.prepared?.all||[]),always=new Set(character.spells.alwaysPrepared||[]),tomeCantrips=new Set(character.spells.tome?.cantrips||[]),tomeRituals=new Set(character.spells.tome?.rituals||[]),invocation=new Set(character.spells.invocationSpells||[]),arcanum=new Set(Object.values(character.spells.mysticArcanum||{}));
-    const ids=[...cantrips,...known,...prepared,...always,...tomeCantrips,...tomeRituals,...invocation,...arcanum];
+    const active=characterActiveSpellReferences(character),byId=new Map([...catalog,...active].map(spell=>[spell.id,spell])),cantrips=new Set(character.spells.cantrips?.all||[]),known=new Set(character.spells.known?.all||[]),prepared=new Set(character.spells.prepared?.all||[]),always=new Set(character.spells.alwaysPrepared||[]),tomeCantrips=new Set(character.spells.tome?.cantrips||[]),tomeRituals=new Set(character.spells.tome?.rituals||[]),invocation=new Set(character.spells.invocationSpells||[]),arcanum=new Set(Object.values(character.spells.mysticArcanum||{})),supplemental=new Map(active.filter(spell=>["Magic Initiate Cantrip","Magic Initiate · Always Prepared","Species Cantrip","Species Magic"].includes(spell.preparation)).map(spell=>[spell.id,spell]));
+    const ids=[...cantrips,...known,...prepared,...always,...tomeCantrips,...tomeRituals,...invocation,...arcanum,...supplemental.keys()];
     const entries=[...new Set(ids)].map(id=>{
       const spell=byId.get(id);if(!spell)throw new Error(`Missing Warlock print spell ${id}.`);
       const tags=[];
@@ -60,7 +61,8 @@ function spellPageModel(character,catalog){
       if(tomeRituals.has(id))tags.push("R");
       if(invocation.has(id))tags.push("I");
       if(arcanum.has(id))tags.push("X");
-      return{id,name:spell.name,level:spell.level,tags:tags.join("")||"K"};
+      if(supplemental.has(id)){if(spell.level===0)tags.push("C");else tags.push("A");}
+      return{id,name:spell.name,level:spell.level,tags:[...new Set(tags)].join("")||"K"};
     }).sort((a,b)=>a.level-b.level||a.name.localeCompare(b.name));
     const invocationCantripTargets=(character.warlockSelections?.invocationCantripTargets||[]).map(record=>{const spell=byId.get(record.targetCantrip);if(!spell)throw new Error(`Missing invocation target spell ${record.targetCantrip}.`);const invocationOption=warlockInvocationById(character.ruleset,record.invocationId);return{slot:record.slot,invocationId:record.invocationId,invocationName:invocationOption.name,targetCantrip:record.targetCantrip,targetName:spell.name};});
     return{entries,source:`${character.audit.sourceVersion} · Warlock spell list pp.${character.ruleset==="2014"?"110–111":"74–76"} · Pact and invocation magic shown separately`,slots:Object.entries(character.spells.slots||{}).map(([level,count])=>`${level}:${count}`).join(" · "),ability:abilityName(character.spells.ability),saveDc:character.spells.saveDc,attackBonus:fmt(character.spells.attackBonus),warlock:{pactSlotLevel:character.spells.pactMagic.slotLevel,pactSlotCount:character.spells.pactMagic.slotCount,invocations:[...(character.warlockSelections?.invocations?.all||[])],invocationCantripTargets,tomeCantrips:[...tomeCantrips],tomeRituals:[...tomeRituals],invocationSpells:[...invocation],mysticArcanum:{...(character.spells.mysticArcanum||{})},familiarForm:character.warlockSelections?.familiarForm||null}};
