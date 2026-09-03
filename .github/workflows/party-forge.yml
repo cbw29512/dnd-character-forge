@@ -26,8 +26,8 @@ jobs:
           node-version: 22
       - name: Syntax-check Party Forge print path
         run: node --check src/rules/party-forge.js && node --check src/ui/print.js && node --check src/ui/party-print-summary.js && node --check tests/party-print-browser-gate.mjs
-      - name: Verify Party Forge RAW and DM quick-reference contracts
-        run: node --test tests/party-forge.test.js tests/party-print-summary.test.js tests/party-print-summary-style.test.js
+      - name: Verify Party Forge RAW, DM quick-reference, and supplemental-spell contracts
+        run: node --test tests/party-forge.test.js tests/party-print-summary.test.js tests/party-print-summary-style.test.js tests/print-supplemental-spells.test.js
       - name: Locate headless Chrome
         run: |
           BROWSER="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
