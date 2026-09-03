@@ -43,6 +43,7 @@ test("all 12 classes keep four-paragraph dossiers while materially varying narra
     assert.equal(new Set(dossier.personality.mannerisms).size,3,`${classId} repeated mannerism`);
     assert.equal(new Set(dossier.personality.likes).size,3,`${classId} repeated likes`);
     assert.equal(new Set(dossier.personality.dislikes).size,3,`${classId} repeated dislikes`);
+    assert.doesNotMatch(dossier.roleplay.guidance,/as a the\b/i,`${classId} roleplay archetype grammar`);
     return dossier;
   });
   assert.ok(new Set(dossiers.map(item=>item.storyArc.id)).size>=8,"12-class matrix should exercise at least eight narrative structures");
