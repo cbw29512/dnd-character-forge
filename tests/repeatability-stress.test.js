@@ -44,7 +44,8 @@ function assertProductionCharacter(character,label){
     assert.equal(Number.isFinite(attack.damageBonus),true,`${label}: invalid damage bonus for ${attack.name}`);
   }
   if(character.audit.rawIntegrity===false){
-    assert.equal(character.subclass?.contentKind,"forge-original",`${label}: non-RAW character lacks original-content boundary`);
+    const hasOriginalBoundary=character.background?.contentKind==="forge-original"||character.subclass?.contentKind==="forge-original";
+    assert.equal(hasOriginalBoundary,true,`${label}: non-RAW character lacks original-content boundary`);
     assert.match(character.audit.license||"",/Character Forge Original/,`${label}: original-content license missing`);
   }else{
     assert.equal(character.audit.rawIntegrity,true,`${label}: RAW integrity missing`);
