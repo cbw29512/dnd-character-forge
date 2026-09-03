@@ -71,11 +71,14 @@ test("production 404 is explicit and safe",()=>{
   assert.match(page,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")));
 });
 
-test("production smoke can switch from Pages to Netlify exact-SHA verification",()=>{
+test("production smoke workflow delegates to syntax-checkable host-aware script",()=>{
   const workflow=read(".github/workflows/production-smoke.yml");
+  const script=read("scripts/production-smoke.sh");
+  assert.match(workflow,/actions\/checkout@v4/);
   assert.match(workflow,/vars\.NETLIFY_PRODUCTION_URL/);
-  assert.match(workflow,/build-info\.json/);
-  assert.match(workflow,/deployed_sha/);
-  assert.match(workflow,/missing-\$\{GITHUB_SHA\}/);
-  assert.match(workflow,/That page isn’t in the Forge\./);
+  assert.match(workflow,/bash scripts\/production-smoke\.sh/);
+  assert.match(script,/build-info\.json/);
+  assert.match(script,/deployed_sha/);
+  assert.match(script,/missing-\$\{GITHUB_SHA\}/);
+  assert.match(script,/That page isn’t in the Forge\./);
 });
