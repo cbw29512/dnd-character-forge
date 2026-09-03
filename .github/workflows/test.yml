@@ -29,15 +29,17 @@ jobs:
         shell: bash
         run: |
           set +e
-          npm test 2>&1 | tee test-output.log
+          diagnostics_dir="$RUNNER_TEMP/regression-diagnostics"
+          mkdir -p "$diagnostics_dir"
+          npm test 2>&1 | tee "$diagnostics_dir/test-output.log"
           status=${PIPESTATUS[0]}
           exit $status
-      - name: Upload regression diagnostics
-        if: always()
+      - name: Upload regression diagnostics on failure
+        if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: regression-diagnostics
-          path: test-output.log
+          path: ${{ runner.temp }}/regression-diagnostics/test-output.log
           if-no-files-found: warn
           retention-days: 7
 
