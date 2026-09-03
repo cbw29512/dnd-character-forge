@@ -28,6 +28,7 @@ const ROLE_POOLS=Object.freeze({
 });
 
 const FALLBACK_NAMES=Object.freeze(["Aster Vale","Bram Stone","Cira Dawn","Dain Rowan","Elara Reed","Fen Ash","Galen Hart","Iris Thorn","Jora Flint","Kestrel Moon","Lyra Voss","Marek Grey"]);
+let lastGeneratedParty=null;
 
 function dataFor(ruleset){return ruleset==="2014"?FORGE_2014:FORGE_2024;}
 
@@ -73,6 +74,8 @@ function uniquePartyName(character,index,usedNames){
   return {...character,name:fallback};
 }
 
+export function getLastGeneratedParty(){return lastGeneratedParty;}
+
 export function generateParty({ruleset="2024",level=1,size=4,composition=PARTY_COMPOSITIONS.BALANCED,allowDuplicateClasses=false,magicMode=MAGIC_MODES.RANDOM_MAGIC}={}){
   try{
     validatePartyRequest({ruleset,level,size,composition});
@@ -94,7 +97,7 @@ export function generateParty({ruleset="2024",level=1,size=4,composition=PARTY_C
       character=uniquePartyName(character,index,usedNames);
       return Object.freeze({...character,partyRole:role});
     });
-    return Object.freeze({
+    const party=Object.freeze({
       id:crypto.randomUUID(),
       ruleset,
       level,
@@ -103,5 +106,7 @@ export function generateParty({ruleset="2024",level=1,size=4,composition=PARTY_C
       allowDuplicateClasses:Boolean(allowDuplicateClasses),
       members:Object.freeze(members)
     });
+    lastGeneratedParty=party;
+    return party;
   }catch(error){console.error("[party-forge] party generation failed",error);throw error;}
 }
