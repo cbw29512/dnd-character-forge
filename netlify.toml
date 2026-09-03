@@ -1,0 +1,21 @@
+[build]
+  command = "node scripts/netlify-build.mjs"
+  publish = "_site"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[context.production]
+  command = "node scripts/netlify-build.mjs"
+
+[[redirects]]
+  from = "/share"
+  to = "/share/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy"
+  to = "/privacy.html"
+  status = 301
+  force = true
