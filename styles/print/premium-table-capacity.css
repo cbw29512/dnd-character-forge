@@ -4,20 +4,21 @@
    * can legitimately fill every page-one panel, so reclaim geometry from the
    * oversized header and inter-panel spacing before allowing body text to enter
    * the fixed certification/license footer. Keep the established text sizes.
+   * Warlock already owns a separately certified dense layout and is excluded.
    */
-  .sheet-packet-table.profile-caster-two-page .ps-frame{
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
     grid-template-rows:1.66in minmax(0,1fr) .34in;
     gap:.04in;
   }
-  .sheet-packet-table.profile-caster-two-page .ps-top{
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-top{
     grid-template-columns:1.54in minmax(0,1fr) 2.28in;
     gap:.06in;
   }
-  .sheet-packet-table.profile-caster-two-page .ps-main-columns{gap:.06in}
-  .sheet-packet-table.profile-caster-two-page .ps-column{gap:.035in}
-  .sheet-packet-table.profile-caster-two-page .ps-panel-body{padding:.035in .05in}
-  .sheet-packet-table.profile-caster-two-page .ps-feature-list{gap:.018in}
-  .sheet-packet-table.profile-caster-two-page .ps-quick-list li+li{margin-top:.018in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-main-columns{gap:.06in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-column{gap:.035in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-panel-body{padding:.035in .05in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-feature-list{gap:.018in}
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-quick-list li+li{margin-top:.018in}
 
   /*
    * Fighter and Rogue can carry the densest one-page Active Rules indexes.

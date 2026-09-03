@@ -39,6 +39,7 @@ console.log(`[print-footer-boundary] verified ${files.length} Table PDF page-one
 function footerWord(value){
   const raw=decode(value).trim();
   if(!raw||/^[^a-z0-9]+$/i.test(raw))return true;
+  if(/^[A-Z]{1,2}$/.test(raw))return true;
   const compact=raw.normalize("NFKD").replace(/[’‘]/g,"'").toLowerCase().replace(/[^a-z0-9]+/g,"");
   if(!compact||compact.length===1||footerWords.has(compact))return true;
   if(compact===FORGE_BUILD.id.toLowerCase().replace(/[^a-z0-9]+/g,""))return true;
