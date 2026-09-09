@@ -19,6 +19,7 @@ export function renderCharacter(character,target){
     const list=target.querySelector(".reference-list");
     if(!list)throw new Error("Character sheet reference container was not rendered.");
     list.innerHTML=references.map(item=>`<article class="reference-item"><div class="reference-head"><strong>${escapeHtml(item.name)}</strong><span class="reference-tag">${escapeHtml(item.category)}</span></div><p>${escapeHtml(item.text)}</p><div class="reference-foot"><span class="reference-timing">${escapeHtml(item.timing)}</span>${sourceLabel(item.source)}</div></article>`).join("");
+    simplifySheetActions(target);
     ensureTopActions(target);
     ensureHomeNavigation();
   }catch(error){
@@ -86,6 +87,33 @@ function spellReferenceCard(spell){
 }
 
 /*
+ * The base renderer keeps reroll/print buttons as action proxies because the
+ * app's delegated result handler owns those operations. Once the persistent
+ * result action bar exists, only Save to Pregens needs to remain visible in
+ * the character card. This removes duplicate controls without duplicating
+ * business logic or changing the print/save event path.
+ */
+function simplifySheetActions(target){
+  try{
+    const actions=target.querySelector(".character-actions");
+    if(!actions)return;
+    actions.classList.add("character-save-actions");
+    const save=actions.querySelector('[data-action="save"]');
+    if(save&&!save.classList.contains("is-saved"))save.textContent="Save to Pregens";
+    for(const action of ["reroll","print"]){
+      const button=actions.querySelector(`[data-action="${action}"]`);
+      if(!button)continue;
+      button.hidden=true;
+      button.setAttribute("aria-hidden","true");
+      button.tabIndex=-1;
+    }
+  }catch(error){
+    console.error("[ui] result action simplification failed",error);
+    throw error;
+  }
+}
+
+/*
  * The landing state keeps Forge inside the launch card so the primary action
  * is visible immediately. After the first successful render, the same button
  * moves into a persistent top action bar above the workspace.
@@ -100,7 +128,7 @@ function ensureTopActions(target){
       bar=document.createElement("section");
       bar.className="forge-action-bar";
       bar.setAttribute("aria-label","Character Forge actions");
-      bar.innerHTML=`<div class="forge-action-copy"><span class="section-kicker">READY TO PLAY?</span><strong>Forge, reforge, or print</strong><small>Leave everything Random for a complete legal character, or set only the choices you care about.</small></div><div class="forge-action-buttons"></div>`;
+      bar.innerHTML=`<div class="forge-action-copy"><span class="section-kicker">READY TO PLAY?</span><strong>Your character is ready</strong><small>Adjust the setup, forge another result, or print the current character.</small></div><div class="forge-action-buttons"></div>`;
       workspace.parentNode.insertBefore(bar,workspace);
     }
 
@@ -112,7 +140,7 @@ function ensureTopActions(target){
       backButton=document.createElement("button");
       backButton.type="button";
       backButton.className="action-button forge-action-back";
-      backButton.textContent="← Back to Forge Setup";
+      backButton.textContent="← Back to Setup";
       backButton.setAttribute("aria-label","Back to Character Forge setup");
       backButton.addEventListener("click",goToForgeSetup);
       buttons.prepend(backButton);
@@ -130,7 +158,8 @@ function ensureTopActions(target){
       printButton=document.createElement("button");
       printButton.type="button";
       printButton.className="action-button forge-action-print";
-      printButton.textContent="Print / Export PDF";
+      printButton.textContent="Print / PDF";
+      printButton.setAttribute("aria-label","Print or export current character as PDF");
       buttons.appendChild(printButton);
       printButton.addEventListener("click",()=>{
         try{
