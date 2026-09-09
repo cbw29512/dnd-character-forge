@@ -17,12 +17,12 @@ export function buildNarrativeDossier(character,{quickTurn=[]}={}){
     const literaryCore=buildLiteraryCore(context,storyArc,seed),backstory=buildLiteraryBackstory(context,storyArc,seed,literaryCore),artDirection=literaryArtDirection(context,literaryCore),subclassSuffix=subclassName?` · ${subclassName}`:"";
     return Object.freeze({
       title:`${character.name} — Character Dossier`,storyTitle:literaryCore.storyTitle,subtitle:`${classStory.epithet} · ${species} ${className}${subclassSuffix} · ${background}`,disclaimer:"Generated narrative flavor. This page does not add or change game rules.",storyArc:Object.freeze({id:storyArc.id,label:storyArc.label}),backstory,
-      personality:Object.freeze({trait:storyArc.trait(context),ideal:literaryCore.ideal,bond:capitalize(bg.bond)+".",flaw:capitalize(subclassName?subLit.cost:classStory.burden)+".",mannerisms:pickMany(DOSSIER_MANNERISMS,seed,3,51),likes:pickMany(DOSSIER_LIKES,seed,3,71),dislikes:pickMany(DOSSIER_DISLIKES,seed,3,91),fear:literaryCore.fear,secret:literaryCore.secret}),
+      personality:Object.freeze({trait:storyArc.trait(context),ideal:literaryCore.ideal,bond:capitalize(bg.bond)+".",flaw:capitalize(subclassName?subLit.cost:classStory.burden)+".",mannerisms:anchoredMany(literaryCore.habit,DOSSIER_MANNERISMS,seed,3,51),likes:anchoredMany(literaryCore.comfort,DOSSIER_LIKES,seed,3,71),dislikes:anchoredMany(literaryCore.aversion,DOSSIER_DISLIKES,seed,3,91),fear:literaryCore.fear,secret:literaryCore.secret}),
       appearance:Object.freeze([`${species} adventurer with ${ABILITY_BEARING[ability]||ABILITY_BEARING.wis}.`,capitalize(classStory.look)+".",`Carries ${token} among otherwise practical travel gear.`,subclassName?`The ${subclassName} identity reads visually as ${subLit.art}.`:`Moves like someone accustomed to danger rather than someone trying to look dangerous.`,`First impression: ${pick(DOSSIER_FIRST_IMPRESSIONS,seed,113)}.`]),
       artDirection,
       combatNotes:Object.freeze([capitalize(classStory.combat)+".",...quickTurn.slice(0,3)]),
       hooks:Object.freeze([literaryCore.hook,`A message arrives from ${bg.mentor}, asking for help with a problem connected to ${place}.`,`Someone recognizes ${token} and insists it belongs to a story ${character.name} has never heard.`,subclassName?`A stranger recognizes the signs of ${subclassName} and claims ${character.name}'s path began with a story that was deliberately falsified.`:`A survivor of ${event} remembers the outcome very differently and wants a private conversation.`]),
-      roleplay:Object.freeze({quote:classStory.quote,guidance:`Play ${character.name} as a ${storyArc.label.replace(/^The\s+/i,"").toLowerCase()} whose competence matters more than theatrics. Let the ${background} background decide what feels personal${subclassName?`, and let ${subclassName} decide how that history is expressed under pressure`:``}. Observe first, speak with purpose, and let emotion show through choices rather than speeches.`})
+      roleplay:Object.freeze({quote:classStory.quote,guidance:literaryCore.roleplay})
     });
   }catch(error){console.error("[dossier] build failed",error);throw error;}
 }
@@ -32,5 +32,6 @@ function seedFor(character){return hash([character.name,character.ruleset,charac
 function highestAbility(abilities={}){return ABILITIES.reduce((best,id)=>Number(abilities[id]||0)>Number(abilities[best]||0)?id:best,"str");}
 function pick(values,seed,salt=0){return values[Math.abs((seed+salt*2654435761)|0)%values.length];}
 function pickMany(values,seed,count,salt=0){const pool=[...values],out=[];for(let index=0;index<count&&pool.length;index++){const choice=Math.abs((seed+(salt+index)*1597334677)|0)%pool.length;out.push(pool.splice(choice,1)[0]);}return Object.freeze(out);}
+function anchoredMany(anchor,values,seed,count,salt){const rest=values.filter(value=>String(value).toLowerCase()!==String(anchor).toLowerCase());return Object.freeze([anchor,...pickMany(rest,seed,Math.max(0,count-1),salt)]);}
 function hash(value){let result=2166136261;for(const char of String(value)){result^=char.charCodeAt(0);result=Math.imul(result,16777619);}return result|0;}
 function capitalize(value){const text=String(value||"");return text?text[0].toUpperCase()+text.slice(1):text;}
