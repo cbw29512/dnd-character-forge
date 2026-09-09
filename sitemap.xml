@@ -2,7 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://cbw29512.github.io/dnd-character-forge/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-09-03</lastmod>
+  </url>
+  <url>
+    <loc>https://cbw29512.github.io/dnd-character-forge/guide.html</loc>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://cbw29512.github.io/dnd-character-forge/faq.html</loc>
+    <lastmod>2026-09-09</lastmod>
+  </url>
+  <url>
+    <loc>https://cbw29512.github.io/dnd-character-forge/privacy.html</loc>
+    <lastmod>2026-09-09</lastmod>
   </url>
 </urlset>
