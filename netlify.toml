@@ -15,6 +15,18 @@
   force = true
 
 [[redirects]]
+  from = "/guide"
+  to = "/guide.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/faq"
+  to = "/faq.html"
+  status = 301
+  force = true
+
+[[redirects]]
   from = "/privacy"
   to = "/privacy.html"
   status = 301

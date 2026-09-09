@@ -12,76 +12,64 @@ Character Forge is production-ready when a first-time visitor can generate, save
 - Generation fails closed when a required supported rules reference cannot be resolved.
 
 ## Release discipline
-Character Forge is in **release-candidate hardening**, not feature-expansion mode.
+Character Forge remains in **release-candidate hardening** until the remaining release blockers below are closed.
 
-Do not add new classes, subclasses, generators, or major UI concepts until the release blockers below are closed. Preserve working behavior unless a change is required for correctness, release safety, accessibility, licensing, privacy disclosure, or a verified customer-facing defect.
+Do not expand the supported rules surface casually. Preserve working mechanics unless a change is required for correctness, release safety, accessibility, licensing, privacy, verified customer-facing usability, or explicitly approved post-audit polish that does not alter character rules.
 
-## Verified production foundation
-- [x] Explicit 2014/2024 ruleset selection.
-- [x] Levels 1–20 generation coverage.
-- [x] Production-matrix coverage across all 12 classes.
-- [x] Repeatability stress across both editions and representative low/mid/high levels.
-- [x] Edition/source isolation and fail-closed rules validation.
-- [x] Generated SRD 5.1 and SRD 5.2.1 spell-reference catalogs for the supported production spell surface.
-- [x] Pinned official SRD source identity and byte-identical spell-catalog regeneration checks.
-- [x] 2024 starting-equipment choice support and edition-specific starting-equipment handling.
-- [x] No / Low / Normal / High Magic modes with data-driven eligibility checks.
-- [x] Class-specific premium print system for all 12 classes.
-- [x] User portrait replacement plus class-specific fallback portrait behavior.
-- [x] Deluxe and Ink Saver class identity gates.
-- [x] Fixed Letter-page print/PDF browser certification.
-- [x] Deluxe all-12-class physical footer-separation geometry certification.
-- [x] Pregen save/reopen lifecycle.
-- [x] Versioned Pregen persistence and backup export/import with duplicate protection.
+## Current exact-main baseline
+Current audited `main`: `c552fcc219205eab7c4385d94cd0fbce3fdf0560` (PR #141, 2026-09-03).
+
+That baseline includes the merged release cleanup, premium source-label/readability pass, Pregen trust-boundary hardening, mobile Print/Reforge fixes, social preview fixes, modernized CI actions, deterministic dense-Warlock print coverage, and the standard 24-PDF physical body/footer boundary gate.
+
+Verified on the current baseline:
+- [x] Character Forge rules/site regression suite.
+- [x] 2014/2024 source isolation and fail-closed rules validation.
+- [x] All 12 supported SRD classes across levels 1–20 in the production matrix.
+- [x] SRD 5.1 / SRD 5.2.1 spell-reference integrity and regeneration checks.
+- [x] Rules Lawyer browser certification.
+- [x] Party Forge browser certification.
 - [x] Responsive desktop/tablet/compact-phone browser coverage.
-- [x] Live browser accessibility certification.
-- [x] Rules Lawyer certification.
-- [x] Party Forge certification.
-- [x] GitHub Pages deployment gate.
-- [x] Public production smoke gate after deployment.
-- [x] Website SRD attribution and independent-project disclosure.
+- [x] Live accessibility certification.
+- [x] Pregen save/reopen, export/import, duplicate protection, and hostile-backup trust restoration.
+- [x] Class-choice lifecycle coverage.
+- [x] Deluxe and Ink Saver print/PDF generation.
+- [x] All 12 Deluxe class identities.
+- [x] Ink Saver class identities.
+- [x] Deterministic dense-caster and Warlock print geometry.
+- [x] Standard 2014/2024 Table PDF physical body/footer-boundary certification.
+- [x] Website privacy disclosure, independent-project disclosure, and SRD licensing notice.
+- [x] Edition-aware SRD/CC attribution rendered on printed pages by the release-candidate code path.
+- [x] GitHub Pages deployment and production smoke on exact `main`.
 - [x] Visible audit build/version identification.
 
-## Exact-main release-candidate baseline
-Baseline before final cleanup: `6b601ef96d03d5fd237d0f9ceafda02e9ea592cc`.
+## Current polish branch
+`polish/seo-mobile-20260909`
 
-Verified on that exact SHA:
-- [x] Character Forge rules/site suite.
-- [x] Responsive/accessibility/save-restore/class-choice browser gates.
-- [x] Premium PDF and all-12 Deluxe/Ink Saver print gates.
-- [x] Rules Lawyer gate.
-- [x] Party Forge gate.
-- [x] GitHub Pages deployment.
-- [x] Production smoke.
+Purpose: improve the public release wrapper without changing character mechanics or the supported rules matrix.
 
-## Current cleanup branch
-`release/ten-out-of-ten-cleanup-20260831`
+Allowed scope:
+- CSP-safe static support pages;
+- useful crawlable pregen guide / FAQ content;
+- mobile readability for those support pages;
+- crawl discovery and Netlify canonical-host portability;
+- documentation reconciliation and regression coverage.
 
-Purpose: close documentation, privacy, standalone-export attribution, and release-process gaps without expanding character mechanics.
-
-- [x] Supersede stale README PR #125.
-- [x] Replace milestone-era README with current supported scope and friend-test status.
-- [x] Add a concise privacy disclosure matching the current local-storage architecture.
-- [x] Add an edition-aware standalone SRD/CC attribution renderer for exported print packets.
-- [x] Add a unit contract requiring Wizards attribution, CC BY 4.0, the correct SRD source, the CC license URL, and one attribution line per printed page.
-- [ ] Exact-head rules/site and browser/print gates green on the cleanup PR.
-- [ ] Human visual review confirms the new compact attribution row is readable and does not disturb footer geometry.
-- [ ] Merge only after the exact cleanup head is green.
-- [ ] Exact-`main` release-critical CI, Pages, and production smoke green after merge.
+Stop the branch if a rules, generation, persistence, or certified print behavior changes unexpectedly.
 
 ## Remaining release blockers
-These are the only items that should block promotion from the audit build to the initial production release unless a new P0/P1 defect is discovered.
+These are the items that still block promotion from `0.9.0-audit.1` to the initial approved production release unless a new P0/P1 defect is discovered.
 
 ### P0 — repository protection
 - [ ] Protect `main` with a GitHub branch protection rule or repository ruleset.
-- [ ] Require pull-request-based changes and release-critical status checks supported by the repository configuration.
+- [ ] Require pull-request-based changes and the intended release-critical status checks.
 - [ ] Prevent accidental force-push/deletion of `main`.
 
-The connected GitHub automation surface currently exposes branch-protection/ruleset reads but not the required administrative write, so this remains an explicit repository-settings action.
+Current repository state: `main` is not protected. This is an administration/settings task rather than application-code work.
 
 ### P0 — human release acceptance
 Run once on the coherent final candidate after automation is green:
 - [ ] Open the deployed site as a first-time visitor/incognito.
+- [ ] Confirm the Forge purpose and primary action are immediately understandable.
 - [ ] Forge representative Barbarian, Cleric, Fighter, Rogue, Wizard, and Warlock characters plus one fully Random character.
 - [ ] Exercise both 2014 and 2024 and representative low/high levels.
 - [ ] Exercise No / Low / Normal / High Magic modes.
@@ -93,8 +81,9 @@ Run once on the coherent final candidate after automation is green:
 
 ### P0 for commercial launch — exported-product attribution
 - [x] Website carries independent-project disclosure and SRD 5.1 / SRD 5.2.1 CC licensing notice.
-- [x] Cleanup branch adds visible edition-specific SRD/CC attribution to every printed page without adding packet pages.
-- [ ] Certify that attribution visually on generated 2014/2024 Deluxe and Ink Saver PDFs before closing this blocker.
+- [x] Edition-specific SRD/CC attribution is rendered on printed pages without intentionally adding packet pages.
+- [x] Automated attribution contracts exist for both editions.
+- [ ] Human commercial acceptance explicitly verifies attribution remains legible in representative 2014/2024 Deluxe and Ink Saver exports and does not create a footer collision.
 - [ ] Verify no Wizards logos, protected trade dress, unlicensed book art, or unsupported non-SRD material ships in the standalone commercial product.
 
 ### P1 — release promotion
@@ -106,12 +95,12 @@ Complete only after all applicable P0 items pass:
 - [ ] Record the exact release SHA and verification evidence in master issue #37.
 
 ## Not a 1.0 blocker
-Do not hold the initial production release for speculative scope expansion. These can continue after a stable release unless they expose an existing supported-content defect:
+Do not hold the initial production release for speculative supported-content expansion. These can continue after a stable release unless they expose an existing supported-content defect:
 - additional legally redistributable subclasses;
 - new Character Forge Original content;
 - broader customization;
 - additional convenience workflows;
-- visual polish that does not address a verified defect.
+- cosmetic polish that does not address a verified usability or release-wrapper issue.
 
 ## Stop-the-line rule
-Any failing release gate, intermittent generator/print failure, cross-edition leak, unsupported guessed rule, corrupt save/restore behavior, or P0/P1 customer-visible defect returns the candidate to hardening. Otherwise, stop adding features and finish the release.
+Any failing release gate, intermittent generator/print failure, cross-edition leak, unsupported guessed rule, corrupt save/restore behavior, or P0/P1 customer-visible defect returns the candidate to hardening. Otherwise, finish the release before expanding the rules surface.

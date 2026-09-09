@@ -19,6 +19,8 @@ const SITE_URL=normalized.href;
 const publicDirs=["assets","src","styles","share"];
 const publicFiles=[
   "index.html",
+  "guide.html",
+  "faq.html",
   "privacy.html",
   "site.webmanifest",
   "robots.txt",
@@ -38,7 +40,16 @@ for(const file of publicFiles){
   if(fs.existsSync(source))fs.copyFileSync(source,path.join(OUT,file));
 }
 
-for(const relative of ["index.html","share/index.html","robots.txt","sitemap.xml","404.html"]){
+for(const relative of [
+  "index.html",
+  "guide.html",
+  "faq.html",
+  "privacy.html",
+  "share/index.html",
+  "robots.txt",
+  "sitemap.xml",
+  "404.html"
+]){
   const target=path.join(OUT,relative);
   const source=fs.readFileSync(target,"utf8");
   fs.writeFileSync(target,source.replaceAll(LEGACY_BASE,SITE_URL));

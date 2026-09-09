@@ -11,6 +11,12 @@
 /index.html
   Cache-Control: no-cache, no-store, must-revalidate
 
+/guide.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/faq.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
 /share/index.html
   Cache-Control: no-cache, no-store, must-revalidate
 
