@@ -3,7 +3,7 @@ import { ORIGINAL_BACKGROUND_DOSSIER } from "./original-background-dossier.js";
 import { DOSSIER_DISLIKES, DOSSIER_FIRST_IMPRESSIONS, DOSSIER_LIKES, DOSSIER_MANNERISMS, DOSSIER_STORY_EVENTS, DOSSIER_STORY_PLACES } from "./dossier-flavor.js";
 import { narrativeArcFor } from "./dossier-narratives.js";
 import { literaryBackgroundFor } from "./dossier-background-literary.js";
-import { literarySubclassFor } from "./dossier-subclass-literary.js";
+import { literarySubclassFor } from "./dossier-subclass-literary-all.js";
 import { buildLiteraryBackstory, literaryArtDirection } from "./dossier-literary.js";
 
 const ABILITIES=["str","dex","con","int","wis","cha"];
