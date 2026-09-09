@@ -16,6 +16,7 @@ html{scroll-behavior:smooth}
 body{
   margin:0;
   min-height:100vh;
+  overflow-wrap:anywhere;
   background:
     radial-gradient(circle at 15% 8%,rgba(93,48,43,.45) 0,transparent 30rem),
     radial-gradient(circle at 88% 18%,rgba(77,62,35,.24) 0,transparent 24rem),
@@ -31,9 +32,9 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--gold-strong);outlin
 .static-header{border-bottom:1px solid rgba(255,255,255,.08);background:rgba(15,17,21,.9)}
 .static-header-inner,.static-footer-inner{width:min(960px,calc(100% - 32px));margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
 .static-header-inner{min-height:66px}
-.static-brand{color:var(--text);font-family:Georgia,serif;font-weight:800;text-decoration:none;font-size:1.08rem}
-.static-nav{display:flex;flex-wrap:wrap;gap:16px}
-.static-nav a{color:var(--muted);font-size:.92rem;font-weight:700;text-decoration:none}
+.static-brand{display:inline-flex;min-height:44px;align-items:center;color:var(--text);font-family:Georgia,serif;font-weight:800;text-decoration:none;font-size:1.08rem}
+.static-nav{display:flex;flex-wrap:wrap;gap:10px 16px}
+.static-nav a{display:inline-flex;min-height:44px;align-items:center;color:var(--muted);font-size:.92rem;font-weight:700;text-decoration:none}
 .static-nav a:hover{color:var(--gold-strong)}
 .static-main{width:min(860px,calc(100% - 32px));margin:0 auto;padding:56px 0 80px}
 .static-main-wide{width:min(1040px,calc(100% - 32px))}
@@ -71,8 +72,8 @@ li+li{margin-top:.45rem}
 .share-shell{display:grid;place-items:center;min-height:100vh;padding:24px}
 .share-shell main{max-width:36rem;text-align:center}
 @media (max-width:700px){
-  .static-header-inner,.static-footer-inner{align-items:flex-start;flex-direction:column;padding:14px 0;gap:10px}
-  .static-nav{gap:12px}
+  .static-header-inner,.static-footer-inner{align-items:flex-start;flex-direction:column;padding:14px 0;gap:8px}
+  .static-nav{width:100%;gap:4px 14px}
   .static-main,.static-main-wide{width:min(100% - 24px,1040px);padding:34px 0 60px}
   .step-grid,.faq-grid{grid-template-columns:1fr}
   h1{font-size:clamp(2.2rem,12vw,3.5rem)}
