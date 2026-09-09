@@ -1,0 +1,40 @@
+.character-actions.character-save-actions {
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.character-save-actions [data-action="save"] {
+  min-width:190px;
+}
+
+@media (max-width:680px) {
+  .character-actions.character-save-actions {
+    display:grid;
+    grid-template-columns:1fr;
+    margin-top:14px;
+  }
+
+  .character-save-actions [data-action="save"] {
+    width:100%;
+    min-width:0;
+  }
+
+  .forge-action-bar .forge-action-copy small {
+    display:none;
+  }
+
+  .forge-action-bar .forge-action-copy strong {
+    display:block;
+    margin-top:2px;
+  }
+
+  .forge-action-buttons {
+    gap:8px;
+  }
+
+  .forge-action-back,
+  .forge-action-print {
+    min-height:44px;
+  }
+}
