@@ -1,9 +1,9 @@
 export function buildLiteraryBackstory(context,storyArc,seed,core){
   try{
     const c=context,k=core,openings=[
-      `Before anyone called ${c.name} a ${c.className}, life was measured in ${c.bgLit.texture}. ${c.name} ${c.bg.origin}. ${capitalize(c.bg.mentor)} taught one lesson that survived every later certainty: ${c.bgLit.lesson}.`,
-      `${c.name}'s first education had little to do with heroism. It was made of ${c.bgLit.texture}. There, ${c.name} ${c.bg.origin}, and ${c.bg.mentor} taught that ${c.bgLit.lesson}.`,
-      `The oldest version of ${c.name} belongs to a world of ${c.bgLit.texture}. ${c.name} ${c.bg.origin}; the work was ordinary until ordinary responsibility became the standard by which every later choice would be judged.`
+      `Before anyone called ${c.name} a ${c.className}, life was measured in ${c.bgLit.texture}. ${c.name} ${c.bg.origin}. ${k.backgroundMemory} ${capitalize(c.bg.mentor)} taught one lesson that survived every later certainty: ${c.bgLit.lesson}.`,
+      `${c.name}'s first education had little to do with heroism. It was made of ${c.bgLit.texture}. There, ${c.name} ${c.bg.origin}. ${k.backgroundMemory} ${capitalize(c.bg.mentor)} taught that ${c.bgLit.lesson}.`,
+      `The oldest version of ${c.name} belongs to a world of ${c.bgLit.texture}. ${c.name} ${c.bg.origin}; the work was ordinary until ordinary responsibility became the standard by which every later choice would be judged. ${k.backgroundMemory}`
     ];
     const fractures=[
       `That life broke open during ${c.event} near ${c.place}. In the confusion, ${c.bgLit.wound}. The cost made ${c.bg.bond} more than a memory. ${capitalize(c.token)} became the object ${c.name} kept when almost everything else from that chapter could be left behind.`,
