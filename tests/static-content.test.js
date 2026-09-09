@@ -50,9 +50,12 @@ test("CSP-protected support pages use external styling only",()=>{
 test("static pages preserve mobile readability and touch targets",()=>{
   const css=read("styles/static-pages.css");
   assert.match(css,/\.button-link\{[^}]*min-height:44px/s);
+  assert.match(css,/\.static-nav a\{[^}]*min-height:44px/s);
+  assert.match(css,/\.static-brand\{[^}]*min-height:44px/s);
   assert.match(css,/@media \(max-width:700px\)/);
   assert.match(css,/\.step-grid,\.faq-grid\{grid-template-columns:1fr\}/);
   assert.match(css,/\.skip-link:focus\{transform:translateY\(0\)\}/);
+  assert.match(css,/overflow-wrap:anywhere/);
 });
 
 test("sitemap contains every intentional indexable static page",()=>{
