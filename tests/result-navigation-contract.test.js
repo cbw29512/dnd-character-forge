@@ -6,7 +6,7 @@ const source=readFileSync(new URL("../src/ui/render-safe.js",import.meta.url),"u
 
 test("generated character action bar exposes a clear return to Forge setup",()=>{
   assert.match(source,/className="action-button forge-action-back"/);
-  assert.match(source,/textContent="← Back to Forge Setup"/);
+  assert.match(source,/textContent="← Back to Setup"/);
   assert.match(source,/aria-label","Back to Character Forge setup"/);
   assert.match(source,/backButton\.addEventListener\("click",goToForgeSetup\)/);
 });

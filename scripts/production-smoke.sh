@@ -8,6 +8,7 @@ trap 'echo "::error::Production smoke failed at line ${LINENO}."' ERR
 
 index_file="$(mktemp)"
 headers_file="$(mktemp)"
+support_file="$(mktemp)"
 deployment_ready=0
 
 if [[ -n "${NETLIFY_PRODUCTION_URL:-}" ]]; then
@@ -97,10 +98,26 @@ if [[ "${site_ready}" -ne 1 ]]; then
   exit 1
 fi
 
+for support_contract in \
+  'guide.html|How to generate a pregen' \
+  'faq.html|Questions about the D&D 5e pregen generator.' \
+  'privacy.html|Character Forge is designed to work without an account or hosted character database.'; do
+  support_path="${support_contract%%|*}"
+  support_needle="${support_contract#*|}"
+  echo "[production-smoke] verifying ${support_path}"
+  curl --fail --silent --show-error --location \
+    --connect-timeout 10 --max-time 20 \
+    -H 'Cache-Control: no-cache' \
+    "${BASE_URL}${support_path}?smoke=${GITHUB_SHA}" -o "${support_file}"
+  grep -Fq "${support_needle}" "${support_file}"
+done
+
 for asset in \
   src/app.js \
   src/ui/premium-copy-guard.js \
   styles/base.css \
+  styles/result-polish.css \
+  styles/static-pages.css \
   styles/readability.css \
   styles/print/premium-caster-columns.css \
   styles/print/premium-dossier.css \
@@ -132,4 +149,4 @@ if [[ "${DEPLOY_MODE}" == "netlify" ]]; then
   grep -Fq 'That page isn’t in the Forge.' "${not_found_body}"
 fi
 
-echo "[production-smoke] exact ${DEPLOY_MODE} deployment, live Forge contract, routes, and critical assets are healthy."
+echo "[production-smoke] exact ${DEPLOY_MODE} deployment, live Forge contract, support pages, routes, and critical assets are healthy."
