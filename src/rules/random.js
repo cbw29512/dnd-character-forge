@@ -34,7 +34,10 @@ export function pick(items) {
   try {
     if (!Array.isArray(items) || items.length === 0) throw new Error("Cannot pick from an empty list");
     if(isLegacyGeneratorNamePool(items))return randomCharacterName();
-    const eligible = items.filter(item => item?.randomEligibleInForge === true || item?.randomEligible !== false);
+    // Random must respect the source record's eligibility contract. In
+    // particular, Forge Original backgrounds/subclasses use randomEligible:false
+    // so an SRD/RAW Random choice can never silently cross into original content.
+    const eligible = items.filter(item => item?.randomEligible !== false);
     if (eligible.length === 0) throw new Error("Cannot pick from a list with no Random-eligible choices");
 
     pickSerial += 1;
