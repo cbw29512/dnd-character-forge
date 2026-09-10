@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
@@ -15,6 +16,8 @@ const SLUG="composed-deep-sailor-tempest-scout";
 try{
   mkdirSync(OUT,{recursive:true});
   const character=buildCharacter(),target={innerHTML:""},model=renderPremiumPrintSheet(character,target);
+  assert.equal(character.sourceMode,SOURCE.HOMEBREW,"composed art pilot must remain outside production RAW mode");
+  assert.equal(character.audit?.rawIntegrity,false,"composed art pilot must not claim RAW integrity");
   assert.equal(model.dossier?.artDirection?.backgroundId,"deep-sailor");
   assert.equal(model.dossier?.artDirection?.pathId,"tempest-scout");
   assert.equal(model.dossier?.artDirection?.variantKey,"deep-sailor--tempest-scout");
@@ -54,7 +57,7 @@ try{
   assert.match(extracted,/Deluxe Character Dossier/i);
   assert.match(extracted,/salt-stained chart|sailor|sea|ship/i);
   assert.match(extracted,/storm road|tempest/i);
-  console.log(`[composed-dossier] ${SLUG}: self-contained SVG vignette rendered with visible pixel contrast in Chrome and PDF.`);
+  console.log(`[composed-dossier] ${SLUG}: compatible self-contained SVG vignette rendered with visible pixel contrast in Chrome and PDF.`);
 }catch(error){console.error("[composed-dossier] browser/PDF certification failed",error);throw error;}
 
 function verifyPortraitContrast(ppmPath){
@@ -101,8 +104,8 @@ function composedVignetteFragment(packet){
 
 function buildCharacter(){
   try{
-    const state=createInitialState();state.ruleset="2024";state.constraints.level="7";state.constraints.class="ranger";state.constraints.subclass="tempest-scout";state.constraints.species="human";state.constraints.background="deep-sailor";state.constraints.name="Mara Tideglass";
-    const character=generateCharacter(state);assert.equal(character.validation.valid,true,"composed pilot fixture must remain legal");character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",printMode:"premium"}};return character;
+    const state=createInitialState();state.sourceMode=SOURCE.HOMEBREW;state.ruleset="2024";state.constraints.level="7";state.constraints.class="ranger";state.constraints.subclass="tempest-scout";state.constraints.species="human";state.constraints.background="deep-sailor";state.constraints.name="Mara Tideglass";
+    const character=generateCharacter(state);assert.equal(character.validation.valid,true,"composed compatible art pilot fixture must remain legal");character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",printMode:"premium"}};return character;
   }catch(error){console.error("[composed-dossier] fixture build failed",error);throw error;}
 }
 
