@@ -5,6 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { FORGE_BUILD } from "../src/rules/certification.js";
+import { printLicenseAttribution } from "../src/print/license-attribution.js";
 
 const ROOT=fileURLToPath(new URL("../",import.meta.url));
 const OUT=path.join(ROOT,"tests/.browser-print");
@@ -14,7 +15,11 @@ const files=readdirSync(OUT).filter(name=>TABLE_PDF.test(name)).sort();
 assert.equal(files.length,24,`print footer boundary gate expected 24 standard Table PDFs, found ${files.length}`);
 
 const temp=mkdtempSync(path.join(os.tmpdir(),"character-forge-footer-boundary-"));
-const footerWords=new Set(["rules","lawyer","certified","pass","raw","integrity","page","contains","srd","material","wizards","of","the","coast","llc","cc","by",...CLASSES]);
+const prescribedAttribution=[
+  printLicenseAttribution({audit:{version:"SRD 5.1"}}),
+  printLicenseAttribution({audit:{version:"SRD 5.2.1"}})
+].join(" ");
+const footerWords=new Set(["rules","lawyer","certified","pass","raw","integrity","page","contains","srd","material","wizards","of","the","coast","llc","cc","by",...CLASSES,...prescribedAttribution.split(/\s+/).map(normalizeWord)]);
 const failures=[];
 try{
   for(const name of files){
@@ -40,11 +45,12 @@ function footerWord(value){
   const raw=decode(value).trim();
   if(!raw||/^[^a-z0-9]+$/i.test(raw))return true;
   if(/^[A-Z]{1,2}$/.test(raw))return true;
-  const compact=raw.normalize("NFKD").replace(/[’‘]/g,"'").toLowerCase().replace(/[^a-z0-9]+/g,"");
+  const compact=normalizeWord(raw);
   if(!compact||compact.length===1||footerWords.has(compact))return true;
-  if(compact===FORGE_BUILD.id.toLowerCase().replace(/[^a-z0-9]+/g,""))return true;
+  if(compact===normalizeWord(FORGE_BUILD.id))return true;
   if(/^\d+$/.test(compact))return true;
   if(compact.includes("creativecommons")||compact.includes("dndbeyond")||compact.includes("dndwizards")||compact.includes("systemsreferencedocument"))return true;
   return false;
 }
+function normalizeWord(value){return String(value||"").normalize("NFKD").replace(/[’‘]/g,"'").toLowerCase().replace(/[^a-z0-9]+/g,"");}
 function decode(value){return String(value||"").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&#39;/g,"'").replace(/&#x([0-9a-f]+);/gi,(_,hex)=>String.fromCodePoint(parseInt(hex,16))).replace(/&#(\d+);/g,(_,num)=>String.fromCodePoint(Number(num)));}
