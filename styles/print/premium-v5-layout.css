@@ -12,6 +12,18 @@
     grid-template-columns:1.48in minmax(0,1fr) 2.32in;
   }
 
+  /* V5 adds useful table tools without giving them permission to invade the
+     certified footer. Reclaim room from the generous identity rail at the
+     packet/profile level, preserving gameplay typography and full rule text. */
+  .sheet-packet-table.profile-martial-one-page .ps-frame{
+    grid-template-rows:1.55in minmax(0,1fr) .31in;
+    gap:.03in;
+  }
+  .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
+    grid-template-rows:1.52in minmax(0,1fr) .34in;
+    gap:.035in;
+  }
+
   /* Wider feature rails are used to improve legibility, not to pack in more text. */
   .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list strong{font-size:6.75pt}
   .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list p{font-size:5.8pt;line-height:1.18}
@@ -38,6 +50,28 @@
   .ps-resource-tracker>small{font:4.2pt/1 Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
   .ps-resource-current{display:grid;grid-template-columns:auto .28in auto;gap:.025in;align-items:end;font:4.35pt Arial,sans-serif;color:var(--ps-muted)}
   .ps-resource-current i{height:.13in;border-bottom:1px solid var(--ps-dark)}
+
+  /* Table packets keep the same writable resources in a compact horizontal
+     ledger. Deluxe retains the roomier tracker cards above. */
+  .sheet-packet-table .ps-resource-trackers{
+    grid-template-columns:repeat(auto-fit,minmax(.78in,1fr));
+    gap:.018in;
+    margin:0 0 .025in;
+  }
+  .sheet-packet-table .ps-resource-tracker{
+    grid-template-columns:1fr;
+    justify-items:center;
+    align-content:center;
+    gap:.008in;
+    min-height:.28in;
+    padding:.018in .025in;
+    text-align:center;
+  }
+  .sheet-packet-table .ps-resource-tracker>strong{font-size:4.65pt;line-height:1.02}
+  .sheet-packet-table .ps-resource-marks{justify-content:center;gap:.012in}
+  .sheet-packet-table .ps-resource-marks i{font-size:6.8pt}
+  .sheet-packet-table .ps-resource-tracker>small{font-size:3.8pt;line-height:1}
+  .sheet-packet-table .ps-resource-current{grid-template-columns:auto .22in auto;font-size:3.9pt;line-height:1}
 
   .sheet-print-ink-saver .ps-passive-grid>span,
   .sheet-print-ink-saver .ps-equipment-notes,
