@@ -1,4 +1,4 @@
-import { classPlaceholderArt } from "../print/class-art.js";
+import { dossierFallbackArt } from "../print/dossier-portrait-assets.js";
 import { classWatermark, portraitImageStyle, sheetArticleOpen } from "./print-decoration.js";
 
 const esc=value=>String(value??"").replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
@@ -15,7 +15,7 @@ function header(m,d){return `<header class="ps-dossier-header">${portrait(m,d)}<
 function portrait(m,d){
   if(m.portraitDataUrl)return `<section class="ps-dossier-portrait"><div class="ps-dossier-portrait-art has-image"><img src="${esc(m.portraitDataUrl)}" alt="" style="${portraitImageStyle(m)}"></div></section>`;
   const art=d.artDirection||{},variant=art.variantKey||m.identity.classId,background=art.backgroundSymbol||m.identity.background,path=art.pathSymbol||m.identity.subclassName||m.identity.className;
-  return `<section class="ps-dossier-portrait"><div class="ps-dossier-portrait-art ps-narrative-fallback class-${esc(m.identity.classId)}" data-portrait-variant="${esc(variant)}">${classPlaceholderArt(m.identity.classId)}<span class="ps-narrative-motif ps-narrative-origin">${esc(background)}</span><span class="ps-narrative-motif ps-narrative-path">${esc(path)}</span></div></section>`;
+  return `<section class="ps-dossier-portrait"><div class="ps-dossier-portrait-art ps-narrative-fallback class-${esc(m.identity.classId)}" data-portrait-variant="${esc(variant)}">${dossierFallbackArt(m.identity.classId,art)}<span class="ps-narrative-motif ps-narrative-origin">${esc(background)}</span><span class="ps-narrative-motif ps-narrative-path">${esc(path)}</span></div></section>`;
 }
 function story(d){return `<section class="ps-dossier-story"><h2>Backstory</h2>${d.storyTitle?`<p class="ps-dossier-story-title">${esc(d.storyTitle)}</p>`:""}<div class="ps-dossier-story-copy">${d.backstory.map(text=>`<p>${esc(text)}</p>`).join("")}</div>${chronicle()}</section>`;}
 function chronicle(){return `<section class="ps-dossier-chronicle" aria-label="Campaign Chronicle"><header><h3>Campaign Chronicle</h3><small>Milestones · Allies · Debts · Revelations · Session Notes</small></header><div class="ps-dossier-chronicle-lines" aria-hidden="true"><i></i><i></i><i></i><i></i></div></section>`;}
