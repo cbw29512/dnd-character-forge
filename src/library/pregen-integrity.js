@@ -9,6 +9,7 @@ export async function verifyPregenEntry(entry){
     const actual=await fingerprint(pregenFingerprintPayload(migrated.character));
     if(actual!==migrated.fingerprint)throw new Error("Saved pregen integrity check failed. Its stored mechanics no longer match the saved fingerprint.");
     const character=finalizeExistingCharacter(migrated.character);
+    if(character.sourceMode!=="RAW"||character.audit?.rawIntegrity!==true)throw new Error("This production Forge accepts SRD/RAW saved characters only.");
     return{...migrated,schemaVersion:PREGEN_SCHEMA_VERSION,character};
   }catch(error){console.error("[pregen-integrity] saved pregen rejected",error);throw error;}
 }
