@@ -19,6 +19,10 @@
     grid-template-rows:1.56in minmax(0,1fr) .34in;
     gap:.035in;
   }
+  .sheet-packet-deluxe.profile-caster-deluxe-three-page.layout-feature-heavy.layout-spell-heavy .ps-frame{
+    grid-template-rows:1.50in minmax(0,1fr) .34in;
+    gap:.035in;
+  }
 
   /* Table mode uses the same semantic density model. Dense feature/spell rails
      receive width from the center column so rules wrap less and stay above the
