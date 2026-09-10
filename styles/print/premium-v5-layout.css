@@ -11,6 +11,14 @@
   .sheet-packet-deluxe.layout-resource-heavy:not(.layout-feature-heavy) .ps-main-columns{
     grid-template-columns:1.48in minmax(0,1fr) 2.32in;
   }
+  .sheet-packet-deluxe.profile-caster-deluxe-three-page.layout-resource-heavy.layout-spell-heavy:not(.layout-feature-heavy) .ps-main-columns{
+    grid-template-columns:1.46in minmax(0,1fr) 2.52in;
+    gap:.055in;
+  }
+  .sheet-packet-deluxe.profile-caster-deluxe-three-page.layout-resource-heavy.layout-spell-heavy:not(.layout-feature-heavy) .ps-frame{
+    grid-template-rows:1.56in minmax(0,1fr) .34in;
+    gap:.035in;
+  }
 
   /* Table mode uses the same semantic density model. Dense feature/spell rails
      receive width from the center column so rules wrap less and stay above the
