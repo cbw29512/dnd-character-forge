@@ -43,7 +43,7 @@ export function validateClassAdvancements(character){
 
 export function advancementChoicesForState(ruleset,cls,level){
   try{
-    const levels=advancementLevelsFor(cls,level),options=advancementFeatOptionsFor(ruleset);return levels.map(slotLevel=>Object.freeze({level:slotLevel,options:Object.freeze(options.filter(option=>(option.minLevel||4)<=slotLevel))}));
+    const levels=advancementLevelsFor(cls,level),options=advancementFeatOptionsFor(ruleset).filter(option=>option?.contentKind!=="forge-original");return levels.map(slotLevel=>Object.freeze({level:slotLevel,options:Object.freeze(options.filter(option=>(option.minLevel||4)<=slotLevel))}));
   }catch(error){console.error("[advancement-feats] UI choices failed",error);throw error;}
 }
 
