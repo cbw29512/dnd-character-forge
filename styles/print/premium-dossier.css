@@ -2,64 +2,64 @@
   /*
    * The dossier is a fixed Letter page. Reserve enough body height for the full
    * four-paragraph literary story AND the Campaign Chronicle instead of letting
-   * long legal narratives consume the writable area. We reclaim space from the
-   * generous header/spacing before reducing prose to a still-readable 7.25pt.
+   * long legal narratives consume the writable area. The body keeps readable
+   * type; capacity comes from a tighter header, leading, and panel rhythm.
    */
-  .ps-dossier-frame{grid-template-rows:1.5in 1fr .32in;gap:.055in}
-  .ps-dossier-header{display:grid;grid-template-columns:1.42in minmax(0,1fr) 1.34in;gap:.085in;min-height:0;align-items:stretch}
+  .ps-dossier-frame{grid-template-rows:1.3in 1fr .32in;gap:.05in}
+  .ps-dossier-header{display:grid;grid-template-columns:1.22in minmax(0,1fr) 1.2in;gap:.07in;min-height:0;align-items:stretch}
   .ps-dossier-portrait,.ps-dossier-title,.ps-dossier-seal,.ps-dossier-story,.ps-dossier-panel{box-sizing:border-box;border:1px solid color-mix(in srgb,var(--ps-frame) 72%,#d5bf97);background:rgba(249,241,222,.84);box-shadow:inset 0 0 .07in rgba(91,66,36,.06)}
-  .ps-dossier-portrait{padding:.045in;overflow:hidden}
-  .ps-dossier-portrait-art{position:relative;height:100%;display:grid;place-items:center;align-content:center;gap:.04in;overflow:hidden;border:2px solid var(--ps-accent);background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.16),transparent 30%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary));color:#f8e8c5;box-shadow:inset 0 0 .23in rgba(0,0,0,.42)}
+  .ps-dossier-portrait{padding:.04in;overflow:hidden}
+  .ps-dossier-portrait-art{position:relative;height:100%;display:grid;place-items:center;align-content:center;gap:.035in;overflow:hidden;border:2px solid var(--ps-accent);background:radial-gradient(circle at 50% 42%,rgba(255,255,255,.16),transparent 30%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary));color:#f8e8c5;box-shadow:inset 0 0 .23in rgba(0,0,0,.42)}
   /* Built-in class portraits must own a real box in the dossier. The generic
      color placeholder uses display:contents elsewhere, which can collapse the
      image's percentage height inside this print grid and leave a blank frame. */
   .ps-dossier-portrait-art:not(.has-image) .ps-placeholder-illustrated{display:block;width:100%;height:100%;min-width:0;min-height:0}
   .ps-dossier-portrait-art:not(.has-image) .ps-class-portrait-image{display:block!important;width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important}
-  .ps-dossier-portrait-art small{font:700 6pt Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+  .ps-dossier-portrait-art small{font:700 5.8pt Arial,sans-serif;letter-spacing:.12em;text-transform:uppercase}
   .ps-narrative-fallback::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.18),transparent 24%,transparent 68%,rgba(0,0,0,.52));box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-  .ps-narrative-motif{position:absolute;z-index:3;max-width:calc(100% - .1in);padding:.022in .04in;border:1px solid rgba(255,255,255,.38);border-radius:.05in;background:rgba(17,20,24,.72);color:#fff8e8;font:700 4.6pt/1.08 Arial,sans-serif;letter-spacing:.045em;text-transform:uppercase;white-space:normal;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.7)}
-  .ps-narrative-origin{top:.03in;left:.03in}
-  .ps-narrative-path{right:.03in;bottom:.03in}
-  .ps-dossier-title{padding:.1in .14in;display:flex;flex-direction:column;justify-content:center}
-  .ps-dossier-title>small{font:700 5.9pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.14em;color:var(--ps-muted)}
-  .ps-dossier-title h1{margin:.02in 0 .025in;font-size:25pt;line-height:.9}
-  .ps-dossier-title p{margin:0;font-size:8pt;font-weight:700;color:var(--ps-dark)}
-  .ps-dossier-title blockquote{margin:.055in 0 0;padding-left:.08in;border-left:2px solid var(--ps-primary);font-size:7.7pt;line-height:1.2;font-style:italic;color:var(--ps-muted)}
-  .ps-dossier-seal{display:grid;place-items:center;align-content:center;text-align:center;padding:.065in;clip-path:polygon(50% 0,95% 12%,92% 76%,50% 100%,8% 76%,5% 12%);background:linear-gradient(180deg,rgba(255,249,233,.92),var(--ps-panel-2))}
-  .ps-dossier-seal span{font:700 6.2pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.11em;color:var(--ps-primary)}
-  .ps-dossier-seal small{margin:.035in 0;font-size:6.3pt;color:var(--ps-muted)}
-  .ps-dossier-seal b{font-size:8pt;color:var(--ps-dark)}
+  .ps-narrative-motif{position:absolute;z-index:3;max-width:calc(100% - .08in);padding:.018in .035in;border:1px solid rgba(255,255,255,.38);border-radius:.045in;background:rgba(17,20,24,.72);color:#fff8e8;font:700 4.35pt/1.05 Arial,sans-serif;letter-spacing:.04em;text-transform:uppercase;white-space:normal;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.7)}
+  .ps-narrative-origin{top:.025in;left:.025in}
+  .ps-narrative-path{right:.025in;bottom:.025in}
+  .ps-dossier-title{padding:.075in .12in;display:flex;flex-direction:column;justify-content:center}
+  .ps-dossier-title>small{font:700 5.6pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.13em;color:var(--ps-muted)}
+  .ps-dossier-title h1{margin:.015in 0 .02in;font-size:24pt;line-height:.88}
+  .ps-dossier-title p{margin:0;font-size:7.7pt;font-weight:700;color:var(--ps-dark)}
+  .ps-dossier-title blockquote{margin:.04in 0 0;padding-left:.07in;border-left:2px solid var(--ps-primary);font-size:7.35pt;line-height:1.16;font-style:italic;color:var(--ps-muted)}
+  .ps-dossier-seal{display:grid;place-items:center;align-content:center;text-align:center;padding:.05in;clip-path:polygon(50% 0,95% 12%,92% 76%,50% 100%,8% 76%,5% 12%);background:linear-gradient(180deg,rgba(255,249,233,.92),var(--ps-panel-2))}
+  .ps-dossier-seal span{font:700 5.9pt Arial,sans-serif;text-transform:uppercase;letter-spacing:.1em;color:var(--ps-primary)}
+  .ps-dossier-seal small{margin:.025in 0;font-size:6pt;color:var(--ps-muted)}
+  .ps-dossier-seal b{font-size:7.7pt;color:var(--ps-dark)}
 
-  .ps-dossier-body{display:grid;grid-template-columns:minmax(0,1.34fr) minmax(0,.9fr);gap:.07in;min-height:0;overflow:hidden}
-  .ps-dossier-main,.ps-dossier-side{display:flex;flex-direction:column;gap:.052in;min-height:0}
-  .ps-dossier-story{padding:.082in .105in;flex:1;overflow:hidden;display:flex;flex-direction:column}
-  .ps-dossier-story h2,.ps-dossier-panel h2{margin:0 0 .05in;padding-bottom:.03in;border-bottom:2px solid var(--ps-primary);font-size:9.8pt;text-transform:uppercase;letter-spacing:.052em;color:var(--ps-dark)}
-  .ps-dossier-story .ps-dossier-story-title{margin:-.01in 0 .04in;font:700 6.85pt/1.15 Georgia,serif;text-align:left;letter-spacing:.022em;color:var(--ps-primary)}
+  .ps-dossier-body{display:grid;grid-template-columns:minmax(0,1.34fr) minmax(0,.9fr);gap:.065in;min-height:0;overflow:hidden}
+  .ps-dossier-main,.ps-dossier-side{display:flex;flex-direction:column;gap:.045in;min-height:0}
+  .ps-dossier-story{padding:.075in .1in;flex:1;overflow:hidden;display:flex;flex-direction:column}
+  .ps-dossier-story h2,.ps-dossier-panel h2{margin:0 0 .04in;padding-bottom:.025in;border-bottom:2px solid var(--ps-primary);font-size:9.65pt;text-transform:uppercase;letter-spacing:.05em;color:var(--ps-dark)}
+  .ps-dossier-story .ps-dossier-story-title{margin:-.008in 0 .03in;font:700 6.75pt/1.12 Georgia,serif;text-align:left;letter-spacing:.02em;color:var(--ps-primary)}
   .ps-dossier-story-copy{flex:0 0 auto}
-  .ps-dossier-story p{margin:0 0 .04in;font-size:7.25pt;line-height:1.24;text-align:justify;hyphens:auto}
+  .ps-dossier-story p{margin:0 0 .03in;font-size:7.25pt;line-height:1.17;text-align:justify;hyphens:auto}
   .ps-dossier-story p:last-child{margin-bottom:0}
   /* Keep a real writable Chronicle even on the densest story variants. Four
      lines are more useful for handwriting than six lines squeezed into the
      same footprint, and the heading/guidance remain visible in the PDF text. */
-  .ps-dossier-chronicle{margin-top:auto;padding-top:.045in;min-height:.59in;display:flex;flex-direction:column;gap:.025in;border-top:1px solid color-mix(in srgb,var(--ps-primary) 38%,transparent)}
-  .ps-dossier-chronicle header{display:flex;align-items:baseline;justify-content:space-between;gap:.065in}
-  .ps-dossier-chronicle h3{margin:0;font:700 6.6pt Arial,sans-serif;letter-spacing:.085em;text-transform:uppercase;color:var(--ps-dark)}
-  .ps-dossier-chronicle small{font:600 4.7pt Arial,sans-serif;letter-spacing:.03em;text-transform:uppercase;color:var(--ps-muted);text-align:right}
-  .ps-dossier-chronicle-lines{flex:1;min-height:.4in;display:grid;grid-template-rows:repeat(4,1fr);padding:0 .02in;background:linear-gradient(90deg,color-mix(in srgb,var(--ps-primary) 5%,transparent),transparent 26%,transparent 74%,color-mix(in srgb,var(--ps-primary) 5%,transparent))}
+  .ps-dossier-chronicle{margin-top:auto;padding-top:.035in;min-height:.55in;display:flex;flex-direction:column;gap:.02in;border-top:1px solid color-mix(in srgb,var(--ps-primary) 38%,transparent)}
+  .ps-dossier-chronicle header{display:flex;align-items:baseline;justify-content:space-between;gap:.055in}
+  .ps-dossier-chronicle h3{margin:0;font:700 6.4pt Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ps-dark)}
+  .ps-dossier-chronicle small{font:600 4.55pt Arial,sans-serif;letter-spacing:.028em;text-transform:uppercase;color:var(--ps-muted);text-align:right}
+  .ps-dossier-chronicle-lines{flex:1;min-height:.36in;display:grid;grid-template-rows:repeat(4,1fr);padding:0 .02in;background:linear-gradient(90deg,color-mix(in srgb,var(--ps-primary) 5%,transparent),transparent 26%,transparent 74%,color-mix(in srgb,var(--ps-primary) 5%,transparent))}
   .ps-dossier-chronicle-lines i{display:block;border-bottom:1px dotted color-mix(in srgb,var(--ps-dark) 30%,transparent)}
-  .ps-dossier-panel{padding:.072in .085in;break-inside:avoid;overflow:hidden}
-  .ps-dossier-panel>div{font-size:6.55pt;line-height:1.28}
+  .ps-dossier-panel{padding:.065in .08in;break-inside:avoid;overflow:hidden}
+  .ps-dossier-panel>div{font-size:6.55pt;line-height:1.24}
   .ps-dossier-panel ul{margin:0;padding-left:.15in}
-  .ps-dossier-panel li+li{margin-top:.022in}
+  .ps-dossier-panel li+li{margin-top:.02in}
   .ps-dossier-combat{flex:0 0 auto}
-  .ps-dossier-traits{margin:0;display:grid;gap:.022in}
-  .ps-dossier-traits div{display:grid;grid-template-columns:.38in 1fr;gap:.035in;padding-bottom:.016in;border-bottom:1px dotted rgba(65,49,31,.22)}
+  .ps-dossier-traits{margin:0;display:grid;gap:.02in}
+  .ps-dossier-traits div{display:grid;grid-template-columns:.38in 1fr;gap:.035in;padding-bottom:.014in;border-bottom:1px dotted rgba(65,49,31,.22)}
   .ps-dossier-traits dt{font:700 5.55pt Arial,sans-serif;text-transform:uppercase;color:var(--ps-primary)}
-  .ps-dossier-traits dd{margin:0;font-size:6.25pt;line-height:1.24}
-  .ps-dossier-tags{margin:.038in 0 0;font-size:5.95pt;line-height:1.25}
-  .ps-dossier-roleplay blockquote{margin:0 0 .035in;padding:.04in .065in;border-left:3px solid var(--ps-primary);background:rgba(255,255,255,.38);font-size:7.1pt;line-height:1.22;font-style:italic}
-  .ps-dossier-roleplay p{margin:0;font-size:6.3pt;line-height:1.26}
-  .ps-dossier-hooks li{font-size:6.1pt;line-height:1.25}
+  .ps-dossier-traits dd{margin:0;font-size:6.25pt;line-height:1.21}
+  .ps-dossier-tags{margin:.032in 0 0;font-size:5.95pt;line-height:1.21}
+  .ps-dossier-roleplay blockquote{margin:0 0 .03in;padding:.035in .06in;border-left:3px solid var(--ps-primary);background:rgba(255,255,255,.38);font-size:7.05pt;line-height:1.18;font-style:italic}
+  .ps-dossier-roleplay p{margin:0;font-size:6.3pt;line-height:1.2}
+  .ps-dossier-hooks li{font-size:6.1pt;line-height:1.21}
 
   .sheet-print-ink-saver .ps-dossier-portrait-art,.sheet-print-ink-saver .ps-dossier-seal,.sheet-print-ink-saver .ps-dossier-title,.sheet-print-ink-saver .ps-dossier-story,.sheet-print-ink-saver .ps-dossier-panel{background:#fff!important;box-shadow:none}
   .sheet-print-ink-saver .ps-dossier-chronicle-lines{background:none}
