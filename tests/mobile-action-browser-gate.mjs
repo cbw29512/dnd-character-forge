@@ -34,19 +34,20 @@ await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
 const {port}=server.address();
 try{
   const url=`http://127.0.0.1:${port}/__mobile-action-audit.html`;
-  const args=["--headless","--no-sandbox","--disable-gpu","--disable-dev-shm-usage","--hide-scrollbars","--window-size=390,844","--virtual-time-budget=5000","--dump-dom",url];
+  const args=["--headless","--no-sandbox","--disable-gpu","--disable-dev-shm-usage","--hide-scrollbars","--window-size=360,844","--virtual-time-budget=5000","--dump-dom",url];
   const {stdout}=await execFileAsync(CHROME,args,{encoding:"utf8",timeout:30000,maxBuffer:8*1024*1024});
   const match=stdout.match(/<pre id="mobileActionAudit">([^<]+)<\/pre>/);
   assert.ok(match,"mobile action audit result was not produced");
   const audit=JSON.parse(decodeHtml(match[1]));
   assert.equal(audit.error,"",`mobile action audit runtime failed: ${audit.error}`);
-  assert.equal(audit.initialForgeWorked,true,"phone: initial Forge did not render a character");
-  assert.equal(audit.reforgeWorked,true,"phone: Reforge did not apply the updated setup");
-  assert.equal(audit.reforgeFeedback,true,"phone: Reforge did not provide visible confirmation");
-  assert.equal(audit.printButtonPresent,true,"phone: Print action is missing");
-  assert.equal(audit.printCalledSynchronously,true,"phone: Print did not call window.print() in the original tap turn");
-  assert.equal(audit.printRootCleaned,true,"phone: print staging root did not clean up after afterprint");
-  console.log("[mobile-actions] phone Reforge + Print user-gesture contract verified");
+  assert.equal(audit.initialForgeWorked,true,"compact phone: initial Forge did not render a character");
+  assert.equal(audit.actionLayoutFits,true,`compact phone: generated action bar clips or overflows (${JSON.stringify(audit.actionBoxes)})`);
+  assert.equal(audit.reforgeWorked,true,"compact phone: Reforge did not apply the updated setup");
+  assert.equal(audit.reforgeFeedback,true,"compact phone: Reforge did not provide visible confirmation");
+  assert.equal(audit.printButtonPresent,true,"compact phone: Print action is missing");
+  assert.equal(audit.printCalledSynchronously,true,"compact phone: Print did not call window.print() in the original tap turn");
+  assert.equal(audit.printRootCleaned,true,"compact phone: print staging root did not clean up after afterprint");
+  console.log("[mobile-actions] compact-phone layout + Reforge + Print user-gesture contract verified");
 }finally{
   await new Promise(resolve=>server.close(resolve));
 }
@@ -62,6 +63,11 @@ const run=()=>window.setTimeout(()=>{
     if(!forge)throw new Error("Forge button missing");
     forge.click();
     const initialForgeWorked=Boolean(document.querySelector("#result .character-sheet"));
+    const viewportWidth=document.documentElement.clientWidth;
+    const measure=selector=>{const element=document.querySelector(selector);if(!element)return {present:false};const rect=element.getBoundingClientRect();return {present:true,left:Math.round(rect.left*100)/100,right:Math.round(rect.right*100)/100,width:Math.round(rect.width*100)/100,clientWidth:element.clientWidth,scrollWidth:element.scrollWidth};};
+    const actionBoxes={back:measure(".forge-action-back"),primary:measure(".forge-action-primary"),print:measure(".forge-action-print")};
+    const fits=box=>box.present&&box.left>=-1&&box.right<=viewportWidth+1&&box.width>0&&box.scrollWidth<=box.clientWidth+1;
+    const actionLayoutFits=Object.values(actionBoxes).every(fits);
     const name=document.getElementById("name");
     name.value="Mobile Reforge Proof";
     name.dispatchEvent(new Event("input",{bubbles:true}));
@@ -79,8 +85,8 @@ const run=()=>window.setTimeout(()=>{
     window.dispatchEvent(new Event("afterprint"));
     const root=document.getElementById("premiumPrintRoot");
     const printRootCleaned=Boolean(root)&&root.innerHTML===""&&root.getAttribute("aria-hidden")==="true"&&!document.body.classList.contains("premium-print-active");
-    finish({error:runtimeError,initialForgeWorked,reforgeWorked,reforgeFeedback,printButtonPresent,printCalledSynchronously,printRootCleaned});
-  }catch(error){finish({error:error.message,initialForgeWorked:false,reforgeWorked:false,reforgeFeedback:false,printButtonPresent:false,printCalledSynchronously:false,printRootCleaned:false});}
+    finish({error:runtimeError,initialForgeWorked,actionLayoutFits,actionBoxes,reforgeWorked,reforgeFeedback,printButtonPresent,printCalledSynchronously,printRootCleaned});
+  }catch(error){finish({error:error.message,initialForgeWorked:false,actionLayoutFits:false,actionBoxes:{},reforgeWorked:false,reforgeFeedback:false,printButtonPresent:false,printCalledSynchronously:false,printRootCleaned:false});}
 },150);
 if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run,{once:true});else run();
 })();<\/script>`;}

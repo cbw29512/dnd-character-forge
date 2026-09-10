@@ -38,3 +38,22 @@
     min-height:44px;
   }
 }
+
+@media (max-width:390px) {
+  .forge-action-buttons {
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .forge-action-buttons .forge-button {
+    grid-column:1 / -1;
+    grid-row:1;
+    width:100%;
+    min-width:0;
+  }
+
+  .forge-action-back,
+  .forge-action-print {
+    width:100%;
+    min-width:0;
+  }
+}
