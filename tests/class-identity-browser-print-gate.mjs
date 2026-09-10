@@ -56,7 +56,10 @@ function bboxLines(xml){
   for(const match of xml.matchAll(pattern)){const words=[...match[5].matchAll(/<word\b[^>]*>([\s\S]*?)<\/word>/g)].map(word=>decodeXml(word[1]));const text=normalize(words.join(" "));if(text)lines.push({xMin:Number(match[1]),yMin:Number(match[2]),xMax:Number(match[3]),yMax:Number(match[4]),text});}
   return lines;
 }
-function isAttributionLine(value){return /Contains\s+SRD\s+5\.(?:1|2\.1)\s+material.*Wizards of the Coast LLC.*CC BY 4\.0/i.test(normalize(value));}
+function isAttributionLine(value){
+  const text=normalize(value);
+  return /This work includes material(?: taken)? from the System Reference Document 5\.(?:1|2\.1)/i.test(text)||/SRD 5\.(?:1|2\.1).*licensed under the Creative Commons Attribution 4\.0 International License/i.test(text)||/Creative Commons Attribution 4\.0 International License/i.test(text)||/creativecommons\.org\/licenses\/by\/4\.0\/legalcode/i.test(text)||/dndbeyond\.com\/srd|dnd\.wizards\.com\/resources\/systems-reference-document/i.test(text);
+}
 function allowedFooterLine(value,motto,className){
   const text=normalize(value),lower=text.toLowerCase(),compact=lower.replace(/\s+/g,""),classCompact=className.replace(/\s+/g,""),symbolOnly=!/[\p{L}\p{N}]/u.test(text);
   return /RULES\s+LAWYER\s+CERTIFIED/i.test(text)||isAttributionLine(text)||lower===motto||compact===classCompact||symbolOnly;
