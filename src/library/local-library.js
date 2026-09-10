@@ -44,6 +44,7 @@ export function replacePregens(items){
 
 export async function savePregen(character) {
   try {
+    if(character?.sourceMode!=="RAW"||character?.audit?.rawIntegrity!==true||character?.audit?.status!=="PASS")throw new Error("My Pregens accepts RAW-certified Character Forge characters only.");
     const items = loadPregens();
     const contentFingerprint = await fingerprint(pregenFingerprintPayload(character));
     for(const item of items){if(!item.character)continue;item.fingerprint=await fingerprint(pregenFingerprintPayload(item.character));item.schemaVersion=PREGEN_SCHEMA_VERSION;}

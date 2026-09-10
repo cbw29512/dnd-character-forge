@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { FORGE_2014, FORGE_2024 } from "../src/data/forge-data.js";
 import { buildNarrativeDossier } from "../src/print/dossier.js";
@@ -11,8 +12,9 @@ import { literarySymbolIds } from "../src/print/dossier-literary-motifs.js";
 const backgroundIds=new Set(LITERARY_BACKGROUND_IDS),subclassIds=new Set(LITERARY_SUBCLASS_IDS),symbols=literarySymbolIds();
 const backgroundSymbols=new Set(symbols.backgrounds),subclassSymbols=new Set(symbols.subclasses),classSymbols=new Set(symbols.classes);
 
-function make({ruleset="2024",classId="barbarian",subclass="berserker",background="soldier",species="human",level="7",name="Mara Voss"}={}){
+function make({ruleset="2024",classId="barbarian",subclass="berserker",background="soldier",species="human",level="7",name="Mara Voss",sourceMode=SOURCE.RAW}={}){
   const state=createInitialState();
+  state.sourceMode=sourceMode;
   state.ruleset=ruleset;
   state.constraints.level=level;
   state.constraints.class=classId;
@@ -44,8 +46,8 @@ test("SRD subclasses resolve their actual literary profiles end to end",()=>{
 });
 
 test("changing only the subclass materially changes tale, psychology, title, hook, and art",()=>{
-  const berserker=buildNarrativeDossier(make({subclass:"berserker"}));
-  const tempest=buildNarrativeDossier(make({subclass:"iron-tempest"}));
+  const berserker=buildNarrativeDossier(make({subclass:"berserker",sourceMode:SOURCE.HOMEBREW}));
+  const tempest=buildNarrativeDossier(make({subclass:"iron-tempest",sourceMode:SOURCE.HOMEBREW}));
   assert.notEqual(berserker.backstory[2],tempest.backstory[2]);
   assert.notEqual(berserker.storyTitle,tempest.storyTitle);
   assert.notEqual(berserker.personality.flaw,tempest.personality.flaw);
@@ -71,8 +73,10 @@ test("changing only the background materially changes formative history and stor
   assert.match(criminal.backstory.join(" "),/trust|coin|alley|coded|criminal|loyalt/i);
 });
 
-test("background and subclass intersect as one authored premise",()=>{
-  const dossier=buildNarrativeDossier(make({classId:"paladin",subclass:"oath-beacon",background:"grave-warden",name:"Elira Venn"}));
+test("compatible background and subclass intersect as one authored premise without claiming RAW",()=>{
+  const character=make({classId:"paladin",subclass:"oath-beacon",background:"grave-warden",name:"Elira Venn",sourceMode:SOURCE.HOMEBREW});
+  assert.equal(character.audit.rawIntegrity,false);
+  const dossier=buildNarrativeDossier(character);
   assert.match(dossier.storyTitle,/Unmarked Grave|Beacon In Smoke/);
   assert.match(dossier.backstory[0],/wet earth|names spoken carefully|burial grounds/i);
   assert.match(dossier.backstory[2],/Oath of the Beacon/);

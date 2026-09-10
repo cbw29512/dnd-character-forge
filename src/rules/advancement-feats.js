@@ -1,3 +1,4 @@
+import { SOURCE } from "../schema.js";
 import { ADVANCEMENT_ASI_ID, advancementFeatOptionsFor, advancementOptionById, isForgeOriginalFeat } from "../data/feat-library.js";
 
 export function advancementLevelsFor(cls,level){
@@ -41,9 +42,10 @@ export function validateClassAdvancements(character){
   }catch(error){console.error("[advancement-feats] validation failed",error);throw error;}
 }
 
-export function advancementChoicesForState(ruleset,cls,level){
+export function advancementChoicesForState(ruleset,cls,level,sourceMode=SOURCE.RAW){
   try{
-    const levels=advancementLevelsFor(cls,level),options=advancementFeatOptionsFor(ruleset);return levels.map(slotLevel=>Object.freeze({level:slotLevel,options:Object.freeze(options.filter(option=>(option.minLevel||4)<=slotLevel))}));
+    const levels=advancementLevelsFor(cls,level),all=advancementFeatOptionsFor(ruleset),options=sourceMode===SOURCE.RAW?all.filter(option=>!isForgeOriginalFeat(option)):all;
+    return levels.map(slotLevel=>Object.freeze({level:slotLevel,options:Object.freeze(options.filter(option=>(option.minLevel||4)<=slotLevel))}));
   }catch(error){console.error("[advancement-feats] UI choices failed",error);throw error;}
 }
 

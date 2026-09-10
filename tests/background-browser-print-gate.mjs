@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
@@ -18,11 +19,12 @@ const CASES=[
 
 mkdirSync(OUT,{recursive:true});
 for(const testCase of CASES)verify(testCase);
-console.log(`[background-browser] verified ${CASES.length} Forge-original background Letter PDFs in Chrome`);
+console.log(`[background-browser] verified ${CASES.length} Forge-original background Letter PDFs in explicit compatible mode`);
 
 function verify(testCase){
   try{
     const character=characterAt(testCase),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),slug=`${testCase.ruleset}-${testCase.species}-fighter-${testCase.background}`;
+    assert.equal(character.sourceMode,SOURCE.HOMEBREW,`${slug}: original background fixture must stay outside RAW mode`);
     assert.equal(character.validation.valid,true,`${slug}: validation failed`);
     assert.equal(character.audit.status,"PASS",`${slug}: audit failed`);
     assert.equal(character.audit.rawIntegrity,false,`${slug}: original background was mislabeled RAW`);
@@ -62,7 +64,7 @@ function verify(testCase){
 }
 
 function characterAt({ruleset,species,background}){
-  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="5";state.constraints.class="fighter";state.constraints.subclass="champion";state.constraints.species=species;state.constraints.background=background;state.constraints.name=`Forge ${background}`;return generateCharacter(state);
+  const state=createInitialState();state.sourceMode=SOURCE.HOMEBREW;state.ruleset=ruleset;state.constraints.level="5";state.constraints.class="fighter";state.constraints.subclass="champion";state.constraints.species=species;state.constraints.background=background;state.constraints.name=`Forge ${background}`;return generateCharacter(state);
 }
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function normalize(value){return String(value||"").normalize("NFKC").replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/[\u2010-\u2015]/g,"-").replace(/\s+/g," ").trim();}
