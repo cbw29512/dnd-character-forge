@@ -1,9 +1,20 @@
 import { classDecorationArt, classPlaceholderArt } from "./class-art.js";
 
+const graveWardenOathBeacon=new URL("./dossier-portraits/grave-warden--oath-beacon.svg",import.meta.url).href;
+
 // Curated dossier portraits are presentation-only. Each approved entry must be
 // keyed by the literary engine's deterministic background--path variant key.
 // Assets are added deliberately; an absent variant always falls back safely.
-export const CURATED_DOSSIER_PORTRAITS=Object.freeze({});
+export const CURATED_DOSSIER_PORTRAITS=Object.freeze({
+  "grave-warden--oath-beacon":Object.freeze({
+    variantKey:"grave-warden--oath-beacon",
+    src:graveWardenOathBeacon,
+    backgroundSymbol:"unmarked grave",
+    pathSymbol:"beacon in smoke",
+    status:"approved",
+    provenance:"Original Character Forge vector illustration"
+  })
+});
 
 export function isCuratedDossierPortraitEntry(entry,variantKey){
   try{
