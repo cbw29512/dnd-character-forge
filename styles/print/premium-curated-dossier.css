@@ -1,24 +1,32 @@
+.ps-composed-dossier-portrait{position:relative;overflow:hidden}
+.ps-composed-dossier-portrait .ps-class-portrait-image{position:absolute;inset:0}
+.ps-composed-dossier-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:#f4e6c4;filter:drop-shadow(0 0 1.4px #24170f)}
+
 @media print{
-  /* Curated dossier art is the approved color-print exception to the V5
-     heraldic fallback. Ordinary built-in placeholders still resolve to the
-     class crest; only exact curated dossier art is allowed to replace it. */
-  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait{
+  /* Color dossier art resolves in strict priority: exact curated illustration,
+     then approved reusable composition. Ordinary variants keep the established
+     class fallback. Reusable composition is never counted as exact art. */
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-composed-dossier-portrait{
     display:block!important;
     width:100%;
     height:100%;
     min-width:0;
     min-height:0;
   }
-  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait + .ps-placeholder-emblem{
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait + .ps-placeholder-emblem,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-composed-dossier-portrait + .ps-placeholder-emblem{
     display:none!important;
   }
 
-  /* Ink Saver remains deterministic: never rasterize curated color art when
-     economical monochrome output was requested; use the crisp vector crest. */
-  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait{
+  /* Ink Saver remains deterministic: color portraits and compositions are
+     hidden and the crisp monochrome class crest is restored. */
+  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait,
+  .premium-sheet.sheet-print-ink-saver .ps-composed-dossier-portrait{
     display:none!important;
   }
-  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait + .ps-placeholder-emblem{
+  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait + .ps-placeholder-emblem,
+  .premium-sheet.sheet-print-ink-saver .ps-composed-dossier-portrait + .ps-placeholder-emblem{
     display:grid!important;
     place-items:center;
     width:100%;
