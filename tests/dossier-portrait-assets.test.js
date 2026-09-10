@@ -57,14 +57,16 @@ test("approved reusable layers render a story vignette before generic class fall
   }catch(error){console.error("[dossier-portrait-assets-test] composed priority failed",error);throw error;}
 });
 
-test("color print shows exact or composed art while Ink Saver restores the crest",()=>{
+test("composed color art owns a visible stacking and contrast contract while Ink Saver restores the crest",()=>{
   try{
     const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-curated-dossier.css",import.meta.url)),"utf8"),loadPoint=readFileSync(fileURLToPath(new URL("../styles/print/premium-sorcerer.css",import.meta.url)),"utf8");
-    assert.match(css,/ps-curated-dossier-portrait[\s\S]*ps-composed-dossier-portrait/);
+    assert.match(css,/ps-composed-dossier-portrait\{[^}]*z-index:2/s,"composed wrapper must sit above the generic narrative overlay");
+    assert.match(css,/ps-composed-art-field\{[^}]*z-index:2/s,"composed art field must establish an explicit visible layer");
+    assert.match(css,/ps-composed-background-art\{[^}]*color:#dce8c7!important[^}]*opacity:\.92/s);
+    assert.match(css,/ps-composed-class-crest\{[^}]*color:#ffe7a6!important[^}]*opacity:\.9/s);
+    assert.match(css,/ps-composed-path-art\{[^}]*color:#ffe39a!important[^}]*opacity:1/s);
+    assert.match(css,/ps-narrative-fallback:has\(\.ps-composed-dossier-portrait\)::after\{[^}]*z-index:1/s,"generic fallback overlay must remain below composed art");
     assert.match(css,/sheet-print-ink-saver[\s\S]*ps-curated-dossier-portrait[\s\S]*ps-composed-dossier-portrait/);
-    assert.match(css,/ps-composed-class-crest\{[^}]*position:absolute[^}]*place-items:center/s);
-    assert.match(css,/ps-composed-background-art[^}]*opacity:/s);
-    assert.match(css,/ps-composed-path-art[^}]*opacity:/s);
     assert.ok(loadPoint.indexOf('premium-curated-dossier.css')>loadPoint.indexOf('premium-ink-saver.css'),"dossier art override must load after heraldic defaults");
   }catch(error){console.error("[dossier-portrait-assets-test] print visibility contract failed",error);throw error;}
 });
