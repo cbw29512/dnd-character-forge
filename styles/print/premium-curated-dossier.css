@@ -1,11 +1,23 @@
-.ps-composed-dossier-portrait{position:relative;overflow:hidden}
-.ps-composed-dossier-portrait .ps-class-portrait-image{position:absolute;inset:0}
-.ps-composed-dossier-overlay{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;color:#f4e6c4;filter:drop-shadow(0 0 1.4px #24170f)}
+.ps-composed-dossier-portrait{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 48% 43%,color-mix(in srgb,var(--ps-accent) 24%,#fff) 0 12%,transparent 36%),
+    linear-gradient(155deg,color-mix(in srgb,var(--ps-dark) 88%,#000),color-mix(in srgb,var(--ps-primary) 78%,#101820));
+}
+.ps-composed-art-field{position:absolute;inset:0;display:block;overflow:hidden}
+.ps-composed-background-art,.ps-composed-path-art{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.ps-composed-background-art{z-index:0;color:color-mix(in srgb,var(--ps-accent) 58%,#dce8d7);opacity:.72;filter:drop-shadow(0 1px 1px rgba(0,0,0,.42))}
+.ps-composed-class-crest{position:absolute;z-index:1;inset:8% 7% 7%;display:grid;place-items:center;color:color-mix(in srgb,var(--ps-accent) 72%,#fff2cf);opacity:.74;filter:drop-shadow(0 2px 2px rgba(0,0,0,.56))}
+.ps-composed-class-crest .ps-class-crest{display:block!important;width:94%!important;height:94%!important;margin:auto;max-width:none!important;max-height:none!important}
+.ps-composed-path-art{z-index:2;color:color-mix(in srgb,var(--ps-accent) 48%,#ffe7a3);opacity:.94;filter:drop-shadow(0 1px 1.4px rgba(0,0,0,.78))}
+.ps-composed-dossier-portrait::before{content:"";position:absolute;z-index:2;inset:.035in;border:1px solid color-mix(in srgb,var(--ps-accent) 55%,rgba(255,255,255,.3));pointer-events:none;box-shadow:inset 0 0 .12in rgba(0,0,0,.2)}
 
 @media print{
   /* Color dossier art resolves in strict priority: exact curated illustration,
-     then approved reusable composition. Ordinary variants keep the established
-     class fallback. Reusable composition is never counted as exact art. */
+     then an approved reusable story vignette. Ordinary variants keep the
+     established class fallback. Composed art is never counted as exact art. */
   .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait,
   .premium-sheet:not(.sheet-print-ink-saver) .ps-composed-dossier-portrait{
     display:block!important;
@@ -19,7 +31,7 @@
     display:none!important;
   }
 
-  /* Ink Saver remains deterministic: color portraits and compositions are
+  /* Ink Saver remains deterministic: color illustrations and vignettes are
      hidden and the crisp monochrome class crest is restored. */
   .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait,
   .premium-sheet.sheet-print-ink-saver .ps-composed-dossier-portrait{
