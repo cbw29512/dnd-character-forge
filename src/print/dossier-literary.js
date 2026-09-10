@@ -29,18 +29,20 @@ export function buildLiteraryBackstory(context,storyArc,seed,core){
 
 export function literaryArtDirection(context,core){
   try{
-    const c=context,k=core,subclass=c.subclassName?`; subclass signature: ${c.subLit.art}`:"";
+    const c=context,k=core,subclass=c.subclassName?`; subclass signature: ${c.subLit.art}`:"",pathId=c.subclassId||c.classId;
     return Object.freeze({
       subject:`${c.species} ${c.className}${c.subclassName?` — ${c.subclassName}`:""}`,
       background:c.bgLit.art,
       subclass:c.subclassName?c.subLit.art:"class identity only",
+      backgroundId:c.backgroundId,
+      pathId,
       backgroundSymbol:k.backgroundSymbol,
       pathSymbol:k.pathSymbol,
       symbolicAnchor:`${k.backgroundSymbol}; ${k.pathSymbol}`,
       composition:"single character, three-quarter portrait, story moment rather than combat pose",
       continuity:"show one visible keepsake from the background and one restrained visual signature from the class path",
       avoid:"generic glamour pose, random tavern backdrop, logos, written text, duplicate weapons, costume-like pristine gear",
-      variantKey:`${c.backgroundId}--${c.subclassId||c.classId}`,
+      variantKey:`${c.backgroundId}--${pathId}`,
       brief:`Grounded fantasy portrait of ${c.name}, a ${c.species} ${c.className}${c.subclassName?` of ${c.subclassName}`:""}. Story title: ${k.storyTitle}. Background history: ${c.bgLit.art}${subclass}. Anchor the image with the ${k.backgroundSymbol} and the ${k.pathSymbol}; use practical lived-in gear, an expressive face, and a narrative environment. Depict a consequential quiet moment, not a generic glamour pose.`
     });
   }catch(error){console.error("[dossier-literary] art direction failed",error);throw error;}
