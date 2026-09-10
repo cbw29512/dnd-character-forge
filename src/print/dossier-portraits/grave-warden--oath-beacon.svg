@@ -2,112 +2,106 @@
   <title id="title">Grave Warden and Oath Beacon</title>
   <desc id="desc">An original fantasy portrait of a vigilant oathbound guardian standing among old grave stones beneath a restrained beacon of warm light.</desc>
   <defs>
-    <linearGradient id="night" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#11182a"/>
-      <stop offset="0.58" stop-color="#29313b"/>
-      <stop offset="1" stop-color="#0d1015"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a1120"/>
+      <stop offset="0.52" stop-color="#1f2b39"/>
+      <stop offset="1" stop-color="#080b10"/>
     </linearGradient>
-    <radialGradient id="beacon" cx="50%" cy="12%" r="72%">
-      <stop offset="0" stop-color="#fff5c9" stop-opacity="0.96"/>
-      <stop offset="0.25" stop-color="#d8b665" stop-opacity="0.55"/>
-      <stop offset="0.62" stop-color="#8a6a32" stop-opacity="0.12"/>
+    <radialGradient id="halo" cx="50%" cy="13%" r="64%">
+      <stop offset="0" stop-color="#fff4bd" stop-opacity=".92"/>
+      <stop offset=".22" stop-color="#d9b75f" stop-opacity=".48"/>
+      <stop offset=".62" stop-color="#9a7437" stop-opacity=".09"/>
       <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </radialGradient>
-    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#d9d7c8"/>
-      <stop offset="0.4" stop-color="#848a8d"/>
-      <stop offset="0.72" stop-color="#3f474d"/>
-      <stop offset="1" stop-color="#b3ae93"/>
-    </linearGradient>
-    <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#3b3029"/>
-      <stop offset="0.55" stop-color="#1b2025"/>
-      <stop offset="1" stop-color="#101419"/>
+    <linearGradient id="armor" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e2dfcf"/>
+      <stop offset=".34" stop-color="#a8adb0"/>
+      <stop offset=".67" stop-color="#59636b"/>
+      <stop offset="1" stop-color="#c7bea1"/>
     </linearGradient>
     <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f0dc8e"/>
-      <stop offset="0.55" stop-color="#aa7f31"/>
-      <stop offset="1" stop-color="#61451f"/>
+      <stop offset="0" stop-color="#ffe89a"/>
+      <stop offset=".5" stop-color="#c89a3d"/>
+      <stop offset="1" stop-color="#72501e"/>
     </linearGradient>
-    <filter id="mist" x="-10%" y="-20%" width="120%" height="160%">
-      <feGaussianBlur stdDeviation="18"/>
+    <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#384552"/>
+      <stop offset=".56" stop-color="#17202a"/>
+      <stop offset="1" stop-color="#0d1218"/>
+    </linearGradient>
+    <filter id="mist" x="-20%" y="-100%" width="140%" height="300%">
+      <feGaussianBlur stdDeviation="13"/>
     </filter>
   </defs>
 
-  <rect width="640" height="800" fill="url(#night)"/>
-  <rect width="640" height="800" fill="url(#beacon)"/>
+  <rect width="640" height="800" fill="url(#sky)"/>
+  <rect width="640" height="800" fill="url(#halo)"/>
 
-  <g opacity="0.3" fill="#9ca2a6">
-    <circle cx="78" cy="89" r="1.8"/><circle cx="150" cy="62" r="1.2"/><circle cx="211" cy="111" r="1.4"/>
-    <circle cx="431" cy="74" r="1.5"/><circle cx="518" cy="116" r="1.2"/><circle cx="582" cy="65" r="1.6"/>
+  <g fill="#111820" stroke="#69727a" stroke-width="4" opacity=".78">
+    <path d="M28 625V462c0-22 16-39 38-43l31-5 31 5c22 4 38 21 38 43v163Z"/>
+    <path d="M470 638V492c0-20 14-36 34-40l27-5 27 5c20 4 34 20 34 40v146Z"/>
+    <path d="M66 449v-50h62v50M97 399v-34M80 382h34" fill="none"/>
+    <path d="M500 479v-42h62v42M531 437v-30" fill="none"/>
+  </g>
+  <path d="M0 610c93-39 176-26 250 8 72 33 154 37 225 8 62-25 113-21 165 3v171H0Z" fill="#11171d"/>
+  <g fill="#cdd2d1" opacity=".19" filter="url(#mist)">
+    <ellipse cx="165" cy="643" rx="170" ry="26"/>
+    <ellipse cx="470" cy="668" rx="180" ry="30"/>
   </g>
 
-  <g opacity="0.5" fill="#11151b" stroke="#596067" stroke-width="4">
-    <path d="M18 632h110V447c0-23 16-41 38-46l15-3 15 3c22 5 38 23 38 46v185H18Z"/>
-    <path d="M423 643h199V489c0-19 13-35 31-39l13-3 13 3c18 4 31 20 31 39v154H423Z"/>
-    <path d="M67 474v-52h104v52" fill="none"/>
-    <path d="M512 512v-47h102v47" fill="none"/>
+  <g transform="translate(320 108)">
+    <circle r="72" fill="#d7b45a" opacity=".08"/>
+    <circle r="47" fill="#ffe8a4" opacity=".08"/>
+    <path d="M0-62 12-17 55 0 12 17 0 62-12 17-55 0-12-17Z" fill="#e8c866" opacity=".88"/>
+    <circle r="12" fill="#fff5c6"/>
   </g>
+  <path d="M320 135 240 452h160Z" fill="#f1d274" opacity=".07"/>
 
-  <g opacity="0.42" fill="#2c3438">
-    <path d="M0 617c84-44 166-34 238 2 69 34 154 41 220 14 69-28 124-20 182 10v157H0Z"/>
-    <path d="M0 670c91-26 170-13 255 15 77 25 151 24 232-7 65-25 105-23 153-5v127H0Z" fill="#151a1e"/>
-  </g>
+  <g transform="translate(320 404)">
+    <path d="M-165-70c36-53 86-82 165-82s129 29 165 82l34 295H-199Z" fill="url(#cloak)" stroke="#7a776a" stroke-width="6"/>
+    <path d="M-120-72c31-29 70-44 120-44s89 15 120 44l-25 68H-95Z" fill="#202b35" stroke="#8b8877" stroke-width="4"/>
 
-  <g opacity="0.22" fill="#d6d9d6" filter="url(#mist)">
-    <ellipse cx="177" cy="644" rx="180" ry="29"/>
-    <ellipse cx="474" cy="674" rx="210" ry="34"/>
-  </g>
+    <path d="M-76-173c18-53 43-80 76-80s58 27 76 80l-17 76H-59Z" fill="#151d25" stroke="#9b9b8f" stroke-width="6"/>
+    <path d="M-45-174c11-26 26-40 45-40s34 14 45 40l-9 42h-72Z" fill="#2e3942"/>
+    <path d="M-29-166h58l-7 24h-44Z" fill="#e2c56d" opacity=".8"/>
+    <path d="M-18-158h36" stroke="#fff0ad" stroke-width="5" stroke-linecap="round"/>
 
-  <path d="M320 20c-48 77-62 155-42 237h84c20-82 6-160-42-237Z" fill="#f6df8a" opacity="0.09"/>
-  <path d="M320 16 339 91h-38l19-75Zm0 74 11 31h-22l11-31Z" fill="url(#gold)" opacity="0.95"/>
+    <path d="M-104-63 0-119 104-63 84 103 0 150-84 103Z" fill="url(#armor)" stroke="#323b43" stroke-width="7"/>
+    <path d="M-66-45 0-82 66-45 54 67 0 99-54 67Z" fill="#26323d" stroke="#d4b85d" stroke-width="6"/>
+    <path d="M0-60v124M-39-20h78" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="0" cy="-20" r="30" fill="none" stroke="#e8d18b" stroke-width="4" opacity=".85"/>
 
-  <g transform="translate(320 390)">
-    <path d="M-92-172c18-48 58-74 92-74s74 26 92 74l-19 45H-73Z" fill="#12171c" stroke="#6a6f6b" stroke-width="4"/>
-    <path d="M-58-177c16-26 36-39 58-39s42 13 58 39l-18 39h-80Z" fill="#1a2025"/>
-    <path d="M-39-164c10-17 23-26 39-26s29 9 39 26l-9 31h-60Z" fill="#bba374" opacity="0.35"/>
-    <path d="M-128-104c25-33 59-53 94-58l34 27 34-27c35 5 69 25 94 58l27 223H-155Z" fill="url(#cloth)" stroke="#6d685c" stroke-width="5"/>
-    <path d="M-94-76 0-130 94-76l-15 157H-79Z" fill="url(#steel)" stroke="#31383d" stroke-width="5"/>
-    <path d="M-65-58 0-97 65-58 54 54 0 89-54 54Z" fill="#202932" stroke="#b7a05b" stroke-width="5"/>
-    <path d="M0-71v119M-39-27h78" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round"/>
-    <circle cx="0" cy="-27" r="27" fill="none" stroke="#d9c47a" stroke-width="4" opacity="0.8"/>
-    <path d="M-128-83c-39 47-63 104-71 170l53 19 45-105Z" fill="url(#steel)" stroke="#343b40" stroke-width="5"/>
-    <path d="M128-83c39 47 63 104 71 170l-53 19-45-105Z" fill="url(#steel)" stroke="#343b40" stroke-width="5"/>
-    <path d="M-158 98c24 55 32 111 25 168H-34l34-179 34 179h99c7-57-1-113-25-168l-46 20L0 97l-62 21Z" fill="#171c21" stroke="#504e47" stroke-width="5"/>
-    <path d="M-8 76h16l12 214H-20Z" fill="url(#gold)" opacity="0.78"/>
+    <path d="M-119-47c-45 46-70 99-77 159l55 19 54-118Z" fill="url(#armor)" stroke="#39444c" stroke-width="6"/>
+    <path d="M119-47c45 46 70 99 77 159l-55 19-54-118Z" fill="url(#armor)" stroke="#39444c" stroke-width="6"/>
 
-    <g transform="translate(142 74) rotate(-8)">
-      <path d="M0-4 34-4 51 105 12 122-28 105-12-4Z" fill="#1d2730" stroke="#c5ad61" stroke-width="5"/>
-      <path d="M12 18v70M-8 44h40" fill="none" stroke="#dfca7a" stroke-width="7" stroke-linecap="round"/>
+    <g transform="translate(-157 88) rotate(4)">
+      <path d="M-8-188h16v344H-8Z" fill="#d8d6c9" stroke="#4c5459" stroke-width="3"/>
+      <path d="M0-223 17-187H-17Z" fill="#e7e4d2" stroke="#6d725f" stroke-width="3"/>
+      <path d="M-39-138h78v15h-78Z" fill="url(#gold)"/>
+      <path d="M-13 154h26l13 48h-52Z" fill="#8b6730"/>
     </g>
 
-    <g transform="translate(-155 102) rotate(7)">
-      <path d="M0-155h12v274H0Z" fill="#c6c0a7"/>
-      <path d="M-15-142h42l-8 26H-7Z" fill="#d9c47b"/>
-      <path d="M-31-107h74v12h-74Z" fill="#d5c58a"/>
-      <path d="M-4 119h20l11 43h-42Z" fill="#8e6d33"/>
+    <g transform="translate(145 72) rotate(-7)">
+      <path d="M-47-32h94l17 102c-8 45-31 75-64 94-33-19-56-49-64-94Z" fill="#202c36" stroke="#d2b75f" stroke-width="6"/>
+      <path d="M0-5v90M-27 29h54" fill="none" stroke="#e9d27d" stroke-width="8" stroke-linecap="round"/>
     </g>
+
+    <path d="M-128 118c22 55 28 117 18 188H-18L0 150l18 156h92c10-71 4-133-18-188l-44 19L0 118l-48 19Z" fill="#111820" stroke="#4f514b" stroke-width="5"/>
+    <path d="M-8 132h16l11 172h-38Z" fill="url(#gold)" opacity=".72"/>
   </g>
 
-  <g transform="translate(77 591)" opacity="0.92">
-    <path d="M0 105V25C0 9 12-3 28-3h48c16 0 28 12 28 28v80Z" fill="#1f2529" stroke="#767975" stroke-width="5"/>
-    <path d="M52 16v54M30 40h44" stroke="#9a9276" stroke-width="5" stroke-linecap="round"/>
-    <path d="M-22 105h148" stroke="#101418" stroke-width="12"/>
+  <g fill="#252d33" stroke="#8a8d84" stroke-width="5">
+    <path d="M52 705V579c0-18 13-32 31-35l39-6 39 6c18 3 31 17 31 35v126Z"/>
+    <path d="M448 716V601c0-17 12-30 29-33l34-5 34 5c17 3 29 16 29 33v115Z"/>
+  </g>
+  <g stroke="#b1aa8c" stroke-width="5" stroke-linecap="round" opacity=".78">
+    <path d="M122 569v74M92 599h60"/>
+    <path d="M511 593v62M487 618h48"/>
   </g>
 
-  <g transform="translate(501 610)" opacity="0.74">
-    <path d="M0 88V24C0 10 11 0 25 0h37c14 0 25 10 25 24v64Z" fill="#252c31" stroke="#6c716f" stroke-width="4"/>
-    <circle cx="44" cy="38" r="10" fill="none" stroke="#9b8b5d" stroke-width="3"/>
-    <path d="M-18 88h124" stroke="#11161a" stroke-width="10"/>
-  </g>
+  <path d="M214 294c19-67 55-101 106-101s87 34 106 101" fill="none" stroke="#d7b65f" stroke-width="7" opacity=".25"/>
+  <path d="M166 429c35-48 72-73 110-84M474 429c-35-48-72-73-110-84" fill="none" stroke="#e0c26f" stroke-width="6" opacity=".22"/>
 
-  <g transform="translate(320 116)">
-    <circle r="48" fill="#dcbf68" opacity="0.08"/>
-    <circle r="31" fill="#fff0aa" opacity="0.08"/>
-    <path d="M0-43 8-12 38 0 8 12 0 43-8 12-38 0-8-12Z" fill="#ead27f" opacity="0.75"/>
-    <circle r="9" fill="#fff3bd"/>
-  </g>
-
-  <rect x="12" y="12" width="616" height="776" rx="8" fill="none" stroke="#b79a4a" stroke-width="3" opacity="0.82"/>
-  <rect x="23" y="23" width="594" height="754" rx="5" fill="none" stroke="#ece0b1" stroke-width="1" opacity="0.24"/>
+  <rect x="12" y="12" width="616" height="776" rx="8" fill="none" stroke="#b79a4a" stroke-width="3" opacity=".85"/>
+  <rect x="23" y="23" width="594" height="754" rx="5" fill="none" stroke="#ece0b1" stroke-width="1" opacity=".26"/>
 </svg>
