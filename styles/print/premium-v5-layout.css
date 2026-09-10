@@ -35,6 +35,10 @@
     grid-template-rows:1.44in minmax(0,1fr) .34in;
     gap:.03in;
   }
+  .sheet-packet-table .ps-body{
+    box-sizing:border-box;
+    padding-bottom:.12in;
+  }
 
   /* Martial Table packets can carry 30+ active rules. Use horizontal page width
      instead of adding vertical rows into the footer. This mirrors the certified
