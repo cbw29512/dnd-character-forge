@@ -44,13 +44,15 @@ test("exact curated art outranks a reusable layer pair for the same variant",()=
   }catch(error){console.error("[dossier-portrait-assets-test] exact priority failed",error);throw error;}
 });
 
-test("approved reusable layers render before generic class fallback",()=>{
+test("approved reusable layers render a story vignette before generic class fallback",()=>{
   try{
     const html=dossierFallbackArt("ranger",{backgroundId:"deep-sailor",pathId:"tempest-scout",variantKey:"deep-sailor--tempest-scout"});
     assert.match(html,/data-composed-portrait="deep-sailor--tempest-scout"/);
-    assert.match(html,/ps-composed-dossier-overlay/);
-    assert.match(html,/ps-class-portrait-image/);
+    assert.match(html,/ps-composed-background-art/);
+    assert.match(html,/ps-composed-class-crest/);
+    assert.match(html,/ps-composed-path-art/);
     assert.match(html,/Ranger bow arrow and woodland trail crest/);
+    assert.doesNotMatch(html,/ps-class-portrait-image/);
     assert.doesNotMatch(html,/data-curated-portrait/);
   }catch(error){console.error("[dossier-portrait-assets-test] composed priority failed",error);throw error;}
 });
@@ -60,7 +62,9 @@ test("color print shows exact or composed art while Ink Saver restores the crest
     const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-curated-dossier.css",import.meta.url)),"utf8"),loadPoint=readFileSync(fileURLToPath(new URL("../styles/print/premium-sorcerer.css",import.meta.url)),"utf8");
     assert.match(css,/ps-curated-dossier-portrait[\s\S]*ps-composed-dossier-portrait/);
     assert.match(css,/sheet-print-ink-saver[\s\S]*ps-curated-dossier-portrait[\s\S]*ps-composed-dossier-portrait/);
-    assert.match(css,/ps-composed-dossier-overlay\{[^}]*position:absolute[^}]*pointer-events:none/s);
+    assert.match(css,/ps-composed-class-crest\{[^}]*position:absolute[^}]*place-items:center/s);
+    assert.match(css,/ps-composed-background-art[^}]*opacity:/s);
+    assert.match(css,/ps-composed-path-art[^}]*opacity:/s);
     assert.ok(loadPoint.indexOf('premium-curated-dossier.css')>loadPoint.indexOf('premium-ink-saver.css'),"dossier art override must load after heraldic defaults");
   }catch(error){console.error("[dossier-portrait-assets-test] print visibility contract failed",error);throw error;}
 });
