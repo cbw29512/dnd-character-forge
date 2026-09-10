@@ -37,7 +37,9 @@ function assertRenderedMonochrome(filePath,classId){
   assert.equal(coloredPixels,0,`${classId}: Black & White render leaked color into ${coloredPixels} pixels (max RGB spread ${maxSpread})`);
 }
 
-function characterAt(classId){const state=createInitialState();state.ruleset="2024";state.constraints.level="7";state.constraints.class=classId;state.constraints.subclass="random";state.constraints.species="human";state.constraints.background="criminal";const character=generateCharacter(state);character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",style:"ornate",paper:"white",ornament:"rich",frame:"class",printMode:"ink-saver",portraitVisible:false,portraitFilter:"grayscale"}};return character;}
+function characterAt(classId){const state=createInitialState();state.ruleset="2024";state.constraints.level="7";state.constraints.class=classId;state.constraints.subclass="random";state.constraints.species="human";state.constraints.background="criminal";const character=withSeed(seedFor(classId),()=>generateCharacter(state));character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",style:"ornate",paper:"white",ornament:"rich",frame:"class",printMode:"ink-saver",portraitVisible:false,portraitFilter:"grayscale"}};return character;}
+function withSeed(seed,callback){const original=Math.random;let state=seed>>>0;try{Math.random=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state/0x100000000;};return callback();}finally{Math.random=original;}}
+function seedFor(value){let seed=0x9e3779b9;for(const char of String(value)){seed=Math.imul(seed^char.charCodeAt(0),16777619)>>>0;}return seed||1;}
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function normalize(value){return String(value||"").replace(/\s+/g," ").trim();}
 function escapeRegex(value){return String(value).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
