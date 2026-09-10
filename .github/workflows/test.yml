@@ -79,14 +79,18 @@ jobs:
         run: node tests/browser-print-gate.mjs
       - name: Verify curated dossier portrait in Chrome
         run: node tests/curated-dossier-portrait-browser-gate.mjs
-      - name: Upload curated dossier visual review
+      - name: Verify composed dossier portrait in Chrome
+        run: node tests/composed-dossier-portrait-browser-gate.mjs
+      - name: Upload dossier art visual review
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: curated-dossier-review
+          name: dossier-art-review
           path: |
             tests/.browser-print/curated-grave-warden-oath-beacon.pdf
             tests/.browser-print/curated-grave-warden-oath-beacon-dossier.png
+            tests/.browser-print/composed-deep-sailor-tempest-scout.pdf
+            tests/.browser-print/composed-deep-sailor-tempest-scout-dossier.png
           if-no-files-found: warn
           include-hidden-files: true
           retention-days: 7

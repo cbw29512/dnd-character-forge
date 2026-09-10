@@ -1,4 +1,5 @@
 import { FORGE_2014, FORGE_2024 } from "../data/forge-data.js";
+import { composedDossierArtFor } from "./dossier-art-layers.js";
 import { curatedDossierPortraitFor, curatedDossierPortraitIds } from "./dossier-portrait-assets.js";
 
 const CATALOGS=Object.freeze({"2014":FORGE_2014,"2024":FORGE_2024});
@@ -26,21 +27,29 @@ export function supportedDossierVariantCatalog(){
 export function dossierArtCoverage(){
   try{
     const catalog=supportedDossierVariantCatalog(),supported=new Set(catalog.map(item=>item.variantKey));
-    const exact=[],invalid=[],orphaned=[];
+    const exact=[],composed=[],invalid=[],orphaned=[];
     for(const id of curatedDossierPortraitIds()){
       if(!supported.has(id)){orphaned.push(id);continue;}
       if(curatedDossierPortraitFor(id)){exact.push(id);continue;}
       invalid.push(id);
     }
+    const exactSet=new Set(exact);
+    for(const item of catalog){
+      if(exactSet.has(item.variantKey))continue;
+      if(composedDossierArtFor(item.backgroundId,item.pathId))composed.push(item.variantKey);
+    }
+    const covered=exact.length+composed.length;
     return Object.freeze({
       total:catalog.length,
       exact:exact.length,
-      composed:0,
-      fallback:catalog.length-exact.length,
-      exactPercent:catalog.length?Number(((exact.length/catalog.length)*100).toFixed(2)):0,
+      composed:composed.length,
+      fallback:catalog.length-covered,
+      exactPercent:percent(exact.length,catalog.length),
+      coveredPercent:percent(covered,catalog.length),
       invalid:Object.freeze([...invalid]),
       orphaned:Object.freeze([...orphaned]),
       exactIds:Object.freeze([...exact]),
+      composedIds:Object.freeze([...composed]),
       catalog
     });
   }catch(error){
@@ -61,3 +70,4 @@ function addVariant(map,{ruleset,backgroundId,classId,pathId,kind}){
 }
 
 function freezeVariant(item){return Object.freeze({...item,rulesets:Object.freeze([...item.rulesets].sort())});}
+function percent(count,total){return total?Number(((count/total)*100).toFixed(2)):0;}
