@@ -25,7 +25,8 @@ test("RAW generator Random backgrounds stay inside verified SRD catalogs",()=>{
       const state=createInitialState();state.ruleset=ruleset;state.constraints.level="5";state.constraints.class="fighter";state.constraints.species=ruleset==="2014"?"human":"dwarf";state.constraints.subclass="champion";state.constraints.background="random";
       const character=generateCharacter(state);
       assert.equal(character.sourceMode,"RAW");
-      assert.equal(character.audit.rawIntegrity,true,`${ruleset}: Random background crossed out of RAW`);
+      const diagnostic=`bg=${character.background?.id}/${character.background?.contentKind||"srd"} subclass=${character.subclass?.id}/${character.subclass?.contentKind||"srd"} feats=${(character.feats||[]).map(feat=>`${feat.id}:${feat.contentKind||"srd"}`).join(",")||"none"} license=${character.audit?.license||"none"}`;
+      assert.equal(character.audit.rawIntegrity,true,`${ruleset}: Random character crossed out of RAW (${diagnostic})`);
       assert.equal(isForgeOriginalBackground(character.background),false,`${ruleset}: ${character.background?.id} is not SRD`);
       assert.ok(data.backgrounds.some(item=>item.id===character.background.id));
     }
