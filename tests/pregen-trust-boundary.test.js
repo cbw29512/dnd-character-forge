@@ -10,12 +10,12 @@ import { fingerprint, pregenFingerprintPayload } from "../src/library/fingerprin
 import { verifyPregenEntry } from "../src/library/pregen-integrity.js";
 import { legacySafeCharacter } from "../src/ui/render-safe.js";
 
-function fighter2024(){
+function fighter2024(background="criminal"){
   const state=createInitialState();
   state.constraints.level="5";
   state.constraints.class="fighter";
   state.constraints.species="human";
-  state.constraints.background="criminal";
+  state.constraints.background=background;
   return generateCharacter(state);
 }
 
@@ -30,6 +30,14 @@ test("saved pregens are fingerprint-checked and revalidated before reopening",as
   assert.equal(verified.character.validation.valid,true);
   assert.equal(verified.character.audit.status,"PASS");
   assert.notEqual(verified.character.audit.sourceVersion,"FAKE");
+});
+
+test("production Pregen trust boundary rejects Forge Original content even when sourceMode says RAW",async()=>{
+  const character=fighter2024("bounty-hunter");
+  assert.equal(character.sourceMode,"RAW");
+  assert.equal(character.audit.rawIntegrity,false);
+  const entry=await entryFor(character);
+  await assert.rejects(()=>verifyPregenEntry(entry),/accepts SRD\/RAW saved characters only/i);
 });
 
 test("saved pregen rejects mechanical tampering without a matching fingerprint",async()=>{
@@ -123,5 +131,6 @@ test("library open path verifies saved pregens before rendering",()=>{
   const source=readFileSync(new URL("../src/ui/library.js",import.meta.url),"utf8");
   assert.match(source,/verifyPregenEntry/);
   assert.match(source,/const verified=await verifyPregenEntry\(entry\)/);
+  assert.match(source,/audit\?\.rawIntegrity!==true/);
   assert.match(source,/Fingerprint \$\{escapeHtml\(fingerprint\)\}/);
 });

@@ -58,14 +58,14 @@ test("every 2024 original background generates legal Origin-feat, tool, equipmen
   }
 });
 
-test("Forge Random background catalogs include labeled originals without mutating source records",()=>{
+test("Forge Original backgrounds remain explicit opt-in without mutating source records",()=>{
   for(const [ruleset,data,sources] of [
     ["2014",FORGE_2014,FORGE_ORIGINAL_BACKGROUNDS_2014],
     ["2024",FORGE_2024,FORGE_ORIGINAL_BACKGROUNDS_2024]
   ]){
     const originals=data.backgrounds.filter(isForgeOriginalBackground);
-    assert.equal(originals.length,sources.length,`${ruleset}: original Random pool count`);
-    assert.ok(originals.every(item=>item.randomEligible===false&&item.randomEligibleInForge===true),`${ruleset}: Forge Random eligibility missing`);
+    assert.equal(originals.length,sources.length,`${ruleset}: original background count`);
+    assert.ok(originals.every(item=>item.randomEligible===false&&item.randomEligibleInForge!==true),`${ruleset}: Forge Original backgrounds must remain excluded from default Random generation`);
     assert.ok(sources.every(item=>item.randomEligible===false),`${ruleset}: source records were mutated`);
   }
 });

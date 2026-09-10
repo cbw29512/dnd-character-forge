@@ -18,7 +18,6 @@ export function bindPregenLibrary(options={}){
         if(view){
           const entry=loadPregens().find(item=>item.id===view.dataset.viewPregen);
           if(!entry)throw new Error("Saved pregen was not found.");
-          if(entry.sourceMode!=="RAW")throw new Error("This production Forge opens validated Forge-generated characters only.");
           const verified=await verifyPregenEntry(entry);
           await callbacks.onView?.(verified);
           return;
@@ -34,14 +33,14 @@ export function renderPregenLibrary(){
   try{
     const search=document.getElementById("pregenSearch")?.value.trim().toLowerCase()||"",ruleset=document.getElementById("pregenRuleset")?.value||"all";
     const items=loadPregens().filter(item=>{
-      if(item.sourceMode!=="RAW")return false;
+      if(item.sourceMode!=="RAW"||item.character?.audit?.rawIntegrity!==true)return false;
       const haystack=`${item.name} ${item.className} ${item.speciesName} ${item.backgroundName}`.toLowerCase();
       return(!search||haystack.includes(search))&&(ruleset==="all"||item.ruleset===ruleset);
     });
     const grid=document.getElementById("pregenGrid"),count=document.getElementById("pregenCount");
     if(count)count.textContent=`${items.length} saved`;
     if(!grid)return;
-    grid.innerHTML=items.length?items.map(card).join(""):`<div class="library-empty"><span>✦</span><h3>No matching pregens yet</h3><p>Forge a validated character, then choose <strong>Save to Pregens</strong>. Exact mechanical duplicates are blocked automatically.</p></div>`;
+    grid.innerHTML=items.length?items.map(card).join(""):`<div class="library-empty"><span>✦</span><h3>No matching RAW pregens yet</h3><p>Forge a validated SRD/RAW character, then choose <strong>Save to Pregens</strong>. Exact mechanical duplicates are blocked automatically.</p></div>`;
   }catch(error){console.error("[library-ui] render failed",error);throw error;}
 }
 
@@ -76,13 +75,7 @@ async function restorePregenBackup(event){
 
 function card(item){
   try{
-    const fingerprint=typeof item.fingerprint==="string"&&item.fingerprint?item.fingerprint.slice(0,8):"unverified",id=escapeHtml(item.id),compatible=usesCompatibleContent(item.character),badge=compatible?'<span class="library-badge">✓ 5E COMPATIBLE</span>':'<span class="library-badge raw">✓ SRD / RAW</span>';
-    return `<article class="library-card"><div class="library-card-top">${badge}<span class="library-level">Level ${item.level}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.speciesName)} ${escapeHtml(item.className)} · ${escapeHtml(item.backgroundName)}</p><div class="library-meta"><span>${escapeHtml(item.ruleset)}</span><span>Fingerprint ${escapeHtml(fingerprint)}</span></div><div class="library-actions"><button class="library-open" type="button" data-view-pregen="${id}">Open character</button><button class="library-remove" type="button" data-remove-pregen="${id}">Remove</button></div></article>`;
+    const fingerprint=typeof item.fingerprint==="string"&&item.fingerprint?item.fingerprint.slice(0,8):"unverified",id=escapeHtml(item.id);
+    return `<article class="library-card"><div class="library-card-top"><span class="library-badge raw">✓ SRD / RAW</span><span class="library-level">Level ${item.level}</span></div><h3>${escapeHtml(item.name)}</h3><p>${escapeHtml(item.speciesName)} ${escapeHtml(item.className)} · ${escapeHtml(item.backgroundName)}</p><div class="library-meta"><span>${escapeHtml(item.ruleset)}</span><span>Fingerprint ${escapeHtml(fingerprint)}</span></div><div class="library-actions"><button class="library-open" type="button" data-view-pregen="${id}">Open character</button><button class="library-remove" type="button" data-remove-pregen="${id}">Remove</button></div></article>`;
   }catch(error){console.error("[library-ui] card failed",error);throw error;}
-}
-
-function usesCompatibleContent(character){
-  try{
-    return character?.audit?.rawIntegrity===false||character?.background?.contentKind==="forge-original"||character?.subclass?.contentKind==="forge-original"||(character?.feats||[]).some(feat=>feat?.contentKind==="forge-original");
-  }catch(error){console.error("[library-ui] provenance badge failed",error);throw error;}
 }
