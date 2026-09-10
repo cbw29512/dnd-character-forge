@@ -1,12 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
-test("player-uploaded portrait remains higher priority than an exact curated dossier variant",()=>{
+test("player-uploaded portrait remains higher priority than an exact compatible curated dossier variant",()=>{
   try{
     const state=createInitialState();
+    state.sourceMode=SOURCE.HOMEBREW;
     state.ruleset="2024";
     state.constraints.level="7";
     state.constraints.class="paladin";
@@ -15,7 +17,9 @@ test("player-uploaded portrait remains higher priority than an exact curated dos
     state.constraints.background="grave-warden";
     state.constraints.name="Upload Priority Witness";
     const character=generateCharacter(state);
-    assert.equal(character.validation.valid,true,"upload-priority fixture must remain legal");
+    assert.equal(character.sourceMode,SOURCE.HOMEBREW);
+    assert.equal(character.audit?.rawIntegrity,false);
+    assert.equal(character.validation.valid,true,"upload-priority compatible fixture must remain legal");
 
     character.presentation={
       ...(character.presentation||{}),
