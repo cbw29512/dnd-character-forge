@@ -1,0 +1,27 @@
+@media print{
+  /* Curated dossier art is the approved color-print exception to the V5
+     heraldic fallback. Ordinary built-in placeholders still resolve to the
+     class crest; only exact curated dossier art is allowed to replace it. */
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait{
+    display:block!important;
+    width:100%;
+    height:100%;
+    min-width:0;
+    min-height:0;
+  }
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-curated-dossier-portrait + .ps-placeholder-emblem{
+    display:none!important;
+  }
+
+  /* Ink Saver remains deterministic: never rasterize curated color art when
+     economical monochrome output was requested; use the crisp vector crest. */
+  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait{
+    display:none!important;
+  }
+  .premium-sheet.sheet-print-ink-saver .ps-curated-dossier-portrait + .ps-placeholder-emblem{
+    display:grid!important;
+    place-items:center;
+    width:100%;
+    height:100%;
+  }
+}
