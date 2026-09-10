@@ -27,45 +27,30 @@ test("Grave Warden Oath Beacon resolves to a real original SVG asset",()=>{
     assert.equal(entry.status,"approved");
     assert.match(entry.provenance,/Original Character Forge vector illustration/);
     const svg=readFileSync(fileURLToPath(entry.src),"utf8");
-    assert.match(svg,/<svg\b/);
-    assert.match(svg,/Grave Warden and Oath Beacon/);
-    assert.match(svg,/grave stones/i);
-    assert.ok(svg.length>3000,"pilot SVG is unexpectedly trivial");
+    assert.match(svg,/<svg\b/);assert.match(svg,/Grave Warden and Oath Beacon/);assert.match(svg,/grave stones/i);assert.ok(svg.length>3000,"pilot SVG is unexpectedly trivial");
   }catch(error){console.error("[dossier-portrait-assets-test] pilot asset certification failed",error);throw error;}
 });
 
 test("exact curated art outranks a reusable layer pair for the same variant",()=>{
   try{
     const key="grave-warden--oath-beacon",html=dossierFallbackArt("paladin",{backgroundId:"grave-warden",pathId:"oath-beacon",variantKey:key});
-    assert.match(html,/data-curated-portrait="grave-warden--oath-beacon"/);
-    assert.doesNotMatch(html,/data-composed-portrait/);
-    assert.match(html,/grave-warden--oath-beacon\.svg/);
-    assert.match(html,/Paladin radiant sword and oath shield crest/);
+    assert.match(html,/data-curated-portrait="grave-warden--oath-beacon"/);assert.doesNotMatch(html,/data-composed-portrait/);assert.match(html,/grave-warden--oath-beacon\.svg/);assert.match(html,/Paladin radiant sword and oath shield crest/);
   }catch(error){console.error("[dossier-portrait-assets-test] exact priority failed",error);throw error;}
 });
 
 test("approved reusable layers render a story vignette before generic class fallback",()=>{
   try{
     const html=dossierFallbackArt("ranger",{backgroundId:"deep-sailor",pathId:"tempest-scout",variantKey:"deep-sailor--tempest-scout"});
-    assert.match(html,/data-composed-portrait="deep-sailor--tempest-scout"/);
-    assert.match(html,/ps-composed-background-art/);
-    assert.match(html,/ps-composed-class-crest/);
-    assert.match(html,/ps-composed-path-art/);
-    assert.match(html,/Ranger bow arrow and woodland trail crest/);
-    assert.doesNotMatch(html,/ps-class-portrait-image/);
-    assert.doesNotMatch(html,/data-curated-portrait/);
+    assert.match(html,/data-composed-portrait="deep-sailor--tempest-scout"/);assert.match(html,/ps-composed-scene/);assert.match(html,/ps-composed-background-art/);assert.match(html,/ps-composed-class-crest/);assert.match(html,/ps-composed-path-art/);assert.match(html,/Ranger bow arrow and woodland trail crest/);assert.doesNotMatch(html,/ps-class-portrait-image/);assert.doesNotMatch(html,/data-curated-portrait/);
   }catch(error){console.error("[dossier-portrait-assets-test] composed priority failed",error);throw error;}
 });
 
-test("composed color art owns a visible stacking and contrast contract while Ink Saver restores the crest",()=>{
+test("composed color art uses one self-painted SVG while Ink Saver restores the crest",()=>{
   try{
     const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-curated-dossier.css",import.meta.url)),"utf8"),loadPoint=readFileSync(fileURLToPath(new URL("../styles/print/premium-sorcerer.css",import.meta.url)),"utf8");
-    assert.match(css,/ps-composed-dossier-portrait\{[^}]*z-index:2/s,"composed wrapper must sit above the generic narrative overlay");
-    assert.match(css,/ps-composed-art-field\{[^}]*z-index:2/s,"composed art field must establish an explicit visible layer");
-    assert.match(css,/ps-composed-background-art\{[^}]*color:#dce8c7!important[^}]*opacity:\.92/s);
-    assert.match(css,/ps-composed-class-crest\{[^}]*color:#ffe7a6!important[^}]*opacity:\.9/s);
-    assert.match(css,/ps-composed-path-art\{[^}]*color:#ffe39a!important[^}]*opacity:1/s);
+    assert.match(css,/ps-composed-dossier-portrait\{[^}]*z-index:2/s,"composed scene must sit above the generic narrative overlay");
     assert.match(css,/ps-narrative-fallback:has\(\.ps-composed-dossier-portrait\)::after\{[^}]*z-index:1/s,"generic fallback overlay must remain below composed art");
+    assert.match(css,/\.premium-sheet:not\(\.sheet-print-ink-saver\)[\s\S]*\.ps-composed-dossier-portrait\{[\s\S]*display:block!important/s);
     assert.match(css,/sheet-print-ink-saver[\s\S]*ps-curated-dossier-portrait[\s\S]*ps-composed-dossier-portrait/);
     assert.ok(loadPoint.indexOf('premium-curated-dossier.css')>loadPoint.indexOf('premium-ink-saver.css'),"dossier art override must load after heraldic defaults");
   }catch(error){console.error("[dossier-portrait-assets-test] print visibility contract failed",error);throw error;}
@@ -73,14 +58,8 @@ test("composed color art owns a visible stacking and contrast contract while Ink
 
 test("missing or malformed variants fail closed to established class art",()=>{
   try{
-    const key="__missing__--__missing__";
-    assert.equal(curatedDossierPortraitFor(key),null);
-    const missing=dossierFallbackArt("paladin",{variantKey:key});
-    assert.match(missing,/ps-placeholder-illustrated/);
-    assert.match(missing,/ps-class-crest/);
-    assert.doesNotMatch(missing,/data-curated-portrait|data-composed-portrait/);
-    const malformed=dossierFallbackArt("fighter",{get variantKey(){throw new Error("fixture failure");}});
-    assert.match(malformed,/ps-placeholder-emblem/);
-    assert.match(malformed,/Fighter shield and crossed blades crest/);
+    const key="__missing__--__missing__";assert.equal(curatedDossierPortraitFor(key),null);
+    const missing=dossierFallbackArt("paladin",{variantKey:key});assert.match(missing,/ps-placeholder-illustrated/);assert.match(missing,/ps-class-crest/);assert.doesNotMatch(missing,/data-curated-portrait|data-composed-portrait/);
+    const malformed=dossierFallbackArt("fighter",{get variantKey(){throw new Error("fixture failure");}});assert.match(malformed,/ps-placeholder-emblem/);assert.match(malformed,/Fighter shield and crossed blades crest/);
   }catch(error){console.error("[dossier-portrait-assets-test] fail-closed contract failed",error);throw error;}
 });
