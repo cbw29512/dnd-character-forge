@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
+import { fileURLToPath } from "node:url";
 import {
   curatedDossierPortraitFor,
+  curatedDossierPortraitIds,
   dossierFallbackArt,
   isCuratedDossierPortraitEntry
 } from "../src/print/dossier-portrait-assets.js";
@@ -26,26 +29,51 @@ test("curated portrait schema requires an approved exact variant",()=>{
   }
 });
 
-test("missing curated variants fall back to the established class art",()=>{
+test("Grave Warden Oath Beacon resolves to a real original SVG asset",()=>{
   try{
-    const key="__missing__--__missing__";
-    assert.equal(curatedDossierPortraitFor(key),null);
-    const html=dossierFallbackArt("paladin",{variantKey:key});
-    assert.match(html,/ps-placeholder-illustrated/);
-    assert.match(html,/ps-placeholder-emblem/);
-    assert.match(html,/ps-class-crest/);
-    assert.doesNotMatch(html,/data-curated-portrait/);
+    const key="grave-warden--oath-beacon",entry=curatedDossierPortraitFor(key);
+    assert.ok(entry,`${key}: curated entry missing`);
+    assert.deepEqual(curatedDossierPortraitIds(),[key]);
+    assert.equal(entry.status,"approved");
+    assert.match(entry.provenance,/Original Character Forge vector illustration/);
+    const svg=readFileSync(fileURLToPath(entry.src),"utf8");
+    assert.match(svg,/<svg\b/);
+    assert.match(svg,/Grave Warden and Oath Beacon/);
+    assert.match(svg,/grave stones/i);
+    assert.ok(svg.length>3000,"pilot SVG is unexpectedly trivial");
   }catch(error){
-    console.error("[dossier-portrait-assets-test] class fallback failed",error);
+    console.error("[dossier-portrait-assets-test] pilot asset certification failed",error);
     throw error;
   }
 });
 
-test("malformed portrait inputs fail closed to class fallback",()=>{
+test("approved exact variant renders curated color art plus the ink-saver crest",()=>{
   try{
-    const html=dossierFallbackArt("fighter",{get variantKey(){throw new Error("fixture failure");}});
+    const key="grave-warden--oath-beacon";
+    const html=dossierFallbackArt("paladin",{variantKey:key});
+    assert.match(html,/data-curated-portrait="grave-warden--oath-beacon"/);
+    assert.match(html,/ps-curated-dossier-portrait/);
+    assert.match(html,/grave-warden--oath-beacon\.svg/);
     assert.match(html,/ps-placeholder-emblem/);
-    assert.match(html,/Fighter shield and crossed blades crest/);
+    assert.match(html,/Paladin radiant sword and oath shield crest/);
+  }catch(error){
+    console.error("[dossier-portrait-assets-test] curated render failed",error);
+    throw error;
+  }
+});
+
+test("missing or malformed variants fail closed to established class art",()=>{
+  try{
+    const key="__missing__--__missing__";
+    assert.equal(curatedDossierPortraitFor(key),null);
+    const missing=dossierFallbackArt("paladin",{variantKey:key});
+    assert.match(missing,/ps-placeholder-illustrated/);
+    assert.match(missing,/ps-class-crest/);
+    assert.doesNotMatch(missing,/data-curated-portrait/);
+
+    const malformed=dossierFallbackArt("fighter",{get variantKey(){throw new Error("fixture failure");}});
+    assert.match(malformed,/ps-placeholder-emblem/);
+    assert.match(malformed,/Fighter shield and crossed blades crest/);
   }catch(error){
     console.error("[dossier-portrait-assets-test] fail-closed contract failed",error);
     throw error;
