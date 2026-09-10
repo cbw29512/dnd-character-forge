@@ -24,20 +24,16 @@
     gap:.055in;
   }
 
-  /* V5 adds useful table tools without giving them permission to invade the
-     certified footer. Reclaim room from the generous identity rail at the
-     packet/profile level, preserving gameplay typography and full rule text. */
+  /* Dense Table packets need a true geometric safety margin above the legal
+     footer. Reclaim that room from the oversized identity/portrait rail, not
+     from gameplay typography. The portrait art itself remains fully visible. */
   .sheet-packet-table.profile-martial-one-page .ps-frame{
-    grid-template-rows:1.47in minmax(0,1fr) .31in;
+    grid-template-rows:1.34in minmax(0,1fr) .31in;
     gap:.028in;
   }
   .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
-    grid-template-rows:1.44in minmax(0,1fr) .34in;
+    grid-template-rows:1.32in minmax(0,1fr) .34in;
     gap:.03in;
-  }
-  .sheet-packet-table .ps-body{
-    box-sizing:border-box;
-    padding-bottom:.12in;
   }
 
   /* Martial Table packets can carry 30+ active rules. Use horizontal page width
