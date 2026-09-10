@@ -6,9 +6,9 @@ export function buildLiteraryBackstory(context,storyArc,seed,core){
       `The oldest version of ${c.name} belongs to a world of ${c.bgLit.texture}. ${c.name} ${c.bg.origin}; the work was ordinary until ordinary responsibility became the standard by which every later choice would be judged. ${k.backgroundMemory}`
     ];
     const fractures=[
-      `That life broke open during ${c.event} near ${c.place}. In the confusion, ${c.bgLit.wound}. The cost made ${c.bg.bond} more than a memory. ${capitalize(c.token)} became the object ${c.name} kept when almost everything else from that chapter could be left behind.`,
-      `${c.event} near ${c.place} turned old lessons into consequences. ${capitalize(c.bgLit.wound)}. What remained was loyalty to ${c.bg.bond}, and ${c.token}—small enough to carry, heavy enough to remember.`,
-      `Then came ${c.event} near ${c.place}, the kind of day that makes every earlier belief prove its weight. ${capitalize(c.bgLit.wound)}. From then on, ${c.bg.bond} became a debt of the heart rather than a pleasant piece of history.`
+      `That life broke open during ${c.event} near ${c.place}. In the confusion, ${c.name} ${c.bgLit.wound}. The cost made ${c.bg.bond} more than a memory. ${capitalize(c.token)} became the object ${c.name} kept when almost everything else from that chapter could be left behind.`,
+      `${capitalize(c.event)} near ${c.place} turned old lessons into consequences. ${c.name} ${c.bgLit.wound}. What remained was loyalty to ${c.bg.bond}, and ${c.token}—small enough to carry, heavy enough to remember.`,
+      `Then came ${c.event} near ${c.place}, the kind of day that makes every earlier belief prove its weight. ${c.name} ${c.bgLit.wound}. From then on, ${c.bg.bond} became a debt of the heart rather than a pleasant piece of history.`
     ];
     const becoming=c.subclassName?[
       `The path to ${c.subclassName} began when ${c.name} ${c.subLit.threshold}. ${k.resonance} ${k.tension}`,
@@ -19,9 +19,9 @@ export function buildLiteraryBackstory(context,storyArc,seed,core){
       `Becoming a ${c.className} gave shape to instincts that had survived the earlier life. After ${c.name} ${c.awakening}, the work became clear: ${c.classStory.duty}. ${k.resonance} ${k.tension}`
     ];
     const presents=[
-      `Now ${c.name} travels as ${article(storyArc.label)} ${storyArc.label.replace(/^The\s+/i,"").toLowerCase()}, but the old life still decides what feels personal. ${capitalize(c.bgLit.desire)}. The road ahead is not a search for glory; it is an attempt to make the next difficult choice better than the one that still hurts.`,
-      `Adventure has become the place where the old life and the new discipline finally meet. ${capitalize(c.bgLit.desire)}. ${c.name} does not expect the past to become clean; the hope is smaller and harder—to become someone whose next chapter does not require pretending the earlier ones never happened.`,
-      `The reason ${c.name} keeps moving is specific: ${c.bgLit.desire}. That desire now travels inside the habits of a ${c.className}${c.subclassName?` and the hard-earned identity of ${c.subclassName}`:""}. Whatever comes next, ${c.name} intends to choose it awake.`
+      `Now ${c.name} travels as ${article(storyArc.label)} ${storyArc.label.replace(/^The\s+/i,"").toLowerCase()}, but the old life still decides what feels personal. What matters now is ${c.bgLit.desire}. The road ahead is not a search for glory; it is a chance to make the next difficult choice better than the one that still hurts.`,
+      `Adventure is where the old life and the new discipline finally meet. The unfinished aim is ${c.bgLit.desire}. ${c.name} does not expect the past to become clean; only to make the next chapter more honest than the last.`,
+      `The reason ${c.name} keeps moving is specific: ${c.bgLit.desire}. It now travels inside the habits of a ${c.className}${c.subclassName?` and the hard-earned identity of ${c.subclassName}`:""}. Whatever comes next, ${c.name} intends to choose it awake.`
     ];
     return Object.freeze([pick(openings,seed,5),pick(fractures,seed,17),pick(becoming,seed,29),pick(presents,seed,43)]);
   }catch(error){console.error("[dossier-literary] backstory build failed",error);throw error;}
