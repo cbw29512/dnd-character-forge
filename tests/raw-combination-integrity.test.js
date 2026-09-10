@@ -105,13 +105,14 @@ for(const {ruleset,data} of EDITIONS){
     assert.ok(generated>50,`${ruleset}: subclass combination matrix was unexpectedly small`);
   });
 
-  test(`${ruleset} default Random may use Forge Original backgrounds but never leaks original subclasses`,()=>{
+  test(`${ruleset} default Random stays entirely inside RAW/SRD content`,()=>{
     for(const cls of classes)for(const level of [1,Math.min(10,cls.maxLevel),cls.maxLevel])for(let attempt=0;attempt<10;attempt++){
       const state=createInitialState();state.ruleset=ruleset;state.constraints.class=cls.id;state.constraints.level=String(level);
-      const character=generateCharacter(state),originalBackground=character.background?.contentKind==="forge-original";
+      const character=generateCharacter(state);
+      assert.notEqual(character.background?.contentKind,"forge-original",`${ruleset} ${cls.id} L${level}: Random background leak`);
       assert.notEqual(character.subclass?.contentKind,"forge-original",`${ruleset} ${cls.id} L${level}: Random subclass leak`);
-      assert.equal(character.audit?.rawIntegrity,!originalBackground,`${ruleset} ${cls.id} L${level}: Random RAW-integrity boundary mismatch`);
-      if(originalBackground)assert.match(character.audit?.license||"",/Character Forge Original/,`${ruleset} ${cls.id} L${level}: original background license missing`);
+      assert.equal(character.audit?.rawIntegrity,true,`${ruleset} ${cls.id} L${level}: Random character lost RAW integrity`);
+      assert.doesNotMatch(character.audit?.license||"",/Character Forge Original/,`${ruleset} ${cls.id} L${level}: Random character inherited original-content licensing`);
     }
   });
 }
