@@ -1,34 +1,19 @@
 @media print{
-  /* Premium/color sheets use the full illustrated class portrait. The alternate
-     vector emblem stays in the same fallback node and is revealed only for Ink Saver. */
-  .ps-placeholder-illustrated{display:block;width:100%;height:100%;min-width:0;min-height:0}
-  .ps-placeholder-emblem{display:none}
+  /* Premium V5 treats built-in art as heraldry, not as a substitute character
+     portrait. The 12 original vector crests are the coherent default identity;
+     a player-uploaded portrait still replaces the fallback completely. Raster
+     placeholder assets remain available for a future curated Illustrated mode. */
+  .ps-placeholder-illustrated{display:none;width:100%;height:100%;min-width:0;min-height:0}
+  .ps-placeholder-emblem{display:grid;place-items:center;width:100%;height:100%}
   .ps-class-portrait-image{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;display:block!important}
-
-  /* The current Fighter raster fallback is not strong enough to carry the class
-     identity in print. Until curated Fighter artwork replaces it, use the crisp
-     shield-and-crossed-blades crest already shipped with the class system. This
-     applies only to generated fallback art; player-uploaded portraits are untouched. */
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-placeholder-illustrated,
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-placeholder-illustrated{display:none!important}
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder,
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter{
-    background:radial-gradient(circle at 50% 42%,rgba(180,154,112,.2),transparent 34%),linear-gradient(145deg,#17191d,#61201f)!important;
-    color:#f3dfb9!important;
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-dossier-portrait-art:not(.has-image){
+    background:radial-gradient(circle at 50% 42%,color-mix(in srgb,var(--ps-accent) 22%,transparent),transparent 35%),linear-gradient(145deg,var(--ps-dark),var(--ps-primary))!important;
+    color:color-mix(in srgb,var(--ps-accent) 72%,#fff1d3)!important;
   }
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-placeholder-emblem,
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-placeholder-emblem{
-    display:grid!important;
-    place-items:center;
-    width:100%;
-    height:100%;
-  }
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-class-crest,
-  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-class-crest{
-    width:88%;
-    height:88%;
-    color:#f3dfb9!important;
-    filter:drop-shadow(0 .025in .018in rgba(0,0,0,.32));
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-class-crest,
+  .premium-sheet:not(.sheet-print-ink-saver) .ps-dossier-portrait-art:not(.has-image) .ps-class-crest{
+    width:88%;height:88%;color:inherit!important;filter:drop-shadow(0 .025in .018in rgba(0,0,0,.32));
   }
 
   .sheet-print-ink-saver .ps-placeholder-illustrated{display:none!important}
