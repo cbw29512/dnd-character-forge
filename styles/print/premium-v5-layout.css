@@ -20,8 +20,8 @@
     gap:.055in;
   }
   .sheet-packet-table.layout-resource-heavy.layout-spell-heavy:not(.layout-feature-heavy) .ps-main-columns{
-    grid-template-columns:1.46in minmax(0,1fr) 2.34in;
-    gap:.055in;
+    grid-template-columns:1.42in minmax(0,1fr) 2.48in;
+    gap:.05in;
   }
 
   /* Dense Table packets need a true geometric safety margin above the legal
@@ -34,6 +34,14 @@
   .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
     grid-template-rows:1.32in minmax(0,1fr) .34in;
     gap:.03in;
+  }
+  .sheet-packet-table.profile-martial-one-page.layout-skill-heavy .ps-frame{
+    grid-template-rows:1.26in minmax(0,1fr) .31in;
+    gap:.024in;
+  }
+  .sheet-packet-table.profile-caster-two-page.layout-resource-heavy.layout-spell-heavy:not(.layout-feature-heavy):not(.theme-warlock-eldritch) .ps-frame{
+    grid-template-rows:1.24in minmax(0,1fr) .34in;
+    gap:.024in;
   }
 
   /* Martial Table packets can carry 30+ active rules. Use horizontal page width
@@ -50,6 +58,10 @@
   .sheet-packet-table.profile-martial-one-page .ps-rule-index>div{
     grid-template-columns:repeat(7,minmax(0,1fr));
     gap:.004in .025in;
+  }
+  .sheet-packet-table.profile-martial-one-page.layout-skill-heavy .ps-rule-index>div{
+    grid-template-columns:repeat(8,minmax(0,1fr));
+    gap:.004in .018in;
   }
   .sheet-packet-table.profile-martial-one-page .ps-rule-index span{line-height:1}
   .sheet-packet-table.profile-martial-one-page .ps-rule-index b{
@@ -114,21 +126,21 @@
      ledger. Deluxe retains the roomier tracker cards above. */
   .sheet-packet-table .ps-resource-trackers{
     grid-template-columns:repeat(auto-fit,minmax(.78in,1fr));
-    gap:.015in;
-    margin:0 0 .018in;
+    gap:.012in;
+    margin:0 0 .014in;
   }
   .sheet-packet-table .ps-resource-tracker{
     grid-template-columns:1fr;
     justify-items:center;
     align-content:center;
-    gap:.006in;
-    min-height:.24in;
-    padding:.014in .022in;
+    gap:.004in;
+    min-height:.20in;
+    padding:.01in .018in;
     text-align:center;
   }
-  .sheet-packet-table .ps-resource-tracker>strong{font-size:4.55pt;line-height:1.02}
+  .sheet-packet-table .ps-resource-tracker>strong{font-size:4.5pt;line-height:1.02}
   .sheet-packet-table .ps-resource-marks{justify-content:center;gap:.01in}
-  .sheet-packet-table .ps-resource-marks i{font-size:6.6pt}
+  .sheet-packet-table .ps-resource-marks i{font-size:6.5pt}
   .sheet-packet-table .ps-resource-tracker>small{font-size:3.7pt;line-height:1}
   .sheet-packet-table .ps-resource-current{grid-template-columns:auto .2in auto;font-size:3.8pt;line-height:1}
 
