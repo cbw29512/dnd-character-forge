@@ -28,7 +28,7 @@ test("curated portrait schema requires an approved exact variant",()=>{
 
 test("missing curated variants fall back to the established class art",()=>{
   try{
-    const key="grave-warden--oath-beacon";
+    const key="__missing__--__missing__";
     assert.equal(curatedDossierPortraitFor(key),null);
     const html=dossierFallbackArt("paladin",{variantKey:key});
     assert.match(html,/ps-placeholder-illustrated/);
