@@ -1,13 +1,31 @@
 const PROVENANCE="Original Character Forge vector layer";
 
 export const DOSSIER_BACKGROUND_LAYERS=Object.freeze({
-  "grave-warden":makeLayer("grave-warden","background","unmarked grave",`<path opacity=".9" stroke-width="4" d="M18 190h72M28 190v-35h22v35m7 0v-49h24v49M31 155h16m14-14h16"/><path opacity=".55" stroke-width="2" d="M15 198c23-7 48-6 77 0"/>`),
-  "deep-sailor":makeLayer("deep-sailor","background","salt-stained chart",`<path opacity=".88" stroke-width="3" d="M18 183c13-9 25-9 38 0s25 9 38 0M18 194c13-9 25-9 38 0s25 9 38 0"/><circle opacity=".72" stroke-width="3" cx="50" cy="157" r="20"/><path opacity=".72" stroke-width="3" d="m50 143 5 14-5 14-5-14 5-14Z"/>`)
+  "grave-warden":makeLayer("grave-warden","background","unmarked grave",`
+    <circle opacity=".18" cx="42" cy="48" r="27"/>
+    <path opacity=".5" stroke-width="2.4" d="M11 57c24-16 45-17 66-3 13 9 26 12 40 9"/>
+    <path opacity=".72" stroke-width="3.4" d="M16 189h103M26 189v-39h25v39m9 0v-55h29v55m9 0v-31h20v31"/>
+    <path opacity=".46" stroke-width="2.1" d="M29 150h19m17-16h19m18 24h13M18 199c28-8 59-8 101 0"/>
+    <path opacity=".34" stroke-width="2" d="M133 28c-8 15-7 31 4 47m-4-24 17-11m-14 26 19 5"/>`),
+  "deep-sailor":makeLayer("deep-sailor","background","salt-stained chart",`
+    <circle opacity=".36" stroke-width="2.8" cx="43" cy="154" r="30"/>
+    <circle opacity=".18" stroke-width="1.4" cx="43" cy="154" r="22"/>
+    <path opacity=".62" stroke-width="3" d="m43 128 7 26-7 26-7-26 7-26Zm-26 26h52M24 135l38 38m0-38-38 38"/>
+    <path opacity=".72" stroke-width="3.1" d="M7 187c14-10 28-10 42 0s28 10 42 0 28-10 42 0 28 10 40 1M7 199c14-10 28-10 42 0s28 10 42 0 28-10 42 0 28 10 40 1"/>
+    <path opacity=".46" stroke-width="2.2" stroke-dasharray="5 5" d="M18 91c27-22 53-25 79-10 21 12 38 9 54-8"/>
+    <path opacity=".3" stroke-width="1.8" d="M20 78 8 67m21 5L18 58m108 13 14-14m-8 25 20-4"/>`)
 });
 
 export const DOSSIER_PATH_LAYERS=Object.freeze({
-  "oath-beacon":makeLayer("oath-beacon","path","beacon in smoke",`<path opacity=".9" stroke-width="4" d="M132 69h24l-4 42h-16l-4-42Zm4 42-8 25h32l-8-25M144 48v15m-18-4 10 8m26-8-10 8"/>`),
-  "tempest-scout":makeLayer("tempest-scout","path","storm road",`<path opacity=".9" stroke-width="4" d="M120 70c12-14 25-13 37-2 11-3 20 2 24 12-2 9-10 14-22 14h-34"/><path opacity=".92" stroke-width="5" d="m148 91-12 22h12l-9 23 25-31h-13l8-14"/>`)
+  "oath-beacon":makeLayer("oath-beacon","path","beacon in smoke",`
+    <path opacity=".92" stroke-width="4" d="M126 76h26l-4 72h-18l-4-72Zm5 72-10 28h36l-10-28M139 44v22m-27-8 18 11m36-11-18 11"/>
+    <path opacity=".58" stroke-width="2.4" d="M115 87c-10 7-12 17-5 29m59-29c10 7 12 17 5 29M102 57l20 9m36 0 20-9"/>
+    <circle opacity=".2" stroke-width="2" cx="139" cy="87" r="48"/>`),
+  "tempest-scout":makeLayer("tempest-scout","path","storm road",`
+    <path opacity=".82" stroke-width="3.5" d="M102 66c14-17 31-18 47-4 13-4 24 3 29 16-4 12-15 18-32 18h-39"/>
+    <path opacity=".96" stroke-width="6" d="m137 91-19 34h16l-17 38 39-50h-18l13-22"/>
+    <path opacity=".52" stroke-width="2.5" d="M16 111h62m-72 16h86M24 145h61m77-26h15m-22 17h22"/>
+    <path opacity=".34" stroke-width="2" d="M84 101c16 4 27 13 34 27M72 145c18 0 32 6 42 18"/>`)
 });
 
 export function isApprovedDossierArtLayer(entry,id,role){
@@ -16,7 +34,7 @@ export function isApprovedDossierArtLayer(entry,id,role){
     return Boolean(
       key&&entry&&entry.id===key&&entry.role===role&&entry.status==="approved"&&
       typeof entry.symbol==="string"&&entry.symbol.length>0&&
-      typeof entry.vector==="string"&&entry.vector.length>20&&entry.vector.includes("<")&&
+      typeof entry.vector==="string"&&entry.vector.length>80&&entry.vector.includes("<")&&
       typeof entry.provenance==="string"&&entry.provenance.length>0
     );
   }catch(error){
