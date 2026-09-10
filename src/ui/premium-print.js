@@ -3,6 +3,7 @@ import { buildWarlockPremiumPrintModel } from "../print/warlock-model.js";
 import { buildNarrativeDossier } from "../print/dossier.js";
 import { sheetCustomizationClasses } from "../print/customization.js";
 import { exportProfileFor } from "../print/profile.js";
+import { printLayoutClasses, printLayoutProfile } from "../print/layout-profile.js";
 import { printLicenseAttribution } from "../print/license-attribution.js";
 import { certificationFooterText } from "../rules/certification.js";
 import { renderPrintPageOne } from "./print-page-one.js";
@@ -11,10 +12,11 @@ import { renderPrintDossier } from "./print-dossier.js";
 
 export function renderPremiumPrintSheet(character,target){
   try{
-    const model=character?.class?.id==="warlock"?buildWarlockPremiumPrintModel(character):buildPremiumPrintModel(character),requestedPacket=character?.presentation?.sheetCustomization?.packetMode,packetMode=requestedPacket==="deluxe"?"deluxe":"table",profile=exportProfileFor(character,packetMode),customization={...model.presentation.customization,packetMode};
+    const model=character?.class?.id==="warlock"?buildWarlockPremiumPrintModel(character):buildPremiumPrintModel(character),requestedPacket=character?.presentation?.sheetCustomization?.packetMode,packetMode=requestedPacket==="deluxe"?"deluxe":"table",profile=exportProfileFor(character,packetMode),customization={...model.presentation.customization,packetMode},layoutProfile=printLayoutProfile(model.identity.classId);
     model.profile=profile;
     model.packet={totalPages:profile.maxPages};
-    model.presentation={...model.presentation,customization,classes:sheetCustomizationClasses(customization)};
+    model.layoutProfile=[...layoutProfile];
+    model.presentation={...model.presentation,customization,classes:`${sheetCustomizationClasses(customization)} ${printLayoutClasses(model.identity.classId)}`.trim()};
     if(character?.background?.contentKind==="forge-original")model.identity.background=character.background.displayName||`${character.background.name} — Forge Original`;
     model.dossier=profile.dossierPages?buildNarrativeDossier(character,{quickTurn:model.quickTurn}):null;
     // Keep starting-resource data beside the printable model so the sheet shows
