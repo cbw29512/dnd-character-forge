@@ -46,7 +46,7 @@ try{
   execFileSync("pdftoppm",["-f","3","-singlefile","-png","-r","120",pdfPath,pngBase],{stdio:"pipe"});
   const pngPath=`${pngBase}.png`;
   assert.ok(statSync(pngPath).size>25000,"composed dossier review image is unexpectedly small");
-  execFileSync("pdftoppm",["-f","3","-singlefile","-ppm","-r","120",pdfPath,ppmBase],{stdio:"pipe"});
+  execFileSync("pdftoppm",["-f","3","-singlefile","-r","120",pdfPath,ppmBase],{stdio:"pipe"});
   verifyPortraitContrast(`${ppmBase}.ppm`);
 
   const extracted=execFileSync("pdftotext",["-f","3","-l","3","-layout",pdfPath,"-"],{encoding:"utf8"});
