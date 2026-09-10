@@ -21,6 +21,7 @@ try{
 
   const composedHtml=composedVignetteFragment(target.innerHTML);
   assert.match(composedHtml,/data-composed-portrait="deep-sailor--tempest-scout"/);
+  assert.match(composedHtml,/ps-composed-scene/);
   assert.match(composedHtml,/ps-composed-background-art/);
   assert.match(composedHtml,/ps-composed-class-crest/);
   assert.match(composedHtml,/ps-composed-path-art/);
@@ -35,8 +36,8 @@ try{
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
   const htmlUrl=pathToFileURL(htmlPath).href;
   const dom=execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--virtual-time-budget=3000","--dump-dom",htmlUrl],{encoding:"utf8",timeout:30000,maxBuffer:8*1024*1024});
-  assert.match(dom,/data-composed-loaded="true"/,"Chrome did not retain all three composed vignette layers");
-  assert.match(dom,/data-composed-layer-count="3"/,"composed vignette lost a required visual layer");
+  assert.match(dom,/data-composed-loaded="true"/,"Chrome did not retain all three composed vignette identities");
+  assert.match(dom,/data-composed-layer-count="3"/,"composed vignette lost a required visual identity");
 
   execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,htmlUrl],{stdio:"pipe",timeout:30000});
   const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"});
@@ -53,7 +54,7 @@ try{
   assert.match(extracted,/Deluxe Character Dossier/i);
   assert.match(extracted,/salt-stained chart|sailor|sea|ship/i);
   assert.match(extracted,/storm road|tempest/i);
-  console.log(`[composed-dossier] ${SLUG}: full-frame vignette rendered with visible pixel contrast in Chrome and PDF.`);
+  console.log(`[composed-dossier] ${SLUG}: self-contained SVG vignette rendered with visible pixel contrast in Chrome and PDF.`);
 }catch(error){console.error("[composed-dossier] browser/PDF certification failed",error);throw error;}
 
 function verifyPortraitContrast(ppmPath){
@@ -91,8 +92,8 @@ function parsePpm(buffer){
 
 function composedVignetteFragment(packet){
   try{
-    const html=String(packet||""),start=html.indexOf('<span class="ps-placeholder-illustrated ps-composed-dossier-portrait"');
-    assert.ok(start>=0,"composed dossier vignette wrapper is missing");
+    const html=String(packet||""),start=html.indexOf('<svg class="ps-placeholder-illustrated ps-composed-dossier-portrait ps-composed-scene"');
+    assert.ok(start>=0,"composed dossier SVG scene is missing");
     const end=html.indexOf('<span class="ps-placeholder-emblem"',start);assert.ok(end>start,"composed dossier vignette fallback boundary is missing");
     return html.slice(start,end);
   }catch(error){console.error("[composed-dossier] vignette fragment extraction failed",error);throw error;}
@@ -106,6 +107,6 @@ function buildCharacter(){
 }
 
 function fixtureHtml(packet){
-  try{return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div><script>window.addEventListener("load",()=>{const portrait=document.querySelector("[data-composed-portrait]"),background=portrait?.querySelector(".ps-composed-background-art"),crest=portrait?.querySelector(".ps-composed-class-crest .ps-class-crest"),path=portrait?.querySelector(".ps-composed-path-art"),layers=[background,crest,path].filter(Boolean);document.body.dataset.composedLayerCount=String(layers.length);document.body.dataset.composedLoaded=String(Boolean(portrait&&layers.length===3));});</script></body></html>`;}
+  try{return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div><script>window.addEventListener("load",()=>{const portrait=document.querySelector("[data-composed-portrait]"),background=portrait?.querySelector(".ps-composed-background-art"),crest=portrait?.querySelector(".ps-composed-class-crest"),path=portrait?.querySelector(".ps-composed-path-art"),layers=[background,crest,path].filter(Boolean);document.body.dataset.composedLayerCount=String(layers.length);document.body.dataset.composedLoaded=String(Boolean(portrait&&layers.length===3));});</script></body></html>`;}
   catch(error){console.error("[composed-dossier] fixture HTML failed",error);throw error;}
 }
