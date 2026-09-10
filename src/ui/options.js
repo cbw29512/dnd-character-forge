@@ -1,7 +1,7 @@
-import { FORGE_2014, FORGE_2024 } from "../data/forge-data.js";
+import { forgeDataFor } from "../data/forge-data.js";
 import { isForgeOriginalBackground } from "../data/original-backgrounds.js";
 
-const dataFor=state=>state.ruleset==="2014"?FORGE_2014:FORGE_2024;
+const dataFor=state=>forgeDataFor(state.ruleset);
 const rawOnly=items=>items.filter(item=>item?.contentKind!=="forge-original");
 
 export function populateOptions(state){
