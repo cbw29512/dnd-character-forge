@@ -10,17 +10,17 @@ import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 const sceneIds=new Set(LITERARY_SCENE_IDS);
 const FORBIDDEN=["undefined","[object Object]","old keepsake","class-specific gear","earlier life left unresolved","road dust, smoke, worn leather"];
 
-function make({ruleset="2024",classId="fighter",subclass="champion",background="soldier",name="Quality Witness",level=7}={}){
+function make({ruleset="2024",classId="fighter",subclass="champion",species="human",background="soldier",name="Quality Witness",level=7}={}){
   const state=createInitialState();
   state.ruleset=ruleset;
   state.constraints.level=String(level);
   state.constraints.class=classId;
   state.constraints.subclass=subclass;
-  state.constraints.species="human";
+  state.constraints.species=species;
   state.constraints.background=background;
   state.constraints.name=name;
   const character=generateCharacter(state);
-  assert.equal(character.validation.valid,true,`${ruleset}/${classId}/${subclass}/${background}/L${level} fixture invalid`);
+  assert.equal(character.validation.valid,true,`${ruleset}/${classId}/${subclass}/${species}/${background}/L${level} fixture invalid`);
   return character;
 }
 
@@ -57,15 +57,17 @@ test("every supported background has an authored turning-point scene and clean d
   }
 });
 
-test("every supported subclass resolves clean literary output through the real generator",()=>{
+test("every supported subclass resolves clean literary output through the certified legal baseline",()=>{
   for(const data of [FORGE_2014,FORGE_2024]){
     for(const subclass of data.subclasses){
       const cls=data.classes.find(item=>item.id===subclass.classId);
       assert.ok(cls,`${data.ruleset}/${subclass.id} missing owning class`);
       const level=Math.max(Number(cls.subclassLevel||1),Number(subclass.level||1));
       assert.ok(level<=Number(cls.maxLevel||20),`${data.ruleset}/${subclass.id} unlock exceeds class max level`);
-      const dossier=buildNarrativeDossier(make({ruleset:data.ruleset,classId:subclass.classId,subclass:subclass.id,background:"soldier",name:`Witness ${subclass.id}`,level}));
+      const character=make({ruleset:data.ruleset,classId:subclass.classId,subclass:subclass.id,species:data.species[0].id,background:data.backgrounds[0].id,name:`Witness ${subclass.id}`,level});
+      const dossier=buildNarrativeDossier(character);
       assertClean(dossier,`${data.ruleset}/${subclass.id}`);
+      assert.equal(character.subclass?.id,subclass.id,`${data.ruleset}/${subclass.id} subclass drift`);
       assert.match(dossier.backstory.join(" "),new RegExp(subclass.name.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"),`${subclass.id} name absent from its own story`);
     }
   }
