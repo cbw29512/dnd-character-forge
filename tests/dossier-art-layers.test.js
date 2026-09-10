@@ -8,13 +8,18 @@ import {
 } from "../src/print/dossier-art-layers.js";
 import { composedDossierPortraitArt } from "../src/print/dossier-art-layer-renderer.js";
 
-test("approved dossier layers are typed and reusable",()=>{
+test("approved dossier layers are typed, renderable, and reusable",()=>{
   try{
-    assert.equal(isApprovedDossierArtLayer(DOSSIER_BACKGROUND_LAYERS["grave-warden"],"grave-warden","background"),true);
-    assert.equal(isApprovedDossierArtLayer(DOSSIER_PATH_LAYERS["oath-beacon"],"oath-beacon","path"),true);
-    assert.equal(isApprovedDossierArtLayer({...DOSSIER_PATH_LAYERS["oath-beacon"],status:"draft"},"oath-beacon","path"),false);
-    assert.equal(composedDossierArtFor("grave-warden","tempest-scout")?.variantKey,"grave-warden--tempest-scout");
-    assert.equal(composedDossierArtFor("deep-sailor","oath-beacon")?.variantKey,"deep-sailor--oath-beacon");
+    const background=DOSSIER_BACKGROUND_LAYERS["grave-warden"],path=DOSSIER_PATH_LAYERS["oath-beacon"];
+    assert.equal(isApprovedDossierArtLayer(background,"grave-warden","background"),true);
+    assert.equal(isApprovedDossierArtLayer(path,"oath-beacon","path"),true);
+    assert.equal(isApprovedDossierArtLayer({...path,status:"draft"},"oath-beacon","path"),false);
+    assert.equal(isApprovedDossierArtLayer({...path,vector:""},"oath-beacon","path"),false);
+    const graveTempest=composedDossierArtFor("grave-warden","tempest-scout"),deepBeacon=composedDossierArtFor("deep-sailor","oath-beacon");
+    assert.equal(graveTempest?.variantKey,"grave-warden--tempest-scout");
+    assert.equal(deepBeacon?.variantKey,"deep-sailor--oath-beacon");
+    assert.ok(graveTempest?.background.vector.length>20&&graveTempest?.path.vector.length>20,"approved composition must carry both renderable vectors");
+    assert.ok(deepBeacon?.background.vector.length>20&&deepBeacon?.path.vector.length>20,"approved composition must carry both renderable vectors");
     assert.equal(composedDossierArtFor("criminal","oath-beacon"),null);
   }catch(error){
     console.error("[dossier-art-layers-test] layer contract failed",error);
@@ -22,14 +27,14 @@ test("approved dossier layers are typed and reusable",()=>{
   }
 });
 
-test("layer renderer combines class portrait with both approved story motifs",()=>{
+test("layer renderer consumes the approved layer payloads with the class portrait",()=>{
   try{
     const html=composedDossierPortraitArt("ranger",{backgroundId:"grave-warden",pathId:"tempest-scout",variantKey:"grave-warden--tempest-scout"});
     assert.match(html,/data-composed-portrait="grave-warden--tempest-scout"/);
     assert.match(html,/ps-class-portrait-image/);
     assert.match(html,/ps-composed-dossier-overlay/);
-    assert.match(html,/ps-composed-background-layer|M18 190/);
-    assert.match(html,/ps-composed-path-layer|m148 91/);
+    assert.match(html,/M18 190/);
+    assert.match(html,/m148 91/);
     assert.match(html,/Ranger bow arrow and woodland trail crest/);
   }catch(error){
     console.error("[dossier-art-layers-test] layered render failed",error);
