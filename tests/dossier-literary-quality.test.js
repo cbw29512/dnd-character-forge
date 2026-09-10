@@ -38,7 +38,12 @@ function assertClean(dossier,label){
   const text=dossierText(dossier);
   for(const marker of FORBIDDEN)assert.doesNotMatch(text,new RegExp(marker.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"),"i"),`${label} leaked ${marker}`);
   assert.ok(dossier.storyTitle.length>=12,`${label} missing literary title`);
+  assert.doesNotMatch(dossier.storyTitle,/'S\b/,`${label} corrupted apostrophe title casing`);
   assert.equal(dossier.backstory.length,4,`${label} wrong paragraph count`);
+  for(const paragraph of dossier.backstory){
+    assert.doesNotMatch(paragraph,/(?:^|[.!?]\s+)Learned\b/,`${label} contains an orphaned Learned fragment`);
+    assert.doesNotMatch(paragraph,/: (?:can|uses|turns|makes|shapes|carries|wins|sees|draws|treats|controls|reveals|builds|studies)\b/,`${label} contains an orphaned subclass-gift clause`);
+  }
   assert.ok(dossier.artDirection?.variantKey,`${label} missing portrait variant`);
   assert.ok(dossier.artDirection?.backgroundSymbol,`${label} missing background symbol`);
   assert.ok(dossier.artDirection?.pathSymbol,`${label} missing path symbol`);
@@ -73,6 +78,18 @@ test("every supported subclass resolves clean literary output through the certif
   }
 });
 
+test("subject-dependent literary fragments compose as complete sentences",()=>{
+  const berserker=buildNarrativeDossier(make({classId:"barbarian",subclass:"berserker",background:"criminal",name:"Briala Juniper"}));
+  const text=dossierText(berserker);
+  assert.doesNotMatch(text,/Briala Juniper rage stopped/i,"Berserker threshold lost its grammatical subject");
+  assert.doesNotMatch(text,/(?:^|[.!?]\s+)Learned that\b/,"background wound rendered as a sentence fragment");
+  assert.doesNotMatch(text,/: can turn\b/,"subclass gift rendered without a subject");
+
+  const cleric=buildNarrativeDossier(make({classId:"cleric",subclass:"life-domain",background:"criminal",name:"Rian Larkspur"}));
+  assert.match(cleric.storyTitle,/Keeper's Light/,"possessive subclass symbol missing from title");
+  assert.doesNotMatch(cleric.storyTitle,/Keeper'S Light/,"possessive subclass symbol was incorrectly title-cased");
+});
+
 test("background scene banks provide deterministic variety rather than one repeated rupture",()=>{
   const stories=["Elira One","Elira Two","Elira Three","Elira Four"].map(name=>buildNarrativeDossier(make({classId:"paladin",subclass:"oath-beacon",background:"grave-warden",name})).backstory[1]);
   assert.ok(new Set(stories).size>=2,"grave-warden scene bank did not vary across deterministic seeds");
@@ -86,6 +103,6 @@ test("printed fallback portrait carries the exact story variant and both motifs"
   const model=renderPremiumPrintSheet(character,target);
   assert.equal(model.dossier.artDirection.variantKey,"grave-warden--oath-beacon");
   assert.match(target.innerHTML,/data-portrait-variant="grave-warden--oath-beacon"/);
-  assert.match(target.innerHTML,/ps-narrative-origin">unmarked grave</);
-  assert.match(target.innerHTML,/ps-narrative-path">beacon in smoke</);
+  assert.match(target.innerHTML,/ps-narrative-origin">unmarked grave/);
+  assert.match(target.innerHTML,/ps-narrative-path">beacon in smoke/);
 });
