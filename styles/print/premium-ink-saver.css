@@ -4,6 +4,33 @@
   .ps-placeholder-illustrated{display:block;width:100%;height:100%;min-width:0;min-height:0}
   .ps-placeholder-emblem{display:none}
   .ps-class-portrait-image{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;display:block!important}
+
+  /* The current Fighter raster fallback is not strong enough to carry the class
+     identity in print. Until curated Fighter artwork replaces it, use the crisp
+     shield-and-crossed-blades crest already shipped with the class system. This
+     applies only to generated fallback art; player-uploaded portraits are untouched. */
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-placeholder-illustrated,
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-placeholder-illustrated{display:none!important}
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder,
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter{
+    background:radial-gradient(circle at 50% 42%,rgba(180,154,112,.2),transparent 34%),linear-gradient(145deg,#17191d,#61201f)!important;
+    color:#f3dfb9!important;
+  }
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-placeholder-emblem,
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-placeholder-emblem{
+    display:grid!important;
+    place-items:center;
+    width:100%;
+    height:100%;
+  }
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-portrait-art.class-placeholder .ps-class-crest,
+  .theme-fighter-steel:not(.sheet-print-ink-saver) .ps-dossier-portrait-art.class-fighter .ps-class-crest{
+    width:88%;
+    height:88%;
+    color:#f3dfb9!important;
+    filter:drop-shadow(0 .025in .018in rgba(0,0,0,.32));
+  }
+
   .sheet-print-ink-saver .ps-placeholder-illustrated{display:none!important}
   .sheet-print-ink-saver .ps-placeholder-emblem{display:grid!important;place-items:center;width:100%;height:100%}
 
