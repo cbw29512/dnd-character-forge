@@ -16,25 +16,27 @@ const LEGACY_GENERATOR_NAME_POOL=Object.freeze(new Set([
 ]));
 
 const BACKGROUND_AFFINITY=Object.freeze({
-  barbarian:Object.freeze(["soldier","pit-fighter","caravan-guard","monster-hunter","wilderness-guide"]),
-  bard:Object.freeze(["royal-envoy","treasure-seeker","criminal","sage","deep-sailor"]),
-  cleric:Object.freeze(["acolyte","grave-warden","field-medic","royal-envoy"]),
-  druid:Object.freeze(["wilderness-guide","field-medic","grave-warden","monster-hunter","hedge-mage"]),
-  fighter:Object.freeze(["soldier","watchman","caravan-guard","bounty-hunter","pit-fighter"]),
-  monk:Object.freeze(["field-medic","watchman","caravan-guard","sage"]),
-  paladin:Object.freeze(["soldier","watchman","royal-envoy","acolyte","grave-warden"]),
-  ranger:Object.freeze(["wilderness-guide","monster-hunter","bounty-hunter","caravan-guard","deep-sailor"]),
-  rogue:Object.freeze(["criminal","bounty-hunter","treasure-seeker","watchman","deep-sailor"]),
-  sorcerer:Object.freeze(["hedge-mage","royal-envoy","treasure-seeker","sage"]),
-  warlock:Object.freeze(["grave-warden","hedge-mage","treasure-seeker","criminal"]),
-  wizard:Object.freeze(["sage","hedge-mage","royal-envoy","treasure-seeker"])
+  barbarian:Object.freeze(["soldier"]),
+  bard:Object.freeze(["criminal","sage"]),
+  cleric:Object.freeze(["acolyte","soldier"]),
+  druid:Object.freeze(["sage","acolyte"]),
+  fighter:Object.freeze(["soldier"]),
+  monk:Object.freeze(["sage","soldier"]),
+  paladin:Object.freeze(["soldier","acolyte"]),
+  ranger:Object.freeze(["soldier","sage"]),
+  rogue:Object.freeze(["criminal"]),
+  sorcerer:Object.freeze(["sage"]),
+  warlock:Object.freeze(["criminal","sage"]),
+  wizard:Object.freeze(["sage"])
 });
 
 export function pick(items) {
   try {
     if (!Array.isArray(items) || items.length === 0) throw new Error("Cannot pick from an empty list");
     if(isLegacyGeneratorNamePool(items))return randomCharacterName();
-    const eligible = items.filter(item => item?.randomEligibleInForge === true || item?.randomEligible !== false);
+    // `randomEligible:false` is authoritative. Production RAW Random must never
+    // be widened by a secondary compatibility flag on Forge Original content.
+    const eligible = items.filter(item => item?.randomEligible !== false);
     if (eligible.length === 0) throw new Error("Cannot pick from a list with no Random-eligible choices");
 
     pickSerial += 1;
