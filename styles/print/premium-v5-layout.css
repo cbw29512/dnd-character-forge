@@ -36,6 +36,51 @@
     gap:.03in;
   }
 
+  /* Martial Table packets can carry 30+ active rules. Use horizontal page width
+     instead of adding vertical rows into the footer. This mirrors the certified
+     Deluxe strategy while preserving every rule name. */
+  .sheet-packet-table.profile-martial-one-page .ps-rule-index{
+    padding:.014in .03in;
+  }
+  .sheet-packet-table.profile-martial-one-page .ps-rule-index h2{
+    margin:0 0 .005in;
+    font-size:5.35pt;
+    line-height:1;
+  }
+  .sheet-packet-table.profile-martial-one-page .ps-rule-index>div{
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:.004in .025in;
+  }
+  .sheet-packet-table.profile-martial-one-page .ps-rule-index span{line-height:1}
+  .sheet-packet-table.profile-martial-one-page .ps-rule-index b{
+    font-size:4pt;
+    line-height:1;
+  }
+
+  /* Caster Table packets were wasting vertical space by laying 9-12 equipment
+     entries in one long list while Quick Turn was forced into the footer. Keep
+     every item, but use two compact columns so the center rail can shrink. */
+  .sheet-packet-table.profile-caster-two-page .ps-equipment .ps-list{
+    columns:2;
+    column-gap:.12in;
+    column-rule:1px solid rgba(65,49,31,.12);
+    font-size:5.8pt;
+    line-height:1.18;
+    margin-bottom:.005in;
+  }
+  .sheet-packet-table.profile-caster-two-page .ps-equipment .ps-list li{
+    break-inside:avoid;
+    page-break-inside:avoid;
+    margin-bottom:.008in;
+  }
+  .sheet-packet-table.profile-caster-two-page .ps-quick-list{
+    font-size:5.4pt;
+    line-height:1.16;
+    margin-top:.005in;
+    margin-bottom:.005in;
+  }
+  .sheet-packet-table.profile-caster-two-page .ps-quick-list li+li{margin-top:.008in}
+
   /* Wider feature rails are used to improve legibility, not to pack in more text. */
   .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list strong{font-size:6.75pt}
   .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list p{font-size:5.8pt;line-height:1.18}
