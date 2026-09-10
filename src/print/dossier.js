@@ -1,8 +1,9 @@
 import { CLASS_DOSSIER, BACKGROUND_DOSSIER } from "./dossier-data.js";
 import { ORIGINAL_BACKGROUND_DOSSIER } from "./original-background-dossier.js";
-import { DOSSIER_DISLIKES, DOSSIER_FIRST_IMPRESSIONS, DOSSIER_LIKES, DOSSIER_MANNERISMS, DOSSIER_STORY_EVENTS, DOSSIER_STORY_PLACES } from "./dossier-flavor.js";
+import { DOSSIER_DISLIKES, DOSSIER_FIRST_IMPRESSIONS, DOSSIER_LIKES, DOSSIER_MANNERISMS } from "./dossier-flavor.js";
 import { narrativeArcFor } from "./dossier-narratives.js";
 import { literaryBackgroundFor } from "./dossier-background-literary.js";
+import { literarySceneFor } from "./dossier-background-scenes.js";
 import { literarySubclassFor } from "./dossier-subclass-literary-all.js";
 import { buildLiteraryBackstory, literaryArtDirection } from "./dossier-literary.js";
 import { buildLiteraryCore } from "./dossier-literary-motifs.js";
@@ -13,7 +14,7 @@ const ABILITY_BEARING=Object.freeze({str:"a compact, forceful physical presence"
 export function buildNarrativeDossier(character,{quickTurn=[]}={}){
   try{
     if(!character?.validation?.valid)throw new Error("Dossier requires a validated character.");
-    const classId=character.class?.id||"fighter",backgroundId=character.background?.id||character.background?.name||"",subclassId=character.subclass?.id||character.subclass?.name||"",classStory=CLASS_DOSSIER[classId]||CLASS_DOSSIER.fighter,bg=backgroundStory(character.background),bgLit=literaryBackgroundFor(character.background),subclassName=character.subclass?.name||character.subclass?.displayName||"",subLit=literarySubclassFor(character.subclass),seed=seedFor(character),event=pick(DOSSIER_STORY_EVENTS,seed,11),place=pick(DOSSIER_STORY_PLACES,seed,23),awakening=pick(classStory.awakening,seed,37),species=character.species?.name||character.species?.id||"adventurer",background=character.background?.name||"Adventurer",className=character.class?.name||"Adventurer",ability=highestAbility(character.abilities),token=bg.token,storyArc=narrativeArcFor(seed+101),context={name:character.name,classId,backgroundId:String(backgroundId).toLowerCase(),subclassId:String(subclassId).toLowerCase(),bg,bgLit,classStory,subLit,event,place,awakening,species,background,className,subclassName,token};
+    const classId=character.class?.id||"fighter",backgroundId=character.background?.id||character.background?.name||"",subclassId=character.subclass?.id||character.subclass?.name||"",classStory=CLASS_DOSSIER[classId]||CLASS_DOSSIER.fighter,bg=backgroundStory(character.background),bgLit=literaryBackgroundFor(character.background),subclassName=character.subclass?.name||character.subclass?.displayName||"",subLit=literarySubclassFor(character.subclass),seed=seedFor(character),scene=literarySceneFor(character.background,seed),event=scene.event,place=scene.place,awakening=pick(classStory.awakening,seed,37),species=character.species?.name||character.species?.id||"adventurer",background=character.background?.name||"Adventurer",className=character.class?.name||"Adventurer",ability=highestAbility(character.abilities),token=bg.token,storyArc=narrativeArcFor(seed+101),context={name:character.name,classId,backgroundId:String(backgroundId).toLowerCase(),subclassId:String(subclassId).toLowerCase(),bg,bgLit,classStory,subLit,event,place,awakening,species,background,className,subclassName,token};
     const literaryCore=buildLiteraryCore(context,storyArc,seed),backstory=buildLiteraryBackstory(context,storyArc,seed,literaryCore),artDirection=literaryArtDirection(context,literaryCore),subclassSuffix=subclassName?` · ${subclassName}`:"";
     return Object.freeze({
       title:`${character.name} — Character Dossier`,storyTitle:literaryCore.storyTitle,subtitle:`${classStory.epithet} · ${species} ${className}${subclassSuffix} · ${background}`,disclaimer:"Generated narrative flavor. This page does not add or change game rules.",storyArc:Object.freeze({id:storyArc.id,label:storyArc.label}),backstory,
