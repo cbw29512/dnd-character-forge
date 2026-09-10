@@ -1,10 +1,12 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 
 function stateFor(ruleset){
   const state=createInitialState();
+  state.sourceMode=SOURCE.HOMEBREW;
   state.ruleset=ruleset;
   state.constraints.level="8";
   state.constraints.class="barbarian";
@@ -16,13 +18,15 @@ function stateFor(ruleset){
 }
 
 for(const ruleset of ["2014","2024"]){
-  test(`${ruleset} Barbarian accepts legal advancement Speed with Fast Movement`,()=>{
+  test(`${ruleset} compatible Barbarian accepts legal Original advancement Speed outside RAW mode`,()=>{
     const character=generateCharacter(stateFor(ruleset));
+    assert.equal(character.sourceMode,SOURCE.HOMEBREW);
     assert.equal(character.advancementSpeedBonus,5);
     assert.equal(character.barbarian.speedBonus,10);
     assert.equal(character.speed,45);
     assert.ok(character.feats.some(feat=>feat.id==="fleet-vanguard"));
     assert.equal(character.validation.valid,true,character.validation.errors?.join(" | "));
     assert.equal(character.audit.status,"PASS");
+    assert.equal(character.audit.rawIntegrity,false);
   });
 }
