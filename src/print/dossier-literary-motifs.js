@@ -44,9 +44,9 @@ export function buildLiteraryCore(context,storyArc,seed){
     const fear=hasSubclass?`${c.name} ${c.subLit.cost}. The old wound gives that fear enough evidence to be difficult to dismiss.`:storyArc.fear(c);
     const secret=hasSubclass?`The memory of the ${b} returned at the exact moment ${c.name} ${c.subLit.threshold}. ${c.name} has never told anyone why those two memories feel like one story.`:storyArc.secret(c);
     const hook=hasSubclass?`Someone tied to ${c.bg.bond} has found evidence connecting the ${b} to the first signs of the ${s}. They want ${c.name} to explain the connection before someone else does.`:storyArc.hook(c);
-    const resonance=hasSubclass?`${capitalize(c.bgLit.desire)} was once only a hope. ${c.subclassName} made that hope dangerous and practical at once: ${c.subLit.gift}.`:`${capitalize(c.bgLit.desire)} became the reason ${c.name}'s ${c.className} training mattered beyond survival.`;
+    const resonance=hasSubclass?`${capitalize(c.bgLit.desire)} was once only a hope. ${c.subclassName} made it practical under pressure. ${c.name} ${c.subLit.gift}.`:`${capitalize(c.bgLit.desire)} became the reason ${c.name}'s ${c.className} training mattered beyond survival.`;
     const tension=hasSubclass?`The older lesson remains: ${c.bgLit.lesson}. The newer danger is personal: ${c.name} ${c.subLit.cost}. Neither truth has defeated the other.`:`The old lesson remains: ${c.bgLit.lesson}. ${c.name} still has to decide what that lesson costs when the answer is inconvenient.`;
-    const roleplay=`Let the ${c.background} history show in small habits: ${cue.habit}. ${c.name} finds comfort in ${cue.comfort} and reacts sharply to ${cue.aversion}. In hard choices, begin from the belief that ${c.bgLit.lesson}.${hasSubclass?` Under pressure, ${c.subclassName} adds a second truth: ${c.subLit.gift}, even while ${c.name} ${c.subLit.cost}.`:``}`;
+    const roleplay=`Let the ${c.background} history show in small habits: ${cue.habit}. ${c.name} finds comfort in ${cue.comfort} and reacts sharply to ${cue.aversion}. In hard choices, begin from the belief that ${c.bgLit.lesson}.${hasSubclass?` Under pressure, ${c.subclassName} adds a second truth: ${c.name} ${c.subLit.gift}, even while ${c.name} ${c.subLit.cost}.`:``}`;
     return Object.freeze({storyTitle,backgroundSymbol:b,pathSymbol:s,backgroundMemory:cue.memory,habit:cue.habit,comfort:cue.comfort,aversion:cue.aversion,ideal,fear,secret,hook,resonance,tension,roleplay});
   }catch(error){console.error("[dossier-literary-motifs] core build failed",error);throw error;}
 }
@@ -60,4 +60,4 @@ function titleFor(background,path,seed){
 function fallbackCue(){return{memory:"They learned to notice the small obligations that make ordinary lives hold together.",habit:"checks practical details before committing to a plan",comfort:"a quiet place where equipment can be put in order",aversion:"confidence that has not earned its certainty"};}
 function stripTo(value){return String(value||"").replace(/^to\s+/i,"");}
 function capitalize(value){const text=String(value||"");return text?text[0].toUpperCase()+text.slice(1):text;}
-function titleCase(value){return String(value||"").replace(/\b\w/g,char=>char.toUpperCase());}
+function titleCase(value){return String(value||"").split(/\s+/).map(word=>word?word[0].toUpperCase()+word.slice(1):word).join(" ");}
