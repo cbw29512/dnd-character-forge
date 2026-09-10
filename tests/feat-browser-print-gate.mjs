@@ -4,6 +4,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
@@ -59,7 +60,7 @@ function verify(testCase){
   }catch(error){console.error(`[feat-browser] failed ${testCase.ruleset} ${testCase.featId}`,error);throw error;}
 }
 
-function characterAt({ruleset,background,featId}){const state=createInitialState();state.ruleset=ruleset;state.constraints.level="4";state.constraints.class="fighter";state.constraints.subclass="champion";state.constraints.species="human";state.constraints.background=background;state.constraints.name=`Forge ${featId}`;state.classSelections.advancements=[featId];return generateCharacter(state);}
+function characterAt({ruleset,background,featId,raw}){const state=createInitialState();state.sourceMode=raw?SOURCE.RAW:SOURCE.HOMEBREW;state.ruleset=ruleset;state.constraints.level="4";state.constraints.class="fighter";state.constraints.subclass="champion";state.constraints.species="human";state.constraints.background=background;state.constraints.name=`Forge ${featId}`;state.classSelections.advancements=[featId];return generateCharacter(state);}
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function normalize(value){return String(value||"").normalize("NFKC").replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/[\u2010-\u2015]/g,"-").replace(/\s+/g," ").trim();}
 function normalizeHtml(value){return normalize(String(value||"").replace(/<[^>]*>/g," ").replace(/&amp;/g,"&").replace(/&#39;/g,"'").replace(/&quot;/g,'"')).toLowerCase();}
