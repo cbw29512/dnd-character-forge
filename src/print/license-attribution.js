@@ -1,5 +1,5 @@
-const SRD_51 = "Contains SRD 5.1 material © Wizards of the Coast LLC · CC BY 4.0 · dnd.wizards.com/resources/systems-reference-document · creativecommons.org/licenses/by/4.0/";
-const SRD_521 = "Contains SRD 5.2.1 material © Wizards of the Coast LLC · CC BY 4.0 · dndbeyond.com/srd · creativecommons.org/licenses/by/4.0/";
+const SRD_51 = "This work includes material taken from the System Reference Document 5.1 (“SRD 5.1”) by Wizards of the Coast LLC and available at https://dnd.wizards.com/resources/systems-reference-document. The SRD 5.1 is licensed under the Creative Commons Attribution 4.0 International License available at https://creativecommons.org/licenses/by/4.0/legalcode.";
+const SRD_521 = "This work includes material from the System Reference Document 5.2.1 (“SRD 5.2.1”) by Wizards of the Coast LLC, available at https://www.dndbeyond.com/srd. The SRD 5.2.1 is licensed under the Creative Commons Attribution 4.0 International License, available at https://creativecommons.org/licenses/by/4.0/legalcode.";
 
 export function printLicenseAttribution(model){
   try{
