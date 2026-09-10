@@ -21,6 +21,20 @@
   .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-quick-list li+li{margin-top:.018in}
 
   /*
+   * Paladin page one is the densest non-Warlock caster table sheet. A legal
+   * level-20 Quick Turn can add the shared Channel Divinity reminder after the
+   * normal aura and smite guidance. Preserve the established type sizes and
+   * reclaim height from the oversized identity rail instead of shrinking text.
+   * The 1.54in rail still matches the portrait column width and gives the body
+   * a deterministic safety margin above the fixed certification footer.
+   */
+  .sheet-packet-table.profile-caster-two-page.theme-paladin-oath .ps-frame{
+    grid-template-rows:1.54in minmax(0,1fr) .34in;
+  }
+  .sheet-packet-table.profile-caster-two-page.theme-paladin-oath .ps-column{gap:.028in}
+  .sheet-packet-table.profile-caster-two-page.theme-paladin-oath .ps-quick-list li+li{margin-top:.012in}
+
+  /*
    * Fighter and Rogue can carry the densest one-page Active Rules indexes.
    * Preserve the four-column scan width and return only that index to its
    * original compact proof size; the rest of the sheet keeps readability-v2
