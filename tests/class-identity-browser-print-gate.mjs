@@ -15,7 +15,7 @@ for(const classId of CLASSES){
   catch(error){const message=error instanceof Error?error.message:String(error);failures.push(`${classId}: ${message}`);console.error(`[class-identity-browser-print] ${classId} failed: ${message}`);}
 }
 if(failures.length){throw new Error(`[class-identity-browser-print] ${failures.length} class portrait/packet failure(s):\n${failures.join("\n")}`);}
-console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, page-one geometry, standalone attribution placement, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
+console.log(`[class-identity-browser-print] verified ${CLASSES.length} deluxe class identities, page-one geometry, standalone attribution placement, complete dossier stories/chronicles, decoded visually complete portraits, printed first-page portraits, dossier portraits, and ink-saver emblems in Chrome`);
 
 function verifyClass(classId){
   const character=characterAt(classId),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),expected=model.profile.caster?3:2,slug=`v3-2024-${classId}`,htmlPath=path.join(OUT,`${slug}.html`),pdfPath=path.join(OUT,`${slug}.pdf`),txtPath=path.join(OUT,`${slug}.txt`),sheetPng=path.join(OUT,`${slug}-sheet`),dossierPng=path.join(OUT,`${slug}-dossier`),sheetProbe=path.join(OUT,`${slug}-sheet-probe`),dossierProbe=path.join(OUT,`${slug}-dossier-probe`),id=escapeRegex(classId);
@@ -29,10 +29,11 @@ function verifyClass(classId){
   const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"}),pages=Number(info.match(/^Pages:\s+(\d+)/m)?.[1]||0);assert.equal(pages,expected,`${classId}: Chrome page count mismatch`);assert.match(info,/Page size:\s+612 x 792 pts/i,`${classId}: PDF not US Letter`);
   const bbox=execFileSync("pdftotext",["-f","1","-l","1","-bbox-layout",pdfPath,"-"],{encoding:"utf8"});assertPrintGeometry(bbox,classId,model);
   execFileSync("pdftotext",["-layout",pdfPath,txtPath]);const text=normalize(readFileSync(txtPath,"utf8"));assert.ok(text.includes(character.name),`${classId}: name missing`);assert.ok(text.includes(character.class.name),`${classId}: class missing`);assert.match(text,/Deluxe Character Dossier/i,`${classId}: dossier heading missing`);assert.ok(text.includes("Generated narrative flavor"),`${classId}: narrative disclaimer missing`);assert.ok(text.toLowerCase().includes("raw integrity"),`${classId}: RAW marker missing`);assert.match(text,new RegExp(`Page ${expected}\\s*\\/\\s*${expected}`,"i"),`${classId}: final page marker missing`);
+  const dossierText=normalize(execFileSync("pdftotext",["-f",String(expected),"-l",String(expected),"-raw",pdfPath,"-"],{encoding:"utf8"}));assert.ok(dossierText.includes(normalize(model.dossier.storyTitle)),`${classId}: dossier story title clipped or missing`);for(const [index,paragraph] of model.dossier.backstory.entries())assert.ok(dossierText.includes(normalize(paragraph)),`${classId}: dossier backstory paragraph ${index+1} clipped or missing`);assert.match(dossierText,/Campaign Chronicle/i,`${classId}: Campaign Chronicle clipped or missing`);assert.match(dossierText,/Milestones.*Allies.*Debts.*Revelations.*Session Notes/i,`${classId}: Chronicle guidance clipped or missing`);
   execFileSync("pdftoppm",["-png","-r","110","-f","1","-singlefile",pdfPath,sheetPng]);execFileSync("pdftoppm",["-png","-r","110","-f",String(expected),"-singlefile",pdfPath,dossierPng]);
   execFileSync("pdftoppm",["-r","55","-f","1","-singlefile","-x","35","-y","35","-W","78","-H","72",pdfPath,sheetProbe]);assertPrintedPortrait(`${sheetProbe}.ppm`,classId,"first-page portrait");
   execFileSync("pdftoppm",["-r","55","-f",String(expected),"-singlefile","-x","34","-y","30","-W","70","-H","86",pdfPath,dossierProbe]);assertPrintedPortrait(`${dossierProbe}.ppm`,classId,"Deluxe dossier portrait");
-  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · page-one geometry and attribution clear · decoded and visibly printed class portraits`);
+  console.log(`[class-identity-browser-print] ${classId}: ${expected} pages · ${model.theme.id} · page-one geometry and attribution clear · complete dossier story/chronicle · decoded and visibly printed class portraits`);
 }
 
 function assertPrintGeometry(xml,classId,model){
