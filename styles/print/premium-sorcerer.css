@@ -10,10 +10,10 @@
 @import url("./premium-class-signatures.css");
 @import url("./premium-class-palettes.css");
 @import url("./premium-ink-saver.css");
-@import url("./premium-attribution.css");
 @import url("./premium-readability.css");
 @import url("./premium-table-capacity.css");
 @import url("./premium-v5-layout.css");
+@import url("./premium-attribution.css");
 
 @media print{
   /* Sorcerer: faceted aether/crystal geometry while preserving the familiar 5e scan order. */
