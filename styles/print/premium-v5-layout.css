@@ -12,16 +12,28 @@
     grid-template-columns:1.48in minmax(0,1fr) 2.32in;
   }
 
+  /* Table mode uses the same semantic density model. Dense feature/spell rails
+     receive width from the center column so rules wrap less and stay above the
+     footer without reducing their type size. */
+  .sheet-packet-table.layout-feature-heavy .ps-main-columns{
+    grid-template-columns:1.46in minmax(0,1fr) 2.38in;
+    gap:.055in;
+  }
+  .sheet-packet-table.layout-resource-heavy.layout-spell-heavy:not(.layout-feature-heavy) .ps-main-columns{
+    grid-template-columns:1.46in minmax(0,1fr) 2.34in;
+    gap:.055in;
+  }
+
   /* V5 adds useful table tools without giving them permission to invade the
      certified footer. Reclaim room from the generous identity rail at the
      packet/profile level, preserving gameplay typography and full rule text. */
   .sheet-packet-table.profile-martial-one-page .ps-frame{
-    grid-template-rows:1.55in minmax(0,1fr) .31in;
-    gap:.03in;
+    grid-template-rows:1.47in minmax(0,1fr) .31in;
+    gap:.028in;
   }
   .sheet-packet-table.profile-caster-two-page:not(.theme-warlock-eldritch) .ps-frame{
-    grid-template-rows:1.52in minmax(0,1fr) .34in;
-    gap:.035in;
+    grid-template-rows:1.44in minmax(0,1fr) .34in;
+    gap:.03in;
   }
 
   /* Wider feature rails are used to improve legibility, not to pack in more text. */
@@ -36,10 +48,12 @@
   .ps-passive-grid>span:last-child{border-right:0}
   .ps-passive-grid b{margin-top:.012in;font:700 10pt/1 Georgia,serif;color:var(--ps-dark)}
 
-  /* Sparse equipment panels become intentional writable table space. */
+  /* Sparse equipment panels become intentional writable table space in Deluxe.
+     Compact Table packets prioritize rules and trackers over optional note lines. */
   .ps-equipment-notes{margin-top:.055in;padding-top:.035in;border-top:1px dotted rgba(65,49,31,.28)}
   .ps-equipment-notes>span{display:block;margin-bottom:.025in;font:700 4.7pt Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ps-muted)}
   .ps-equipment-notes i{display:block;height:.18in;border-bottom:1px solid rgba(65,49,31,.26)}
+  .sheet-packet-table .ps-equipment-notes{display:none}
 
   /* Resource trackers are generated from trackable utility stats, not class names. */
   .ps-resource-trackers{display:grid;gap:.028in;margin:0 0 .045in}
@@ -55,23 +69,23 @@
      ledger. Deluxe retains the roomier tracker cards above. */
   .sheet-packet-table .ps-resource-trackers{
     grid-template-columns:repeat(auto-fit,minmax(.78in,1fr));
-    gap:.018in;
-    margin:0 0 .025in;
+    gap:.015in;
+    margin:0 0 .018in;
   }
   .sheet-packet-table .ps-resource-tracker{
     grid-template-columns:1fr;
     justify-items:center;
     align-content:center;
-    gap:.008in;
-    min-height:.28in;
-    padding:.018in .025in;
+    gap:.006in;
+    min-height:.24in;
+    padding:.014in .022in;
     text-align:center;
   }
-  .sheet-packet-table .ps-resource-tracker>strong{font-size:4.65pt;line-height:1.02}
-  .sheet-packet-table .ps-resource-marks{justify-content:center;gap:.012in}
-  .sheet-packet-table .ps-resource-marks i{font-size:6.8pt}
-  .sheet-packet-table .ps-resource-tracker>small{font-size:3.8pt;line-height:1}
-  .sheet-packet-table .ps-resource-current{grid-template-columns:auto .22in auto;font-size:3.9pt;line-height:1}
+  .sheet-packet-table .ps-resource-tracker>strong{font-size:4.55pt;line-height:1.02}
+  .sheet-packet-table .ps-resource-marks{justify-content:center;gap:.01in}
+  .sheet-packet-table .ps-resource-marks i{font-size:6.6pt}
+  .sheet-packet-table .ps-resource-tracker>small{font-size:3.7pt;line-height:1}
+  .sheet-packet-table .ps-resource-current{grid-template-columns:auto .2in auto;font-size:3.8pt;line-height:1}
 
   .sheet-print-ink-saver .ps-passive-grid>span,
   .sheet-print-ink-saver .ps-equipment-notes,
