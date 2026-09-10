@@ -23,7 +23,7 @@ const EXPECTED={
 };
 
 for(const classId of CLASSES){
-  test(`${classId} fallback carries a premium portrait and crisp ink-saver emblem`,()=>{
+  test(`${classId} fallback carries distinct portrait source and crisp heraldic emblem`,()=>{
     const art=classPlaceholderArt(classId),portrait=classPortraitDataUrl(classId);
     assert.ok(typeof portrait==="string"&&portrait.length>20,`${classId}: portrait source is missing`);
     assert.match(art,/class="ps-placeholder-illustrated"/);
@@ -38,25 +38,28 @@ for(const classId of CLASSES){
   });
 }
 
-test("Cleric color placeholder is the approved raster portrait asset",()=>{
+test("Cleric raster source remains available for future Illustrated mode",()=>{
   const portrait=classPortraitDataUrl("cleric");
-  assert.match(portrait,/cleric\.webp$/i,"Cleric must use the approved raster portrait, not the legacy icon placeholder");
+  assert.match(portrait,/cleric\.webp$/i);
   const assetUrl=new URL("../src/print/class-portraits/cleric.webp",import.meta.url);
   const bytes=readFileSync(fileURLToPath(assetUrl));
   assert.equal(bytes.subarray(0,4).toString("ascii"),"RIFF");
   assert.equal(bytes.subarray(8,12).toString("ascii"),"WEBP");
-  assert.equal(createHash("sha256").update(bytes).digest("hex"),"3705a71fd343103a0d1c4f38f3738ff0728e3a95dccca4389c1454a3109fbe6c","Cleric portrait must remain the approved gold-and-ivory character artwork");
+  assert.equal(createHash("sha256").update(bytes).digest("hex"),"3705a71fd343103a0d1c4f38f3738ff0728e3a95dccca4389c1454a3109fbe6c","Cleric portrait source must remain unchanged");
 });
 
-test("all class portraits are distinct assets",()=>{
+test("all class portrait sources remain distinct assets",()=>{
   const portraits=CLASSES.map(classPortraitDataUrl);
   assert.equal(new Set(portraits).size,CLASSES.length);
 });
 
-test("print CSS fills the color portrait frame and swaps to the emblem in Ink Saver",()=>{
+test("print CSS intentionally uses heraldic emblems for built-in color and Ink Saver fallbacks",()=>{
   const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-ink-saver.css",import.meta.url)),"utf8");
-  assert.match(css,/\.ps-placeholder-illustrated\s*\{[^}]*display:block[^}]*width:100%[^}]*height:100%/s);
-  assert.match(css,/\.ps-placeholder-emblem\s*\{display:none\}/);
+  assert.match(css,/\.ps-placeholder-illustrated\s*\{display:none/);
+  assert.match(css,/\.ps-placeholder-emblem\s*\{display:grid/);
+  assert.match(css,/\.premium-sheet:not\(\.sheet-print-ink-saver\) \.ps-portrait-art\.class-placeholder/);
+  assert.match(css,/\.premium-sheet:not\(\.sheet-print-ink-saver\)[\s\S]*\.ps-class-crest/);
+  assert.match(css,/linear-gradient\(145deg,var\(--ps-dark\),var\(--ps-primary\)\)/);
   assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-illustrated\s*\{display:none!important\}/);
   assert.match(css,/\.sheet-print-ink-saver \.ps-placeholder-emblem\s*\{display:grid!important/);
   assert.match(css,/\.ps-class-portrait-image\s*\{[^}]*object-fit:cover!important/s);

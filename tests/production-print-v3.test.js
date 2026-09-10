@@ -21,16 +21,16 @@ test("export profiles preserve compact packets and add one deluxe dossier page",
   }catch(error){console.error("[production-print-v3] profile contract failed",error);throw error;}
 });
 
-test("deluxe martial packet renders class sheet plus complete dossier",()=>{
+test("deluxe martial packet renders class sheet plus complete titled dossier",()=>{
   try{
     const character=make("barbarian"),target={innerHTML:""},model=renderPremiumPrintSheet(character,target);
-    assert.equal(model.packet.totalPages,2);assert.equal(model.profile.packetMode,"deluxe");assert.ok(model.dossier);assert.equal(model.dossier.backstory.length,4);assert.ok(model.dossier.hooks.length>=4);assert.match(target.innerHTML,/ps-dossier-page/);assert.match(target.innerHTML,/Campaign Chronicle/);assert.match(target.innerHTML,/Milestones · Allies · Debts · Revelations · Session Notes/);assert.equal((target.innerHTML.match(/ps-dossier-chronicle-lines/g)||[]).length,1);assert.match(target.innerHTML,/Page 1\/2/);assert.match(target.innerHTML,/Page 2\/2/);assert.doesNotMatch(target.innerHTML,/ps-caster-page/);assert.match(target.innerHTML,/ps-class-ornaments/);
+    assert.equal(model.packet.totalPages,2);assert.equal(model.profile.packetMode,"deluxe");assert.ok(model.dossier);assert.equal(model.dossier.backstory.length,4);assert.ok(model.dossier.storyTitle);assert.ok(model.dossier.hooks.length>=4);assert.match(target.innerHTML,/ps-dossier-page/);assert.match(target.innerHTML,/ps-dossier-story-title/);assert.match(target.innerHTML,/Campaign Chronicle/);assert.match(target.innerHTML,/Milestones · Allies · Debts · Revelations · Session Notes/);assert.equal((target.innerHTML.match(/ps-dossier-chronicle-lines/g)||[]).length,1);assert.match(target.innerHTML,/Page 1\/2/);assert.match(target.innerHTML,/Page 2\/2/);assert.doesNotMatch(target.innerHTML,/ps-caster-page/);assert.match(target.innerHTML,/ps-class-ornaments/);
   }catch(error){console.error("[production-print-v3] martial deluxe render failed",error);throw error;}
 });
 
 test("deluxe caster and half-caster packets render class, spell, and dossier pages",()=>{
   try{
-    for(const classId of ["paladin","wizard"]){const target={innerHTML:""},model=renderPremiumPrintSheet(make(classId),target);assert.equal(model.packet.totalPages,3,`${classId} page count`);assert.match(target.innerHTML,/ps-caster-page/);assert.match(target.innerHTML,/ps-dossier-page/);assert.match(target.innerHTML,/Campaign Chronicle/);assert.match(target.innerHTML,/Page 1\/3/);assert.match(target.innerHTML,/Page 2\/3/);assert.match(target.innerHTML,/Page 3\/3/);}
+    for(const classId of ["paladin","wizard"]){const target={innerHTML:""},model=renderPremiumPrintSheet(make(classId),target);assert.equal(model.packet.totalPages,3,`${classId} page count`);assert.match(target.innerHTML,/ps-caster-page/);assert.match(target.innerHTML,/ps-dossier-page/);assert.match(target.innerHTML,/ps-dossier-story-title/);assert.match(target.innerHTML,/Campaign Chronicle/);assert.match(target.innerHTML,/Page 1\/3/);assert.match(target.innerHTML,/Page 2\/3/);assert.match(target.innerHTML,/Page 3\/3/);}
   }catch(error){console.error("[production-print-v3] caster deluxe render failed",error);throw error;}
 });
 

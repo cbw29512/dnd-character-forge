@@ -24,24 +24,29 @@ function render(character){
   return{html:target.innerHTML,model};
 }
 
-test("every standalone print page carries edition-specific SRD/CC attribution",()=>{
-  for(const [ruleset,sourcePattern] of [["2014",/dnd\.wizards\.com\/resources\/systems-reference-document/],["2024",/dndbeyond\.com\/srd/]]){
+test("every standalone print page carries prescribed edition-specific SRD/CC attribution",()=>{
+  for(const [ruleset,sourcePattern,prescribed] of [
+    ["2014",/dnd\.wizards\.com\/resources\/systems-reference-document/,/This work includes material taken from the System Reference Document 5\.1/],
+    ["2024",/dndbeyond\.com\/srd/,/This work includes material from the System Reference Document 5\.2\.1/]
+  ]){
     for(const packetMode of ["table","deluxe"]){
       const {html,model}=render(make(ruleset,packetMode));
+      assert.match(html,prescribed);
       assert.match(html,/Wizards of the Coast LLC/);
-      assert.match(html,/CC BY 4\.0/);
-      assert.match(html,/creativecommons\.org\/licenses\/by\/4\.0\//);
+      assert.match(html,/Creative Commons Attribution 4\.0 International License/);
+      assert.match(html,/creativecommons\.org\/licenses\/by\/4\.0\/legalcode/);
       assert.match(html,sourcePattern);
       assert.equal((html.match(/class="ps-license"/g)||[]).length,model.packet.totalPages,`${ruleset} ${packetMode} attribution count`);
     }
   }
 });
 
-test("print cascade loads compact attribution footer styling",()=>{
+test("print cascade reserves wrapping room for prescribed attribution",()=>{
   const sorcerer=fs.readFileSync(new URL("../styles/print/premium-sorcerer.css",import.meta.url),"utf8");
   const attribution=fs.readFileSync(new URL("../styles/print/premium-attribution.css",import.meta.url),"utf8");
   assert.match(sorcerer,/premium-attribution\.css/);
   assert.match(attribution,/\.ps-footer>\.ps-license/);
   assert.match(attribution,/grid-column:1\/-1/);
-  assert.match(attribution,/white-space:nowrap/);
+  assert.match(attribution,/white-space:normal/);
+  assert.doesNotMatch(attribution,/white-space:nowrap/);
 });

@@ -1,6 +1,7 @@
 @media print{
-  /* Every standalone PDF page carries a compact visible source/license trail.
-     Keep this inside the existing certified footer row so page counts do not change. */
+  /* Every standalone PDF page carries the prescribed SRD/CC attribution.
+     The legal line may wrap to two compact lines; footer profiles reserve the
+     space so compliance never depends on clipping or one-line microtype. */
   .ps-footer{
     display:grid;
     grid-template-columns:minmax(0,1fr) auto;
@@ -9,20 +10,21 @@
     align-items:center;
     column-gap:.15in;
     row-gap:.008in;
-    padding:.02in .08in 0;
+    padding:.012in .08in 0;
   }
   .ps-footer>.ps-license{
     grid-column:1/-1;
     grid-row:2;
     min-width:0;
-    overflow:hidden;
+    overflow:visible;
     text-align:center;
-    white-space:nowrap;
+    white-space:normal;
     color:var(--ps-muted);
-    font:5pt/1.02 Arial,sans-serif;
+    font:4.15pt/1.08 Arial,sans-serif;
     font-weight:400;
-    letter-spacing:-.01em;
+    letter-spacing:-.012em;
     text-transform:none;
+    text-wrap:balance;
   }
   .sheet-print-ink-saver .ps-license{color:#111!important}
 }
