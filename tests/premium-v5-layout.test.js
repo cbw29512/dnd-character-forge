@@ -24,6 +24,11 @@ function render(classId,level="7"){
   return{html:target.innerHTML,model};
 }
 
+function passiveFromModel(model,id){
+  const skill=model.skills.find(item=>item.id===id),bonus=Number(String(skill?.bonus??0).replace("+",""));
+  return 10+(Number.isFinite(bonus)?bonus:0);
+}
+
 test("layout profiles are semantic and reusable across class families",()=>{
   assert.deepEqual(printLayoutProfile("fighter"),["feature-heavy","equipment-light"]);
   assert.deepEqual(printLayoutProfile("rogue"),["skill-heavy","feature-heavy","equipment-light"]);
@@ -33,11 +38,11 @@ test("layout profiles are semantic and reusable across class families",()=>{
 });
 
 test("Deluxe page one prints all three passive senses from generated skill bonuses",()=>{
-  const {html}=render("fighter");
+  const {html,model}=render("fighter");
   assert.match(html,/ps-passive ps-passive-grid/);
-  assert.match(html,/Perception<b>\d+<\/b>/);
-  assert.match(html,/Insight<b>\d+<\/b>/);
-  assert.match(html,/Investigation<b>\d+<\/b>/);
+  assert.ok(html.includes(`Passive Wisdom (Perception)<b>${model.stats.passivePerception}</b>`));
+  assert.ok(html.includes(`Insight<b>${passiveFromModel(model,"insight")}</b>`));
+  assert.ok(html.includes(`Investigation<b>${passiveFromModel(model,"investigation")}</b>`));
 });
 
 test("equipment-light profiles convert unused gear area into writable loot notes",()=>{
