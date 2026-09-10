@@ -62,6 +62,21 @@ test("approved exact variant renders curated color art plus the ink-saver crest"
   }
 });
 
+test("curated print CSS shows approved art in color and restores the crest for Ink Saver",()=>{
+  try{
+    const css=readFileSync(fileURLToPath(new URL("../styles/print/premium-curated-dossier.css",import.meta.url)),"utf8");
+    const loadPoint=readFileSync(fileURLToPath(new URL("../styles/print/premium-sorcerer.css",import.meta.url)),"utf8");
+    assert.match(css,/\.premium-sheet:not\(\.sheet-print-ink-saver\) \.ps-curated-dossier-portrait\s*\{[^}]*display:block!important/s);
+    assert.match(css,/\.premium-sheet:not\(\.sheet-print-ink-saver\) \.ps-curated-dossier-portrait \+ \.ps-placeholder-emblem\s*\{[^}]*display:none!important/s);
+    assert.match(css,/\.premium-sheet\.sheet-print-ink-saver \.ps-curated-dossier-portrait\s*\{[^}]*display:none!important/s);
+    assert.match(css,/\.premium-sheet\.sheet-print-ink-saver \.ps-curated-dossier-portrait \+ \.ps-placeholder-emblem\s*\{[^}]*display:grid!important/s);
+    assert.ok(loadPoint.indexOf('premium-curated-dossier.css')>loadPoint.indexOf('premium-ink-saver.css'),"curated override must load after heraldic defaults");
+  }catch(error){
+    console.error("[dossier-portrait-assets-test] print visibility contract failed",error);
+    throw error;
+  }
+});
+
 test("missing or malformed variants fail closed to established class art",()=>{
   try{
     const key="__missing__--__missing__";
