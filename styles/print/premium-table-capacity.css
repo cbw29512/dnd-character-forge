@@ -68,4 +68,15 @@
     font-size:4.35pt;
     line-height:1;
   }
+
+  /*
+   * Fighter Deluxe page one has a rules-heavy right rail but relatively sparse
+   * equipment in the center. The generic martial columns leave Feat, Features &
+   * Traits, and Proficiencies unnecessarily narrow. Reallocate that unused center
+   * width to the right rail instead of shrinking or truncating rules text.
+   */
+  .sheet-packet-deluxe.profile-martial-deluxe-two-page.theme-fighter-steel .ps-main-columns{
+    grid-template-columns:1.48in minmax(0,1fr) 2.55in;
+    gap:.07in;
+  }
 }
