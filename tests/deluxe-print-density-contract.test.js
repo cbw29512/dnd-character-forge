@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 const fixedCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-fixed.css",import.meta.url)),"utf8");
 const deluxeCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-v3-base.css",import.meta.url)),"utf8");
 const readabilityCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-readability.css",import.meta.url)),"utf8");
+const capacityCss=readFileSync(fileURLToPath(new URL("../styles/print/premium-table-capacity.css",import.meta.url)),"utf8");
 
 test("Deluxe print profiles inherit compact page-one layout rules",()=>{
   assert.match(fixedCss,/\.profile-martial-deluxe-two-page \.ps-frame/);
@@ -31,6 +32,10 @@ test("Late Deluxe hierarchy keeps dense Quick Turn and feature type within Lette
   assert.match(feature,/font-size\s*:\s*5\.5pt/);
   assert.match(feature,/line-height\s*:\s*1\.16/);
   assert.match(deluxeCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page\.theme-fighter-steel \.ps-rule-index>div\{grid-template-columns:repeat\(5,minmax\(0,1fr\)\)/);
+});
+
+test("Fighter Deluxe reallocates empty center width to the rules-heavy right rail",()=>{
+  assert.match(capacityCss,/\.sheet-packet-deluxe\.profile-martial-deluxe-two-page\.theme-fighter-steel \.ps-main-columns\{[\s\S]*?grid-template-columns:1\.48in minmax\(0,1fr\) 2\.55in;[\s\S]*?gap:\.07in/);
 });
 
 test("Late readability layer reserves max-level Monk Table footer clearance",()=>{
