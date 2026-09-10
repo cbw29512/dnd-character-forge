@@ -34,6 +34,8 @@ export function literaryArtDirection(context,core){
       subject:`${c.species} ${c.className}${c.subclassName?` — ${c.subclassName}`:""}`,
       background:c.bgLit.art,
       subclass:c.subclassName?c.subLit.art:"class identity only",
+      backgroundSymbol:k.backgroundSymbol,
+      pathSymbol:k.pathSymbol,
       symbolicAnchor:`${k.backgroundSymbol}; ${k.pathSymbol}`,
       composition:"single character, three-quarter portrait, story moment rather than combat pose",
       continuity:"show one visible keepsake from the background and one restrained visual signature from the class path",
