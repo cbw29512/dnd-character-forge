@@ -77,6 +77,8 @@ jobs:
         run: node tests/class-choice-lifecycle-browser-gate.mjs
       - name: Verify premium PDF packets in Chrome
         run: node tests/browser-print-gate.mjs
+      - name: Verify curated dossier portrait in Chrome
+        run: node tests/curated-dossier-portrait-browser-gate.mjs
       - name: Verify expanded Barbarian premium PDFs in Chrome
         run: node tests/barbarian-original-browser-print-gate.mjs
       - name: Verify expanded background premium PDFs in Chrome
