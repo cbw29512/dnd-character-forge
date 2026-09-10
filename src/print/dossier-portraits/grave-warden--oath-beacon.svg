@@ -1,107 +1,79 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-labelledby="title desc">
-  <title id="title">Grave Warden and Oath Beacon</title>
-  <desc id="desc">An original fantasy portrait of a vigilant oathbound guardian standing among old grave stones beneath a restrained beacon of warm light.</desc>
-  <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#0a1120"/>
-      <stop offset="0.52" stop-color="#1f2b39"/>
-      <stop offset="1" stop-color="#080b10"/>
-    </linearGradient>
-    <radialGradient id="halo" cx="50%" cy="13%" r="64%">
-      <stop offset="0" stop-color="#fff4bd" stop-opacity=".92"/>
-      <stop offset=".22" stop-color="#d9b75f" stop-opacity=".48"/>
-      <stop offset=".62" stop-color="#9a7437" stop-opacity=".09"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="armor" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#e2dfcf"/>
-      <stop offset=".34" stop-color="#a8adb0"/>
-      <stop offset=".67" stop-color="#59636b"/>
-      <stop offset="1" stop-color="#c7bea1"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffe89a"/>
-      <stop offset=".5" stop-color="#c89a3d"/>
-      <stop offset="1" stop-color="#72501e"/>
-    </linearGradient>
-    <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#384552"/>
-      <stop offset=".56" stop-color="#17202a"/>
-      <stop offset="1" stop-color="#0d1218"/>
-    </linearGradient>
-    <filter id="mist" x="-20%" y="-100%" width="140%" height="300%">
-      <feGaussianBlur stdDeviation="13"/>
-    </filter>
-  </defs>
+<title id="title">Grave Warden and Oath Beacon</title>
+<desc id="desc">An original fantasy portrait: a grave warden in a steel helm and cloak stands between weathered grave stones, with a bright oath beacon burning behind the head.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#111827"/><stop offset=".55" stop-color="#26313a"/><stop offset="1" stop-color="#0b0f14"/>
+  </linearGradient>
+  <radialGradient id="halo" cx="50%" cy="25%" r="48%">
+    <stop offset="0" stop-color="#fff4bd" stop-opacity=".95"/><stop offset=".18" stop-color="#e9c96d" stop-opacity=".62"/>
+    <stop offset=".55" stop-color="#b28a3c" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#e0ddcc"/><stop offset=".35" stop-color="#899198"/><stop offset=".7" stop-color="#424b52"/><stop offset="1" stop-color="#bcb49a"/>
+  </linearGradient>
+  <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4c4239"/><stop offset=".55" stop-color="#202830"/><stop offset="1" stop-color="#0e1419"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f4df91"/><stop offset=".55" stop-color="#b88d38"/><stop offset="1" stop-color="#6a4b20"/>
+  </linearGradient>
+</defs>
+<rect width="640" height="800" fill="url(#sky)"/>
+<rect width="640" height="800" fill="url(#halo)"/>
 
-  <rect width="640" height="800" fill="url(#sky)"/>
-  <rect width="640" height="800" fill="url(#halo)"/>
+<!-- unmistakable graveyard frame -->
+<g stroke="#727a79" stroke-width="8" fill="#20272c">
+  <path d="M22 720V367c0-44 32-78 76-78h42c44 0 76 34 76 78v353Z"/>
+  <path d="M424 720V390c0-39 30-70 69-70h50c39 0 69 31 69 70v330Z"/>
+</g>
+<g fill="none" stroke="#a49b78" stroke-width="8" opacity=".8">
+  <path d="M62 368h114M119 312v133"/>
+  <path d="M461 394h115M518 343v119"/>
+</g>
+<g fill="#11171b" opacity=".8"><path d="M0 665Q105 615 215 664T430 657T640 670V800H0Z"/></g>
 
-  <g fill="#111820" stroke="#69727a" stroke-width="4" opacity=".78">
-    <path d="M28 625V462c0-22 16-39 38-43l31-5 31 5c22 4 38 21 38 43v163Z"/>
-    <path d="M470 638V492c0-20 14-36 34-40l27-5 27 5c20 4 34 20 34 40v146Z"/>
-    <path d="M66 449v-50h62v50M97 399v-34M80 382h34" fill="none"/>
-    <path d="M500 479v-42h62v42M531 437v-30" fill="none"/>
+<!-- oath beacon: large enough to survive thumbnailing -->
+<g transform="translate(320 145)">
+  <circle r="104" fill="#d5b75b" opacity=".13"/>
+  <circle r="72" fill="#fff0a4" opacity=".12"/>
+  <path d="M0-88 18-28 78 0 18 28 0 88-18 28-78 0-18-28Z" fill="#e8cb70" opacity=".95"/>
+  <circle r="18" fill="#fff6cc"/>
+</g>
+
+<!-- character bust: face and shoulders dominate frame -->
+<g transform="translate(320 0)">
+  <path d="M-286 792c18-166 83-278 195-326l91 50 91-50c112 48 177 160 195 326Z" fill="url(#cloak)" stroke="#5c5a50" stroke-width="9"/>
+  <path d="M-270 620c32-89 93-143 178-160l45 49-54 128-169 45Z" fill="url(#steel)" stroke="#30383e" stroke-width="9"/>
+  <path d="M270 620c-32-89-93-143-178-160l-45 49 54 128 169 45Z" fill="url(#steel)" stroke="#30383e" stroke-width="9"/>
+  <path d="M-132 279c0-98 60-162 132-162s132 64 132 162l-30 182H-102Z" fill="#151b21" stroke="#777467" stroke-width="10"/>
+  <path d="M-104 276c10-92 54-137 104-137s94 45 104 137l-15 152H-89Z" fill="url(#steel)" stroke="#30363b" stroke-width="10"/>
+  <path d="M-86 270c16-70 49-102 86-102s70 32 86 102Z" fill="#343c42"/>
+  <path d="M-67 287c9-42 34-67 67-67s58 25 67 67l-13 84c-13 42-32 65-54 65s-41-23-54-65Z" fill="#bea37f" stroke="#433a31" stroke-width="8"/>
+  <path d="M-55 300Q-28 280-5 298M5 298Q28 280 55 300" fill="none" stroke="#493d31" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="-27" cy="312" r="8" fill="#161a1e"/><circle cx="27" cy="312" r="8" fill="#161a1e"/>
+  <path d="M-24 376Q0 391 24 376" fill="none" stroke="#6d5040" stroke-width="7" stroke-linecap="round"/>
+  <path d="M0 152 22 251 0 282-22 251Z" fill="url(#gold)"/>
+  <path d="M-105 271h210" stroke="#d2bd75" stroke-width="12"/>
+  <path d="M-126 430 0 503 126 430 92 564H-92Z" fill="#27333d" stroke="#a88c46" stroke-width="8"/>
+  <circle cy="485" r="28" fill="#161d22" stroke="#d4bc69" stroke-width="8"/>
+  <path d="M0 467v36M-18 485h36" stroke="#e8d27d" stroke-width="7" stroke-linecap="round"/>
+  <g transform="translate(165 590) rotate(-5)">
+    <path d="M-55-42h110l-8 118-47 46-47-46Z" fill="#25303a" stroke="#c0a653" stroke-width="8"/>
+    <path d="M0-18v83M-30 20h60" stroke="#dcc36c" stroke-width="8" stroke-linecap="round"/>
   </g>
-  <path d="M0 610c93-39 176-26 250 8 72 33 154 37 225 8 62-25 113-21 165 3v171H0Z" fill="#11171d"/>
-  <g fill="#cdd2d1" opacity=".19" filter="url(#mist)">
-    <ellipse cx="165" cy="643" rx="170" ry="26"/>
-    <ellipse cx="470" cy="668" rx="180" ry="30"/>
+  <g transform="translate(-196 575) rotate(7)">
+    <path d="M-9-195h18V133H-9Z" fill="#d5d1bd"/>
+    <path d="M-48-145h96v17h-96Z" fill="#d7bd68"/>
+    <path d="M-22 133h44l18 70h-80Z" fill="#8c6b31"/>
   </g>
+</g>
 
-  <g transform="translate(320 108)">
-    <circle r="72" fill="#d7b45a" opacity=".08"/>
-    <circle r="47" fill="#ffe8a4" opacity=".08"/>
-    <path d="M0-62 12-17 55 0 12 17 0 62-12 17-55 0-12-17Z" fill="#e8c866" opacity=".88"/>
-    <circle r="12" fill="#fff5c6"/>
-  </g>
-  <path d="M320 135 240 452h160Z" fill="#f1d274" opacity=".07"/>
-
-  <g transform="translate(320 404)">
-    <path d="M-165-70c36-53 86-82 165-82s129 29 165 82l34 295H-199Z" fill="url(#cloak)" stroke="#7a776a" stroke-width="6"/>
-    <path d="M-120-72c31-29 70-44 120-44s89 15 120 44l-25 68H-95Z" fill="#202b35" stroke="#8b8877" stroke-width="4"/>
-
-    <path d="M-76-173c18-53 43-80 76-80s58 27 76 80l-17 76H-59Z" fill="#151d25" stroke="#9b9b8f" stroke-width="6"/>
-    <path d="M-45-174c11-26 26-40 45-40s34 14 45 40l-9 42h-72Z" fill="#2e3942"/>
-    <path d="M-29-166h58l-7 24h-44Z" fill="#e2c56d" opacity=".8"/>
-    <path d="M-18-158h36" stroke="#fff0ad" stroke-width="5" stroke-linecap="round"/>
-
-    <path d="M-104-63 0-119 104-63 84 103 0 150-84 103Z" fill="url(#armor)" stroke="#323b43" stroke-width="7"/>
-    <path d="M-66-45 0-82 66-45 54 67 0 99-54 67Z" fill="#26323d" stroke="#d4b85d" stroke-width="6"/>
-    <path d="M0-60v124M-39-20h78" fill="none" stroke="url(#gold)" stroke-width="12" stroke-linecap="round"/>
-    <circle cx="0" cy="-20" r="30" fill="none" stroke="#e8d18b" stroke-width="4" opacity=".85"/>
-
-    <path d="M-119-47c-45 46-70 99-77 159l55 19 54-118Z" fill="url(#armor)" stroke="#39444c" stroke-width="6"/>
-    <path d="M119-47c45 46 70 99 77 159l-55 19-54-118Z" fill="url(#armor)" stroke="#39444c" stroke-width="6"/>
-
-    <g transform="translate(-157 88) rotate(4)">
-      <path d="M-8-188h16v344H-8Z" fill="#d8d6c9" stroke="#4c5459" stroke-width="3"/>
-      <path d="M0-223 17-187H-17Z" fill="#e7e4d2" stroke="#6d725f" stroke-width="3"/>
-      <path d="M-39-138h78v15h-78Z" fill="url(#gold)"/>
-      <path d="M-13 154h26l13 48h-52Z" fill="#8b6730"/>
-    </g>
-
-    <g transform="translate(145 72) rotate(-7)">
-      <path d="M-47-32h94l17 102c-8 45-31 75-64 94-33-19-56-49-64-94Z" fill="#202c36" stroke="#d2b75f" stroke-width="6"/>
-      <path d="M0-5v90M-27 29h54" fill="none" stroke="#e9d27d" stroke-width="8" stroke-linecap="round"/>
-    </g>
-
-    <path d="M-128 118c22 55 28 117 18 188H-18L0 150l18 156h92c10-71 4-133-18-188l-44 19L0 118l-48 19Z" fill="#111820" stroke="#4f514b" stroke-width="5"/>
-    <path d="M-8 132h16l11 172h-38Z" fill="url(#gold)" opacity=".72"/>
-  </g>
-
-  <g fill="#252d33" stroke="#8a8d84" stroke-width="5">
-    <path d="M52 705V579c0-18 13-32 31-35l39-6 39 6c18 3 31 17 31 35v126Z"/>
-    <path d="M448 716V601c0-17 12-30 29-33l34-5 34 5c17 3 29 16 29 33v115Z"/>
-  </g>
-  <g stroke="#b1aa8c" stroke-width="5" stroke-linecap="round" opacity=".78">
-    <path d="M122 569v74M92 599h60"/>
-    <path d="M511 593v62M487 618h48"/>
-  </g>
-
-  <path d="M214 294c19-67 55-101 106-101s87 34 106 101" fill="none" stroke="#d7b65f" stroke-width="7" opacity=".25"/>
-  <path d="M166 429c35-48 72-73 110-84M474 429c-35-48-72-73-110-84" fill="none" stroke="#e0c26f" stroke-width="6" opacity=".22"/>
-
-  <rect x="12" y="12" width="616" height="776" rx="8" fill="none" stroke="#b79a4a" stroke-width="3" opacity=".85"/>
-  <rect x="23" y="23" width="594" height="754" rx="5" fill="none" stroke="#ece0b1" stroke-width="1" opacity=".26"/>
+<!-- foreground grave markers reinforce background at thumbnail size -->
+<g fill="#242b2f" stroke="#8b8b7e" stroke-width="6">
+  <path d="M38 790V650c0-27 20-48 47-48h45c27 0 47 21 47 48v140Z"/>
+  <path d="M482 790V676c0-24 18-43 42-43h38c24 0 42 19 42 43v114Z"/>
+</g>
+<rect x="12" y="12" width="616" height="776" rx="10" fill="none" stroke="#b99b4a" stroke-width="5"/>
+<rect x="25" y="25" width="590" height="750" rx="7" fill="none" stroke="#f0dfac" stroke-width="2" opacity=".28"/>
 </svg>
