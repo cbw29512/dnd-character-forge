@@ -96,13 +96,15 @@ test("background scene banks provide deterministic variety rather than one repea
   for(const story of stories)assert.match(story,/burial|grave|headstone|cemetery|stones|plot|paupers/i);
 });
 
-test("printed fallback portrait carries the exact story variant and both motifs",()=>{
+test("printed Grave Warden Oath Beacon uses the exact curated story variant and both motifs",()=>{
   const character=make({classId:"paladin",subclass:"oath-beacon",background:"grave-warden",name:"Elira Venn"});
   character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe"}};
   const target={innerHTML:""};
   const model=renderPremiumPrintSheet(character,target);
   assert.equal(model.dossier.artDirection.variantKey,"grave-warden--oath-beacon");
   assert.match(target.innerHTML,/data-portrait-variant="grave-warden--oath-beacon"/);
+  assert.match(target.innerHTML,/data-curated-portrait="grave-warden--oath-beacon"/);
+  assert.match(target.innerHTML,/grave-warden--oath-beacon\.svg/);
   assert.match(target.innerHTML,/ps-narrative-origin">unmarked grave/);
   assert.match(target.innerHTML,/ps-narrative-path">beacon in smoke/);
 });

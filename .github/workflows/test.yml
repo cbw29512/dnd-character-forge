@@ -77,6 +77,19 @@ jobs:
         run: node tests/class-choice-lifecycle-browser-gate.mjs
       - name: Verify premium PDF packets in Chrome
         run: node tests/browser-print-gate.mjs
+      - name: Verify curated dossier portrait in Chrome
+        run: node tests/curated-dossier-portrait-browser-gate.mjs
+      - name: Upload curated dossier visual review
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: curated-dossier-review
+          path: |
+            tests/.browser-print/curated-grave-warden-oath-beacon.pdf
+            tests/.browser-print/curated-grave-warden-oath-beacon-dossier.png
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
       - name: Verify expanded Barbarian premium PDFs in Chrome
         run: node tests/barbarian-original-browser-print-gate.mjs
       - name: Verify expanded background premium PDFs in Chrome

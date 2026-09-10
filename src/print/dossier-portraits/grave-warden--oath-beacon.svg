@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 800" role="img" aria-labelledby="title desc">
+<title id="title">Grave Warden and Oath Beacon</title>
+<desc id="desc">An original fantasy portrait: a grave warden in a steel helm and cloak stands between weathered grave stones, with a bright oath beacon burning behind the head.</desc>
+<defs>
+  <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#111827"/><stop offset=".55" stop-color="#26313a"/><stop offset="1" stop-color="#0b0f14"/>
+  </linearGradient>
+  <radialGradient id="halo" cx="50%" cy="25%" r="48%">
+    <stop offset="0" stop-color="#fff4bd" stop-opacity=".95"/><stop offset=".18" stop-color="#e9c96d" stop-opacity=".62"/>
+    <stop offset=".55" stop-color="#b28a3c" stop-opacity=".16"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+  </radialGradient>
+  <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#e0ddcc"/><stop offset=".35" stop-color="#899198"/><stop offset=".7" stop-color="#424b52"/><stop offset="1" stop-color="#bcb49a"/>
+  </linearGradient>
+  <linearGradient id="cloak" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#4c4239"/><stop offset=".55" stop-color="#202830"/><stop offset="1" stop-color="#0e1419"/>
+  </linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#f4df91"/><stop offset=".55" stop-color="#b88d38"/><stop offset="1" stop-color="#6a4b20"/>
+  </linearGradient>
+</defs>
+<rect width="640" height="800" fill="url(#sky)"/>
+<rect width="640" height="800" fill="url(#halo)"/>
+
+<!-- unmistakable graveyard frame -->
+<g stroke="#727a79" stroke-width="8" fill="#20272c">
+  <path d="M22 720V367c0-44 32-78 76-78h42c44 0 76 34 76 78v353Z"/>
+  <path d="M424 720V390c0-39 30-70 69-70h50c39 0 69 31 69 70v330Z"/>
+</g>
+<g fill="none" stroke="#a49b78" stroke-width="8" opacity=".8">
+  <path d="M62 368h114M119 312v133"/>
+  <path d="M461 394h115M518 343v119"/>
+</g>
+<g fill="#11171b" opacity=".8"><path d="M0 665Q105 615 215 664T430 657T640 670V800H0Z"/></g>
+
+<!-- oath beacon: large enough to survive thumbnailing -->
+<g transform="translate(320 145)">
+  <circle r="104" fill="#d5b75b" opacity=".13"/>
+  <circle r="72" fill="#fff0a4" opacity=".12"/>
+  <path d="M0-88 18-28 78 0 18 28 0 88-18 28-78 0-18-28Z" fill="#e8cb70" opacity=".95"/>
+  <circle r="18" fill="#fff6cc"/>
+</g>
+
+<!-- character bust: face and shoulders dominate frame -->
+<g transform="translate(320 0)">
+  <path d="M-286 792c18-166 83-278 195-326l91 50 91-50c112 48 177 160 195 326Z" fill="url(#cloak)" stroke="#5c5a50" stroke-width="9"/>
+  <path d="M-270 620c32-89 93-143 178-160l45 49-54 128-169 45Z" fill="url(#steel)" stroke="#30383e" stroke-width="9"/>
+  <path d="M270 620c-32-89-93-143-178-160l-45 49 54 128 169 45Z" fill="url(#steel)" stroke="#30383e" stroke-width="9"/>
+  <path d="M-132 279c0-98 60-162 132-162s132 64 132 162l-30 182H-102Z" fill="#151b21" stroke="#777467" stroke-width="10"/>
+  <path d="M-104 276c10-92 54-137 104-137s94 45 104 137l-15 152H-89Z" fill="url(#steel)" stroke="#30363b" stroke-width="10"/>
+  <path d="M-86 270c16-70 49-102 86-102s70 32 86 102Z" fill="#343c42"/>
+  <path d="M-67 287c9-42 34-67 67-67s58 25 67 67l-13 84c-13 42-32 65-54 65s-41-23-54-65Z" fill="#bea37f" stroke="#433a31" stroke-width="8"/>
+  <path d="M-55 300Q-28 280-5 298M5 298Q28 280 55 300" fill="none" stroke="#493d31" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="-27" cy="312" r="8" fill="#161a1e"/><circle cx="27" cy="312" r="8" fill="#161a1e"/>
+  <path d="M-24 376Q0 391 24 376" fill="none" stroke="#6d5040" stroke-width="7" stroke-linecap="round"/>
+  <path d="M0 152 22 251 0 282-22 251Z" fill="url(#gold)"/>
+  <path d="M-105 271h210" stroke="#d2bd75" stroke-width="12"/>
+  <path d="M-126 430 0 503 126 430 92 564H-92Z" fill="#27333d" stroke="#a88c46" stroke-width="8"/>
+  <circle cy="485" r="28" fill="#161d22" stroke="#d4bc69" stroke-width="8"/>
+  <path d="M0 467v36M-18 485h36" stroke="#e8d27d" stroke-width="7" stroke-linecap="round"/>
+  <g transform="translate(165 590) rotate(-5)">
+    <path d="M-55-42h110l-8 118-47 46-47-46Z" fill="#25303a" stroke="#c0a653" stroke-width="8"/>
+    <path d="M0-18v83M-30 20h60" stroke="#dcc36c" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(-196 575) rotate(7)">
+    <path d="M-9-195h18V133H-9Z" fill="#d5d1bd"/>
+    <path d="M-48-145h96v17h-96Z" fill="#d7bd68"/>
+    <path d="M-22 133h44l18 70h-80Z" fill="#8c6b31"/>
+  </g>
+</g>
+
+<!-- foreground grave markers reinforce background at thumbnail size -->
+<g fill="#242b2f" stroke="#8b8b7e" stroke-width="6">
+  <path d="M38 790V650c0-27 20-48 47-48h45c27 0 47 21 47 48v140Z"/>
+  <path d="M482 790V676c0-24 18-43 42-43h38c24 0 42 19 42 43v114Z"/>
+</g>
+<rect x="12" y="12" width="616" height="776" rx="10" fill="none" stroke="#b99b4a" stroke-width="5"/>
+<rect x="25" y="25" width="590" height="750" rx="7" fill="none" stroke="#f0dfac" stroke-width="2" opacity=".28"/>
+</svg>
