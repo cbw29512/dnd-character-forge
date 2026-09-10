@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { FORGE_2014, FORGE_2024 } from "../src/data/forge-data.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { originFeatInstanceKey } from "../src/rules/origin-feats.js";
@@ -18,6 +19,7 @@ function criticalLevels(cls){
 }
 function stateFor({ruleset,classId,level,speciesId,backgroundId,subclassId="random"}){
   const state=createInitialState();
+  state.sourceMode=SOURCE.RAW;
   state.ruleset=ruleset;
   state.constraints={...state.constraints,level:String(level),class:classId,subclass:subclassId,species:speciesId,background:backgroundId,name:`RAW audit ${ruleset} ${classId} L${level}`};
   return state;
@@ -29,6 +31,7 @@ function duplicates(values,key=value=>value){
 }
 function assertRawCharacter(character,{ruleset,classId,level,speciesId,backgroundId,subclassId=null,data}){
   const label=`${ruleset} ${classId} L${level} ${speciesId}/${backgroundId}${subclassId?` ${subclassId}`:""}`;
+  assert.equal(character.sourceMode,SOURCE.RAW,`${label}: source mode drift`);
   assert.equal(character.ruleset,ruleset,`${label}: ruleset drift`);
   assert.equal(character.class.id,classId,`${label}: class drift`);
   assert.equal(character.level,level,`${label}: level drift`);
@@ -38,6 +41,7 @@ function assertRawCharacter(character,{ruleset,classId,level,speciesId,backgroun
 
   assert.notEqual(character.background?.contentKind,"forge-original",`${label}: Forge Original background leaked into RAW audit`);
   assert.notEqual(character.subclass?.contentKind,"forge-original",`${label}: Forge Original subclass leaked into RAW audit`);
+  assert.equal((character.feats||[]).some(feat=>feat?.contentKind==="forge-original"),false,`${label}: Forge Original feat leaked into RAW audit`);
   assert.equal(character.validation?.valid,true,`${label}: validation failed: ${(character.validation?.errors||[]).join(" | ")}`);
   assert.equal(character.audit?.status,"PASS",`${label}: Rules Audit failed`);
   assert.equal(character.audit?.rawIntegrity,true,`${label}: RAW integrity flag failed`);
@@ -105,13 +109,16 @@ for(const {ruleset,data} of EDITIONS){
     assert.ok(generated>50,`${ruleset}: subclass combination matrix was unexpectedly small`);
   });
 
-  test(`${ruleset} default Random may use Forge Original backgrounds but never leaks original subclasses`,()=>{
+  test(`${ruleset} default Random remains RAW-only across repeated class/level generation`,()=>{
     for(const cls of classes)for(const level of [1,Math.min(10,cls.maxLevel),cls.maxLevel])for(let attempt=0;attempt<10;attempt++){
-      const state=createInitialState();state.ruleset=ruleset;state.constraints.class=cls.id;state.constraints.level=String(level);
-      const character=generateCharacter(state),originalBackground=character.background?.contentKind==="forge-original";
+      const state=createInitialState();state.sourceMode=SOURCE.RAW;state.ruleset=ruleset;state.constraints.class=cls.id;state.constraints.level=String(level);
+      const character=generateCharacter(state);
+      assert.equal(character.sourceMode,SOURCE.RAW,`${ruleset} ${cls.id} L${level}: source mode drift`);
+      assert.equal(character.validation?.valid,true,`${ruleset} ${cls.id} L${level}: Random validation failed`);
+      assert.notEqual(character.background?.contentKind,"forge-original",`${ruleset} ${cls.id} L${level}: Random background leak`);
       assert.notEqual(character.subclass?.contentKind,"forge-original",`${ruleset} ${cls.id} L${level}: Random subclass leak`);
-      assert.equal(character.audit?.rawIntegrity,!originalBackground,`${ruleset} ${cls.id} L${level}: Random RAW-integrity boundary mismatch`);
-      if(originalBackground)assert.match(character.audit?.license||"",/Character Forge Original/,`${ruleset} ${cls.id} L${level}: original background license missing`);
+      assert.equal((character.feats||[]).some(feat=>feat?.contentKind==="forge-original"),false,`${ruleset} ${cls.id} L${level}: Random feat leak`);
+      assert.equal(character.audit?.rawIntegrity,true,`${ruleset} ${cls.id} L${level}: Random RAW integrity failed`);
     }
   });
 }
