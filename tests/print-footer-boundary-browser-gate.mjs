@@ -19,7 +19,7 @@ const prescribedAttribution=[
   printLicenseAttribution({audit:{version:"SRD 5.1"}}),
   printLicenseAttribution({audit:{version:"SRD 5.2.1"}})
 ].join(" ");
-const footerWords=new Set(["rules","lawyer","certified","pass","raw","integrity","page","contains","srd","material","wizards","of","the","coast","llc","cc","by",...CLASSES,...prescribedAttribution.split(/\s+/).map(normalizeWord)]);
+const footerWords=new Set(["rules","lawyer","certified","pass","raw","integrity","page","contains","srd","material","wizards","of","the","coast","llc","cc","by","referencedocument",...CLASSES,...prescribedAttribution.split(/\s+/).map(normalizeWord)]);
 const failures=[];
 try{
   for(const name of files){
