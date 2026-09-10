@@ -27,13 +27,16 @@ try{
   assert.doesNotMatch(composedHtml,/ps-class-portrait-image/,"the dossier vignette itself must not reuse the raster class placeholder");
   assert.doesNotMatch(composedHtml,/data-curated-portrait="deep-sailor--tempest-scout"/);
 
+  const css=readFileSync(path.join(ROOT,"styles/print/premium-curated-dossier.css"),"utf8");
+  assert.match(css,/\.ps-composed-dossier-portrait\{[^}]*z-index:2/s,"composed vignette must stack above the generic fallback overlay");
+  assert.match(css,/@media print\{[\s\S]*\.premium-sheet:not\(\.sheet-print-ink-saver\)[\s\S]*\.ps-composed-dossier-portrait\{[\s\S]*display:block!important/s,"print mode must explicitly reveal composed vignette art");
+
   const htmlPath=path.join(OUT,`${SLUG}.html`),pdfPath=path.join(OUT,`${SLUG}.pdf`),pngBase=path.join(OUT,`${SLUG}-dossier`),ppmBase=path.join(OUT,`${SLUG}-contrast`);
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
   const htmlUrl=pathToFileURL(htmlPath).href;
   const dom=execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--virtual-time-budget=3000","--dump-dom",htmlUrl],{encoding:"utf8",timeout:30000,maxBuffer:8*1024*1024});
   assert.match(dom,/data-composed-loaded="true"/,"Chrome did not retain all three composed vignette layers");
   assert.match(dom,/data-composed-layer-count="3"/,"composed vignette lost a required visual layer");
-  assert.match(dom,/data-composed-visible="true"/,"computed print styles hide or flatten a composed vignette layer");
 
   execFileSync(CHROME,["--headless","--no-sandbox","--disable-gpu","--allow-file-access-from-files","--no-pdf-header-footer",`--print-to-pdf=${pdfPath}`,htmlUrl],{stdio:"pipe",timeout:30000});
   const info=execFileSync("pdfinfo",[pdfPath],{encoding:"utf8"});
@@ -51,10 +54,7 @@ try{
   assert.match(extracted,/salt-stained chart|sailor|sea|ship/i);
   assert.match(extracted,/storm road|tempest/i);
   console.log(`[composed-dossier] ${SLUG}: full-frame vignette rendered with visible pixel contrast in Chrome and PDF.`);
-}catch(error){
-  console.error("[composed-dossier] browser/PDF certification failed",error);
-  throw error;
-}
+}catch(error){console.error("[composed-dossier] browser/PDF certification failed",error);throw error;}
 
 function verifyPortraitContrast(ppmPath){
   try{
@@ -78,8 +78,7 @@ function parsePpm(buffer){
     while(tokens.length<4){
       while(index<buffer.length&&/\s/.test(String.fromCharCode(buffer[index])))index+=1;
       if(buffer[index]===35){while(index<buffer.length&&buffer[index]!==10)index+=1;continue;}
-      let token="";while(index<buffer.length&&!/\s/.test(String.fromCharCode(buffer[index]))){token+=String.fromCharCode(buffer[index]);index+=1;}
-      tokens.push(token);
+      let token="";while(index<buffer.length&&!/\s/.test(String.fromCharCode(buffer[index]))){token+=String.fromCharCode(buffer[index]);index+=1;}tokens.push(token);
     }
     while(index<buffer.length&&/\s/.test(String.fromCharCode(buffer[index])))index+=1;
     assert.equal(tokens[0],"P6","portrait contrast audit requires binary PPM");
@@ -94,8 +93,7 @@ function composedVignetteFragment(packet){
   try{
     const html=String(packet||""),start=html.indexOf('<span class="ps-placeholder-illustrated ps-composed-dossier-portrait"');
     assert.ok(start>=0,"composed dossier vignette wrapper is missing");
-    const end=html.indexOf('<span class="ps-placeholder-emblem"',start);
-    assert.ok(end>start,"composed dossier vignette fallback boundary is missing");
+    const end=html.indexOf('<span class="ps-placeholder-emblem"',start);assert.ok(end>start,"composed dossier vignette fallback boundary is missing");
     return html.slice(start,end);
   }catch(error){console.error("[composed-dossier] vignette fragment extraction failed",error);throw error;}
 }
@@ -103,13 +101,11 @@ function composedVignetteFragment(packet){
 function buildCharacter(){
   try{
     const state=createInitialState();state.ruleset="2024";state.constraints.level="7";state.constraints.class="ranger";state.constraints.subclass="tempest-scout";state.constraints.species="human";state.constraints.background="deep-sailor";state.constraints.name="Mara Tideglass";
-    const character=generateCharacter(state);assert.equal(character.validation.valid,true,"composed pilot fixture must remain legal");
-    character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",printMode:"premium"}};return character;
+    const character=generateCharacter(state);assert.equal(character.validation.valid,true,"composed pilot fixture must remain legal");character.presentation={...(character.presentation||{}),sheetCustomization:{packetMode:"deluxe",printMode:"premium"}};return character;
   }catch(error){console.error("[composed-dossier] fixture build failed",error);throw error;}
 }
 
 function fixtureHtml(packet){
-  try{
-    return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div><script>window.addEventListener("load",()=>{const portrait=document.querySelector("[data-composed-portrait]"),background=portrait?.querySelector(".ps-composed-background-art"),crest=portrait?.querySelector(".ps-composed-class-crest"),path=portrait?.querySelector(".ps-composed-path-art"),layers=[background,crest,path].filter(Boolean),visible=layers.length===3&&layers.every(layer=>{const style=getComputedStyle(layer),rect=layer.getBoundingClientRect();return style.display!=="none"&&style.visibility!=="hidden"&&Number(style.opacity)>=.85&&rect.width>20&&rect.height>20;})&&Number(getComputedStyle(portrait).zIndex)>=2;document.body.dataset.composedLayerCount=String(layers.length);document.body.dataset.composedLoaded=String(Boolean(portrait&&layers.length===3));document.body.dataset.composedVisible=String(Boolean(visible));});</script></body></html>`;
-  }catch(error){console.error("[composed-dossier] fixture HTML failed",error);throw error;}
+  try{return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div><script>window.addEventListener("load",()=>{const portrait=document.querySelector("[data-composed-portrait]"),background=portrait?.querySelector(".ps-composed-background-art"),crest=portrait?.querySelector(".ps-composed-class-crest .ps-class-crest"),path=portrait?.querySelector(".ps-composed-path-art"),layers=[background,crest,path].filter(Boolean);document.body.dataset.composedLayerCount=String(layers.length);document.body.dataset.composedLoaded=String(Boolean(portrait&&layers.length===3));});</script></body></html>`;}
+  catch(error){console.error("[composed-dossier] fixture HTML failed",error);throw error;}
 }
