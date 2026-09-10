@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { createInitialState } from "../src/state.js";
+import { SOURCE } from "../src/schema.js";
 import { generateCharacter } from "../src/rules/generator.js";
 import { renderPremiumPrintSheet } from "../src/ui/premium-print.js";
 
@@ -18,11 +19,12 @@ const CASES=[
 ];
 
 for(const testCase of CASES)verify(testCase);
-console.log(`[barbarian-original-browser] verified ${CASES.length} Forge-original Barbarian Letter PDFs in Chrome`);
+console.log(`[barbarian-original-browser] verified ${CASES.length} Forge-original Barbarian Letter PDFs in explicit compatible mode`);
 
 function verify(testCase){
   try{
     const character=characterAt(testCase),target={innerHTML:""},model=renderPremiumPrintSheet(character,target),slug=`${testCase.ruleset}-human-barbarian-${testCase.subclass}`;
+    assert.equal(character.sourceMode,SOURCE.HOMEBREW,`${slug}: original fixture must stay outside RAW mode`);
     assert.equal(character.validation.valid,true,`${slug}: validation failed`);
     assert.equal(character.audit.status,"PASS",`${slug}: audit failed`);
     assert.equal(character.audit.rawIntegrity,false,`${slug}: original content was mislabeled RAW`);
@@ -52,7 +54,7 @@ function verify(testCase){
 }
 
 function characterAt({ruleset,subclass,background}){
-  const state=createInitialState();state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="barbarian";state.constraints.subclass=subclass;state.constraints.species="human";state.constraints.background=background;state.constraints.name=`Forge ${subclass}`;return generateCharacter(state);
+  const state=createInitialState();state.sourceMode=SOURCE.HOMEBREW;state.ruleset=ruleset;state.constraints.level="20";state.constraints.class="barbarian";state.constraints.subclass=subclass;state.constraints.species="human";state.constraints.background=background;state.constraints.name=`Forge ${subclass}`;return generateCharacter(state);
 }
 function fixtureHtml(packet){return `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles/responsive.css"></head><body class="premium-print-active"><div id="premiumPrintRoot" class="premium-print-root">${packet}</div></body></html>`;}
 function normalize(value){return String(value||"").normalize("NFKC").replace(/[’‘]/g,"'").replace(/[“”]/g,'"').replace(/[\u2010-\u2015]/g,"-").replace(/\s+/g," ").trim();}
