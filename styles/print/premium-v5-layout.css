@@ -1,0 +1,45 @@
+@media print{
+  /* Premium V5 uses reusable density profiles rather than class-name branches.
+     The rules/data model chooses semantic layout traits; CSS allocates space. */
+  .sheet-packet-deluxe.layout-feature-heavy .ps-main-columns{
+    grid-template-columns:1.48in minmax(0,1fr) 2.55in;
+    gap:.065in;
+  }
+  .sheet-packet-deluxe.layout-skill-heavy.layout-feature-heavy .ps-main-columns{
+    grid-template-columns:1.58in minmax(0,1fr) 2.43in;
+  }
+  .sheet-packet-deluxe.layout-resource-heavy:not(.layout-feature-heavy) .ps-main-columns{
+    grid-template-columns:1.48in minmax(0,1fr) 2.32in;
+  }
+
+  /* Wider feature rails are used to improve legibility, not to pack in more text. */
+  .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list strong{font-size:6.75pt}
+  .sheet-packet-deluxe.layout-feature-heavy .ps-feature-list p{font-size:5.8pt;line-height:1.18}
+  .sheet-packet-deluxe.layout-feature-heavy .ps-feat p,
+  .sheet-packet-deluxe.layout-feature-heavy .ps-proficiencies p{font-size:6.05pt;line-height:1.22}
+
+  /* Three passive senses share the footprint previously used by one oversized row. */
+  .ps-passive.ps-passive-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.025in;padding:.035in .04in}
+  .ps-passive-grid>span{display:grid;grid-template-rows:auto auto;place-items:center;min-width:0;padding:.015in .01in;border-right:1px dotted rgba(65,49,31,.28);font:700 4.55pt/1.05 Arial,sans-serif;text-transform:uppercase;text-align:center}
+  .ps-passive-grid>span:last-child{border-right:0}
+  .ps-passive-grid b{margin-top:.012in;font:700 10pt/1 Georgia,serif;color:var(--ps-dark)}
+
+  /* Sparse equipment panels become intentional writable table space. */
+  .ps-equipment-notes{margin-top:.055in;padding-top:.035in;border-top:1px dotted rgba(65,49,31,.28)}
+  .ps-equipment-notes>span{display:block;margin-bottom:.025in;font:700 4.7pt Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ps-muted)}
+  .ps-equipment-notes i{display:block;height:.18in;border-bottom:1px solid rgba(65,49,31,.26)}
+
+  /* Resource trackers are generated from trackable utility stats, not class names. */
+  .ps-resource-trackers{display:grid;gap:.028in;margin:0 0 .045in}
+  .ps-resource-tracker{display:grid;grid-template-columns:minmax(.75in,auto) 1fr auto;align-items:center;gap:.04in;padding:.028in .04in;border:1px solid color-mix(in srgb,var(--ps-primary) 54%,#d5bf97);background:rgba(255,250,236,.55)}
+  .ps-resource-tracker>strong{font:700 5.15pt Georgia,serif;color:var(--ps-dark)}
+  .ps-resource-marks{display:flex;justify-content:flex-end;gap:.018in;min-width:0}
+  .ps-resource-marks i{font:700 7.6pt/1 Arial,sans-serif;font-style:normal;color:var(--ps-primary)}
+  .ps-resource-tracker>small{font:4.2pt/1 Arial,sans-serif;color:var(--ps-muted);white-space:nowrap}
+  .ps-resource-current{display:grid;grid-template-columns:auto .28in auto;gap:.025in;align-items:end;font:4.35pt Arial,sans-serif;color:var(--ps-muted)}
+  .ps-resource-current i{height:.13in;border-bottom:1px solid var(--ps-dark)}
+
+  .sheet-print-ink-saver .ps-passive-grid>span,
+  .sheet-print-ink-saver .ps-equipment-notes,
+  .sheet-print-ink-saver .ps-resource-tracker{border-color:#777!important}
+}
