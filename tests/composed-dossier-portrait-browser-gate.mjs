@@ -18,12 +18,14 @@ try{
   assert.equal(model.dossier?.artDirection?.backgroundId,"deep-sailor");
   assert.equal(model.dossier?.artDirection?.pathId,"tempest-scout");
   assert.equal(model.dossier?.artDirection?.variantKey,"deep-sailor--tempest-scout");
-  assert.match(target.innerHTML,/data-composed-portrait="deep-sailor--tempest-scout"/);
-  assert.match(target.innerHTML,/ps-composed-background-art/);
-  assert.match(target.innerHTML,/ps-composed-class-crest/);
-  assert.match(target.innerHTML,/ps-composed-path-art/);
-  assert.doesNotMatch(target.innerHTML,/ps-class-portrait-image/);
-  assert.doesNotMatch(target.innerHTML,/data-curated-portrait="deep-sailor--tempest-scout"/);
+
+  const composedHtml=composedVignetteFragment(target.innerHTML);
+  assert.match(composedHtml,/data-composed-portrait="deep-sailor--tempest-scout"/);
+  assert.match(composedHtml,/ps-composed-background-art/);
+  assert.match(composedHtml,/ps-composed-class-crest/);
+  assert.match(composedHtml,/ps-composed-path-art/);
+  assert.doesNotMatch(composedHtml,/ps-class-portrait-image/,"the dossier vignette itself must not reuse the raster class placeholder");
+  assert.doesNotMatch(composedHtml,/data-curated-portrait="deep-sailor--tempest-scout"/);
 
   const htmlPath=path.join(OUT,`${SLUG}.html`),pdfPath=path.join(OUT,`${SLUG}.pdf`),pngBase=path.join(OUT,`${SLUG}-dossier`);
   writeFileSync(htmlPath,fixtureHtml(target.innerHTML),"utf8");
@@ -48,6 +50,20 @@ try{
 }catch(error){
   console.error("[composed-dossier] browser/PDF certification failed",error);
   throw error;
+}
+
+function composedVignetteFragment(packet){
+  try{
+    const html=String(packet||"");
+    const start=html.indexOf('<span class="ps-placeholder-illustrated ps-composed-dossier-portrait"');
+    assert.ok(start>=0,"composed dossier vignette wrapper is missing");
+    const end=html.indexOf('<span class="ps-placeholder-emblem"',start);
+    assert.ok(end>start,"composed dossier vignette fallback boundary is missing");
+    return html.slice(start,end);
+  }catch(error){
+    console.error("[composed-dossier] vignette fragment extraction failed",error);
+    throw error;
+  }
 }
 
 function buildCharacter(){
