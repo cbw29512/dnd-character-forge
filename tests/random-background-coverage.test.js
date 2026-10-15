@@ -6,18 +6,19 @@ import { randomBackgroundCoverageMessage } from "../src/ui/options.js";
 
 function stateFor(ruleset){const state=createInitialState();state.ruleset=ruleset;return state;}
 
-test("2014 Random background guidance explains the one-option strict SRD pool",()=>{
+test("2014 Random guidance discloses its SRD and Forge Original pools",()=>{
   const message=randomBackgroundCoverageMessage(stateFor("2014"));
-  assert.match(message,/2014 SRD Random background has 1 verified option here: Acolyte\./);
-  assert.match(message,/Forge Original/);
+  assert.match(message,/2014 Random.*1 SRD background \(Acolyte\) and 12 Forge Original backgrounds/);
+  assert.doesNotMatch(message,/opt-in|1 verified option here/);
   assert.match(message,/clearly marked as original/);
 });
 
-test("2024 Random background guidance names the four verified SRD choices and keeps Originals opt-in",()=>{
+test("2024 Random guidance names its four SRD choices and discloses Originals",()=>{
   const message=randomBackgroundCoverageMessage(stateFor("2024"));
-  assert.match(message,/rotates across 4 verified options/);
+  assert.match(message,/4 SRD backgrounds/);
   for(const name of ["Acolyte","Criminal","Sage","Soldier"])assert.match(message,new RegExp(`\\b${name}\\b`));
-  assert.match(message,/Forge Original backgrounds stay opt-in/);
+  assert.match(message,/12 Forge Original backgrounds/);
+  assert.match(message,/choose a named background to keep that choice fixed/);
 });
 
 test("Forge panel owns an accessible live Random coverage note",async()=>{
