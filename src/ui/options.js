@@ -27,10 +27,13 @@ export function populateSubclasses(state){
 }
 export function randomBackgroundCoverageMessage(state){
   try{
-    const verified=dataFor(state).backgrounds.filter(background=>!isForgeOriginalBackground(background)&&background.randomEligible!==false),names=verified.map(background=>background.name);
-    if(!verified.length)return `${state.ruleset} SRD Random has no verified background options in this catalog. Choose a listed background instead.`;
-    if(verified.length===1)return `${state.ruleset} SRD Random background has 1 verified option here: ${names[0]}. For more variety, choose a background labeled Forge Original; it stays clearly marked as original.`;
-    return `${state.ruleset} SRD Random background rotates across ${verified.length} verified options: ${formatNames(names)}. Forge Original backgrounds stay opt-in.`;
+    // Describe the combined Forge pool used by pick(), while retaining each source label.
+    const eligible=dataFor(state).backgrounds.filter(background=>background.randomEligibleInForge===true||background.randomEligible!==false);
+    const verified=eligible.filter(background=>!isForgeOriginalBackground(background)),originals=eligible.filter(isForgeOriginalBackground),names=verified.map(background=>background.name);
+    if(!eligible.length)return `${state.ruleset} Random has no background options in this catalog. Choose a listed background instead.`;
+    const srd=verified.length?`${verified.length} SRD background${verified.length===1?"":"s"} (${formatNames(names)})`:"no SRD backgrounds";
+    const original=originals.length?` and ${originals.length} Forge Original background${originals.length===1?"":"s"}`:"";
+    return `${state.ruleset} Random draws from a catalog of ${srd}${original}. Forge Original results are clearly marked as original. Fixed choices can narrow the compatible pool; choose a named background to keep that choice fixed.`;
   }catch(error){console.error("[ui] Random background coverage failed",error);throw error;}
 }
 export function renderRandomBackgroundCoverage(state){
