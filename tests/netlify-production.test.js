@@ -1,6 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {spawnSync} from "node:child_process";
 
 const NETLIFY_URL="https://character-forge-test.netlify.app/";
@@ -19,19 +21,19 @@ test("Netlify configuration publishes only generated static output",()=>{
 });
 
 test("Netlify build rewrites production host without mutating source files",()=>{
-  fs.rmSync("_site",{recursive:true,force:true});
+  const output=fs.mkdtempSync(path.join(os.tmpdir(),"forge-build-contract-"));
   const result=spawnSync(process.execPath,["scripts/netlify-build.mjs"],{
     cwd:process.cwd(),
-    env:{...process.env,SITE_URL:NETLIFY_URL,COMMIT_REF:"deadbeef",BRANCH:"main"},
+    env:{...process.env,CHARACTER_FORGE_BUILD_OUTPUT:output,SITE_URL:NETLIFY_URL,COMMIT_REF:"deadbeef",BRANCH:"main"},
     encoding:"utf8"
   });
   try{
     assert.equal(result.status,0,result.stderr||result.stdout);
-    const builtIndex=read("_site/index.html");
-    const builtShare=read("_site/share/index.html");
-    const builtRobots=read("_site/robots.txt");
-    const builtSitemap=read("_site/sitemap.xml");
-    const built404=read("_site/404.html");
+    const builtIndex=read(path.join(output,"index.html"));
+    const builtShare=read(path.join(output,"share/index.html"));
+    const builtRobots=read(path.join(output,"robots.txt"));
+    const builtSitemap=read(path.join(output,"sitemap.xml"));
+    const built404=read(path.join(output,"404.html"));
     const sourceIndex=read("index.html");
     const source404=read("404.html");
 
@@ -44,13 +46,13 @@ test("Netlify build rewrites production host without mutating source files",()=>
     assert.match(sourceIndex,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")),"source must remain valid for GitHub Pages during cutover");
     assert.match(source404,new RegExp(LEGACY_URL.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")),"source 404 must remain valid during Pages fallback");
 
-    const buildInfo=JSON.parse(read("_site/build-info.json"));
+    const buildInfo=JSON.parse(read(path.join(output,"build-info.json")));
     assert.equal(buildInfo.commit,"deadbeef");
     assert.equal(buildInfo.branch,"main");
     assert.equal(buildInfo.siteUrl,NETLIFY_URL);
-    assert.ok(fs.existsSync("_site/_headers"));
+    assert.ok(fs.existsSync(path.join(output,"_headers")));
   }finally{
-    fs.rmSync("_site",{recursive:true,force:true});
+    fs.rmSync(output,{recursive:true,force:true});
   }
 });
 

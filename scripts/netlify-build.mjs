@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { versionPublicAssets } from "./version-assets.mjs";
 
 const ROOT=process.cwd();
-const OUT=path.join(ROOT,"_site");
+// Isolated output keeps concurrent build-contract checks from deleting each other.
+const OUT=path.resolve(process.env.CHARACTER_FORGE_BUILD_OUTPUT||path.join(ROOT,"_site"));
 const LEGACY_BASE="https://cbw29512.github.io/dnd-character-forge/";
 const rawSiteUrl=process.env.URL||process.env.SITE_URL||process.env.DEPLOY_PRIME_URL;
 
@@ -55,6 +57,7 @@ for(const relative of [
   fs.writeFileSync(target,source.replaceAll(LEGACY_BASE,SITE_URL));
 }
 
+const assetRevision=versionPublicAssets(OUT);
 const commit=process.env.COMMIT_REF||process.env.GITHUB_SHA||"unknown";
 const branch=process.env.BRANCH||process.env.HEAD||"unknown";
 fs.writeFileSync(path.join(OUT,"build-info.json"),JSON.stringify({
@@ -62,6 +65,7 @@ fs.writeFileSync(path.join(OUT,"build-info.json"),JSON.stringify({
   commit,
   branch,
   siteUrl:SITE_URL,
+  assetRevision,
   builtAt:new Date().toISOString()
 },null,2)+"\n");
 
